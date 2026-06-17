@@ -1,0 +1,62 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import Navbar from "../components/Nav/Navbar";
+import Footer from "../components/Nav/Footer";
+import PageHero from "../components/shop/PageHero";
+import CategoryGrid from "../components/shop/CategoryGrid";
+import Photo from "../components/ui/Photo";
+import Reveal from "../components/ui/Reveal";
+
+const SUPPLEMENT_CATS = [
+  { name: "Semaglutide", tag: "GLP-1", link: "/contact" },
+  { name: "Tirzepatide", tag: "GLP-1 / GIP", link: "/contact" },
+  { name: "Retatrutide", tag: "GLP-3", link: "/contact" },
+  { name: "BPC-157", tag: "Recovery", link: "/contact" },
+  { name: "NAD+", tag: "Longevity", link: "/contact" },
+  { name: "GHK-Cu", tag: "Skin & repair", link: "/contact" },
+  { name: "Thymosin Alpha 1", tag: "Immune", link: "/contact" },
+  { name: "MOTS-C", tag: "Metabolic", link: "/contact" },
+  { name: "Tesamorelin", tag: "Growth", link: "/contact" },
+];
+
+export default function SupplementsPage() {
+  return (
+    <main className="min-h-screen w-full bg-bg text-ink">
+      <Navbar />
+
+      <PageHero
+        eyebrow="Supplements"
+        title="Clinical-grade formulas, tailored to your labs."
+        subtitle="Compounded peptides and daily-foundation supplements, prepared by FDA-regulated pharmacies and matched to your protocol."
+        chips={["503A compounding", "Physician-reviewed", "Purity tested"]}
+      />
+
+      <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
+        <span className="nv-eyebrow">Browse by molecule</span>
+        <div className="mt-6">
+          <CategoryGrid items={SUPPLEMENT_CATS} />
+        </div>
+      </section>
+
+      {/* What arrives band */}
+      <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(3.5rem,7vw,6rem)] md:px-10">
+        <div className="grid items-center gap-[clamp(2rem,5vw,4.5rem)] md:grid-cols-2">
+          <Reveal>
+            <span className="nv-eyebrow">What arrives</span>
+            <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.7rem)] font-extrabold leading-tight">Pre-sorted, dated, and ready to take.</h2>
+            <p className="mt-4 max-w-[46ch] text-[1.04rem] text-muted">Your supplements come split into morning and evening packs alongside any prescription treatments — one box, no juggling bottles.</p>
+            <Link to="/contact" className="group mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.96rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow">
+              Build your protocol <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <Photo src="/amber-bottles.jpg" alt="Hands holding two amber supplement bottles" className="min-h-[320px] w-full rounded-[26px] border border-line nv-shadow" imgClassName="object-cover" />
+          </Reveal>
+        </div>
+      </section>
+
+      <Footer />
+    </main>
+  );
+}
