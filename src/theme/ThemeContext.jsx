@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { PALETTES, TYPOGRAPHIES, WEIGHTS, DEVICES, HOWITWORKS_LAYOUTS, DEFAULTS, byId } from "./themes";
+import { PALETTES, TYPOGRAPHIES, WEIGHTS, DEVICES, DEFAULTS, byId } from "./themes";
 
 const ThemeContext = createContext(null);
 export const useTheme = () => useContext(ThemeContext);
@@ -9,7 +9,6 @@ const LS = {
   typography: "nv_type",
   weight: "nv_weight",
   italic: "nv_italic",
-  howItWorks: "nv_hiw",
   studio: "nv_studio_unlocked",
 };
 
@@ -22,14 +21,6 @@ const read = (k, fallback) => {
   }
 };
 
-/**
- * Reads the URL once for two purposes:
- *  - `?preview=1`  → we're inside the Design Studio's device iframe; hide the
- *                    launcher and never recurse.
- *  - `?studio` / `?studio=1` / `?studio=0` → unlock / lock the studio on THIS
- *                    device only (persisted to localStorage). Public visitors
- *                    never see the launcher.
- */
 function readUrlFlags() {
   if (typeof window === "undefined") return { isPreview: false, studioParam: null };
   const p = new URLSearchParams(window.location.search);
@@ -44,13 +35,8 @@ export default function ThemeProvider({ children }) {
   const [typographyId, setTypographyId] = useState(() => read(LS.typography, DEFAULTS.typography));
   const [weightId, setWeightId] = useState(() => read(LS.weight, DEFAULTS.weight));
   const [italic, setItalic] = useState(() => read(LS.italic, String(DEFAULTS.italic)) === "true");
-  const [howItWorksId, setHowItWorksId] = useState(() => read(LS.howItWorks, DEFAULTS.howItWorks));
   const [device, setDevice] = useState(DEFAULTS.device); // device preview is session-only
   const [studioOpen, setStudioOpen] = useState(false);
-
-  // The Design Studio launcher is visible to EVERYONE. Any palette/typography
-  // change a visitor makes is saved to *their* localStorage only — it never
-  // affects the live site for anyone else. (?studio=0 hides the launcher.)
   const [studioUnlocked, setStudioUnlocked] = useState(() => urlFlags.studioParam !== "0");
 
   const isPreview = urlFlags.isPreview;
@@ -103,13 +89,12 @@ export default function ThemeProvider({ children }) {
   const setTypography = (id) => { setTypographyId(id); try { localStorage.setItem(LS.typography, id); } catch {} };
   const setWeight = (id) => { setWeightId(id); try { localStorage.setItem(LS.weight, id); } catch {} };
   const setItalicPersisted = (v) => { setItalic(v); try { localStorage.setItem(LS.italic, String(v)); } catch {} };
-  const setHowItWorks = (id) => { setHowItWorksId(id); try { localStorage.setItem(LS.howItWorks, id); } catch {} };
 
   const value = {
-    palette, typography, weight, italic, howItWorks: howItWorksId,
+    palette, typography, weight, italic,
     device, studioOpen, studioUnlocked, isPreview,
-    palettes: PALETTES, typographies: TYPOGRAPHIES, weights: WEIGHTS, devices: DEVICES, howItWorksLayouts: HOWITWORKS_LAYOUTS,
-    setPalette, setTypography, setWeight, setItalic: setItalicPersisted, setHowItWorks,
+    palettes: PALETTES, typographies: TYPOGRAPHIES, weights: WEIGHTS, devices: DEVICES,
+    setPalette, setTypography, setWeight, setItalic: setItalicPersisted,
     setDevice, setStudioOpen, setStudioUnlocked,
   };
 

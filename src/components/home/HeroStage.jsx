@@ -1,63 +1,58 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { CONSULTS, CONSULT_ORDER } from "../data/consultations";
 
 const EASE = [0.22, 0.61, 0.18, 1];
 
-/* Glass category cards — mapped to real NovaMD categories. */
-const CARDS = [
-  { title: "Weight Loss", desc: "GLP-1 & metabolic support, dosed for you.", img: "/pills-tablets.png", kind: "pills", link: "/treatments" },
-  { title: "Supplements", desc: "Clinical-grade formulas, tailored to your labs.", img: "/pills-float.png", kind: "pills", link: "/supplements" },
-  { title: "Skin Health", desc: "Dermatologist-designed routines that work.", img: "/skin-health.png", kind: "person", link: "/treatments" },
-  { title: "Sports Medicine", desc: "Recover faster. Train harder. Stay in the game.", img: "/pills-tablets.png", kind: "pills", link: "/treatments" },
-  { title: "Men's Health", desc: "Hair, drive, and daily focus at the source.", img: "/pills-float.png", kind: "pills", link: "/treatments" },
-];
-
-function GlassCard({ card, delay }) {
+/* Glass category card — flow-HTML content (tag · name · blurb), floating pill,
+   shine sweep; opens that category's consultation. */
+function GlassCard({ c, delay }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.8, ease: EASE, delay }}
-      className="snap-start shrink-0"
+      transition={{ duration: 0.7, ease: EASE, delay }}
+      className="h-full"
     >
       <Link
-        to={card.link}
-        className="group relative flex h-[200px] w-[330px] items-center overflow-hidden rounded-[22px] nv-shadow-lg transition-transform duration-500 hover:-translate-y-2"
+        to={`/start/${c.slug}`}
+        className="group relative flex h-full min-h-[212px] flex-col overflow-hidden rounded-[20px] p-4 nv-shadow-lg transition-transform duration-500 hover:-translate-y-2"
       >
-        <span className="nv-glass absolute inset-0 rounded-[22px]" />
+        <span className="nv-glass absolute inset-0 rounded-[20px]" />
+
         {/* gloss sweep on hover */}
-        <span className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[22px]">
-          <span className="absolute left-0 top-0 h-full w-[55%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-white/55 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
+        <span className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[20px]">
+          <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-white/55 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
         </span>
-        <div className="relative z-[3] max-w-[54%] pl-6">
-          <h3 className="font-display text-[1.45rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)]">
-            {card.title}
-          </h3>
-          <p className="mt-2 max-w-[22ch] text-[0.86rem] leading-snug text-white/90 opacity-0 transition-all duration-500 group-hover:opacity-100 drop-shadow-[0_1px_10px_rgba(15,22,34,0.45)]">
-            {card.desc}
-          </p>
-          <span className="mt-3 inline-flex items-center gap-1.5 text-[0.82rem] font-semibold text-on-panel opacity-0 transition-all duration-500 group-hover:opacity-100">
-            Explore <ArrowRight size={13} />
+
+        {/* floating pill — left, like the flow's orb (one shared render across cards) */}
+        <img
+          src="/supplementpill.avif"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="nv-bob relative z-[3] mb-2.5 h-[46px] w-auto self-start object-contain drop-shadow-[0_12px_20px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110"
+        />
+
+        {/* flow content: tag · name · blurb */}
+        <div className="relative z-[3]">
+          <span className="font-mono text-[0.58rem] uppercase tracking-[0.12em] text-white/75 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)]">
+            {c.tag}
           </span>
+          <h3 className="mt-1 font-display text-[1.08rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)]">
+            {c.name}
+          </h3>
+          <p className="mt-1.5 text-[0.78rem] leading-snug text-white/85 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)]">
+            {c.blurb}
+          </p>
         </div>
-        {card.kind === "pills" ? (
-          <img
-            src={card.img}
-            alt={`${card.title} tablets`}
-            loading="lazy"
-            className="nv-bob pointer-events-none absolute bottom-1/2 right-4 z-[2] w-[132px] translate-y-1/2 drop-shadow-[0_14px_20px_rgba(15,22,34,0.5)]"
-          />
-        ) : (
-          <img
-            src={card.img}
-            alt={card.title}
-            loading="lazy"
-            className="pointer-events-none absolute bottom-0 right-1.5 z-[2] h-[188px] w-auto drop-shadow-[0_14px_20px_rgba(15,22,34,0.5)]"
-          />
-        )}
+
+        <span className="relative z-[3] mt-auto inline-flex items-center gap-1.5 pt-2.5 text-[0.78rem] font-semibold text-white transition-all duration-500 group-hover:gap-2.5 drop-shadow-[0_1px_10px_rgba(15,22,34,0.45)]">
+          Start <ArrowRight size={13} strokeWidth={2.4} />
+        </span>
       </Link>
     </motion.div>
   );
@@ -65,21 +60,12 @@ function GlassCard({ card, delay }) {
 
 export default function HeroStage() {
   const stageRef = useRef(null);
-  const trackRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: stageRef,
     offset: ["start start", "end start"],
   });
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
-
-  const scrollTrack = (dir) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const card = track.querySelector("a");
-    const step = card ? card.offsetWidth + 22 : 352;
-    track.scrollBy({ left: dir * step, behavior: "smooth" });
-  };
 
   return (
     <section ref={stageRef} className="relative isolate overflow-hidden">
@@ -107,7 +93,7 @@ export default function HeroStage() {
 
       <div className="mx-auto max-w-[1500px] px-5 pb-[clamp(48px,7vw,88px)] pt-[clamp(34px,6vw,72px)] md:px-10">
         {/* Hero row */}
-        <div className="mb-[clamp(34px,5vw,58px)] flex flex-col items-start justify-between gap-7 md:flex-row md:items-start">
+        <div className="mb-[clamp(30px,4vw,50px)] flex flex-col items-start justify-between gap-7 md:flex-row md:items-end">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
@@ -129,9 +115,9 @@ export default function HeroStage() {
               </span>{" "}
               treatment <span className="nv-em font-bold italic">for you.</span>
             </h1>
-            <p className="mt-[18px] max-w-[40ch] text-[clamp(1rem,1.3vw,1.1rem)] leading-relaxed text-muted">
-              Clinical care, considered like luxury. Tell us your goals — we build a plan around your
-              body, reviewed by licensed providers.
+            <p className="mt-[18px] max-w-[42ch] text-[clamp(1rem,1.3vw,1.1rem)] leading-relaxed text-muted">
+              Pick what you want to work on. Answer a few quick questions and a licensed provider
+              builds a plan around your body — shipped to your door.
             </p>
           </motion.div>
 
@@ -149,7 +135,7 @@ export default function HeroStage() {
                 className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0"
                 style={{ background: "linear-gradient(135deg, var(--nv-primary), var(--nv-primary-deep))" }}
               />
-              <span className="relative z-10">Find My Treatment</span>
+              <span className="relative z-10">Browse all treatments</span>
               <span className="relative z-10 grid h-[26px] w-[26px] place-items-center rounded-full border-[1.5px] border-current transition-transform duration-300 group-hover:translate-x-1">
                 <ArrowRight size={13} strokeWidth={2.6} />
               </span>
@@ -157,42 +143,20 @@ export default function HeroStage() {
           </motion.div>
         </div>
 
-        {/* Glass category carousel — arrows flank the cards, centered on them */}
-        <div className="flex items-center gap-2 md:gap-3.5">
-          <button
-            aria-label="Previous"
-            onClick={() => scrollTrack(-1)}
-            className="hidden h-11 w-11 shrink-0 place-items-center rounded-full border border-white/60 bg-white/60 text-ink backdrop-blur-md transition-all hover:border-primary hover:bg-primary hover:text-on-primary sm:grid"
-          >
-            <ChevronLeft size={18} />
-          </button>
-
-          <div
-            ref={trackRef}
-            className="no-scrollbar flex min-w-0 flex-1 snap-x snap-mandatory gap-[22px] overflow-x-auto px-0.5 py-5"
-          >
-            {CARDS.map((card, i) => (
-              <GlassCard key={card.title} card={card} delay={i * 0.07} />
-            ))}
-            <span className="shrink-0 pr-0.5" />
-          </div>
-
-          <button
-            aria-label="Next"
-            onClick={() => scrollTrack(1)}
-            className="hidden h-11 w-11 shrink-0 place-items-center rounded-full border border-white/60 bg-white/60 text-ink backdrop-blur-md transition-all hover:border-primary hover:bg-primary hover:text-on-primary sm:grid"
-          >
-            <ChevronRight size={18} />
-          </button>
+        {/* All five categories — one row, each opens its consultation */}
+        <div className="grid grid-cols-2 gap-[clamp(0.7rem,1.2vw,1rem)] sm:grid-cols-3 lg:grid-cols-5">
+          {CONSULT_ORDER.map((key, i) => (
+            <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} />
+          ))}
         </div>
 
-        {/* Women's wide glass card */}
+        {/* Women's wide card — now the "not sure where to start?" assessment prompt */}
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.9, ease: EASE }}
-          className="relative mt-[clamp(26px,3vw,40px)] flex min-h-[clamp(320px,38vw,440px)] items-start overflow-hidden rounded-[26px]"
+          className="relative mt-[clamp(16px,2vw,24px)] flex min-h-[clamp(300px,34vw,400px)] items-start overflow-hidden rounded-[26px]"
         >
           <span
             className="absolute inset-0"
@@ -204,19 +168,22 @@ export default function HeroStage() {
               border: "1px solid rgba(255,255,255,0.5)",
             }}
           />
-          <div className="relative z-[3] max-w-[88%] p-[clamp(28px,4vw,46px)] md:max-w-[50%]">
-            <h2 className="font-display text-[clamp(1.7rem,3.2vw,2.7rem)] font-bold leading-tight tracking-tight text-white drop-shadow-[0_2px_18px_rgba(15,22,34,0.5)]">
-              Women's Health, handled with real care.
+          <div className="relative z-[3] max-w-[88%] p-[clamp(28px,4vw,46px)] md:max-w-[52%]">
+            <span className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-white/80 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)]">
+              Free 2-minute assessment
+            </span>
+            <h2 className="mt-3 font-display text-[clamp(1.7rem,3.2vw,2.7rem)] font-bold leading-tight tracking-tight text-white drop-shadow-[0_2px_18px_rgba(15,22,34,0.5)]">
+              Not sure where to start?
             </h2>
-            <p className="mt-3.5 max-w-[34ch] leading-relaxed text-white/90 drop-shadow-[0_1px_12px_rgba(15,22,34,0.4)]">
-              Hormones, fertility, energy, and longevity — assessed together, not in silos, by providers
-              who specialize in women's bodies.
+            <p className="mt-3.5 max-w-[40ch] leading-relaxed text-white/90 drop-shadow-[0_1px_12px_rgba(15,22,34,0.4)]">
+              Take the free assessment and we'll point you to the right care — reviewed by a licensed
+              provider, with no commitment and nothing to pay until you're prescribed.
             </p>
             <Link
-              to="/treatments"
+              to="/start/weight-loss"
               className="mt-6 inline-flex items-center gap-2.5 rounded-full border-[1.5px] border-white/55 px-5 py-3 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-white hover:text-ink"
             >
-              Start your assessment <ArrowRight size={14} />
+              Start the assessment <ArrowRight size={14} />
             </Link>
           </div>
           <img

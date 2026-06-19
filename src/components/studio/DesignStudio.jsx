@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Palette, Type, Italic, Check, X, Sparkles, RotateCcw,
-  Smartphone, Tablet, Monitor, Maximize, Eye, Lock, LayoutTemplate,
+  Smartphone, Tablet, Monitor, Maximize, Eye, Lock,
 } from "lucide-react";
 import { useTheme } from "../../theme/ThemeContext";
 import { DEFAULTS } from "../../theme/themes";
@@ -19,7 +19,7 @@ const DEVICE_ICON = {
 
 /* ----------------------------- device preview ----------------------------- */
 function DevicePreview() {
-  const { device, devices, setDevice, palette, typography, weight, italic, howItWorks } = useTheme();
+  const { device, devices, setDevice, palette, typography, weight, italic } = useTheme();
   const active = devices.find((d) => d.id === device);
   const [scale, setScale] = useState(1);
 
@@ -39,7 +39,7 @@ function DevicePreview() {
 
   const path = window.location.pathname;
   // Re-key on theme so the iframe re-renders with the active palette/type.
-  const frameKey = `${path}|${palette.id}|${typography.id}|${weight.id}|${italic}|${howItWorks}`;
+  const frameKey = `${path}|${palette.id}|${typography.id}|${weight.id}|${italic}`;
 
   return (
     <motion.div
@@ -124,9 +124,9 @@ export default function DesignStudio() {
   if (t.isPreview || !t.studioUnlocked) return null;
 
   const {
-    palettes, typographies, weights, devices, howItWorksLayouts,
-    palette, typography, weight, italic, device, howItWorks,
-    setPalette, setTypography, setWeight, setItalic, setDevice, setHowItWorks,
+    palettes, typographies, weights, devices,
+    palette, typography, weight, italic, device,
+    setPalette, setTypography, setWeight, setItalic, setDevice,
     studioOpen, setStudioOpen,
   } = t;
 
@@ -135,7 +135,6 @@ export default function DesignStudio() {
     setTypography(DEFAULTS.typography);
     setWeight(DEFAULTS.weight);
     setItalic(DEFAULTS.italic);
-    setHowItWorks(DEFAULTS.howItWorks);
     setDevice(DEFAULTS.device);
   };
 
@@ -166,7 +165,8 @@ export default function DesignStudio() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 240, damping: 28 }}
-            className="fixed right-0 top-0 z-[160] flex h-full w-[92%] max-w-[380px] flex-col border-l border-line bg-surface text-ink nv-scroll overflow-y-auto"
+            data-lenis-prevent
+            className="fixed right-0 top-0 z-[160] flex h-full w-[92%] max-w-[380px] flex-col border-l border-line bg-surface text-ink nv-scroll-lg overflow-y-auto"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-surface/95 px-6 py-5 backdrop-blur">
@@ -268,30 +268,6 @@ export default function DesignStudio() {
                     <span className={`h-4 w-4 rounded-full bg-white transition-transform ${italic ? "translate-x-4" : ""}`} />
                   </span>
                 </button>
-              </Section>
-
-              {/* How it works layout */}
-              <Section icon={<LayoutTemplate size={14} />} title="How it works layout">
-                <div className="grid grid-cols-2 gap-2.5">
-                  {howItWorksLayouts.map((l) => {
-                    const on = l.id === howItWorks;
-                    return (
-                      <button
-                        key={l.id}
-                        onClick={() => setHowItWorks(l.id)}
-                        className={`rounded-2xl border px-3 py-3 text-left transition-all ${
-                          on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
-                        }`}
-                      >
-                        <span className="flex items-center justify-between">
-                          <span className="text-[13px] font-semibold">{l.name}</span>
-                          {on && <Check size={14} className="text-primary" />}
-                        </span>
-                        <span className="mt-1 block text-[10.5px] leading-snug text-muted">{l.note}</span>
-                      </button>
-                    );
-                  })}
-                </div>
               </Section>
 
               {/* Device */}

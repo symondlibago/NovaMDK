@@ -1,28 +1,18 @@
-// =============================================================================
-// NovaMD Design System — palettes, typography, weight scales, device frames.
-// These power the (device-private) Design Studio and the live, swappable theme.
-// Every value here maps to a runtime CSS variable (see ThemeContext + index.css).
-// =============================================================================
-
-/**
- * Each palette resolves to the full semantic token set used across the site.
- * `swatch` is the 5-stop strip shown in the Design Studio (matches the brand decks).
- */
 export const PALETTES = [
   {
     id: "slate",
     name: "Health & Luxury",
-    tagline: "Slate blue + bone · clinical-premium",
-    swatch: ["#2B3742", "#3F5268", "#7D93A8", "#A6B7C7", "#F1F1ED"],
+    tagline: "Deep slate blue + bone · clinical-premium",
+    swatch: ["#1F2B38", "#2E435C", "#6B829B", "#A6B7C7", "#F1F1ED"],
     vars: {
       "--nv-bg": "#F1F1ED",
       "--nv-surface": "#FBFBF8",
       "--nv-surface-2": "#F4F4EE",
-      "--nv-ink": "#233039",
-      "--nv-ink-panel": "#2B3742",
-      "--nv-primary": "#3F5268",
-      "--nv-primary-deep": "#33435A",
-      "--nv-accent": "#7D93A8",
+      "--nv-ink": "#1C2932",
+      "--nv-ink-panel": "#1F2B38",
+      "--nv-primary": "#2E435C",
+      "--nv-primary-deep": "#22344A",
+      "--nv-accent": "#6B829B",
       "--nv-line": "#E2E6E6",
       "--nv-line-strong": "#D2DAD9",
       "--nv-muted": "#65727F",
@@ -116,10 +106,7 @@ export const PALETTES = [
   },
 ];
 
-/**
- * Four typography systems. `display` drives headings, `body` drives prose,
- * `mono` drives eyebrows / spec labels. All families are loaded in index.css.
- */
+
 export const TYPOGRAPHIES = [
   {
     id: "grotesk",
@@ -183,12 +170,6 @@ export const TYPOGRAPHIES = [
   },
 ];
 
-/** "How it works" section layouts, switchable from the studio. */
-export const HOWITWORKS_LAYOUTS = [
-  { id: "timeline", name: "Timeline", note: "Vertical line, fills on scroll" },
-  { id: "split", name: "Split", note: "Steps beside a photo" },
-];
-
 /** Heading / body weight presets toggled in the studio (Light · Medium · Bold). */
 export const WEIGHTS = [
   { id: "light", name: "Light", vars: { "--nv-weight-heading": "600", "--nv-weight-body": "400" } },
@@ -211,7 +192,6 @@ export const DEFAULTS = {
   weight: "medium",
   italic: false,
   device: "live",
-  howItWorks: "timeline",
 };
 
 export const byId = (list, id) => list.find((x) => x.id === id) || list[0];

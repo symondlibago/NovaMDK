@@ -9,6 +9,7 @@ import Platform from "./pages/Platform";
 import TreatmentsPage from "./pages/Treatments";
 import SupplementsPage from "./pages/Supplements";
 import ContactPage from "./pages/Contact";
+import Consult from "./pages/Consult";
 import LegalPage from "./components/LegalPage";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/treatments" element={<TreatmentsPage />} />
           <Route path="/supplements" element={<SupplementsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/start/:slug" element={<Consult />} />
           <Route path="/legal/:policyId" element={<LegalPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

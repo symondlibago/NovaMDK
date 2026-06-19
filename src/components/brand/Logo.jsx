@@ -24,12 +24,13 @@ export default function Logo({ className = "", size = "md", dark = false, markOn
           background: `linear-gradient(155deg, var(--nv-primary) 0%, var(--nv-primary-deep) 100%)`,
         }}
       >
-        <svg width={s.box * 0.5} height={s.box * 0.5} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg width={s.box * 0.62} height={s.box * 0.62} viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
-            d="M12 4v16M4 12h16"
+            d="M2 12.5H7.5L9.7 6L12.6 18.5L15 10L16.6 12.5H22"
             stroke="var(--nv-on-primary)"
-            strokeWidth="2.6"
+            strokeWidth="2.2"
             strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </span>
