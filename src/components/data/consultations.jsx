@@ -1,19 +1,4 @@
 import { Scale, Sparkles, Heart, Activity, Infinity as InfinityIcon } from "lucide-react";
-
-/**
- * Consultation funnels — one engaging, trust-building questionnaire per category.
- * Clicking a hero category card opens /start/<slug> (the full-screen flow), and
- * the closing step routes to /treatments?goal=<goalSlug> to show matched products.
- *
- * Step types:
- *   { t:"intro", eyebrow, title, body, cta }
- *   { t:"q",     q, help?, multi?, opts:[...] }
- *   { t:"fact",  lead, body }
- *   { t:"end",   title, body, cta, note }
- *
- * `goalSlug` maps the funnel to a product `categorySlug` so the Treatments shop
- * can preselect the right filter when the visitor lands there.
- */
 export const CONSULTS = {
   "weight-loss": {
     slug: "weight-loss",

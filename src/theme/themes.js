@@ -2,22 +2,22 @@ export const PALETTES = [
   {
     id: "slate",
     name: "Health & Luxury",
-    tagline: "Deep slate blue + bone · clinical-premium",
-    swatch: ["#1F2B38", "#2E435C", "#6B829B", "#A6B7C7", "#F1F1ED"],
+    tagline: "Deep navy + champagne gold · quiet luxury",
+    swatch: ["#22344F", "#B0A584", "#CFCBC0", "#E4E2DC", "#FBFAF6"],
     vars: {
-      "--nv-bg": "#F1F1ED",
-      "--nv-surface": "#FBFBF8",
-      "--nv-surface-2": "#F4F4EE",
-      "--nv-ink": "#1C2932",
-      "--nv-ink-panel": "#1F2B38",
-      "--nv-primary": "#2E435C",
-      "--nv-primary-deep": "#22344A",
-      "--nv-accent": "#6B829B",
-      "--nv-line": "#E2E6E6",
-      "--nv-line-strong": "#D2DAD9",
-      "--nv-muted": "#65727F",
-      "--nv-on-primary": "#F4F4EF",
-      "--nv-on-panel": "#E7ECF0",
+      "--nv-bg": "#F4F3EF",
+      "--nv-surface": "#FFFFFF",
+      "--nv-surface-2": "#EFEEE8",
+      "--nv-ink": "#22344F",
+      "--nv-ink-panel": "#22344F",
+      "--nv-primary": "#22344F",
+      "--nv-primary-deep": "#1A2A42",
+      "--nv-accent": "#B0A584",
+      "--nv-line": "#E4E2DC",
+      "--nv-line-strong": "#D6D2C8",
+      "--nv-muted": "#5E6573",
+      "--nv-on-primary": "#FBFAF6",
+      "--nv-on-panel": "#E4E2DC",
     },
   },
   {
@@ -168,6 +168,152 @@ export const TYPOGRAPHIES = [
       "--nv-display-tracking": "-0.02em",
     },
   },
+  {
+    id: "inter",
+    name: "Clinical Inter",
+    sample: "Aa",
+    note: "Inter · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Inter', system-ui, sans-serif",
+      "--nv-font-body": "'Inter', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.02em",
+    },
+  },
+  {
+    id: "opensans",
+    name: "Open Humanist",
+    sample: "Aa",
+    note: "Open Sans · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Open Sans', system-ui, sans-serif",
+      "--nv-font-body": "'Open Sans', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.015em",
+    },
+  },
+  {
+    id: "lato",
+    name: "Friendly Lato",
+    sample: "Aa",
+    note: "Lato · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Lato', system-ui, sans-serif",
+      "--nv-font-body": "'Lato', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.015em",
+    },
+  },
+  {
+    id: "roboto",
+    name: "Roboto",
+    sample: "Aa",
+    note: "Roboto · Roboto Mono",
+    vars: {
+      "--nv-font-display": "'Roboto', system-ui, sans-serif",
+      "--nv-font-body": "'Roboto', system-ui, sans-serif",
+      "--nv-font-mono": "'Roboto Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.02em",
+    },
+  },
+  {
+    id: "arial",
+    name: "Arial",
+    sample: "Aa",
+    note: "Arial · system mono",
+    vars: {
+      "--nv-font-display": "Arial, Helvetica, sans-serif",
+      "--nv-font-body": "Arial, Helvetica, sans-serif",
+      "--nv-font-mono": "ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace",
+      "--nv-display-tracking": "-0.01em",
+    },
+  },
+  {
+    id: "nunito",
+    name: "Friendly Nunito",
+    sample: "Aa",
+    note: "Nunito · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Nunito', system-ui, sans-serif",
+      "--nv-font-body": "'Nunito', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.015em",
+    },
+  },
+  {
+    id: "manrope",
+    name: "Modern Manrope",
+    sample: "Aa",
+    note: "Manrope · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Manrope', system-ui, sans-serif",
+      "--nv-font-body": "'Manrope', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.02em",
+    },
+  },
+  {
+    id: "worksans",
+    name: "Clean Work Sans",
+    sample: "Aa",
+    note: "Work Sans · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Work Sans', system-ui, sans-serif",
+      "--nv-font-body": "'Work Sans', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.018em",
+    },
+  },
+  {
+    id: "sourcesans",
+    name: "Source Humanist",
+    sample: "Aa",
+    note: "Source Sans 3 · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Source Sans 3', system-ui, sans-serif",
+      "--nv-font-body": "'Source Sans 3', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.015em",
+    },
+  },
+  {
+    id: "jakarta",
+    name: "Premium Jakarta",
+    sample: "Aa",
+    note: "Plus Jakarta Sans · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Plus Jakarta Sans', system-ui, sans-serif",
+      "--nv-font-body": "'Plus Jakarta Sans', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.02em",
+    },
+  },
+  {
+    id: "mulish",
+    name: "Light Mulish",
+    sample: "Aa",
+    note: "Mulish · IBM Plex Mono",
+    vars: {
+      "--nv-font-display": "'Mulish', system-ui, sans-serif",
+      "--nv-font-body": "'Mulish', system-ui, sans-serif",
+      "--nv-font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+      "--nv-display-tracking": "-0.015em",
+    },
+  },
+];
+
+/** Letter-spacing presets (studio) — space between letters. */
+export const LETTER_SPACINGS = [
+  { id: "tight", name: "Tight", vars: { "--nv-letter-spacing": "-0.02em" } },
+  { id: "normal", name: "Normal", vars: { "--nv-letter-spacing": "0em" } },
+  { id: "wide", name: "Wide", vars: { "--nv-letter-spacing": "0.03em" } },
+];
+
+/** Line-height presets (studio) — space between lines. */
+export const LINE_HEIGHTS = [
+  { id: "snug", name: "Snug", vars: { "--nv-line-height": "1.4" } },
+  { id: "normal", name: "Normal", vars: { "--nv-line-height": "1.6" } },
+  { id: "relaxed", name: "Relaxed", vars: { "--nv-line-height": "1.85" } },
 ];
 
 /** Heading / body weight presets toggled in the studio (Light · Medium · Bold). */
@@ -191,6 +337,8 @@ export const DEFAULTS = {
   typography: "grotesk",
   weight: "medium",
   italic: false,
+  letterSpacing: "normal",
+  lineHeight: "normal",
   device: "live",
 };
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight, Menu, X } from "lucide-react";
-import Logo from "../brand/Logo";
 import { getLenis } from "../../lib/smoothScroll";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -146,7 +145,7 @@ export default function Navbar() {
 
       <header className="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-xl">
         <nav className="mx-auto flex min-h-[68px] max-w-[1340px] items-center justify-between px-5 md:px-10">
-          <Link to="/" aria-label="NovaMD home"><Logo size="md" /></Link>
+          <Link to="/" aria-label="NovaMDK home"><img src="/logo.png" alt="NovaMDK" className="h-[46px] w-auto md:h-[52px]" /></Link>
 
           <div className="hidden items-center gap-7 lg:flex">
             <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
@@ -179,7 +178,7 @@ export default function Navbar() {
               className="fixed right-0 top-0 z-[101] flex h-full w-[86%] max-w-sm flex-col overflow-y-auto bg-surface lg:hidden nv-scroll"
             >
               <div className="flex items-center justify-between border-b border-line p-4">
-                <Logo size="sm" />
+                <img src="/logo.png" alt="NovaMDK" className="h-9 w-auto" />
                 <button aria-label="Close" onClick={() => setMobileOpen(false)} className="grid h-10 w-10 place-items-center rounded-full bg-surface-2 text-muted hover:text-ink">
                   <X size={20} />
                 </button>

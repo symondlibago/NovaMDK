@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter } from "lucide-react";
-import Logo from "../brand/Logo";
 
 const TikTokIcon = ({ size = 18 }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -17,7 +16,9 @@ export default function Footer() {
       <div className="mx-auto max-w-[1340px] px-6 md:px-10">
         <div className="mb-12 grid grid-cols-1 gap-10 md:mb-20 md:grid-cols-4 lg:gap-16">
           <div className="md:col-span-2 lg:col-span-1 md:pr-8">
-            <Logo size="md" dark />
+            <span className="inline-flex w-fit rounded-2xl bg-surface px-5 py-3.5 nv-shadow">
+              <img src="/logo.png" alt="NovaMDK" className="h-[42px] w-auto" />
+            </span>
             <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-on-panel/60">
               Personalized supplements and treatments, formulated by licensed physicians and delivered to your door.
             </p>

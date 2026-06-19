@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Palette, Type, Italic, Check, X, Sparkles, RotateCcw,
-  Smartphone, Tablet, Monitor, Maximize, Eye, Lock,
+  Smartphone, Tablet, Monitor, Maximize, Eye, Lock, MoveHorizontal,
 } from "lucide-react";
 import { useTheme } from "../../theme/ThemeContext";
 import { DEFAULTS } from "../../theme/themes";
@@ -19,7 +19,7 @@ const DEVICE_ICON = {
 
 /* ----------------------------- device preview ----------------------------- */
 function DevicePreview() {
-  const { device, devices, setDevice, palette, typography, weight, italic } = useTheme();
+  const { device, devices, setDevice, palette, typography, weight, italic, letterSpacing, lineHeight } = useTheme();
   const active = devices.find((d) => d.id === device);
   const [scale, setScale] = useState(1);
 
@@ -39,7 +39,7 @@ function DevicePreview() {
 
   const path = window.location.pathname;
   // Re-key on theme so the iframe re-renders with the active palette/type.
-  const frameKey = `${path}|${palette.id}|${typography.id}|${weight.id}|${italic}`;
+  const frameKey = `${path}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}`;
 
   return (
     <motion.div
@@ -124,9 +124,9 @@ export default function DesignStudio() {
   if (t.isPreview || !t.studioUnlocked) return null;
 
   const {
-    palettes, typographies, weights, devices,
-    palette, typography, weight, italic, device,
-    setPalette, setTypography, setWeight, setItalic, setDevice,
+    palettes, typographies, weights, devices, letterSpacings, lineHeights,
+    palette, typography, weight, italic, device, letterSpacing, lineHeight,
+    setPalette, setTypography, setWeight, setItalic, setDevice, setLetterSpacing, setLineHeight,
     studioOpen, setStudioOpen,
   } = t;
 
@@ -135,6 +135,8 @@ export default function DesignStudio() {
     setTypography(DEFAULTS.typography);
     setWeight(DEFAULTS.weight);
     setItalic(DEFAULTS.italic);
+    setLetterSpacing(DEFAULTS.letterSpacing);
+    setLineHeight(DEFAULTS.lineHeight);
     setDevice(DEFAULTS.device);
   };
 
@@ -268,6 +270,45 @@ export default function DesignStudio() {
                     <span className={`h-4 w-4 rounded-full bg-white transition-transform ${italic ? "translate-x-4" : ""}`} />
                   </span>
                 </button>
+              </Section>
+
+              {/* Spacing */}
+              <Section icon={<MoveHorizontal size={14} />} title="Spacing">
+                <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.1em] text-muted">Letter spacing</p>
+                <div className="flex gap-2">
+                  {letterSpacings.map((ls) => {
+                    const on = ls.id === letterSpacing.id;
+                    return (
+                      <button
+                        key={ls.id}
+                        onClick={() => setLetterSpacing(ls.id)}
+                        style={{ letterSpacing: ls.vars["--nv-letter-spacing"] }}
+                        className={`flex-1 rounded-xl border py-2.5 text-[13px] transition-all ${
+                          on ? "border-primary bg-primary text-on-primary" : "border-line text-ink hover:border-line-strong"
+                        }`}
+                      >
+                        {ls.name}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mb-2 mt-3.5 text-[11px] font-medium uppercase tracking-[0.1em] text-muted">Line spacing</p>
+                <div className="flex gap-2">
+                  {lineHeights.map((lh) => {
+                    const on = lh.id === lineHeight.id;
+                    return (
+                      <button
+                        key={lh.id}
+                        onClick={() => setLineHeight(lh.id)}
+                        className={`flex-1 rounded-xl border py-2.5 text-[13px] transition-all ${
+                          on ? "border-primary bg-primary text-on-primary" : "border-line text-ink hover:border-line-strong"
+                        }`}
+                      >
+                        {lh.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </Section>
 
               {/* Device */}

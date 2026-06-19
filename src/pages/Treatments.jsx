@@ -1,10 +1,14 @@
 import React, { Suspense, lazy } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import {
+  Stethoscope, Truck, Ban, ShieldCheck, ClipboardCheck, PackageOpen, Star,
+} from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
 import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
+import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { productsData } from "../components/data/products";
 
@@ -15,6 +19,8 @@ const FAQ = lazy(() => import("../components/FAQ"));
 const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   name: CONSULTS[k].name,
   tag: CONSULTS[k].tag,
+  blurb: CONSULTS[k].blurb,
+  cta: "Start assessment",
   link: `/start/${k}`,
 }));
 
@@ -23,13 +29,109 @@ const VALID_GOALS = new Set(
   productsData.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
 );
 
+const TRUST = [
+  { icon: Stethoscope, label: "U.S. licensed providers" },
+  { icon: Truck, label: "Free 2-day discreet shipping" },
+  { icon: Ban, label: "No subscription lock-in" },
+  { icon: ShieldCheck, label: "FDA-regulated pharmacies" },
+];
+
+const STEPS = [
+  { icon: ClipboardCheck, title: "Take the 2-minute assessment", desc: "Answer a few private questions about your goals and history — no wrong answers." },
+  { icon: Stethoscope, title: "A provider builds your plan", desc: "A licensed U.S. clinician reviews your intake and prescribes what actually fits you." },
+  { icon: PackageOpen, title: "Delivered to your door", desc: "Free, discreet 2-day shipping — with ongoing care and easy adjustments anytime." },
+];
+
+const STATS = [
+  { b: "100%", s: "Physician-reviewed" },
+  { b: "2-day", s: "Average delivery" },
+  { b: "50", s: "States served" },
+];
+
+/* ------------------------------- sections ------------------------------- */
+function TrustBand() {
+  return (
+    <section className="border-y border-line bg-surface">
+      <div className="mx-auto grid max-w-[1180px] grid-cols-2 gap-x-6 gap-y-5 px-5 py-6 md:grid-cols-4 md:px-10">
+        {TRUST.map((t) => (
+          <div key={t.label} className="flex items-center gap-3">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-2 text-primary"><t.icon size={16} /></span>
+            <span className="text-[0.88rem] font-medium leading-tight">{t.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  return (
+    <section className="mx-auto max-w-[1180px] px-5 py-[clamp(3.5rem,6vw,5.5rem)] md:px-10">
+      <Reveal className="mx-auto max-w-[60ch] text-center">
+        <span className="nv-eyebrow">How it works</span>
+        <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">Care in three simple steps.</h2>
+        <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">From first question to front door — no clinics, no waiting rooms, no awkward pharmacy runs.</p>
+      </Reveal>
+      <div className="mt-12 grid gap-5 sm:grid-cols-3">
+        {STEPS.map((s, i) => (
+          <Reveal as="div" key={s.title} delay={(i % 3) * 0.08}>
+            <div className="relative h-full rounded-[22px] border border-line bg-surface p-7 nv-shadow">
+              <span className="absolute right-6 top-6 font-mono text-[1.15rem] font-bold text-line-strong">0{i + 1}</span>
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-on-primary"><s.icon size={22} /></span>
+              <h3 className="mt-5 font-display text-[1.15rem] font-bold leading-tight">{s.title}</h3>
+              <p className="mt-2 text-[0.92rem] leading-relaxed text-muted">{s.desc}</p>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SocialProof() {
+  return (
+    <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(2rem,4vw,3rem)] md:px-10">
+      <Reveal>
+        <div className="relative overflow-hidden rounded-[28px] bg-panel px-6 py-[clamp(2.4rem,5vw,3.4rem)] text-on-panel md:px-10">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{ background: "radial-gradient(60% 90% at 85% 0%, color-mix(in oklab, var(--nv-accent) 22%, transparent), transparent 70%)" }}
+          />
+          <div className="relative flex flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
+            <div>
+              <div className="flex items-center justify-center gap-2 md:justify-start">
+                <span className="flex text-accent">
+                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={16} fill="currentColor" strokeWidth={0} />)}
+                </span>
+                <span className="text-[0.86rem] text-on-panel/75">4.8 average · 12,000+ reviews</span>
+              </div>
+              <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(1.5rem,3vw,2.2rem)] font-extrabold leading-tight">Care patients actually stick with.</h2>
+            </div>
+            <div className="grid grid-cols-3 gap-x-8 gap-y-4 sm:gap-x-12">
+              {STATS.map((s) => (
+                <div key={s.s} className="text-center">
+                  <b className="block text-[clamp(1.6rem,3.5vw,2.4rem)] font-extrabold tracking-tight">{s.b}</b>
+                  <span className="mt-1 block font-mono text-[0.66rem] uppercase tracking-[0.12em] text-on-panel/60">{s.s}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
 export default function TreatmentsPage() {
   const [params] = useSearchParams();
   const goal = params.get("goal");
   const validGoal = goal && VALID_GOALS.has(goal) ? goal : null;
 
   return (
-    <main className="min-h-screen w-full bg-bg text-ink">
+    <main
+      className="min-h-screen w-full text-ink"
+      style={{ background: "color-mix(in oklab, var(--nv-accent) 30%, var(--nv-surface))" }}
+    >
       <Navbar />
 
       {validGoal ? (
@@ -45,16 +147,24 @@ export default function TreatmentsPage() {
             chips={["US-licensed pharmacy", "Five-minute visit", "Free 2-day shipping", "No lock-in"]}
           />
           <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
-            <div className="mb-6 flex items-baseline justify-between gap-4">
-              <span className="nv-eyebrow">Explore by goal</span>
-              <Link to="/supplements" className="text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <span className="nv-eyebrow">Explore by goal</span>
+                <h2 className="mt-2 text-[clamp(1.5rem,3vw,2.1rem)] font-extrabold leading-tight">What are you working on?</h2>
+                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Pick a goal and take the free two-minute assessment — a provider reviews it and matches your treatment.</p>
+              </div>
+              <Link to="/supplements" className="shrink-0 text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
                 Looking for supplements? →
               </Link>
             </div>
-            <CategoryGrid items={TREATMENT_CATS} />
+            <CategoryGrid items={TREATMENT_CATS} dark art="/pill.png" />
           </section>
         </>
       )}
+
+      <TrustBand />
+      <HowItWorks />
+      <SocialProof />
 
       {/* Reviews + FAQ (reused, re-themed) */}
       <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>

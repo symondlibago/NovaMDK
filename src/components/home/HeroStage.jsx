@@ -25,7 +25,7 @@ function GlassCard({ c, delay }) {
 
         {/* gloss sweep on hover */}
         <span className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[20px]">
-          <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-white/55 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
+          <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
         </span>
 
         {/* floating pill — left, like the flow's orb (one shared render across cards) */}
@@ -99,25 +99,15 @@ export default function HeroStage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: EASE }}
           >
-            <h1 className="max-w-[19ch] font-display text-[clamp(2.05rem,5.2vw,3.95rem)] font-bold leading-[1.08] tracking-tight text-ink">
-              Personalized supplements{" "}
-              <span
-                className="font-bold"
-                style={{
-                  background: "linear-gradient(125deg, var(--nv-primary) 20%, var(--nv-accent))",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  color: "transparent",
-                }}
-              >
-                &amp;
-              </span>{" "}
-              treatment <span className="nv-em font-bold italic">for you.</span>
+            <h1
+              className="max-w-[16ch] text-[clamp(2.3rem,5.8vw,4.3rem)] font-medium leading-[1.02] tracking-[-0.01em] text-ink"
+              style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
+            >
+              Care, made{" "}
+              <span className="nv-em italic font-medium">for one.</span>
             </h1>
             <p className="mt-[18px] max-w-[42ch] text-[clamp(1rem,1.3vw,1.1rem)] leading-relaxed text-muted">
-              Pick what you want to work on. Answer a few quick questions and a licensed provider
-              builds a plan around your body — shipped to your door.
+              Elite, doctor-led treatments tailored to your unique needs and delivered with absolute discretion.
             </p>
           </motion.div>
 
@@ -150,25 +140,30 @@ export default function HeroStage() {
           ))}
         </div>
 
-        {/* Women's wide card — now the "not sure where to start?" assessment prompt */}
+        {/* Women's wide card — "not sure where to start?" assessment prompt */}
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.9, ease: EASE }}
-          className="relative mt-[clamp(16px,2vw,24px)] flex min-h-[clamp(300px,34vw,400px)] items-start overflow-hidden rounded-[26px]"
+          className="relative mt-[clamp(16px,2vw,24px)] flex min-h-[clamp(320px,38vw,460px)] items-center overflow-hidden rounded-[26px] bg-panel"
         >
+          {/* photo fills the card */}
+          <img
+            src="/women-group.png"
+            alt="Four women together after a workout"
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover object-[center_22%]"
+          />
+          {/* navy veil — opaque on the left for the copy, fading right to reveal the photo */}
           <span
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(135deg, color-mix(in oklab, var(--nv-primary) 62%, transparent), color-mix(in oklab, var(--nv-primary) 30%, transparent) 50%, color-mix(in oklab, var(--nv-accent) 22%, transparent))",
-              backdropFilter: "blur(14px) saturate(115%)",
-              WebkitBackdropFilter: "blur(14px) saturate(115%)",
-              border: "1px solid rgba(255,255,255,0.5)",
+                "linear-gradient(100deg, color-mix(in oklab, var(--nv-ink-panel) 96%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 76%, transparent) 38%, color-mix(in oklab, var(--nv-ink-panel) 30%, transparent) 66%, transparent 100%)",
             }}
           />
-          <div className="relative z-[3] max-w-[88%] p-[clamp(28px,4vw,46px)] md:max-w-[52%]">
+          <div className="relative z-[3] max-w-[90%] p-[clamp(28px,4vw,46px)] md:max-w-[54%]">
             <span className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-white/80 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)]">
               Free 2-minute assessment
             </span>
@@ -186,12 +181,6 @@ export default function HeroStage() {
               Start the assessment <ArrowRight size={14} />
             </Link>
           </div>
-          <img
-            src="/women-group.png"
-            alt="Four women together after a workout"
-            loading="lazy"
-            className="absolute bottom-0 right-0 z-[2] hidden h-[96%] w-auto drop-shadow-[0_20px_40px_rgba(15,22,34,0.55)] sm:block"
-          />
         </motion.div>
       </div>
     </section>

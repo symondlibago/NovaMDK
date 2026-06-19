@@ -38,10 +38,10 @@ function ProductCard({ p, delay }) {
       <p className="mb-5 line-clamp-2 text-[0.85rem] leading-relaxed text-muted">{p.subtitle}</p>
 
       <Link
-        to="/contact"
+        to={`/product/${p.id}`}
         className="group/btn mt-auto flex items-center justify-center gap-1.5 rounded-full bg-primary py-3 text-[13.5px] font-semibold text-on-primary transition-all hover:bg-primary-deep nv-shadow"
       >
-        Start your visit
+        Shop now
         <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover/btn:translate-x-0.5" />
       </Link>
       <button className="mt-2 flex w-full items-center justify-center gap-1.5 py-1 text-[11px] font-medium text-muted transition-colors hover:text-ink">

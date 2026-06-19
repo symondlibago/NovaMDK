@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import Logo from "../brand/Logo";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -41,7 +40,7 @@ export default function RouteTransition() {
               animate={{ scale: [1, 1.06, 1], opacity: [0.85, 1, 0.85] }}
               transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Logo size="lg" />
+              <img src="/logo.png" alt="NovaMDK" className="h-[58px] w-auto" />
             </motion.div>
             <div className="h-[3px] w-44 overflow-hidden rounded-full bg-line">
               <motion.div

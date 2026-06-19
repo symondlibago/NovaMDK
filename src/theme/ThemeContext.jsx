@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { PALETTES, TYPOGRAPHIES, WEIGHTS, DEVICES, DEFAULTS, byId } from "./themes";
+import { PALETTES, TYPOGRAPHIES, WEIGHTS, DEVICES, LETTER_SPACINGS, LINE_HEIGHTS, DEFAULTS, byId } from "./themes";
 
 const ThemeContext = createContext(null);
 export const useTheme = () => useContext(ThemeContext);
@@ -9,6 +9,8 @@ const LS = {
   typography: "nv_type",
   weight: "nv_weight",
   italic: "nv_italic",
+  letterSpacing: "nv_letter",
+  lineHeight: "nv_line",
   studio: "nv_studio_unlocked",
 };
 
@@ -35,6 +37,8 @@ export default function ThemeProvider({ children }) {
   const [typographyId, setTypographyId] = useState(() => read(LS.typography, DEFAULTS.typography));
   const [weightId, setWeightId] = useState(() => read(LS.weight, DEFAULTS.weight));
   const [italic, setItalic] = useState(() => read(LS.italic, String(DEFAULTS.italic)) === "true");
+  const [letterSpacingId, setLetterSpacingId] = useState(() => read(LS.letterSpacing, DEFAULTS.letterSpacing));
+  const [lineHeightId, setLineHeightId] = useState(() => read(LS.lineHeight, DEFAULTS.lineHeight));
   const [device, setDevice] = useState(DEFAULTS.device); // device preview is session-only
   const [studioOpen, setStudioOpen] = useState(false);
   const [studioUnlocked, setStudioUnlocked] = useState(() => urlFlags.studioParam !== "0");
@@ -44,6 +48,8 @@ export default function ThemeProvider({ children }) {
   const palette = byId(PALETTES, paletteId);
   const typography = byId(TYPOGRAPHIES, typographyId);
   const weight = byId(WEIGHTS, weightId);
+  const letterSpacing = byId(LETTER_SPACINGS, letterSpacingId);
+  const lineHeight = byId(LINE_HEIGHTS, lineHeightId);
 
   // Persist the studio unlock the first time it's toggled via URL.
   useEffect(() => {
@@ -80,21 +86,27 @@ export default function ThemeProvider({ children }) {
     apply(palette.vars);
     apply(typography.vars);
     apply(weight.vars);
+    apply(letterSpacing.vars);
+    apply(lineHeight.vars);
     root.setAttribute("data-palette", palette.id);
     root.setAttribute("data-type", typography.id);
     root.setAttribute("data-italic", italic ? "true" : "false");
-  }, [palette, typography, weight, italic]);
+  }, [palette, typography, weight, italic, letterSpacing, lineHeight]);
 
   const setPalette = (id) => { setPaletteId(id); try { localStorage.setItem(LS.palette, id); } catch {} };
   const setTypography = (id) => { setTypographyId(id); try { localStorage.setItem(LS.typography, id); } catch {} };
   const setWeight = (id) => { setWeightId(id); try { localStorage.setItem(LS.weight, id); } catch {} };
   const setItalicPersisted = (v) => { setItalic(v); try { localStorage.setItem(LS.italic, String(v)); } catch {} };
+  const setLetterSpacing = (id) => { setLetterSpacingId(id); try { localStorage.setItem(LS.letterSpacing, id); } catch {} };
+  const setLineHeight = (id) => { setLineHeightId(id); try { localStorage.setItem(LS.lineHeight, id); } catch {} };
 
   const value = {
-    palette, typography, weight, italic,
+    palette, typography, weight, italic, letterSpacing, lineHeight,
     device, studioOpen, studioUnlocked, isPreview,
     palettes: PALETTES, typographies: TYPOGRAPHIES, weights: WEIGHTS, devices: DEVICES,
+    letterSpacings: LETTER_SPACINGS, lineHeights: LINE_HEIGHTS,
     setPalette, setTypography, setWeight, setItalic: setItalicPersisted,
+    setLetterSpacing, setLineHeight,
     setDevice, setStudioOpen, setStudioUnlocked,
   };
 
