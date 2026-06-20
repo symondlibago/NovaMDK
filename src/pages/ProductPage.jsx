@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
+import { track, EVENTS } from "../lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical, Loader2,
 } from "lucide-react";
@@ -25,6 +26,13 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
+  // Record a product view (high-signal: which treatments get attention).
+  useEffect(() => {
+    if (product) {
+      track(EVENTS.PRODUCT_VIEWED, { id: product.id, name: product.name, category: product.categorySlug });
+    }
+  }, [product?.id]);
+
   if (!product) return <Navigate to="/treatments" replace />;
 
   const related = productsData
@@ -35,6 +43,7 @@ export default function ProductPage() {
   // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final
   // destination/handoff is wired once the team confirms it.)
   const startVisit = async () => {
+    track(EVENTS.START_VISIT, { id: product.id, name: product.name, category: product.categorySlug });
     setErr("");
     setLoading(true);
     try {
@@ -74,7 +83,7 @@ export default function ProductPage() {
         <div className="grid gap-8 md:grid-cols-2 md:items-center lg:gap-12">
           {/* image */}
           <Reveal>
-            <div className="relative flex min-h-[380px] items-center justify-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-10">
+            <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-7 md:min-h-[380px] md:p-10">
               {/* champagne glow */}
               <div
                 className="pointer-events-none absolute inset-0"
@@ -168,7 +177,7 @@ export default function ProductPage() {
 
       {/* ===== How it works ===== */}
       {product.howItWorks && (
-        <section className="bg-surface-2 py-[clamp(3.5rem,6vw,5.5rem)]">
+        <section className="bg-surface-2 py-[clamp(2.5rem,5vw,5.5rem)]">
           <div className="mx-auto max-w-[1180px] px-5 md:px-10">
             <Reveal className="mx-auto max-w-[60ch] text-center">
               <span className="nv-eyebrow">How it works</span>
@@ -193,7 +202,7 @@ export default function ProductPage() {
 
       {/* ===== Specs ===== */}
       {product.specs?.length > 0 && (
-        <section className="mx-auto max-w-[1180px] px-5 py-[clamp(3.5rem,6vw,5.5rem)] md:px-10">
+        <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
           <div className="grid gap-10 md:grid-cols-[1fr_1.25fr] md:items-start">
             <Reveal>
               <span className="nv-eyebrow">The details</span>

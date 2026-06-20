@@ -5,6 +5,7 @@ import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
 import Reveal from "../components/ui/Reveal";
+import { track, EVENTS } from "../lib/analytics";
 
 const DETAILS = [
   { icon: Mail, label: "Email", value: "care@novamdk.com", href: "mailto:care@novamdk.com" },
@@ -85,6 +86,8 @@ export default function ContactPage() {
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const onSubmit = (e) => {
     e.preventDefault();
+    // Record the submission (topic only — never name/email/message).
+    track(EVENTS.CONTACT_SUBMITTED, { topic: form.topic });
     // Front-end demo: no backend wired. Surface a success state.
     setSent(true);
   };

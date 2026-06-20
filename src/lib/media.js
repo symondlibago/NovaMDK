@@ -1,4 +1,4 @@
-// Curated premium photography for NovaMD marketing surfaces.
+// Curated premium photography for NovaMDK marketing surfaces.
 // Hotlinked from the Unsplash CDN; <Photo> degrades to a themed gradient if a
 // request fails, so a broken URL still reads as an intentional brand surface.
 

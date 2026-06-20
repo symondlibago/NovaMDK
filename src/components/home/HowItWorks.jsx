@@ -19,11 +19,11 @@ const STEPS = [
  */
 export default function HowItWorks() {
   return (
-    <section id="how" className="relative scroll-mt-24 bg-bg py-[clamp(4rem,8vw,6.5rem)]">
+    <section id="how" className="relative scroll-mt-24 bg-bg py-[clamp(2rem,4vw,3.5rem)]">
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
-        <Reveal className="mx-auto mb-[clamp(2.5rem,5vw,4rem)] max-w-[60ch] text-center">
+        <Reveal className="mx-auto mb-[clamp(1.75rem,4vw,3.5rem)] max-w-[60ch] text-center">
           <span className="nv-eyebrow">How it works</span>
-          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Premium care, delivered effortlessly.</h2>
+          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Exceptional care, made simple.</h2>
         </Reveal>
 
         <div className="overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow-lg">
@@ -59,7 +59,7 @@ export default function HowItWorks() {
             {/* Photo */}
             <div className="relative min-h-[320px] md:min-h-0">
               <div className="absolute inset-0">
-                <Photo src="/visit-phone.jpg" alt="A member taking the five-minute online visit" className="h-full w-full" imgClassName="object-cover" />
+                <Photo src="/how-it-works.jpg" alt="A member completing their online visit on a laptop at home" className="h-full w-full" imgClassName="object-cover" />
               </div>
             </div>
           </div>

@@ -1,7 +1,9 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import ThemeProvider from "./theme/ThemeContext";
 import ScrollToTop from "./components/Nav/ScrollToTop";
+import { trackPageView } from "./lib/analytics";
 import SmoothScroll from "./components/SmoothScroll";
 import RouteTransition from "./components/transition/RouteTransition";
 import DesignStudio from "./components/studio/DesignStudio";
@@ -13,12 +15,22 @@ import Consult from "./pages/Consult";
 import ProductPage from "./pages/ProductPage";
 import LegalPage from "./components/LegalPage";
 
+// Fires a single page_view per route change (pathname only — no query noise).
+function RouteAnalytics() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    trackPageView(pathname);
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
         <SmoothScroll />
         <ScrollToTop />
+        <RouteAnalytics />
         <RouteTransition />
         <Routes>
           <Route path="/" element={<Platform />} />

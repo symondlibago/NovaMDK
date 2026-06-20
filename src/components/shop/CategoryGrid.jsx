@@ -8,10 +8,11 @@ import Reveal from "../ui/Reveal";
  * Each item: { name, tag, link, blurb?, cta?, art? }.
  * `dark` renders the navy product-card style (Treatments funnels).
  */
-function DarkCard({ it, art }) {
+function DarkCard({ it, art, onClick }) {
   return (
     <Link
       to={it.link}
+      onClick={onClick}
       className="group relative flex h-full min-h-[clamp(196px,24vw,220px)] flex-col justify-between overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] bg-panel p-6 text-on-panel transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg"
     >
       {/* product tile on the right — gentle float */}
@@ -43,10 +44,11 @@ function DarkCard({ it, art }) {
   );
 }
 
-function LightCard({ it, art }) {
+function LightCard({ it, art, onClick }) {
   return (
     <Link
       to={it.link}
+      onClick={onClick}
       className="group relative flex h-full min-h-[clamp(180px,22vw,208px)] flex-col overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:nv-shadow-lg"
     >
       <span
@@ -77,14 +79,17 @@ function LightCard({ it, art }) {
   );
 }
 
-export default function CategoryGrid({ items, art = "/pills-float.png", dark = false }) {
+export default function CategoryGrid({ items, art = "/pills-float.png", dark = false, onItemClick }) {
   return (
     <div className="grid grid-cols-1 items-stretch gap-[clamp(0.8rem,1.6vw,1.1rem)] sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((it, i) => (
-        <Reveal as="div" key={it.name} delay={(i % 3) * 0.06} className="h-full">
-          {dark ? <DarkCard it={it} art={art} /> : <LightCard it={it} art={art} />}
-        </Reveal>
-      ))}
+      {items.map((it, i) => {
+        const onClick = onItemClick ? () => onItemClick(it) : undefined;
+        return (
+          <Reveal as="div" key={it.name} delay={(i % 3) * 0.06} className="h-full">
+            {dark ? <DarkCard it={it} art={art} onClick={onClick} /> : <LightCard it={it} art={art} onClick={onClick} />}
+          </Reveal>
+        );
+      })}
     </div>
   );
 }

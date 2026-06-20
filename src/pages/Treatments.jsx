@@ -11,8 +11,8 @@ import TreatmentShop from "../components/shop/TreatmentShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { productsData } from "../components/data/products";
+import { track, EVENTS } from "../lib/analytics";
 
-const Testimonials = lazy(() => import("../components/Testimonials"));
 const FAQ = lazy(() => import("../components/FAQ"));
 
 // Mirror the homepage funnels — each tile browses that goal's shoppable catalog.
@@ -21,6 +21,7 @@ const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   tag: CONSULTS[k].tag,
   blurb: CONSULTS[k].blurb,
   cta: "Browse treatments",
+  goal: CONSULTS[k].goalSlug,
   link: `/treatments?goal=${CONSULTS[k].goalSlug}`,
 }));
 
@@ -66,7 +67,7 @@ function TrustBand() {
 
 function HowItWorks() {
   return (
-    <section className="mx-auto max-w-[1180px] px-5 py-[clamp(3.5rem,6vw,5.5rem)] md:px-10">
+    <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
       <Reveal className="mx-auto max-w-[60ch] text-center">
         <span className="nv-eyebrow">How it works</span>
         <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">Care in three simple steps.</h2>
@@ -162,7 +163,12 @@ export default function TreatmentsPage() {
                 </Link>
               </div>
             </div>
-            <CategoryGrid items={TREATMENT_CATS} dark art="/pill.png" />
+            <CategoryGrid
+              items={TREATMENT_CATS}
+              dark
+              art="/pill.png"
+              onItemClick={(it) => track(EVENTS.CATEGORY_SELECTED, { category: it.goal, source: "treatments" })}
+            />
           </section>
         </>
       )}
@@ -171,9 +177,8 @@ export default function TreatmentsPage() {
       <HowItWorks />
       <SocialProof />
 
-      {/* Reviews + FAQ (reused, re-themed) */}
+      {/* FAQ (reused, re-themed). Testimonials live on the homepage only. */}
       <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>
-        <Testimonials />
         <FAQ />
       </Suspense>
 

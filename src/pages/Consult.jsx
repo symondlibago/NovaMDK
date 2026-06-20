@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, X, Check, Lock, ShieldCheck } from "lucide-react";
 import { CONSULTS } from "../components/data/consultations";
 import { getLenis } from "../lib/smoothScroll";
+import { track, EVENTS } from "../lib/analytics";
 
 const EASE = [0.4, 0, 0.2, 1];
 
@@ -124,7 +125,11 @@ export default function Consult() {
   const [answers, setAnswers] = useState({});
 
   // Reset when switching funnels (defensive — route normally remounts).
-  useEffect(() => { setI(0); setAnswers({}); }, [slug]);
+  useEffect(() => {
+    setI(0);
+    setAnswers({});
+    if (CONSULTS[slug]) track(EVENTS.QUIZ_STARTED, { slug });
+  }, [slug]);
 
   // Scroll to top on every step.
   useEffect(() => {
@@ -142,7 +147,10 @@ export default function Consult() {
   const advance = () => setI((p) => Math.min(p + 1, lastIndex));
   const goHome = () => navigate("/");
   const back = () => (i === 0 ? goHome() : setI((p) => p - 1));
-  const finish = () => navigate(`/treatments?goal=${consult.goalSlug}`);
+  const finish = () => {
+    track(EVENTS.QUIZ_COMPLETED, { slug, goal: consult.goalSlug });
+    navigate(`/treatments?goal=${consult.goalSlug}`);
+  };
 
   // progress + counter
   const progress = lastIndex > 0 ? i / lastIndex : 0;

@@ -137,7 +137,7 @@ export default function Testimonials() {
   const totalDots = isMobile ? reviews.length : maxIndex + 1;
 
   return (
-    <section className="w-full overflow-hidden bg-bg py-[clamp(4rem,8vw,7rem)]">
+    <section className="w-full overflow-hidden bg-bg py-[clamp(2rem,4vw,3.5rem)]">
       <div className="mx-auto max-w-[1240px] px-0 text-center md:px-16">
 
         {/* --- ANIMATED HEADER --- */}
@@ -158,7 +158,7 @@ export default function Testimonials() {
                 In our members' <span className="nv-em text-primary">own words</span>
             </h2>
 
-            <div className="mb-16 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.92rem] font-medium text-muted">
+            <div className="mb-10 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.92rem] font-medium text-muted">
                 <span className="font-semibold text-ink">4.8 average</span>
                 <div className="flex gap-0.5 text-primary">
                 {[1,2,3,4,5].map(star => (
@@ -182,14 +182,14 @@ export default function Testimonials() {
             <div
               ref={mobileCarouselRef}
               onScroll={handleMobileScroll}
-              className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 py-8 pb-12 no-scrollbar"
+              className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 py-4 pb-6 no-scrollbar"
             >
               {renderCards()}
               <div className="w-[4vw] shrink-0"></div>
             </div>
           ) : (
             // DESKTOP: Framer Motion Spring Drag
-            <div className="w-full overflow-hidden py-8" ref={desktopCarouselRef}>
+            <div className="w-full overflow-hidden py-4" ref={desktopCarouselRef}>
               <motion.div
                 className="flex w-max cursor-grab gap-6 px-2 pb-6 pt-2 active:cursor-grabbing"
                 drag="x"

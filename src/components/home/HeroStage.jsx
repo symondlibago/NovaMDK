@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { CONSULTS, CONSULT_ORDER } from "../data/consultations";
+import { track, EVENTS } from "../../lib/analytics";
 
 const EASE = [0.22, 0.61, 0.18, 1];
-
-/* Glass category card — flow-HTML content (tag · name · blurb), floating pill,
-   shine sweep; browses that category's treatments (shoppable catalog). */
 function GlassCard({ c, delay }) {
   return (
     <motion.div
@@ -19,38 +17,45 @@ function GlassCard({ c, delay }) {
     >
       <Link
         to={`/treatments?goal=${c.goalSlug}`}
-        className="group relative flex h-full min-h-[212px] flex-col overflow-hidden rounded-[calc(20px*var(--nv-r-scale,1))] p-4 nv-shadow-lg transition-transform duration-500 hover:-translate-y-2"
+        onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero" })}
+        className="group relative flex h-full flex-row items-center gap-3.5 overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] p-3.5 nv-shadow-lg transition-all duration-500 hover:-translate-y-1 sm:min-h-[212px] sm:flex-col sm:items-stretch sm:gap-0 sm:p-4 sm:hover:-translate-y-2"
       >
-        <span className="nv-glass absolute inset-0 rounded-[calc(20px*var(--nv-r-scale,1))]" />
+        <span className="nv-glass absolute inset-0 rounded-[calc(18px*var(--nv-r-scale,1))]" />
 
-        {/* gloss sweep on hover */}
-        <span className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[calc(20px*var(--nv-r-scale,1))]">
+        {/* gloss sweep on hover (sm+ cards) */}
+        <span className="pointer-events-none absolute inset-0 z-[1] hidden overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] sm:block">
           <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
         </span>
 
-        {/* floating pill — left, like the flow's orb (one shared render across cards) */}
+        {/* floating pill */}
         <img
           src="/supplementpill.avif"
           alt=""
           aria-hidden="true"
           loading="lazy"
-          className="nv-bob relative z-[3] mb-2.5 h-[46px] w-auto self-start object-contain drop-shadow-[0_12px_20px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110"
+          className="nv-bob relative z-[3] h-11 w-11 shrink-0 object-contain drop-shadow-[0_12px_20px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110 sm:mb-2.5 sm:h-[46px] sm:w-auto sm:self-start"
         />
 
-        {/* flow content: tag · name · blurb */}
-        <div className="relative z-[3]">
+        {/* tag · name · blurb */}
+        <div className="relative z-[3] min-w-0 flex-1 sm:flex-none">
           <span className="font-mono text-[0.58rem] uppercase tracking-[0.12em] text-white/75 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)]">
             {c.tag}
           </span>
-          <h3 className="mt-1 font-display text-[1.08rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)]">
+          <h3 className="mt-0.5 font-display text-[1.04rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)] sm:mt-1 sm:text-[1.08rem]">
             {c.name}
           </h3>
-          <p className="mt-1.5 text-[0.78rem] leading-snug text-white/85 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)]">
+          <p className="mt-1 line-clamp-1 text-[0.76rem] leading-snug text-white/85 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)] sm:mt-1.5 sm:line-clamp-none sm:text-[0.78rem]">
             {c.blurb}
           </p>
         </div>
 
-        <span className="relative z-[3] mt-auto inline-flex items-center gap-1.5 pt-2.5 text-[0.78rem] font-semibold text-white transition-all duration-500 group-hover:gap-2.5 drop-shadow-[0_1px_10px_rgba(15,22,34,0.45)]">
+        {/* mobile trailing arrow */}
+        <span className="relative z-[3] grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/40 text-white transition-colors group-hover:bg-white/15 sm:hidden">
+          <ArrowRight size={15} strokeWidth={2.4} />
+        </span>
+
+        {/* sm+ inline CTA */}
+        <span className="relative z-[3] mt-auto hidden items-center gap-1.5 pt-2.5 text-[0.78rem] font-semibold text-white transition-all duration-500 group-hover:gap-2.5 drop-shadow-[0_1px_10px_rgba(15,22,34,0.45)] sm:inline-flex">
           Browse <ArrowRight size={13} strokeWidth={2.4} />
         </span>
       </Link>
@@ -100,14 +105,14 @@ export default function HeroStage() {
             transition={{ duration: 0.9, ease: EASE }}
           >
             <h1
-              className="max-w-[16ch] text-[clamp(2.3rem,5.8vw,4.3rem)] font-medium leading-[1.02] tracking-[-0.01em] text-ink"
+              className="nv-weight-keep max-w-[16ch] text-[clamp(2.3rem,5.8vw,4.3rem)] font-medium leading-[1.02] tracking-[-0.01em] text-ink"
               style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
             >
-              Care, made{" "}
-              <span className="nv-em italic font-medium">for one.</span>
+              Better medicine begins with{" "}
+              <span className="nv-em italic font-medium">better attention.</span>
             </h1>
             <p className="mt-[18px] max-w-[42ch] text-[clamp(1rem,1.3vw,1.1rem)] leading-relaxed text-muted">
-              Elite, doctor-led treatments tailored to your unique needs and delivered with absolute discretion.
+              Doctor-formulated treatments, composed for you and delivered to your door in days.
             </p>
           </motion.div>
 
@@ -119,6 +124,7 @@ export default function HeroStage() {
           >
             <Link
               to="/treatments"
+              onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
               className="group relative inline-flex items-center gap-3.5 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] border-primary/55 px-6 py-4 text-[1.05rem] font-bold tracking-tight text-ink transition-colors duration-300 hover:border-primary hover:text-on-primary"
             >
               <span
@@ -133,8 +139,9 @@ export default function HeroStage() {
           </motion.div>
         </div>
 
-        {/* All five categories — one row, each browses that goal's treatments */}
-        <div className="grid grid-cols-2 gap-[clamp(0.7rem,1.2vw,1rem)] sm:grid-cols-3 lg:grid-cols-5">
+        {/* Categories — all visible: a stacked row list on mobile, a 3- then
+            5-up grid on larger screens. */}
+        <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-3 sm:gap-[clamp(0.7rem,1.2vw,1rem)] lg:grid-cols-5">
           {CONSULT_ORDER.map((key, i) => (
             <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} />
           ))}
@@ -146,14 +153,14 @@ export default function HeroStage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.9, ease: EASE }}
-          className="relative mt-[clamp(16px,2vw,24px)] flex min-h-[clamp(320px,38vw,460px)] items-center overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] bg-panel"
+          className="relative mt-[clamp(12px,2vw,24px)] flex min-h-[clamp(270px,38vw,460px)] items-center overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] bg-panel"
         >
           {/* photo fills the card */}
           <img
-            src="/women-group.png"
-            alt="Four women together after a workout"
+            src="/assessment.jpg"
+            alt="A licensed clinician reviewing a patient's plan on a laptop"
             loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover object-[center_22%]"
+            className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
           />
           {/* navy veil — opaque on the left for the copy, fading right to reveal the photo */}
           <span
@@ -168,11 +175,11 @@ export default function HeroStage() {
               Free 2-minute assessment
             </span>
             <h2 className="mt-3 font-display text-[clamp(1.7rem,3.2vw,2.7rem)] font-bold leading-tight tracking-tight text-white drop-shadow-[0_2px_18px_rgba(15,22,34,0.5)]">
-              Not sure where to start?
+              Let's find what works for you
             </h2>
             <p className="mt-3.5 max-w-[40ch] leading-relaxed text-white/90 drop-shadow-[0_1px_12px_rgba(15,22,34,0.4)]">
-              Take the free assessment and we'll point you to the right care — reviewed by a licensed
-              provider, with no commitment and nothing to pay until you're prescribed.
+              Answer a few questions and a licensed provider will point you to the care that's right for
+              you. It's free, there's no commitment, and you only pay if you're prescribed.
             </p>
             <Link
               to="/start/weight-loss"

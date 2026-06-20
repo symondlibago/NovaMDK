@@ -105,6 +105,14 @@
     line-height: 1.06;
     letter-spacing: var(--nv-display-tracking);
   }
+  /* The studio Weight control must beat utility classes (font-bold,
+     font-extrabold…) that components put on headings — otherwise it only
+     reaches body text. Add `nv-weight-keep` to opt an element out (e.g. the
+     art-directed homepage hero). */
+  h1:not(.nv-weight-keep), h2:not(.nv-weight-keep),
+  h3:not(.nv-weight-keep), h4:not(.nv-weight-keep) {
+    font-weight: var(--nv-weight-heading) !important;
+  }
   ::selection { background: var(--nv-primary); color: var(--nv-on-primary); }
   :focus-visible { outline: 2px solid var(--nv-primary); outline-offset: 3px; border-radius: 8px; }
 

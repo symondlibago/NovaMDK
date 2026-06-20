@@ -43,14 +43,14 @@ export default function FAQ() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-surface py-[clamp(4rem,8vw,7rem)]" id="faq-section">
+    <section className="relative w-full overflow-hidden bg-surface py-[clamp(2rem,4vw,3.5rem)]" id="faq-section">
         <div className="relative z-10 mx-auto max-w-[1240px] px-5 md:px-10">
 
             {/* --- ANIMATED HEADER --- */}
             <Reveal
                 y={30}
                 duration={1}
-                className="mb-12 flex flex-col items-center text-center md:mb-16"
+                className="mb-8 flex flex-col items-center text-center md:mb-10"
             >
                 <div className="flex max-w-2xl flex-col items-center">
                     <div className="mb-4 flex items-center gap-3">
@@ -66,7 +66,7 @@ export default function FAQ() {
             </Reveal>
 
             {/* --- DYNAMIC LAYOUT (Accordion on Mobile, Split Pane on Desktop) --- */}
-            <div className="mb-16 grid items-start gap-4 lg:grid-cols-12 lg:gap-16">
+            <div className="mb-10 grid items-start gap-4 lg:grid-cols-12 lg:gap-16">
 
                 {/* Left Side: Question Menu */}
                 <div className="flex flex-col lg:col-span-5">

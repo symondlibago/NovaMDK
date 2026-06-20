@@ -56,7 +56,7 @@ function DevicePreview() {
       <div className="flex w-full items-center justify-between gap-4 px-6 py-4 text-white/90">
         <div className="flex items-center gap-2 text-[12px] font-medium tracking-wide">
           <Sparkles size={15} className="opacity-70" />
-          NovaMD · Device preview
+          NovaMDK · Device preview
         </div>
         <div className="flex items-center gap-1.5 rounded-full bg-white/10 p-1">
           {devices.map((d) => {

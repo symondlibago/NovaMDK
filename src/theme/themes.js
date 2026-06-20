@@ -650,9 +650,9 @@ export const RADII = [
 
 /** Heading / body weight presets toggled in the studio (Light · Medium · Bold). */
 export const WEIGHTS = [
-  { id: "light", name: "Light", vars: { "--nv-weight-heading": "600", "--nv-weight-body": "400" } },
-  { id: "medium", name: "Medium", vars: { "--nv-weight-heading": "700", "--nv-weight-body": "450" } },
-  { id: "bold", name: "Bold", vars: { "--nv-weight-heading": "800", "--nv-weight-body": "500" } },
+  { id: "light", name: "Light", vars: { "--nv-weight-heading": "700", "--nv-weight-body": "400" } },
+  { id: "medium", name: "Medium", vars: { "--nv-weight-heading": "800", "--nv-weight-body": "450" } },
+  { id: "bold", name: "Bold", vars: { "--nv-weight-heading": "900", "--nv-weight-body": "500" } },
 ];
 
 /** Device preview frames (px) used by the studio's responsive viewer. */

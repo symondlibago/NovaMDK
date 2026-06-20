@@ -163,7 +163,7 @@ export default function Treatments() {
   const totalDots = isMobile ? products.length : maxIndex + 1;
 
   return (
-    <section id="treatments-section" className="relative w-full overflow-hidden bg-surface-2 py-24">
+    <section id="treatments-section" className="relative w-full overflow-hidden bg-surface-2 py-[clamp(2rem,4vw,3.5rem)]">
       <div className="mx-auto max-w-[1400px] px-0 md:px-16">
 
         <motion.div
@@ -171,15 +171,15 @@ export default function Treatments() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 1.2, ease: liquidEase }}
-          className="mx-auto mb-14 max-w-3xl px-6 text-center"
+          className="mx-auto mb-[clamp(1.5rem,3vw,2.5rem)] max-w-3xl px-6 text-center"
         >
           <div className="mb-3 flex items-center justify-center gap-3">
             <span className="h-px w-8 bg-accent/60" />
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-primary lg:text-[11px]">Treatments &amp; Solutions</span>
             <span className="h-px w-8 bg-accent/60" />
           </div>
-          <h2 className="font-display text-4xl font-medium leading-tight tracking-tight text-ink md:text-[52px]">
-            Don't just live longer, <br /> <span className="nv-em font-medium text-primary">live healthier</span>
+          <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-ink md:text-[52px]">
+            Don't just live longer, <br /> <span className="nv-em text-primary">live healthier</span>
           </h2>
         </motion.div>
 
@@ -198,13 +198,13 @@ export default function Treatments() {
             <div
               ref={mobileCarouselRef}
               onScroll={handleMobileScroll}
-              className="no-scrollbar flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 py-8 pb-12"
+              className="no-scrollbar flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 py-4 pb-6"
             >
               {renderCards()}
               <div className="w-[4vw] shrink-0" />
             </div>
           ) : (
-            <div className="w-full overflow-hidden py-8" ref={desktopCarouselRef}>
+            <div className="w-full overflow-hidden py-4" ref={desktopCarouselRef}>
               <motion.div
                 className="flex w-max cursor-grab gap-6 px-2 pb-6 pt-2 active:cursor-grabbing"
                 drag="x"

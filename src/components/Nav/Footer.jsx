@@ -14,8 +14,8 @@ export default function Footer() {
   return (
     <footer className="mt-auto w-full bg-panel pb-10 pt-16 text-on-panel/75 md:pt-24">
       <div className="mx-auto max-w-[1340px] px-6 md:px-10">
-        <div className="mb-12 grid grid-cols-1 gap-10 md:mb-20 md:grid-cols-4 lg:gap-16">
-          <div className="md:col-span-2 lg:col-span-1 md:pr-8">
+        <div className="mb-12 grid grid-cols-2 gap-x-6 gap-y-9 md:mb-20 md:grid-cols-4 md:gap-10 lg:gap-16">
+          <div className="col-span-2 lg:col-span-1 md:pr-8">
             <span className="inline-flex w-fit rounded-2xl bg-surface px-5 py-3.5 nv-shadow">
               <img src="/logo.png" alt="NovaMDK" className="h-[42px] w-auto" />
             </span>
@@ -72,12 +72,12 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col gap-4 border-t border-white/10 pt-8 text-[13px] text-on-panel/50 md:flex-row md:items-center md:justify-between md:pt-10">
-          <p>©2026 NovaMD Inc. All rights reserved.</p>
+          <p>©2026 NovaMDK Inc. All rights reserved.</p>
           <p>Made for your body — not the average.</p>
         </div>
 
         <p className="mt-8 max-w-6xl text-left text-[10px] leading-relaxed text-on-panel/40 md:text-[11px]">
-          Prescription products require an online evaluation by a licensed medical professional. Medications are prescribed by licensed physicians as part of our programs, and actual product packaging may vary. The FDA does not review compounded medications for safety or effectiveness. For prescription items, NovaMD will arrange a consultation with a qualified healthcare provider.
+          Prescription products require an online evaluation by a licensed medical professional. Medications are prescribed by licensed physicians as part of our programs, and actual product packaging may vary. The FDA does not review compounded medications for safety or effectiveness. For prescription items, NovaMDK will arrange a consultation with a qualified healthcare provider.
         </p>
       </div>
     </footer>

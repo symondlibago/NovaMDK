@@ -1,25 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, Building2 } from "lucide-react";
 import Reveal from "../ui/Reveal";
 
-const CITIES = [
-  "New York", "Beverly Hills", "Miami", "San Francisco", "Chicago",
-  "Dallas", "Houston", "Los Angeles", "Scottsdale", "Las Vegas",
+// Venue *types* the kiosk lives in — no specific city locations.
+const VENUES = [
+  "Flagship centers", "Premium gyms", "Luxury med spas", "Wellness retail", "Member clubs",
 ];
 
 export default function SmartKioskShowcase() {
   return (
-    <section className="mx-auto max-w-[1240px] px-5 py-[clamp(4rem,8vw,6.5rem)] md:px-10">
-      <div className="grid items-center gap-[clamp(2rem,5vw,4.5rem)] md:grid-cols-2">
+    <section className="mx-auto max-w-[1240px] px-5 py-[clamp(2rem,4vw,3.5rem)] md:px-10">
+      <div className="grid items-center gap-[clamp(1.5rem,5vw,4.5rem)] md:grid-cols-2">
         <Reveal>
           <span className="nv-eyebrow">Proprietary technology</span>
-          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">
-            NovaMD Smart Kiosk: <span className="text-muted">the next health breakthrough, near you.</span>
+          <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.9rem)] font-extrabold leading-tight">
+            NovaMDK Smart Kiosk: <span className="text-muted">the next health breakthrough.</span>
           </h2>
-          <p className="mt-4 max-w-[46ch] text-[1.06rem] text-muted">
-            Find personalized wellness at flagship centers and premium retail spaces across our nationwide
-            locations. Discover a kiosk near you.
+          <p className="mt-4 max-w-[46ch] text-[1.04rem] leading-relaxed text-muted">
+            Personalized wellness, brought to the premium spaces you already visit — biometric check-ins
+            and provider-guided care in one beautifully simple kiosk.
           </p>
           <Link
             to="/contact"
@@ -40,21 +40,22 @@ export default function SmartKioskShowcase() {
                 <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-500" />
               </span>
               <span className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted">
-                Now available nationwide
+                Now rolling out nationwide
               </span>
             </div>
+            <p className="mb-4 text-[0.95rem] font-semibold text-ink">Built for premium spaces like:</p>
             <div className="flex flex-wrap gap-2.5">
-              {CITIES.map((c) => (
+              {VENUES.map((v) => (
                 <span
-                  key={c}
+                  key={v}
                   className="inline-flex items-center gap-1.5 rounded-full border border-line bg-bg px-3.5 py-2 text-[0.88rem] font-medium text-ink transition-colors hover:border-primary/40"
                 >
-                  <MapPin size={13} className="text-primary" /> {c}
+                  <Building2 size={13} className="text-primary" /> {v}
                 </span>
               ))}
             </div>
             <p className="mt-5 border-t border-line pt-4 text-[0.9rem] text-muted">
-              <b className="font-semibold text-ink">10 flagship locations</b> — and more opening every quarter.
+              <b className="font-semibold text-ink">More opening every quarter</b> — ask about hosting one.
             </p>
           </div>
         </Reveal>

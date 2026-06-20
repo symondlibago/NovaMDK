@@ -62,7 +62,7 @@ export default function TreatmentShop({ category }) {
   const name = products[0].categoryName;
 
   return (
-    <section id="shop" className="scroll-mt-24 bg-surface-2 py-[clamp(3rem,6vw,5rem)]">
+    <section id="shop" className="scroll-mt-24 bg-surface-2 py-[clamp(2.5rem,5.5vw,5rem)]">
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
         <div className="mb-8 text-center">
           <span className="nv-eyebrow">Prescription treatments</span>
