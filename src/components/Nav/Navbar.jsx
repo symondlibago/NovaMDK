@@ -17,6 +17,9 @@ const treatmentItems = [
   { name: "Women's Health", img: "/womenpill.avif", link: "/treatments" },
 ];
 
+/* Peptide molecule list HIDDEN at client request (2026-06-20). "Supplements" is a
+   plain link for now; restore this array + the NavDropdown/MobileGroup to bring the
+   peptide menu back.
 const supplementItems = [
   { name: "Semaglutide", img: "/luvirasupplement.png", link: "/supplements" },
   { name: "Tirzepatide", img: "/luvirasupplement.png", link: "/supplements" },
@@ -30,6 +33,7 @@ const supplementItems = [
   { name: "Tesamorelin", img: "/luvirasupplement.png", link: "/supplements" },
   { name: "Glow Blend", img: "/luvirasupplement.png", link: "/supplements" },
 ];
+*/
 
 /* --------------------------- desktop dropdown --------------------------- */
 function NavDropdown({ title, items, viewAllLink }) {
@@ -149,7 +153,8 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-7 lg:flex">
             <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
-            <NavDropdown title="Supplements" viewAllLink="/supplements" items={supplementItems} />
+            {/* Peptide dropdown hidden at client request — plain link until supplement products are added. */}
+            <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
             <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
           </div>
 
@@ -185,7 +190,10 @@ export default function Navbar() {
               </div>
               <div className="flex grow flex-col p-4">
                 <MobileGroup title="Treatments" items={treatmentItems} close={() => setMobileOpen(false)} viewAllLink="/treatments" defaultOpen />
-                <MobileGroup title="Supplements" items={supplementItems} close={() => setMobileOpen(false)} viewAllLink="/supplements" />
+                {/* Peptide list hidden at client request — plain link until supplement products are added. */}
+                <Link to="/supplements" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
+                  Supplements <ArrowRight size={16} className="text-muted" />
+                </Link>
                 <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                   Contact <ArrowRight size={16} className="text-muted" />
                 </Link>

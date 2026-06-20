@@ -4,10 +4,15 @@ import { ArrowRight } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
-import CategoryGrid from "../components/shop/CategoryGrid";
+// import CategoryGrid from "../components/shop/CategoryGrid"; // re-enable with the peptide list below
 import Photo from "../components/ui/Photo";
 import Reveal from "../components/ui/Reveal";
 
+/* ---------------------------------------------------------------------------
+ * Peptide molecule list — HIDDEN at client request (2026-06-20). The page stays
+ * live for upcoming supplement products. Uncomment this + the section below to
+ * restore the "Browse by molecule" grid.
+ * ---------------------------------------------------------------------------
 const SUPPLEMENT_CATS = [
   { name: "Semaglutide", tag: "GLP-1", link: "/contact" },
   { name: "Tirzepatide", tag: "GLP-1 / GIP", link: "/contact" },
@@ -19,6 +24,7 @@ const SUPPLEMENT_CATS = [
   { name: "MOTS-C", tag: "Metabolic", link: "/contact" },
   { name: "Tesamorelin", tag: "Growth", link: "/contact" },
 ];
+--------------------------------------------------------------------------- */
 
 export default function SupplementsPage() {
   return (
@@ -32,12 +38,14 @@ export default function SupplementsPage() {
         chips={["503A compounding", "Physician-reviewed", "Purity tested"]}
       />
 
+      {/* Peptide molecule list hidden at client request (2026-06-20) — restore with SUPPLEMENT_CATS above.
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
         <span className="nv-eyebrow">Browse by molecule</span>
         <div className="mt-6">
           <CategoryGrid items={SUPPLEMENT_CATS} />
         </div>
       </section>
+      */}
 
       {/* What arrives band */}
       <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(3.5rem,7vw,6rem)] md:px-10">
