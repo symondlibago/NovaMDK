@@ -7,7 +7,7 @@ import { CONSULTS, CONSULT_ORDER } from "../data/consultations";
 const EASE = [0.22, 0.61, 0.18, 1];
 
 /* Glass category card — flow-HTML content (tag · name · blurb), floating pill,
-   shine sweep; opens that category's consultation. */
+   shine sweep; browses that category's treatments (shoppable catalog). */
 function GlassCard({ c, delay }) {
   return (
     <motion.div
@@ -18,13 +18,13 @@ function GlassCard({ c, delay }) {
       className="h-full"
     >
       <Link
-        to={`/start/${c.slug}`}
-        className="group relative flex h-full min-h-[212px] flex-col overflow-hidden rounded-[20px] p-4 nv-shadow-lg transition-transform duration-500 hover:-translate-y-2"
+        to={`/treatments?goal=${c.goalSlug}`}
+        className="group relative flex h-full min-h-[212px] flex-col overflow-hidden rounded-[calc(20px*var(--nv-r-scale,1))] p-4 nv-shadow-lg transition-transform duration-500 hover:-translate-y-2"
       >
-        <span className="nv-glass absolute inset-0 rounded-[20px]" />
+        <span className="nv-glass absolute inset-0 rounded-[calc(20px*var(--nv-r-scale,1))]" />
 
         {/* gloss sweep on hover */}
-        <span className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[20px]">
+        <span className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[calc(20px*var(--nv-r-scale,1))]">
           <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
         </span>
 
@@ -51,7 +51,7 @@ function GlassCard({ c, delay }) {
         </div>
 
         <span className="relative z-[3] mt-auto inline-flex items-center gap-1.5 pt-2.5 text-[0.78rem] font-semibold text-white transition-all duration-500 group-hover:gap-2.5 drop-shadow-[0_1px_10px_rgba(15,22,34,0.45)]">
-          Start <ArrowRight size={13} strokeWidth={2.4} />
+          Browse <ArrowRight size={13} strokeWidth={2.4} />
         </span>
       </Link>
     </motion.div>
@@ -119,7 +119,7 @@ export default function HeroStage() {
           >
             <Link
               to="/treatments"
-              className="group relative inline-flex items-center gap-3.5 overflow-hidden rounded-[14px] border-[1.5px] border-primary/55 px-6 py-4 text-[1.05rem] font-bold tracking-tight text-ink transition-colors duration-300 hover:border-primary hover:text-on-primary"
+              className="group relative inline-flex items-center gap-3.5 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] border-primary/55 px-6 py-4 text-[1.05rem] font-bold tracking-tight text-ink transition-colors duration-300 hover:border-primary hover:text-on-primary"
             >
               <span
                 className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0"
@@ -133,7 +133,7 @@ export default function HeroStage() {
           </motion.div>
         </div>
 
-        {/* All five categories — one row, each opens its consultation */}
+        {/* All five categories — one row, each browses that goal's treatments */}
         <div className="grid grid-cols-2 gap-[clamp(0.7rem,1.2vw,1rem)] sm:grid-cols-3 lg:grid-cols-5">
           {CONSULT_ORDER.map((key, i) => (
             <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} />
@@ -146,7 +146,7 @@ export default function HeroStage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.9, ease: EASE }}
-          className="relative mt-[clamp(16px,2vw,24px)] flex min-h-[clamp(320px,38vw,460px)] items-center overflow-hidden rounded-[26px] bg-panel"
+          className="relative mt-[clamp(16px,2vw,24px)] flex min-h-[clamp(320px,38vw,460px)] items-center overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] bg-panel"
         >
           {/* photo fills the card */}
           <img

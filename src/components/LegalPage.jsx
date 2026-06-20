@@ -631,7 +631,7 @@ export default function LegalPage() {
 
       <main className="flex-1 w-full max-w-[850px] mx-auto px-4 sm:px-6 md:px-12 py-8 md:py-24">
 
-        <div className="bg-surface rounded-3xl md:rounded-[40px] p-6 sm:p-8 md:p-16 border border-line shadow-sm">
+        <div className="bg-surface rounded-3xl md:rounded-[calc(40px*var(--nv-r-scale,1))] p-6 sm:p-8 md:p-16 border border-line shadow-sm">
 
           {/* Header */}
           <div className="mb-8 md:mb-12 border-b border-line pb-6 md:pb-8">

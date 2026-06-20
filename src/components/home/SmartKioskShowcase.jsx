@@ -33,7 +33,7 @@ export default function SmartKioskShowcase() {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="rounded-[26px] border border-line bg-surface p-6 nv-shadow md:p-8">
+          <div className="rounded-[calc(26px*var(--nv-r-scale,1))] border border-line bg-surface p-6 nv-shadow md:p-8">
             <div className="mb-5 flex items-center gap-2.5">
               <span className="relative grid h-2.5 w-2.5 place-items-center">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500/60" />

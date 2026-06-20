@@ -12,7 +12,7 @@ function PrimaryButton({ children, onClick, disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="group/btn mt-7 flex w-full items-center justify-center gap-2 rounded-[13px] bg-primary px-5 py-[17px] text-[15.5px] font-bold tracking-tight text-on-primary nv-shadow transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-deep disabled:pointer-events-none disabled:opacity-40"
+      className="group/btn mt-7 flex w-full items-center justify-center gap-2 rounded-[calc(13px*var(--nv-r-scale,1))] bg-primary px-5 py-[17px] text-[15.5px] font-bold tracking-tight text-on-primary nv-shadow transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-deep disabled:pointer-events-none disabled:opacity-40"
     >
       {children}
       <ArrowRight size={17} className="transition-transform duration-300 group-hover/btn:translate-x-1" />
@@ -53,12 +53,12 @@ function Question({ step, value, onPick, onNext }) {
             <button
               key={idx}
               onClick={() => onPick(idx)}
-              className={`flex w-full items-center gap-3.5 rounded-[14px] border-[1.5px] px-[18px] py-[17px] text-left text-[15.5px] font-semibold transition-colors duration-200 active:scale-[0.99] ${
+              className={`flex w-full items-center gap-3.5 rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] px-[18px] py-[17px] text-left text-[15.5px] font-semibold transition-colors duration-200 active:scale-[0.99] ${
                 on ? "border-primary bg-surface-2" : "border-line bg-surface hover:border-line-strong"
               }`}
             >
               <span
-                className={`grid h-[22px] w-[22px] flex-none place-items-center border-2 transition-colors duration-200 ${multi ? "rounded-[7px]" : "rounded-full"} ${
+                className={`grid h-[22px] w-[22px] flex-none place-items-center border-2 transition-colors duration-200 ${multi ? "rounded-[calc(7px*var(--nv-r-scale,1))]" : "rounded-full"} ${
                   on ? "border-primary bg-primary" : "border-line"
                 }`}
               >

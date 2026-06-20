@@ -91,7 +91,7 @@ export default function Home() {
       <section className="mx-auto w-full max-w-[1240px] px-5 pt-[clamp(3rem,6vw,5rem)] md:px-10">
         <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
           <Reveal className="h-full">
-            <Link to="/treatments" className="group relative flex h-full min-h-[clamp(300px,33vw,420px)] flex-col justify-between overflow-hidden rounded-[26px] p-7 text-white nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
+            <Link to="/treatments" className="group relative flex h-full min-h-[clamp(300px,33vw,420px)] flex-col justify-between overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] p-7 text-white nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
               <div className="absolute inset-0 z-0">
                 <Photo src="/visit-phone.jpg" alt="Taking the five-minute online visit on a phone" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
               </div>
@@ -107,7 +107,7 @@ export default function Home() {
             </Link>
           </Reveal>
           <Reveal delay={0.08} className="h-full">
-            <a href="#how" onClick={(e) => { e.preventDefault(); scrollToId("how"); }} className="group relative flex h-full min-h-[clamp(300px,33vw,420px)] flex-col justify-between overflow-hidden rounded-[26px] p-7 text-white nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
+            <a href="#how" onClick={(e) => { e.preventDefault(); scrollToId("how"); }} className="group relative flex h-full min-h-[clamp(300px,33vw,420px)] flex-col justify-between overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] p-7 text-white nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
               <div className="absolute inset-0 z-0">
                 <Photo src="/courier-delivery.jpg" alt="A courier handing a package to a smiling customer" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
               </div>
@@ -130,7 +130,7 @@ export default function Home() {
         <div className="grid items-center gap-[clamp(2rem,5vw,4.5rem)] md:grid-cols-2">
           <Reveal>
             <div className="relative">
-              <Photo src="/why-portrait.jpg" alt="A person standing calmly, looking ahead" className="aspect-[5/4] rounded-[26px] nv-shadow-lg" imgClassName="object-cover" />
+              <Photo src="/why-portrait.jpg" alt="A person standing calmly, looking ahead" className="aspect-[5/4] rounded-[calc(26px*var(--nv-r-scale,1))] nv-shadow-lg" imgClassName="object-cover" />
               <div className="absolute -bottom-5 -left-3 max-w-[230px] rounded-2xl border border-line bg-surface p-5 nv-shadow-lg">
                 <div className="text-[1.9rem] font-extrabold leading-none tracking-tight text-ink">8 weeks</div>
                 <div className="mt-1.5 text-[0.82rem] leading-snug text-muted">median time members say they felt a difference*</div>
@@ -188,7 +188,7 @@ export default function Home() {
       {/* ===== Closing CTA ===== */}
       <section className="mx-auto mb-16 max-w-[1240px] px-5 md:px-10">
         <Reveal>
-          <div className="relative grid min-h-[clamp(360px,42vw,460px)] items-center overflow-hidden rounded-[28px]">
+          <div className="relative grid min-h-[clamp(360px,42vw,460px)] items-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))]">
             <div className="absolute inset-0 z-0">
               <Photo src="/outdoor-group.jpg" alt="A group of people standing together outdoors" className="h-full w-full" imgClassName="object-cover" />
             </div>

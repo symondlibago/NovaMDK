@@ -3,9 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Palette, Type, Italic, Check, X, Sparkles, RotateCcw,
   Smartphone, Tablet, Monitor, Maximize, Eye, Lock, MoveHorizontal,
+  Pipette, ChevronDown, Square, Share2, Link2, Code2,
 } from "lucide-react";
 import { useTheme } from "../../theme/ThemeContext";
 import { DEFAULTS } from "../../theme/themes";
+import { contrastRatio, grade } from "../../lib/contrast";
+import { encodeTheme } from "../../theme/share";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -19,7 +22,7 @@ const DEVICE_ICON = {
 
 /* ----------------------------- device preview ----------------------------- */
 function DevicePreview() {
-  const { device, devices, setDevice, palette, typography, weight, italic, letterSpacing, lineHeight } = useTheme();
+  const { device, devices, setDevice, palette, typography, weight, italic, letterSpacing, lineHeight, radius, paletteOverrides } = useTheme();
   const active = devices.find((d) => d.id === device);
   const [scale, setScale] = useState(1);
 
@@ -39,7 +42,9 @@ function DevicePreview() {
 
   const path = window.location.pathname;
   // Re-key on theme so the iframe re-renders with the active palette/type.
-  const frameKey = `${path}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}`;
+  // Include a signature of this palette's custom colors so edits show in-preview.
+  const overrideSig = JSON.stringify(paletteOverrides[palette.id] || {});
+  const frameKey = `${path}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}|${radius.id}|${overrideSig}`;
 
   return (
     <motion.div
@@ -111,10 +116,239 @@ function DevicePreview() {
 function SwatchStrip({ colors }) {
   return (
     <span className="flex h-7 w-16 overflow-hidden rounded-md ring-1 ring-black/10 shrink-0">
-      {colors.map((c) => (
-        <span key={c} className="flex-1" style={{ background: c }} />
+      {colors.map((c, i) => (
+        <span key={`${c}-${i}`} className="flex-1" style={{ background: c }} />
       ))}
     </span>
+  );
+}
+
+/* --------------------------- per-palette color editor --------------------------- */
+// The CSS tokens a user can recolor, grouped most-impactful first.
+const PALETTE_FIELDS = [
+  { key: "--nv-primary", label: "Primary / buttons" },
+  { key: "--nv-primary-deep", label: "Primary (hover)" },
+  { key: "--nv-accent", label: "Accent" },
+  { key: "--nv-bg", label: "Page background" },
+  { key: "--nv-surface", label: "Cards / surface" },
+  { key: "--nv-surface-2", label: "Surface (subtle)" },
+  { key: "--nv-ink", label: "Text / ink" },
+  { key: "--nv-ink-panel", label: "Dark panels" },
+  { key: "--nv-muted", label: "Muted text" },
+  { key: "--nv-line", label: "Lines / borders" },
+  { key: "--nv-line-strong", label: "Lines (strong)" },
+  { key: "--nv-on-primary", label: "Text on primary" },
+  { key: "--nv-on-panel", label: "Text on panels" },
+];
+
+// Key foreground/background pairs to check for legibility (WCAG).
+const CONTRAST_PAIRS = [
+  { label: "Body text", fg: "--nv-ink", bg: "--nv-bg" },
+  { label: "Card text", fg: "--nv-ink", bg: "--nv-surface" },
+  { label: "Muted text", fg: "--nv-muted", bg: "--nv-surface" },
+  { label: "Buttons", fg: "--nv-on-primary", bg: "--nv-primary" },
+  { label: "Dark panels", fg: "--nv-on-panel", bg: "--nv-ink-panel" },
+];
+
+// Coerce any stored value into a valid #rrggbb for the native color input.
+const toHex = (v) => {
+  if (typeof v !== "string") return "#000000";
+  const s = v.trim();
+  const m6 = s.match(/^#?([0-9a-fA-F]{6})$/);
+  if (m6) return "#" + m6[1].toLowerCase();
+  const m3 = s.match(/^#?([0-9a-fA-F]{3})$/);
+  if (m3) return "#" + m3[1].split("").map((c) => c + c).join("").toLowerCase();
+  return "#000000";
+};
+
+function PaletteEditor() {
+  const { palette, paletteVars, paletteOverrides, setPaletteColor, resetPaletteColors } = useTheme();
+  const [open, setOpen] = useState(false);
+  const edited = Object.keys(paletteOverrides[palette.id] || {}).length;
+
+  return (
+    <div className="mt-3 overflow-hidden rounded-2xl border border-line bg-surface-2/40">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between px-3.5 py-3 text-left"
+        aria-expanded={open}
+      >
+        <span className="flex items-center gap-2 text-[12.5px] font-semibold">
+          <Pipette size={13} className="text-primary" />
+          Customize this palette
+          {edited > 0 && (
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary">
+              {edited} edited
+            </span>
+          )}
+        </span>
+        <ChevronDown size={15} className={`text-muted transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: EASE }}
+            className="overflow-hidden"
+          >
+            <div className="flex flex-col gap-1.5 px-3.5 pb-3.5">
+              {PALETTE_FIELDS.map((f) => {
+                const val = paletteVars[f.key] || "#000000";
+                return (
+                  <div key={f.key} className="flex items-center gap-2.5">
+                    <label
+                      className="relative grid h-7 w-7 shrink-0 place-items-center overflow-hidden rounded-lg ring-1 ring-black/10"
+                      style={{ background: val }}
+                      title={`Pick ${f.label.toLowerCase()}`}
+                    >
+                      <input
+                        type="color"
+                        value={toHex(val)}
+                        onChange={(e) => setPaletteColor(f.key, e.target.value)}
+                        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        aria-label={f.label}
+                      />
+                    </label>
+                    <span className="min-w-0 flex-1 truncate text-[12px]">{f.label}</span>
+                    <input
+                      value={val}
+                      spellCheck={false}
+                      onChange={(e) => setPaletteColor(f.key, e.target.value)}
+                      className="w-[82px] rounded-md border border-line bg-surface px-2 py-1 text-right font-mono text-[11px] text-ink focus:border-primary focus:outline-none"
+                    />
+                  </div>
+                );
+              })}
+
+              {/* Readability check — flags low-contrast text/background pairs. */}
+              <div className="mt-2 rounded-xl border border-line bg-surface/70 p-2.5">
+                <p className="mb-1.5 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+                  Readability <span className="font-normal normal-case tracking-normal">WCAG · AA ≥ 4.5</span>
+                </p>
+                <div className="flex flex-col gap-1">
+                  {CONTRAST_PAIRS.map((p) => {
+                    const fg = paletteVars[p.fg];
+                    const bg = paletteVars[p.bg];
+                    const ratio = contrastRatio(fg, bg);
+                    const g = grade(ratio);
+                    return (
+                      <div key={p.label} className="flex items-center gap-2 text-[11.5px]">
+                        <span
+                          className="grid h-5 w-7 shrink-0 place-items-center rounded text-[10px] font-bold ring-1 ring-black/10"
+                          style={{ background: bg, color: fg }}
+                        >
+                          Aa
+                        </span>
+                        <span className="min-w-0 flex-1 truncate">{p.label}</span>
+                        <span className="font-mono text-[10.5px] text-muted">{ratio ? `${ratio.toFixed(1)}:1` : "—"}</span>
+                        <span
+                          className={`w-9 rounded-full py-0.5 text-center text-[9px] font-bold ${
+                            g.ok === false
+                              ? "bg-red-100 text-red-700"
+                              : g.ok
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-surface-2 text-muted"
+                          }`}
+                        >
+                          {g.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <button
+                onClick={() => resetPaletteColors(palette.id)}
+                disabled={!edited}
+                className="mt-1.5 flex items-center justify-center gap-1.5 rounded-lg border border-line py-2 text-[11.5px] font-medium text-muted transition-colors enabled:hover:border-line-strong enabled:hover:text-ink disabled:opacity-40"
+              >
+                <RotateCcw size={12} /> Reset “{palette.name}” colors
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* --------------------------- share & export --------------------------- */
+// Render the active (effective) palette as a ready-to-paste themes.js block.
+function buildThemeCode(palette, vars, sel) {
+  const order = [
+    "--nv-bg", "--nv-surface", "--nv-surface-2", "--nv-ink", "--nv-ink-panel",
+    "--nv-primary", "--nv-primary-deep", "--nv-accent", "--nv-line", "--nv-line-strong",
+    "--nv-muted", "--nv-on-primary", "--nv-on-panel",
+  ];
+  const v = (k) => vars[k] || "#000000";
+  const body = order.map((k) => `      "${k}": "${v(k)}",`).join("\n");
+  const swatch = [v("--nv-ink-panel"), v("--nv-primary"), v("--nv-accent"), v("--nv-line-strong"), v("--nv-bg")];
+  return `  {
+    id: "${palette.id}-custom",
+    name: "${palette.name} (custom)",
+    tagline: "${palette.tagline}",
+    swatch: ${JSON.stringify(swatch)},
+    vars: {
+${body}
+    },
+  },
+  // Studio: type ${sel.t} · weight ${sel.w} · italic ${sel.i} · letter ${sel.ls} · line ${sel.lh} · radius ${sel.r}`;
+}
+
+function ShareExport() {
+  const { palette, paletteVars, paletteOverrides, typography, weight, italic, letterSpacing, lineHeight, radius } = useTheme();
+  const [copied, setCopied] = useState("");
+
+  const copy = async (text, which) => {
+    const done = () => { setCopied(which); setTimeout(() => setCopied(""), 1800); };
+    try {
+      await navigator.clipboard.writeText(text);
+      done();
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); done(); } catch {}
+      document.body.removeChild(ta);
+    }
+  };
+
+  const copyLink = () => {
+    const cfg = {
+      p: palette.id,
+      o: paletteOverrides[palette.id] || undefined,
+      t: typography.id, w: weight.id, i: italic,
+      ls: letterSpacing.id, lh: lineHeight.id, r: radius.id,
+    };
+    const { origin, pathname } = window.location;
+    copy(`${origin}${pathname}?studio&theme=${encodeTheme(cfg)}`, "link");
+  };
+
+  const copyCode = () => {
+    const sel = { t: typography.id, w: weight.id, i: italic, ls: letterSpacing.id, lh: lineHeight.id, r: radius.id };
+    copy(buildThemeCode(palette, paletteVars, sel), "code");
+  };
+
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      <button
+        onClick={copyLink}
+        className="flex items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 text-[12.5px] font-semibold text-on-primary transition-all hover:bg-primary-deep"
+      >
+        {copied === "link" ? <><Check size={14} /> Copied</> : <><Link2 size={14} /> Share link</>}
+      </button>
+      <button
+        onClick={copyCode}
+        className="flex items-center justify-center gap-1.5 rounded-xl border border-line py-2.5 text-[12.5px] font-medium text-ink transition-colors hover:border-line-strong"
+      >
+        {copied === "code" ? <><Check size={14} /> Copied</> : <><Code2 size={14} /> Theme code</>}
+      </button>
+    </div>
   );
 }
 
@@ -124,9 +358,10 @@ export default function DesignStudio() {
   if (t.isPreview || !t.studioUnlocked) return null;
 
   const {
-    palettes, typographies, weights, devices, letterSpacings, lineHeights,
-    palette, typography, weight, italic, device, letterSpacing, lineHeight,
-    setPalette, setTypography, setWeight, setItalic, setDevice, setLetterSpacing, setLineHeight,
+    palettes, typographies, weights, devices, letterSpacings, lineHeights, radii,
+    palette, typography, weight, italic, device, letterSpacing, lineHeight, radius,
+    setPalette, setTypography, setWeight, setItalic, setDevice, setLetterSpacing, setLineHeight, setRadius,
+    clearAllPaletteColors,
     studioOpen, setStudioOpen,
   } = t;
 
@@ -137,7 +372,9 @@ export default function DesignStudio() {
     setItalic(DEFAULTS.italic);
     setLetterSpacing(DEFAULTS.letterSpacing);
     setLineHeight(DEFAULTS.lineHeight);
+    setRadius(DEFAULTS.radius);
     setDevice(DEFAULTS.device);
+    clearAllPaletteColors();
   };
 
   return (
@@ -212,6 +449,7 @@ export default function DesignStudio() {
                     );
                   })}
                 </div>
+                <PaletteEditor />
               </Section>
 
               {/* Typography */}
@@ -311,6 +549,30 @@ export default function DesignStudio() {
                 </div>
               </Section>
 
+              {/* Corner radius */}
+              <Section icon={<Square size={14} />} title="Corner radius">
+                <div className="flex gap-2">
+                  {radii.map((r) => {
+                    const on = r.id === radius.id;
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => setRadius(r.id)}
+                        className={`flex flex-1 flex-col items-center gap-2 rounded-xl border py-3 text-[12px] transition-all ${
+                          on ? "border-primary bg-primary text-on-primary" : "border-line text-ink hover:border-line-strong"
+                        }`}
+                      >
+                        <span className="h-6 w-6 border-2 border-current" style={{ borderRadius: r.vars["--radius-2xl"] }} />
+                        {r.name}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-[11px] leading-relaxed text-muted">
+                  Tunes roundness sitewide — sharp reads clinical, round reads friendly.
+                </p>
+              </Section>
+
               {/* Device */}
               <Section icon={<Monitor size={14} />} title="Preview device">
                 <div className="grid grid-cols-3 gap-2">
@@ -332,6 +594,14 @@ export default function DesignStudio() {
                 </div>
                 <p className="mt-2 text-[11px] leading-relaxed text-muted">
                   Opens the live site in a scaled phone · tablet · desktop · kiosk frame.
+                </p>
+              </Section>
+
+              {/* Share & handoff */}
+              <Section icon={<Share2 size={14} />} title="Share & handoff">
+                <ShareExport />
+                <p className="mt-2 text-[11px] leading-relaxed text-muted">
+                  <b>Share link</b> opens the site with this exact look. <b>Theme code</b> copies a ready-to-paste palette block for themes.js.
                 </p>
               </Section>
 

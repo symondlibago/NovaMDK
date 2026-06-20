@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import {
-  ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical,
+  ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical, Loader2,
 } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
@@ -15,14 +15,48 @@ const TRUST = [
   { icon: FlaskConical, label: "Compounded in the USA" },
 ];
 
+// Fallback questionnaire used when a product has no questionnaireId yet.
+const DEFAULT_QUESTIONNAIRE_ID = "";
+
 export default function ProductPage() {
   const { id } = useParams();
   const product = productsData.find((p) => String(p.id) === String(id));
+
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+
   if (!product) return <Navigate to="/treatments" replace />;
 
   const related = productsData
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
     .slice(0, 3);
+
+  // MDIntegrations trigger — the product page is where intake begins. Mint a
+  // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final
+  // destination/handoff is wired once the team confirms it.)
+  const startVisit = async () => {
+    setErr("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/mdi-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionnaire_id: product.questionnaireId || DEFAULT_QUESTIONNAIRE_ID }),
+      });
+      if (!res.ok) throw new Error("We couldn't start your visit just now — please try again.");
+      const voucher = await res.json();
+      // If the minted voucher carries an intake/checkout URL, hand the patient off.
+      const url = voucher.url || voucher.intake_url || voucher.redirect_url || voucher.link || voucher.checkout_url;
+      if (url) { window.location.href = url; return; }
+      // No URL on the voucher yet — surface it so the handoff can be finalized.
+      console.info("MDI voucher minted:", voucher);
+      setErr("Visit started — connecting you to intake shortly.");
+    } catch (e) {
+      setErr(e.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
@@ -40,7 +74,7 @@ export default function ProductPage() {
         <div className="grid gap-8 md:grid-cols-2 md:items-center lg:gap-12">
           {/* image */}
           <Reveal>
-            <div className="relative flex min-h-[380px] items-center justify-center overflow-hidden rounded-[28px] border border-line bg-linear-to-br from-surface to-surface-2 p-10">
+            <div className="relative flex min-h-[380px] items-center justify-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-10">
               {/* champagne glow */}
               <div
                 className="pointer-events-none absolute inset-0"
@@ -100,12 +134,18 @@ export default function ProductPage() {
                 </ul>
               )}
 
-              <Link
-                to="/contact"
-                className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+              <button
+                onClick={startVisit}
+                disabled={loading}
+                className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
               >
-                Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </Link>
+                {loading ? (
+                  <><Loader2 size={16} className="animate-spin" /> Starting your visit…</>
+                ) : (
+                  <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                )}
+              </button>
+              {err && <p className="mt-2 text-center text-[0.84rem] font-medium text-primary">{err}</p>}
               <p className="mt-3 flex items-center justify-center gap-2 text-[0.82rem] text-muted">
                 <ShieldAlert size={14} className="text-primary/70" /> Prescription product — requires an online medical evaluation.
               </p>
@@ -138,7 +178,7 @@ export default function ProductPage() {
             <div className="mt-12 grid gap-5 sm:grid-cols-3">
               {product.howItWorks.steps.map((s, i) => (
                 <Reveal as="div" key={i} delay={(i % 3) * 0.08}>
-                  <div className="relative h-full rounded-[22px] border border-line bg-surface p-7 nv-shadow">
+                  <div className="relative h-full rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-7 nv-shadow">
                     <span className="absolute right-6 top-6 font-mono text-[1.1rem] font-bold text-line-strong">0{i + 1}</span>
                     <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-on-primary">{s.icon}</span>
                     <h3 className="mt-5 font-display text-[1.15rem] font-bold">{s.title}</h3>
@@ -164,7 +204,7 @@ export default function ProductPage() {
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <dl className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-surface nv-shadow">
+              <dl className="divide-y divide-line overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow">
                 {product.specs.map((s) => (
                   <div key={s.label} className="grid grid-cols-1 gap-1 px-6 py-4 transition-colors hover:bg-surface-2 sm:grid-cols-[170px_1fr] sm:gap-4">
                     <dt className="font-mono text-[0.66rem] uppercase tracking-[0.1em] text-muted">{s.label}</dt>
@@ -180,7 +220,7 @@ export default function ProductPage() {
       {/* ===== Safety ===== */}
       {product.safety && (
         <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
-          <div className="rounded-[22px] border border-line bg-surface-2 p-6 md:p-8">
+          <div className="rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface-2 p-6 md:p-8">
             <h3 className="flex items-center gap-2 font-display text-[1.1rem] font-bold">
               <ShieldAlert size={18} className="text-primary" /> Important safety information
             </h3>
@@ -192,7 +232,7 @@ export default function ProductPage() {
       {/* ===== Closing CTA ===== */}
       <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[28px] bg-panel px-6 py-[clamp(2.4rem,5vw,3.6rem)] text-center text-on-panel">
+          <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] bg-panel px-6 py-[clamp(2.4rem,5vw,3.6rem)] text-center text-on-panel">
             <div
               className="pointer-events-none absolute inset-0"
               style={{ background: "radial-gradient(50% 80% at 50% 0%, color-mix(in oklab, var(--nv-accent) 22%, transparent), transparent 70%)" }}
@@ -200,9 +240,18 @@ export default function ProductPage() {
             <div className="relative">
               <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">Start your visit for {product.name.split("(")[0].split("/")[0].trim()}.</h2>
               <p className="mx-auto mt-3 max-w-[46ch] text-[1rem] text-on-panel/70">A licensed provider reviews your intake and confirms the right fit. Nothing to pay until you're prescribed.</p>
-              <Link to="/contact" className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg">
-                Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </Link>
+              <button
+                onClick={startVisit}
+                disabled={loading}
+                className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg disabled:opacity-70 disabled:hover:translate-y-0"
+              >
+                {loading ? (
+                  <><Loader2 size={16} className="animate-spin" /> Starting…</>
+                ) : (
+                  <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                )}
+              </button>
+              {err && <p className="mt-3 text-[0.84rem] font-medium text-on-panel/80">{err}</p>}
             </div>
           </div>
         </Reveal>
@@ -217,9 +266,9 @@ export default function ProductPage() {
               <Link
                 key={r.id}
                 to={`/product/${r.id}`}
-                className="group rounded-[22px] border border-line bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
+                className="group rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
               >
-                <div className="pointer-events-none flex h-32 items-center justify-center rounded-[16px] bg-linear-to-br from-surface to-surface-2">
+                <div className="pointer-events-none flex h-32 items-center justify-center rounded-[calc(16px*var(--nv-r-scale,1))] bg-linear-to-br from-surface to-surface-2">
                   <img src={r.img} alt={r.name} loading="lazy" className="h-[88%] object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105" />
                 </div>
                 <div className="mt-3 flex items-start justify-between gap-3">

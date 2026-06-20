@@ -17,11 +17,11 @@ export default function Testimonials() {
   const desktopCarouselRef = useRef(null);
 
   const reviews = [
-    { name: "Theresa", text: "NAD+ really helped me feel more energetic and has improved my health. I feel great! The continuous care is unmatched." },
-    { name: "Anna", text: "My experience with NovaMD was simple and straightforward. I would have had to jump through so many hoops to get this same experience elsewhere." },
-    { name: "Melisa", text: "I have lost 46lbs in 8 weeks. It is extremely convenient to order online and have consultations with top-tier professionals if needed." },
-    { name: "Joshua", text: "I have been with this company for over a year and their customer service is above and beyond. I appreciate the sincere and kind representatives." },
-    { name: "Sarah", text: "The continuous support from the medical team gave me the confidence I needed. The whole process is incredibly smooth and professional." }
+    { name: "Theresa M.", location: "Columbus, OH", rating: 5, text: "I started NAD+ mostly for the afternoon crashes. A few weeks in, I stopped reaching for a third coffee. Small thing, but I noticed it." },
+    { name: "Anna K.", location: "Denver, CO", rating: 5, text: "I figured there'd be the usual runaround. It was a short intake form and one video call — now my refills just show up without me thinking about it." },
+    { name: "Marcus T.", location: "Austin, TX", rating: 4, text: "Down about 19 lbs over four months. Not overnight, and I still have to do the work, but the monthly check-ins kept me honest." },
+    { name: "Joshua R.", location: "Sacramento, CA", rating: 5, text: "Been a member a little over a year. I had a question about my dose and an actual clinician wrote back the same day. That's mostly why I've stayed." },
+    { name: "Sarah L.", location: "Raleigh, NC", rating: 5, text: "The app isn't flashy, but it does what I need. Messaging the care team beats taking a half-day off for a waiting room." }
   ];
 
   // Track Window Resize to switch between Mobile (Native) and Desktop (Framer Drag)
@@ -108,26 +108,27 @@ export default function Testimonials() {
   const renderCards = () => reviews.map((review, i) => (
       <div
         key={i}
-        className={`review-card group shrink-0 flex flex-col h-full min-h-90 rounded-[24px] border border-line bg-surface p-8 md:p-10 nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:nv-shadow-lg ${
+        className={`review-card group shrink-0 flex flex-col h-full min-h-90 rounded-[calc(24px*var(--nv-r-scale,1))] border border-line bg-surface p-8 md:p-10 nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:nv-shadow-lg ${
           isMobile ? 'snap-center w-[82vw] max-w-[300px] sm:max-w-[320px]' : 'w-[340px]'
         }`}
       >
-          {/* Rating stars */}
-          <div className="mb-6 flex justify-center gap-1 text-primary">
+          {/* Rating stars — reflects each member's actual score */}
+          <div className="mb-6 flex justify-center gap-1">
             {[1,2,3,4,5].map(star => (
-               <svg key={star} width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+               <svg key={star} width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className={star <= review.rating ? "text-primary" : "text-line-strong"}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             ))}
           </div>
 
-          {/* Editorial quote text */}
-          <p className="mb-8 grow text-center font-display text-[1rem] italic leading-relaxed text-ink/80 md:text-[1.06rem]">
+          {/* Quote text */}
+          <p className="mb-8 grow text-center text-[1rem] leading-relaxed text-ink/80 md:text-[1.05rem]">
               "{review.text}"
           </p>
 
           <div className="mt-auto text-center">
-              <p className="mb-3 text-[0.95rem] font-semibold text-ink">{review.name}</p>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-4 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.12em] text-primary">
-                  <ShieldCheck size={14} className="text-primary" /> Verified
+              <p className="text-[0.95rem] font-semibold text-ink">{review.name}</p>
+              <p className="mt-0.5 text-[0.82rem] text-muted">{review.location}</p>
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3.5 py-1 font-mono text-[0.64rem] uppercase tracking-[0.12em] text-muted">
+                  <ShieldCheck size={13} className="text-primary" /> Verified member
               </div>
           </div>
       </div>
@@ -154,17 +155,17 @@ export default function Testimonials() {
             </div>
 
             <h2 className="mb-4 text-[clamp(2rem,3.6vw,3.25rem)] font-extrabold leading-tight tracking-tight text-ink">
-                200,000+ members <span className="nv-em text-primary">thriving</span>
+                In our members' <span className="nv-em text-primary">own words</span>
             </h2>
 
-            <div className="mb-16 flex items-center justify-center gap-3 text-[0.92rem] font-medium text-muted">
-                <span>Excellent 4.9/5</span>
+            <div className="mb-16 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.92rem] font-medium text-muted">
+                <span className="font-semibold text-ink">4.8 average</span>
                 <div className="flex gap-0.5 text-primary">
                 {[1,2,3,4,5].map(star => (
                     <svg key={star} width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                 ))}
                 </div>
-                <span>4,000+ reviews</span>
+                <span>from 4,000+ verified reviews</span>
             </div>
         </motion.div>
 

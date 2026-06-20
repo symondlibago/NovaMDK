@@ -12,10 +12,10 @@ function DarkCard({ it, art }) {
   return (
     <Link
       to={it.link}
-      className="group relative flex h-full min-h-[clamp(196px,24vw,220px)] flex-col justify-between overflow-hidden rounded-[22px] bg-panel p-6 text-on-panel transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg"
+      className="group relative flex h-full min-h-[clamp(196px,24vw,220px)] flex-col justify-between overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] bg-panel p-6 text-on-panel transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg"
     >
       {/* product tile on the right — gentle float */}
-      <span className="nv-bob pointer-events-none absolute bottom-0 right-5 top-0 z-[1] my-auto aspect-square h-[clamp(78px,9.5vw,100px)] overflow-hidden rounded-[16px]">
+      <span className="nv-bob pointer-events-none absolute bottom-0 right-5 top-0 z-[1] my-auto aspect-square h-[clamp(78px,9.5vw,100px)] overflow-hidden rounded-[calc(16px*var(--nv-r-scale,1))]">
         <img
           src={it.art || art}
           alt=""
@@ -47,7 +47,7 @@ function LightCard({ it, art }) {
   return (
     <Link
       to={it.link}
-      className="group relative flex h-full min-h-[clamp(180px,22vw,208px)] flex-col overflow-hidden rounded-[22px] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:nv-shadow-lg"
+      className="group relative flex h-full min-h-[clamp(180px,22vw,208px)] flex-col overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:nv-shadow-lg"
     >
       <span
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"

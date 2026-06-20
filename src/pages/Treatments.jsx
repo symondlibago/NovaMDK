@@ -15,13 +15,13 @@ import { productsData } from "../components/data/products";
 const Testimonials = lazy(() => import("../components/Testimonials"));
 const FAQ = lazy(() => import("../components/FAQ"));
 
-// Mirror the homepage funnels — each tile starts that category's consultation.
+// Mirror the homepage funnels — each tile browses that goal's shoppable catalog.
 const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   name: CONSULTS[k].name,
   tag: CONSULTS[k].tag,
   blurb: CONSULTS[k].blurb,
-  cta: "Start assessment",
-  link: `/start/${k}`,
+  cta: "Browse treatments",
+  link: `/treatments?goal=${CONSULTS[k].goalSlug}`,
 }));
 
 // Valid product categories a quiz can land on (everything but pure supplements).
@@ -75,7 +75,7 @@ function HowItWorks() {
       <div className="mt-12 grid gap-5 sm:grid-cols-3">
         {STEPS.map((s, i) => (
           <Reveal as="div" key={s.title} delay={(i % 3) * 0.08}>
-            <div className="relative h-full rounded-[22px] border border-line bg-surface p-7 nv-shadow">
+            <div className="relative h-full rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-7 nv-shadow">
               <span className="absolute right-6 top-6 font-mono text-[1.15rem] font-bold text-line-strong">0{i + 1}</span>
               <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-on-primary"><s.icon size={22} /></span>
               <h3 className="mt-5 font-display text-[1.15rem] font-bold leading-tight">{s.title}</h3>
@@ -92,7 +92,7 @@ function SocialProof() {
   return (
     <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(2rem,4vw,3rem)] md:px-10">
       <Reveal>
-        <div className="relative overflow-hidden rounded-[28px] bg-panel px-6 py-[clamp(2.4rem,5vw,3.4rem)] text-on-panel md:px-10">
+        <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] bg-panel px-6 py-[clamp(2.4rem,5vw,3.4rem)] text-on-panel md:px-10">
           <div
             className="pointer-events-none absolute inset-0"
             style={{ background: "radial-gradient(60% 90% at 85% 0%, color-mix(in oklab, var(--nv-accent) 22%, transparent), transparent 70%)" }}
@@ -149,13 +149,18 @@ export default function TreatmentsPage() {
           <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <span className="nv-eyebrow">Explore by goal</span>
+                <span className="nv-eyebrow">Browse by goal</span>
                 <h2 className="mt-2 text-[clamp(1.5rem,3vw,2.1rem)] font-extrabold leading-tight">What are you working on?</h2>
-                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Pick a goal and take the free two-minute assessment — a provider reviews it and matches your treatment.</p>
+                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Pick a goal to browse the treatments — or take the quick quiz and we'll match you.</p>
               </div>
-              <Link to="/supplements" className="shrink-0 text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
-                Looking for supplements? →
-              </Link>
+              <div className="flex shrink-0 flex-col gap-1.5 sm:items-end">
+                <Link to="/start/weight-loss" className="text-[0.92rem] font-semibold text-primary transition-colors hover:text-accent">
+                  Not sure? Take the 2-min quiz →
+                </Link>
+                <Link to="/supplements" className="text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
+                  Looking for supplements? →
+                </Link>
+              </div>
             </div>
             <CategoryGrid items={TREATMENT_CATS} dark art="/pill.png" />
           </section>

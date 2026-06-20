@@ -26,7 +26,7 @@ export default function HowItWorks() {
           <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Premium care, delivered effortlessly.</h2>
         </Reveal>
 
-        <div className="overflow-hidden rounded-[28px] border border-line bg-surface nv-shadow-lg">
+        <div className="overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow-lg">
           <div className="grid md:grid-cols-2">
             {/* Steps — reveal step by step on scroll */}
             <div className="flex flex-col justify-center gap-6 p-[clamp(1.6rem,4vw,3rem)] md:gap-7">

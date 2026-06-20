@@ -166,7 +166,7 @@ export default function FAQ() {
                     transition={{ duration: 1, delay: 0.2, ease: liquidEase }}
                     className="hidden h-full lg:col-span-7 lg:flex"
                 >
-                    <div className="relative flex w-full min-h-[380px] flex-col justify-center overflow-hidden rounded-[36px] border border-line bg-surface p-12 nv-shadow-lg">
+                    <div className="relative flex w-full min-h-[380px] flex-col justify-center overflow-hidden rounded-[calc(36px*var(--nv-r-scale,1))] border border-line bg-surface p-12 nv-shadow-lg">
                         <div className="pointer-events-none absolute right-0 top-0 h-80 w-80 -translate-y-1/2 translate-x-1/3 rounded-full bg-primary/10 blur-[80px]" />
 
                         <AnimatePresence mode="wait">

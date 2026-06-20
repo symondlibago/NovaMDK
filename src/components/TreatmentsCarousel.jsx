@@ -127,7 +127,7 @@ export default function Treatments() {
   const renderCards = () => products.map((p, i) => (
     <div
       key={i}
-      className={`treatment-card group relative flex shrink-0 flex-col rounded-[32px] border border-line bg-surface p-6 transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg md:rounded-[40px] md:p-8 ${
+      className={`treatment-card group relative flex shrink-0 flex-col rounded-[calc(32px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg md:rounded-[calc(40px*var(--nv-r-scale,1))] md:p-8 ${
         isMobile ? 'w-[82vw] max-w-[300px] snap-center sm:max-w-[320px]' : 'w-[340px]'
       }`}
     >

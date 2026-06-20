@@ -13,7 +13,7 @@ function ProductCard({ p, delay }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, ease: EASE, delay }}
-      className="group flex flex-col rounded-[26px] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
+      className="group flex flex-col rounded-[calc(26px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
     >
       <div className="mb-2 flex items-center justify-between gap-3">
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.13em] text-accent">{p.categoryName}</span>
@@ -52,8 +52,9 @@ function ProductCard({ p, delay }) {
 }
 
 /**
- * Shows the products for a single category — the screen a patient lands on after
- * finishing that category's consultation. `category` is a product `categorySlug`.
+ * Shows the shoppable products for a single category — the catalog a patient
+ * browses (from a homepage category, the Treatments page, or a quiz match).
+ * `category` is a product `categorySlug`.
  */
 export default function TreatmentShop({ category }) {
   const products = productsData.filter((p) => p.categorySlug === category);
@@ -64,12 +65,12 @@ export default function TreatmentShop({ category }) {
     <section id="shop" className="scroll-mt-24 bg-surface-2 py-[clamp(3rem,6vw,5rem)]">
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
         <div className="mb-8 text-center">
-          <span className="nv-eyebrow">Matched to your answers</span>
+          <span className="nv-eyebrow">Prescription treatments</span>
           <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.6rem)] font-extrabold leading-tight">
-            Your {name} options
+            {name}
           </h2>
-          <p className="mx-auto mt-3 max-w-[40ch] text-[1.02rem] text-muted">
-            A licensed provider confirms the right fit before anything ships.
+          <p className="mx-auto mt-3 max-w-[44ch] text-[1.02rem] text-muted">
+            Pick a treatment to start your visit — a licensed provider confirms the right fit before anything ships.
           </p>
         </div>
 
