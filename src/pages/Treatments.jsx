@@ -8,6 +8,7 @@ import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
 import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
+import PeptideShop from "../components/shop/PeptideShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { productsData } from "../components/data/products";
@@ -16,14 +17,24 @@ import { track, EVENTS } from "../lib/analytics";
 const FAQ = lazy(() => import("../components/FAQ"));
 
 // Mirror the homepage funnels — each tile browses that goal's shoppable catalog.
-const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
-  name: CONSULTS[k].name,
-  tag: CONSULTS[k].tag,
-  blurb: CONSULTS[k].blurb,
-  cta: "Browse treatments",
-  goal: CONSULTS[k].goalSlug,
-  link: `/treatments?goal=${CONSULTS[k].goalSlug}`,
-}));
+const TREATMENT_CATS = [
+  ...CONSULT_ORDER.map((k) => ({
+    name: CONSULTS[k].name,
+    tag: CONSULTS[k].tag,
+    blurb: CONSULTS[k].blurb,
+    cta: "Browse treatments",
+    goal: CONSULTS[k].goalSlug,
+    link: `/treatments?goal=${CONSULTS[k].goalSlug}`,
+  })),
+  {
+    name: "Explore Peptides",
+    tag: "Peptide therapy",
+    blurb: "11 compounded peptides — recovery, longevity, metabolic and skin.",
+    cta: "Browse peptides",
+    goal: "peptides",
+    link: "/treatments?goal=peptides",
+  },
+];
 
 // Valid product categories a quiz can land on (everything but pure supplements).
 const VALID_GOALS = new Set(
@@ -126,6 +137,7 @@ function SocialProof() {
 export default function TreatmentsPage() {
   const [params] = useSearchParams();
   const goal = params.get("goal");
+  const isPeptides = goal === "peptides";
   const validGoal = goal && VALID_GOALS.has(goal) ? goal : null;
 
   return (
@@ -135,7 +147,10 @@ export default function TreatmentsPage() {
     >
       <Navbar />
 
-      {validGoal ? (
+      {isPeptides ? (
+        /* Explore Peptides → the 11-molecule peptide catalog (its own header) */
+        <PeptideShop />
+      ) : validGoal ? (
         /* Came from a consultation → only that category's products (their own header) */
         <TreatmentShop category={validGoal} />
       ) : (
@@ -152,10 +167,10 @@ export default function TreatmentsPage() {
               <div>
                 <span className="nv-eyebrow">Browse by goal</span>
                 <h2 className="mt-2 text-[clamp(1.5rem,3vw,2.1rem)] font-extrabold leading-tight">What are you working on?</h2>
-                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Pick a goal to browse the treatments — or take the quick quiz and we'll match you.</p>
+                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Pick a goal to browse the treatments</p>
               </div>
               <div className="flex shrink-0 flex-col gap-1.5 sm:items-end">
-                <Link to="/start/weight-loss" className="text-[0.92rem] font-semibold text-primary transition-colors hover:text-accent">
+                <Link to="/start" className="text-[0.92rem] font-semibold text-primary transition-colors hover:text-accent">
                   Not sure? Take the 2-min quiz →
                 </Link>
                 <Link to="/supplements" className="text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
@@ -166,10 +181,10 @@ export default function TreatmentsPage() {
             <CategoryGrid
               items={TREATMENT_CATS}
               dark
-              art="/pill.png"
+              art="/pill.avif"
               onItemClick={(it) => track(EVENTS.CATEGORY_SELECTED, { category: it.goal, source: "treatments" })}
             />
-          </section>
+          </section>  
         </>
       )}
 

@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ClipboardCheck, Stethoscope, Dna, PackageOpen } from "lucide-react";
 import Reveal from "../ui/Reveal";
 import Photo from "../ui/Photo";
 
 const EASE = [0.16, 1, 0.3, 1];
+
+// On phones the four steps share the viewport, so without help they'd pop in all
+// at once. Detect mobile to slow each step down and reveal them one-by-one as the
+// patient scrolls.
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return mobile;
+}
 
 const STEPS = [
   { title: "Free Assessment", desc: "Complete a brief, secure intake form detailing your health history and unique goals to see if you qualify.", Icon: ClipboardCheck },
@@ -18,6 +33,7 @@ const STEPS = [
  * scroll into view.
  */
 export default function HowItWorks() {
+  const isMobile = useIsMobile();
   return (
     <section id="how" className="relative scroll-mt-24 bg-bg py-[clamp(2rem,4vw,3.5rem)]">
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
@@ -37,8 +53,8 @@ export default function HowItWorks() {
                     key={step.title}
                     initial={{ opacity: 0, x: -26, filter: "blur(4px)" }}
                     whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                    viewport={{ once: false, margin: "0px 0px -22% 0px" }}
-                    transition={{ duration: 0.6, ease: EASE }}
+                    viewport={isMobile ? { once: false, amount: 0.6 } : { once: false, margin: "0px 0px -22% 0px" }}
+                    transition={{ duration: isMobile ? 0.95 : 0.6, ease: EASE, delay: isMobile ? i * 0.12 : 0 }}
                     className="group flex items-start gap-4"
                   >
                     <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary text-on-primary shadow-sm transition-transform duration-300 group-hover:scale-105">
@@ -59,7 +75,7 @@ export default function HowItWorks() {
             {/* Photo */}
             <div className="relative min-h-[320px] md:min-h-0">
               <div className="absolute inset-0">
-                <Photo src="/how-it-works.jpg" alt="A member completing their online visit on a laptop at home" className="h-full w-full" imgClassName="object-cover" />
+                <Photo src="/how-it-works.avif" alt="A member completing their online visit on a laptop at home" className="h-full w-full" imgClassName="object-cover" />
               </div>
             </div>
           </div>

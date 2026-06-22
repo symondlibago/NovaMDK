@@ -79,7 +79,7 @@ function LightCard({ it, art, onClick }) {
   );
 }
 
-export default function CategoryGrid({ items, art = "/pills-float.png", dark = false, onItemClick }) {
+export default function CategoryGrid({ items, art = "/pills-float.avif", dark = false, onItemClick }) {
   return (
     <div className="grid grid-cols-1 items-stretch gap-[clamp(0.8rem,1.6vw,1.1rem)] sm:grid-cols-2 lg:grid-cols-3">
       {items.map((it, i) => {

@@ -11,24 +11,24 @@ export default function FAQ() {
 
   const faqs = [
     {
-      q: "Can I pay with my HSA/FSA card?",
-      a: "Yes, we accept all major HSA and FSA cards for eligible medical expenses and consultations. You can seamlessly use them at checkout just like a standard credit card, making your care both accessible and tax-advantaged."
+      q: "How does the online visit work?",
+      a: "Answer a few questions about your health and goals. A licensed provider reviews them, and you only pay if you're prescribed."
     },
     {
-      q: "Do I need insurance?",
-      a: "No, you do not need insurance. Our services are transparently priced for direct cash pay, ensuring you know exactly what you're paying for without hidden fees, deductibles, or surprise bills."
+      q: "Is everything prescribed by a real provider?",
+      a: "Yes. A licensed US provider reviews and prescribes every treatment, and a regulated US pharmacy fills it."
     },
     {
-      q: "Can I talk to a doctor?",
-      a: "Absolutely. You will have unlimited messaging access to your assigned licensed medical provider to discuss your progress, adjust dosages, and address any concerns throughout your journey."
+      q: "What can I get treated for?",
+      a: "Weight and metabolism, longevity, recovery, skin, sexual health, and our full peptide line."
     },
     {
-      q: "Who are the healthcare providers?",
-      a: "Our providers are fully licensed, US-based medical doctors and nurse practitioners specializing in longevity, aesthetics, and targeted weight management protocols."
+      q: "How fast will it arrive?",
+      a: "Free two-day shipping in discreet packaging, usually within a couple of business days of approval."
     },
     {
-      q: "How are compounded medications sourced?",
-      a: "We partner exclusively with FDA-regulated, State Board of Pharmacy-licensed 503A compounding pharmacies to guarantee the highest safety, purity, and efficacy standards for every formulation."
+      q: "Can I pause or cancel anytime?",
+      a: "Yes, no lock-in. One message is enough to pause, change, or cancel."
     }
   ];
 

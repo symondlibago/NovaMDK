@@ -93,7 +93,7 @@ export default function Home() {
           <Reveal className="h-full">
             <Link to="/treatments" className="group relative flex h-full min-h-[clamp(248px,36vw,420px)] flex-col justify-between overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] p-6 text-white md:p-7 nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
               <div className="absolute inset-0 z-0">
-                <Photo src="/visit-phone.jpg" alt="Taking the five-minute online visit on a phone" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
+                <Photo src="/visit-phone.avif" alt="Taking the five-minute online visit on a phone" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
               </div>
               <span className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(105deg, color-mix(in oklab, var(--nv-ink-panel) 88%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 52%, transparent) 50%, color-mix(in oklab, var(--nv-ink-panel) 14%, transparent) 100%)" }} />
               <div className="relative z-10">
@@ -109,7 +109,7 @@ export default function Home() {
           <Reveal delay={0.08} className="h-full">
             <a href="#how" onClick={(e) => { e.preventDefault(); scrollToId("how"); }} className="group relative flex h-full min-h-[clamp(248px,36vw,420px)] flex-col justify-between overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] p-6 text-white md:p-7 nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
               <div className="absolute inset-0 z-0">
-                <Photo src="/courier-delivery.jpg" alt="A courier handing a package to a smiling customer" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
+                <Photo src="/courier-delivery.avif" alt="A courier handing a package to a smiling customer" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
               </div>
               <span className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(105deg, color-mix(in oklab, var(--nv-ink-panel) 88%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 52%, transparent) 50%, color-mix(in oklab, var(--nv-ink-panel) 14%, transparent) 100%)" }} />
               <div className="relative z-10">
@@ -130,7 +130,7 @@ export default function Home() {
         <div className="grid items-center gap-[clamp(2rem,5vw,4.5rem)] md:grid-cols-2">
           <Reveal>
             <div className="relative">
-              <Photo src="/why-people-stay.jpg" alt="A smiling member outdoors after a wellness session" className="aspect-[5/4] rounded-[calc(26px*var(--nv-r-scale,1))] nv-shadow-lg" imgClassName="object-cover" />
+              <Photo src="/why-people-stay.avif" alt="A smiling member outdoors after a wellness session" className="aspect-[5/4] rounded-[calc(26px*var(--nv-r-scale,1))] nv-shadow-lg" imgClassName="object-cover" />
               <div className="absolute -bottom-5 -left-3 max-w-[230px] rounded-2xl border border-line bg-surface p-5 nv-shadow-lg">
                 <div className="text-[1.9rem] font-extrabold leading-none tracking-tight text-ink">8 weeks</div>
                 <div className="mt-1.5 text-[0.82rem] leading-snug text-muted">median time members say they felt a difference*</div>
@@ -190,7 +190,7 @@ export default function Home() {
         <Reveal>
           <div className="relative grid min-h-[clamp(300px,42vw,460px)] items-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))]">
             <div className="absolute inset-0 z-0">
-              <Photo src="/outdoor-group.jpg" alt="A group of people standing together outdoors" className="h-full w-full" imgClassName="object-cover" />
+              <Photo src="/outdoor-group.avif" alt="A group of people standing together outdoors" className="h-full w-full" imgClassName="object-cover" />
             </div>
             <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(100deg, color-mix(in oklab, var(--nv-ink-panel) 86%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 55%, transparent) 52%, color-mix(in oklab, var(--nv-ink-panel) 18%, transparent) 100%)" }} />
             <div className="relative z-10 max-w-[34rem] p-[clamp(1.8rem,5vw,3rem)] text-white">

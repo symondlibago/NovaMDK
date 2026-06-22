@@ -23,7 +23,7 @@ const legalDocuments = {
           },
           {
             heading: '1.2 Contact Information',
-            text: 'For general support questions, please contact us at support@novamdk.com. For medical or clinical questions, please contact medteam@novamdk.com or message your Provider through the Platform. Our mailing address is:\n\nNovaMDK\n5000 Birch St. Suite 3000\nNewport Beach, CA 92660',
+            text: 'For general support questions, please contact us at support@novamdk.com. For medical or clinical questions, please contact medteam@novamdk.com or message your Provider through the Platform. Our mailing address is:\n\nNovaMDK\n15570 Brookhurst St #238\nWestminster, CA 92683',
           },
         ],
       },
@@ -218,7 +218,7 @@ const legalDocuments = {
           },
           {
             heading: '19.8 Contact',
-            text: 'Questions about these Terms? Contact us at:\n\nNovaMDK\nAttn: Legal\n5000 Birch St. Suite 3000\nNewport Beach, CA 92660\nEmail: support@novamdk.com\nMedical: medteam@novamdk.com',
+            text: 'Questions about these Terms? Contact us at:\n\nNovaMDK\nAttn: Legal\n15570 Brookhurst St #238\nWestminster, CA 92683\nEmail: support@novamdk.com\nMedical: medteam@novamdk.com',
           },
         ],
       },
@@ -369,7 +369,7 @@ const legalDocuments = {
           },
           {
             heading: '14.2 Contact',
-            text: 'If you have any questions, comments, or requests regarding this Privacy Policy or our privacy practices, please contact us:\n\nNovaMDK\nAttn: Privacy\n5000 Birch St. Suite 3000\nNewport Beach, CA 92660\n\nPrivacy: privacy@novamdk.com\nSupport: support@novamdk.com\nMedical: medteam@novamdk.com',
+            text: 'If you have any questions, comments, or requests regarding this Privacy Policy or our privacy practices, please contact us:\n\nNovaMDK\nAttn: Privacy\n15570 Brookhurst St #238\nWestminster, CA 92683\n\nPrivacy: privacy@novamdk.com\nSupport: support@novamdk.com\nMedical: medteam@novamdk.com',
           },
         ],
       },
@@ -521,7 +521,7 @@ const legalDocuments = {
       },
       {
         heading: '17. Contact Information',
-        text: 'Questions about this Consent or your telehealth care?\n\n14441 Brookhurst St\nSuite 7\nGarden Grove Ca 92943\n\nMedical questions: medteam@novamdk.com\nGeneral support: support@novamdk.com',
+        text: 'Questions about this Consent or your telehealth care?\n\nNovaMDK\n15570 Brookhurst St #238\nWestminster, CA 92683\n\nMedical questions: medteam@novamdk.com\nGeneral support: support@novamdk.com',
       },
     ],
     closing: 'PATIENT ACKNOWLEDGMENT\n\nI have read and understand this Telehealth Informed Consent. I have had the opportunity to ask questions and have received answers to my satisfaction. I voluntarily consent to receive healthcare services through telehealth as described in this Consent.\n\nWhen this Consent is accepted electronically through the Platform, your acceptance is recorded with a date and time stamp and constitutes your legal signature.',
@@ -576,7 +576,7 @@ const legalDocuments = {
       },
       {
         heading: '11. Contact Us',
-        text: 'To exercise your rights, ask questions, submit a complaint, or withdraw an authorization with respect to Consumer Health Data, contact us at:\n\nNovaMDK\nAttn: Privacy\n5000 Birch St. Suite 3000\nNewport Beach, CA 92660\n\nPrivacy: privacy@novamdk.com\nSupport: support@novamdk.com',
+        text: 'To exercise your rights, ask questions, submit a complaint, or withdraw an authorization with respect to Consumer Health Data, contact us at:\n\nNovaMDK\nAttn: Privacy\n15570 Brookhurst St #238\nWestminster, CA 92683\n\nPrivacy: privacy@novamdk.com\nSupport: support@novamdk.com',
       },
       {
         heading: '12. Changes to This Notice',

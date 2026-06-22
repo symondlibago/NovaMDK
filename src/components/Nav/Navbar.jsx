@@ -21,17 +21,17 @@ const treatmentItems = [
    plain link for now; restore this array + the NavDropdown/MobileGroup to bring the
    peptide menu back.
 const supplementItems = [
-  { name: "Semaglutide", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "Tirzepatide", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "Retatrutide (GLP-3)", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "BPC-157", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "NAD+", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "GHK-Cu", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "Thymosin Alpha 1", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "MOTS-C", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "IGF-1-LR3", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "Tesamorelin", img: "/luvirasupplement.png", link: "/supplements" },
-  { name: "Glow Blend", img: "/luvirasupplement.png", link: "/supplements" },
+  { name: "Semaglutide", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "Tirzepatide", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "Retatrutide (GLP-3)", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "BPC-157", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "NAD+", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "GHK-Cu", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "Thymosin Alpha 1", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "MOTS-C", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "IGF-1-LR3", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "Tesamorelin", img: "/luvirasupplement.avif", link: "/supplements" },
+  { name: "Glow Blend", img: "/luvirasupplement.avif", link: "/supplements" },
 ];
 */
 
@@ -153,8 +153,9 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-7 lg:flex">
             <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
-            {/* Peptide dropdown hidden at client request — plain link until supplement products are added. */}
+            <Link to="/treatments?goal=peptides" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Peptides</Link>
             <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
+            <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
             <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
           </div>
 
@@ -190,9 +191,14 @@ export default function Navbar() {
               </div>
               <div className="flex grow flex-col p-4">
                 <MobileGroup title="Treatments" items={treatmentItems} close={() => setMobileOpen(false)} viewAllLink="/treatments" defaultOpen />
-                {/* Peptide list hidden at client request — plain link until supplement products are added. */}
+                <Link to="/treatments?goal=peptides" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
+                  Peptides <ArrowRight size={16} className="text-muted" />
+                </Link>
                 <Link to="/supplements" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                   Supplements <ArrowRight size={16} className="text-muted" />
+                </Link>
+                <Link to="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
+                  Kiosk <ArrowRight size={16} className="text-muted" />
                 </Link>
                 <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                   Contact <ArrowRight size={16} className="text-muted" />

@@ -11,7 +11,7 @@ const DETAILS = [
   { icon: Mail, label: "Email", value: "care@novamdk.com", href: "mailto:care@novamdk.com" },
   { icon: Phone, label: "Phone", value: "(800) 555-0142", href: "tel:+18005550142" },
   { icon: Clock, label: "Hours", value: "Mon–Fri · 8am–8pm ET" },
-  { icon: MapPin, label: "Pharmacy", value: "Licensed in all 50 states" },
+  { icon: MapPin, label: "Address", value: "15570 Brookhurst St #238, Westminster, CA 92683" },
 ];
 
 const field =
@@ -116,7 +116,7 @@ export default function ContactPage() {
                 <div className="relative flex h-full flex-col">
                   <span className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-accent">Talk to us</span>
                   <h2 className="mt-3 text-[clamp(1.5rem,2.6vw,2rem)] font-extrabold leading-tight">
-                    A real person, on the other end.
+                    A care team that actually answers.
                   </h2>
                   <p className="mt-3 max-w-[34ch] text-[0.96rem] leading-relaxed text-on-panel/70">
                     Reach the care team directly — no phone trees, no bots reading from a script.

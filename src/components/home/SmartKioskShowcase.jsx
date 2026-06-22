@@ -22,7 +22,7 @@ export default function SmartKioskShowcase() {
             and provider-guided care in one beautifully simple kiosk.
           </p>
           <Link
-            to="/contact"
+            to="/kiosk"
             className="group mt-7 inline-flex items-center gap-3 rounded-full border border-line bg-surface py-2 pl-6 pr-2 text-[0.96rem] font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-primary nv-shadow"
           >
             Clinic or Gym Owner? Learn more

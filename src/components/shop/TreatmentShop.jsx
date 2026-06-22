@@ -51,13 +51,22 @@ function ProductCard({ p, delay }) {
   );
 }
 
-/**
- * Shows the shoppable products for a single category — the catalog a patient
- * browses (from a homepage category, the Treatments page, or a quiz match).
- * `category` is a product `categorySlug`.
- */
+// Product ids pinned to the front of a category's listing (marketing priority).
+// Weight Loss → Ozempic (4) then Mounjaro (5) lead the catalog.
+const PINNED_FIRST = { "weight-loss": [4, 5] };
+
 export default function TreatmentShop({ category }) {
-  const products = productsData.filter((p) => p.categorySlug === category);
+  const pinned = PINNED_FIRST[category] || [];
+  const products = productsData
+    .filter((p) => p.categorySlug === category)
+    .sort((a, b) => {
+      const ai = pinned.indexOf(a.id);
+      const bi = pinned.indexOf(b.id);
+      if (ai === -1 && bi === -1) return 0;      // both unpinned → keep original order
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;                            // both pinned → pinned order
+    });
   if (!products.length) return null;
   const name = products[0].categoryName;
 

@@ -1,5 +1,3 @@
-// Holds the single Lenis instance so anything (ScrollToTop, anchor links) can
-// drive smooth scrolling without prop-drilling.
 let _lenis = null;
 
 export const setLenis = (l) => { _lenis = l; };

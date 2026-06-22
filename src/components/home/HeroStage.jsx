@@ -33,20 +33,17 @@ function GlassCard({ c, delay }) {
           alt=""
           aria-hidden="true"
           loading="lazy"
-          className="nv-bob relative z-[3] h-11 w-11 shrink-0 object-contain drop-shadow-[0_12px_20px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110 sm:mb-2.5 sm:h-[46px] sm:w-auto sm:self-start"
+          className="nv-bob relative z-[3] h-14 w-14 shrink-0 object-contain drop-shadow-[0_12px_20px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110 sm:mb-3 sm:h-[72px] sm:w-auto sm:self-start"
         />
 
-        {/* tag · name · blurb */}
+        {/* tag · name */}
         <div className="relative z-[3] min-w-0 flex-1 sm:flex-none">
-          <span className="font-mono text-[0.58rem] uppercase tracking-[0.12em] text-white/75 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)]">
+          <span className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-white/80 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)] sm:text-[0.66rem]">
             {c.tag}
           </span>
-          <h3 className="mt-0.5 font-display text-[1.04rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)] sm:mt-1 sm:text-[1.08rem]">
+          <h3 className="mt-0.5 font-display text-[1.22rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)] sm:mt-1.5 sm:text-[1.45rem]">
             {c.name}
           </h3>
-          <p className="mt-1 line-clamp-1 text-[0.76rem] leading-snug text-white/85 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)] sm:mt-1.5 sm:line-clamp-none sm:text-[0.78rem]">
-            {c.blurb}
-          </p>
         </div>
 
         {/* mobile trailing arrow */}
@@ -77,7 +74,7 @@ export default function HeroStage() {
       {/* Ken-burns background photo + parallax */}
       <motion.div style={{ y: bgY }} className="absolute -inset-[8%] -z-30 will-change-transform">
         <img
-          src="/home-hero.jpg"
+          src="/home-hero.avif"
           alt=""
           aria-hidden="true"
           className="nv-kenburns h-full w-full object-cover [object-position:62%_38%] [filter:grayscale(0.45)_saturate(0.85)_contrast(1.02)]"
@@ -157,7 +154,7 @@ export default function HeroStage() {
         >
           {/* photo fills the card */}
           <img
-            src="/assessment.jpg"
+            src="/assessment.avif"
             alt="A licensed clinician reviewing a patient's plan on a laptop"
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
@@ -182,7 +179,7 @@ export default function HeroStage() {
               you. It's free, there's no commitment, and you only pay if you're prescribed.
             </p>
             <Link
-              to="/start/weight-loss"
+              to="/start"
               className="mt-6 inline-flex items-center gap-2.5 rounded-full border-[1.5px] border-white/55 px-5 py-3 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-white hover:text-ink"
             >
               Start the assessment <ArrowRight size={14} />

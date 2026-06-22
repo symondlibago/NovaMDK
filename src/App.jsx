@@ -11,6 +11,7 @@ import Platform from "./pages/Platform";
 import TreatmentsPage from "./pages/Treatments";
 import SupplementsPage from "./pages/Supplements";
 import ContactPage from "./pages/Contact";
+import KioskPage from "./pages/Kiosk";
 import Consult from "./pages/Consult";
 import ProductPage from "./pages/ProductPage";
 import LegalPage from "./components/LegalPage";
@@ -36,7 +37,9 @@ function App() {
           <Route path="/" element={<Platform />} />
           <Route path="/treatments" element={<TreatmentsPage />} />
           <Route path="/supplements" element={<SupplementsPage />} />
+          <Route path="/kiosk" element={<KioskPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/start" element={<Consult />} />
           <Route path="/start/:slug" element={<Consult />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/legal/:policyId" element={<LegalPage />} />

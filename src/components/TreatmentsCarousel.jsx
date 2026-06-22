@@ -1,10 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, ArrowRight, ShieldAlert } from "lucide-react";
-import { productsData } from "./data/products";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const liquidEase = [0.16, 1, 0.3, 1];
+
+// Category cards — full-bleed photo + brand badge; each links into that goal's catalog.
+const CATEGORIES = [
+  { name: "Weight & Metabolism", img: "/weight-metabolism.avif", goal: "weight-loss" },
+  { name: "Dermatology", img: "/dermatology.avif", goal: "unisex-skin-health" },
+  { name: "Longevity & Anti-Aging", img: "/mens-health.avif", goal: "unisex-anti-aging-rx" },
+  { name: "Sexual Health", img: "/sexual-health.avif", goal: "mens-health" },
+  { name: "Pain & Recovery", img: "/pain-recovery.avif", goal: "unisex-sports-medicine" },
+];
 
 export default function Treatments() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -19,10 +27,7 @@ export default function Treatments() {
   const mobileCarouselRef = useRef(null);
   const desktopCarouselRef = useRef(null);
 
-  const featuredIds = [2, 3, 1, 6, 15, 11];
-  const products = productsData
-    ? featuredIds.map(id => productsData.find(p => p.id === id)).filter(Boolean)
-    : [];
+  const products = CATEGORIES;
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -124,40 +129,38 @@ export default function Treatments() {
 
   if (products.length === 0) return null;
 
-  const renderCards = () => products.map((p, i) => (
-    <div
+  const renderCards = () => products.map((c, i) => (
+    <Link
       key={i}
-      className={`treatment-card group relative flex shrink-0 flex-col rounded-[calc(32px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg md:rounded-[calc(40px*var(--nv-r-scale,1))] md:p-8 ${
-        isMobile ? 'w-[82vw] max-w-[300px] snap-center sm:max-w-[320px]' : 'w-[340px]'
+      to={`/treatments?goal=${c.goal}`}
+      className={`treatment-card group relative block shrink-0 overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] nv-shadow transition-all duration-500 hover:-translate-y-1 hover:nv-shadow-lg ${
+        isMobile ? 'h-[150px] w-[80vw] max-w-[330px] snap-center' : 'h-[164px] w-[340px]'
       }`}
     >
-      <h3 className="mb-1 text-[20px] font-medium text-ink md:text-[22px]">{p.name}</h3>
-      <p className="mb-6 text-[13px] font-medium text-muted md:text-sm">{p.price}</p>
-
-      <div className="pointer-events-none mb-8 flex h-40 items-center justify-center px-4 md:h-48">
+      <img
+        src={c.img}
+        alt={c.name}
+        loading="lazy"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+      />
+      {/* legibility wash — darker on the left where the label sits */}
+      <span
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(90deg, color-mix(in oklab, var(--nv-ink-panel) 64%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 26%, transparent) 52%, transparent 100%)" }}
+      />
+      <div className="relative flex h-full items-center justify-between gap-3 p-5 md:p-6">
+        <h3 className="max-w-[58%] font-display text-[1.35rem] font-bold leading-[1.1] text-white drop-shadow-[0_2px_14px_rgba(15,22,34,0.65)] md:text-[1.5rem]">
+          {c.name}
+        </h3>
         <img
-          src={p.img}
-          alt={p.name}
-          className="h-full w-full object-contain mix-blend-multiply drop-shadow-2xl transition-transform duration-700 ease-out group-hover:-translate-y-2 group-hover:rotate-2 group-hover:scale-105"
+          src="/novamdkpill.avif"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="w-[64px] shrink-0 object-contain drop-shadow-[0_6px_18px_rgba(15,22,34,0.35)] transition-transform duration-500 group-hover:scale-110 md:w-[72px]"
         />
       </div>
-
-      <div className="z-10 mb-5 mt-auto flex">
-        <Link
-          to="/contact"
-          className="group/btn flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full bg-primary py-3 text-[13px] font-medium text-on-primary transition-all hover:bg-primary-deep nv-shadow md:gap-2 md:py-3.5 md:text-[14px]"
-        >
-          Start your visit
-          <span className="flex items-center justify-center rounded-full bg-white/20 p-1 transition-colors group-hover/btn:bg-white/30">
-            <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover/btn:translate-x-0.5" />
-          </span>
-        </Link>
-      </div>
-
-      <button className="z-10 flex w-full cursor-pointer items-center justify-center gap-1.5 py-1.5 text-center text-[11px] font-medium text-muted transition-colors hover:text-ink md:text-[12px]">
-        <ShieldAlert size={14} className="text-primary/70" /> Important safety info
-      </button>
-    </div>
+    </Link>
   ));
 
   const totalDots = isMobile ? products.length : maxIndex + 1;
@@ -227,9 +230,9 @@ export default function Treatments() {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3 }}
                 onClick={handlePrev}
-                className="absolute -left-6 top-1/2 z-10 hidden h-14 w-14 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-line bg-surface text-ink transition-all hover:text-primary hover:nv-shadow-lg nv-shadow md:flex"
+                className="absolute -left-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ink/55 text-white transition-all hover:bg-ink/75 nv-shadow md:flex"
               >
-                <ChevronLeft size={24} strokeWidth={1.5} />
+                <ChevronLeft size={22} strokeWidth={2.2} />
               </motion.button>
             )}
           </AnimatePresence>
@@ -243,9 +246,9 @@ export default function Treatments() {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3 }}
                 onClick={handleNext}
-                className="absolute -right-6 top-1/2 z-10 hidden h-14 w-14 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-line bg-surface text-ink transition-all hover:text-primary hover:nv-shadow-lg nv-shadow md:flex"
+                className="absolute -right-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ink/55 text-white transition-all hover:bg-ink/75 nv-shadow md:flex"
               >
-                <ChevronRight size={24} strokeWidth={1.5} />
+                <ChevronRight size={22} strokeWidth={2.2} />
               </motion.button>
             )}
           </AnimatePresence>

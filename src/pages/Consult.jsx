@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, X, Check, Lock, ShieldCheck } from "lucide-react";
-import { CONSULTS } from "../components/data/consultations";
+import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { getLenis } from "../lib/smoothScroll";
 import { track, EVENTS } from "../lib/analytics";
 
@@ -22,6 +22,49 @@ function PrimaryButton({ children, onClick, disabled }) {
 }
 
 /* ------------------------------- screens ------------------------------- */
+/* Category picker — shown first when no goal is chosen yet ("/start"). Picking
+   one routes to that category's questionnaire ("/start/:slug"). */
+function Picker({ onPick }) {
+  return (
+    <section className="mx-auto max-w-[560px] px-6 pb-14 pt-8">
+      <div className="font-mono text-[12px] uppercase tracking-[0.06em] text-accent">Free 2-minute assessment</div>
+      <h2 className="mt-4 font-display text-[clamp(1.8rem,5vw,2.1rem)] font-medium leading-[1.12] tracking-tight text-ink">
+        What would you like help with?
+      </h2>
+      <p className="mt-4 text-[1.02rem] leading-relaxed text-muted">
+        Pick a focus and we'll ask a few quick questions, then match you with the right care.
+      </p>
+
+      <div className="mt-7 flex flex-col gap-2.5">
+        {CONSULT_ORDER.map((key) => {
+          const c = CONSULTS[key];
+          const Icon = c.Icon;
+          return (
+            <button
+              key={key}
+              onClick={() => onPick(key)}
+              className="group flex w-full items-center gap-4 rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] border-line bg-surface px-[18px] py-[15px] text-left transition-colors duration-200 hover:border-primary active:scale-[0.99]"
+            >
+              <span className="grid h-11 w-11 flex-none place-items-center rounded-full bg-surface-2 text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                <Icon size={20} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15.5px] font-bold tracking-tight text-ink">{c.short}</span>
+                <span className="mt-0.5 block truncate text-[13px] text-muted">{c.blurb}</span>
+              </span>
+              <ArrowRight size={18} className="flex-none text-muted transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 flex items-center justify-center gap-2 text-[13px] text-muted">
+        <Lock size={14} /> <span>Private &amp; secure</span>
+      </div>
+    </section>
+  );
+}
+
 function Intro({ step, onNext }) {
   return (
     <section className="mx-auto max-w-[480px] px-6 pb-12 pt-8">
@@ -137,6 +180,24 @@ export default function Consult() {
     if (l) l.scrollTo(0, { immediate: true });
     else window.scrollTo(0, 0);
   }, [i]);
+
+  // No category chosen yet ("/start") → show the picker first.
+  if (!slug) {
+    return (
+      <main className="min-h-screen w-full bg-bg text-ink">
+        <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-bg/85 px-4 py-3 backdrop-blur-md md:px-5">
+          <button onClick={() => navigate("/treatments")} aria-label="Back" className="grid h-[38px] w-[38px] place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+            <ArrowLeft size={18} />
+          </button>
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">Step 1 of 2</span>
+          <button onClick={() => navigate("/")} aria-label="Close" className="grid h-[38px] w-[38px] place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+            <X size={18} />
+          </button>
+        </header>
+        <Picker onPick={(key) => navigate(`/start/${key}`)} />
+      </main>
+    );
+  }
 
   if (!consult) return <Navigate to="/" replace />;
 

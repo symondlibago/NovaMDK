@@ -35,9 +35,18 @@ export default function ProductPage() {
 
   if (!product) return <Navigate to="/treatments" replace />;
 
-  const related = productsData
-    .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
-    .slice(0, 3);
+  // Peptides live under the supplements catalog but are presented on the RX /
+  // peptides side — re-label the breadcrumb, badges, and "related" accordingly.
+  const isPeptide = product.categorySlug === "supplements" && !!product.subCategorySlug;
+  const categoryLabel = isPeptide ? "Peptides" : product.categoryName;
+  const backLink = isPeptide ? "/treatments?goal=peptides" : `/treatments?goal=${product.categorySlug}`;
+
+  const related = isPeptide
+    ? productsData.filter((p) => p.subCategorySlug === product.subCategorySlug && p.id !== product.id)
+    : productsData
+        .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
+        .slice(0, 3);
+  const relatedHeading = isPeptide ? `More ${product.subCategoryName} strengths` : `More in ${product.categoryName}`;
 
   // MDIntegrations trigger — the product page is where intake begins. Mint a
   // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final
@@ -73,8 +82,8 @@ export default function ProductPage() {
 
       {/* breadcrumb */}
       <div className="mx-auto max-w-[1180px] px-5 pt-6 md:px-10">
-        <Link to={`/treatments?goal=${product.categorySlug}`} className="inline-flex items-center gap-1.5 text-[0.9rem] font-medium text-muted transition-colors hover:text-ink">
-          <ArrowLeft size={15} /> Back to {product.categoryName}
+        <Link to={backLink} className="inline-flex items-center gap-1.5 text-[0.9rem] font-medium text-muted transition-colors hover:text-ink">
+          <ArrowLeft size={15} /> Back to {categoryLabel}
         </Link>
       </div>
 
@@ -93,7 +102,7 @@ export default function ProductPage() {
               <div className="pointer-events-none absolute bottom-[18%] left-1/2 h-6 w-2/5 -translate-x-1/2 rounded-[50%] bg-ink/15 blur-xl" />
 
               <span className="absolute left-5 top-5 z-10 rounded-full border border-line bg-surface px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-accent">
-                {product.categoryName}
+                {categoryLabel}
               </span>
               {product.dosageForm && (
                 <span className="absolute bottom-5 left-5 z-10 rounded-full bg-ink px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-on-primary">
@@ -113,7 +122,7 @@ export default function ProductPage() {
           <Reveal delay={0.08}>
             <div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <span className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-accent">{product.categoryName}</span>
+                <span className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-accent">{categoryLabel}</span>
                 <span className="flex items-center gap-1.5">
                   <span className="flex text-accent">
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -269,7 +278,7 @@ export default function ProductPage() {
       {/* ===== Related ===== */}
       {related.length > 0 && (
         <section className="mx-auto mb-[clamp(3.5rem,7vw,6rem)] max-w-[1180px] px-5 md:px-10">
-          <h2 className="mb-6 text-[clamp(1.4rem,3vw,2rem)] font-extrabold">More in {product.categoryName}</h2>
+          <h2 className="mb-6 text-[clamp(1.4rem,3vw,2rem)] font-extrabold">{relatedHeading}</h2>
           <div className="grid gap-5 sm:grid-cols-3">
             {related.map((r) => (
               <Link

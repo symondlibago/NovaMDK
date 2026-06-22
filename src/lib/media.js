@@ -1,7 +1,3 @@
-// Curated premium photography for NovaMDK marketing surfaces.
-// Hotlinked from the Unsplash CDN; <Photo> degrades to a themed gradient if a
-// request fails, so a broken URL still reads as an intentional brand surface.
-
 const U = (id, w = 1600) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 

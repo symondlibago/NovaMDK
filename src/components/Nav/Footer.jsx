@@ -22,6 +22,11 @@ export default function Footer() {
             <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-on-panel/60">
               Personalized supplements and treatments, formulated by licensed physicians and delivered to your door.
             </p>
+            <address className="mt-4 text-sm not-italic leading-relaxed text-on-panel/60">
+              NovaMDK<br />
+              15570 Brookhurst St #238<br />
+              Westminster, CA 92683
+            </address>
             <div className="mb-8 mt-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs">
               <span className="font-medium text-on-panel">4.8</span>
               <span className="tracking-tighter text-accent">★★★★★</span>
