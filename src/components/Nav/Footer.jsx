@@ -22,11 +22,6 @@ export default function Footer() {
             <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-on-panel/60">
               Personalized supplements and treatments, formulated by licensed physicians and delivered to your door.
             </p>
-            <address className="mt-4 text-sm not-italic leading-relaxed text-on-panel/60">
-              NovaMDK<br />
-              15570 Brookhurst St #238<br />
-              Westminster, CA 92683
-            </address>
             <div className="mb-8 mt-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs">
               <span className="font-medium text-on-panel">4.8</span>
               <span className="tracking-tighter text-accent">★★★★★</span>
@@ -44,11 +39,11 @@ export default function Footer() {
             <h4 className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.13em] text-accent md:mb-6">Treatments</h4>
             <ul className="space-y-3 text-[14px] text-on-panel/60 md:space-y-4">
               <li><Link to="/treatments" className="transition-colors hover:text-on-panel">All Treatments</Link></li>
-              <li><Link to="/supplements" className="transition-colors hover:text-on-panel">Supplements</Link></li>
-              <li><Link to="/treatments" className="transition-colors hover:text-on-panel">Weight Loss</Link></li>
-              <li><Link to="/treatments" className="transition-colors hover:text-on-panel">Sports Medicine</Link></li>
-              <li><Link to="/treatments" className="transition-colors hover:text-on-panel">Men's Health</Link></li>
-              <li><Link to="/treatments" className="transition-colors hover:text-on-panel">Women's Health</Link></li>
+              <li><Link to="/treatments?goal=weight-loss" className="transition-colors hover:text-on-panel">Weight Loss</Link></li>
+              <li><Link to="/treatments?goal=unisex-anti-aging-rx" className="transition-colors hover:text-on-panel">Anti-Aging</Link></li>
+              <li><Link to="/treatments?goal=unisex-skin-health" className="transition-colors hover:text-on-panel">Skin Health</Link></li>
+              <li><Link to="/treatments?goal=mens-health" className="transition-colors hover:text-on-panel">Sexual Health</Link></li>
+              <li><Link to="/treatments?goal=unisex-sports-medicine" className="transition-colors hover:text-on-panel">Sports Medicine</Link></li>
             </ul>
           </div>
 
@@ -56,10 +51,10 @@ export default function Footer() {
             <h4 className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.13em] text-accent md:mb-6">Company</h4>
             <ul className="space-y-3 text-[14px] text-on-panel/60 md:space-y-4">
               <li><Link to="/#how" className="transition-colors hover:text-on-panel">How it works</Link></li>
-              <li><Link to="/#why" className="transition-colors hover:text-on-panel">Why people stay</Link></li>
+              <li><Link to="/kiosk" className="transition-colors hover:text-on-panel">Smart Kiosk</Link></li>
+              <li><Link to="/supplements" className="transition-colors hover:text-on-panel">Supplements</Link></li>
               <li><Link to="/#reviews" className="transition-colors hover:text-on-panel">Reviews</Link></li>
               <li><Link to="/#faq" className="transition-colors hover:text-on-panel">FAQ</Link></li>
-              <li><Link to="/treatments" className="transition-colors hover:text-on-panel">Treatments</Link></li>
               <li><Link to="/contact" className="transition-colors hover:text-on-panel">Contact Us</Link></li>
             </ul>
           </div>

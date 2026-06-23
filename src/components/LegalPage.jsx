@@ -704,10 +704,15 @@ export default function LegalPage() {
             </div>
           )}
 
-          {/* Footer note */}
+          {/* Footer note + registered address */}
           <div className="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-line text-xs sm:text-sm text-ink/50">
             If you have any questions regarding these policies, please contact our legal department via the{' '}
             <Link to="/contact" className="text-primary hover:underline">Contact Page</Link>.
+            <address className="mt-4 not-italic leading-relaxed">
+              <span className="font-medium text-ink/70">NovaMDK</span><br />
+              15570 Brookhurst St #238<br />
+              Westminster, CA 92683
+            </address>
           </div>
         </div>
       </main>

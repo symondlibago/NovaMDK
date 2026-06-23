@@ -6,15 +6,14 @@ import { getLenis } from "../../lib/smoothScroll";
 
 const EASE = [0.16, 1, 0.3, 1];
 
-// Category pages were removed in the rebrand — every item routes to the
-// Treatments or Supplements showcase page.
+// Mirror the real treatment categories (see data/consultations.jsx). Each item
+// deep-links to that goal's shoppable catalog — keep in sync with the footer.
 const treatmentItems = [
-  { name: "Weight Loss", img: "/supplementpill.avif", link: "/treatments" },
-  { name: "Sports Medicine", img: "/sportpill.avif", link: "/treatments" },
-  { name: "Anti-Aging Rx", img: "/antipill.avif", link: "/treatments" },
-  { name: "Men's Health", img: "/menpill.avif", link: "/treatments" },
-  { name: "Skin Health", img: "/pill.avif", link: "/treatments" },
-  { name: "Women's Health", img: "/womenpill.avif", link: "/treatments" },
+  { name: "Weight Loss", img: "/supplementpill.avif", link: "/treatments?goal=weight-loss" },
+  { name: "Anti-Aging", img: "/antipill.avif", link: "/treatments?goal=unisex-anti-aging-rx" },
+  { name: "Skin Health", img: "/womenpill.avif", link: "/treatments?goal=unisex-skin-health" },
+  { name: "Sexual Health", img: "/menpill.avif", link: "/treatments?goal=mens-health" },
+  { name: "Sports Medicine", img: "/sportpill.avif", link: "/treatments?goal=unisex-sports-medicine" },
 ];
 
 /* Peptide molecule list HIDDEN at client request (2026-06-20). "Supplements" is a
@@ -153,7 +152,6 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-7 lg:flex">
             <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
-            <Link to="/treatments?goal=peptides" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Peptides</Link>
             <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
             <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
             <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
@@ -191,9 +189,6 @@ export default function Navbar() {
               </div>
               <div className="flex grow flex-col p-4">
                 <MobileGroup title="Treatments" items={treatmentItems} close={() => setMobileOpen(false)} viewAllLink="/treatments" defaultOpen />
-                <Link to="/treatments?goal=peptides" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
-                  Peptides <ArrowRight size={16} className="text-muted" />
-                </Link>
                 <Link to="/supplements" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                   Supplements <ArrowRight size={16} className="text-muted" />
                 </Link>

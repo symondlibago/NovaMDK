@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, Clock, MapPin, Check, ArrowRight, MessageSquare, ShieldCheck, ChevronDown } from "lucide-react";
+import { Mail, Clock, Check, ArrowRight, MessageSquare, ShieldCheck, ChevronDown } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
@@ -9,9 +9,7 @@ import { track, EVENTS } from "../lib/analytics";
 
 const DETAILS = [
   { icon: Mail, label: "Email", value: "care@novamdk.com", href: "mailto:care@novamdk.com" },
-  { icon: Phone, label: "Phone", value: "(800) 555-0142", href: "tel:+18005550142" },
-  { icon: Clock, label: "Hours", value: "Mon–Fri · 8am–8pm ET" },
-  { icon: MapPin, label: "Address", value: "15570 Brookhurst St #238, Westminster, CA 92683" },
+  { icon: Clock, label: "Hours", value: "Mon–Fri, 8am–8pm ET" },
 ];
 
 const field =

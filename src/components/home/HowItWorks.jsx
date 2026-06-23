@@ -39,7 +39,7 @@ export default function HowItWorks() {
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
         <Reveal className="mx-auto mb-[clamp(1.75rem,4vw,3.5rem)] max-w-[60ch] text-center">
           <span className="nv-eyebrow">How it works</span>
-          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Exceptional care, made simple.</h2>
+          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Exceptional care, made simple </h2>
         </Reveal>
 
         <div className="overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow-lg">

@@ -15,8 +15,8 @@ export default function FAQ() {
       a: "Answer a few questions about your health and goals. A licensed provider reviews them, and you only pay if you're prescribed."
     },
     {
-      q: "Is everything prescribed by a real provider?",
-      a: "Yes. A licensed US provider reviews and prescribes every treatment, and a regulated US pharmacy fills it."
+      q: "Is everything prescribed by a US physician?",
+      a: "Yes. A licensed US physician reviews and prescribes every treatment, and a regulated US pharmacy fills it."
     },
     {
       q: "What can I get treated for?",
@@ -60,7 +60,7 @@ export default function FAQ() {
                     </div>
                     <h2 className="font-display text-[clamp(2.2rem,4.6vw,3.2rem)] font-extrabold leading-[1.08] tracking-tight text-ink">
                         Your questions, <br />
-                        <span className="nv-em font-medium text-muted">answered beautifully.</span>
+                        <span className="nv-em font-medium text-muted">answered beautifully</span>
                     </h2>
                 </div>
             </Reveal>

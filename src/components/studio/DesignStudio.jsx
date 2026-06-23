@@ -22,8 +22,9 @@ const DEVICE_ICON = {
 
 /* ----------------------------- device preview ----------------------------- */
 function DevicePreview() {
-  const { device, devices, setDevice, palette, typography, weight, italic, letterSpacing, lineHeight, radius, paletteOverrides } = useTheme();
+  const { device, devices, setDevice, palette, typography, weight, italic, letterSpacing, lineHeight, radius, paletteOverrides, kioskLayout, kioskLayouts, setKioskLayout } = useTheme();
   const active = devices.find((d) => d.id === device);
+  const isKiosk = active?.id === "kiosk";
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
@@ -44,7 +45,11 @@ function DevicePreview() {
   // Re-key on theme so the iframe re-renders with the active palette/type.
   // Include a signature of this palette's custom colors so edits show in-preview.
   const overrideSig = JSON.stringify(paletteOverrides[palette.id] || {});
-  const frameKey = `${path}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}|${radius.id}|${overrideSig}`;
+  // On the kiosk frame, force the homepage so the portrait layout is always
+  // what's previewed, and carry the chosen variant through to it.
+  const previewPath = isKiosk ? "/" : path;
+  const kioskQuery = isKiosk ? `&kiosk=${kioskLayout.id}` : "";
+  const frameKey = `${previewPath}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}|${radius.id}|${overrideSig}|${isKiosk ? kioskLayout.id : ""}`;
 
   return (
     <motion.div
@@ -99,16 +104,68 @@ function DevicePreview() {
             <iframe
               key={frameKey}
               title={`${active.name} preview`}
-              src={`${path}?preview=1`}
+              src={`${previewPath}?preview=1${kioskQuery}`}
               className="h-full w-full border-0"
             />
           </div>
         </div>
       </div>
-      <div className="pb-4 text-[11px] text-white/40">
+      {isKiosk && (
+        <div className="flex items-center gap-1.5 rounded-full bg-white/10 p-1">
+          <span className="px-2.5 text-[11px] text-white/50">Layout</span>
+          {kioskLayouts.map((k) => (
+            <button
+              key={k.id}
+              onClick={() => setKioskLayout(k.id)}
+              title={k.tagline}
+              className={`rounded-full px-3 py-1.5 text-[12px] transition-colors ${
+                k.id === kioskLayout.id ? "bg-white text-[#15171A]" : "text-white/70 hover:text-white"
+              }`}
+            >
+              {k.name}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="pb-4 pt-2 text-[11px] text-white/40">
         {active.w} × {active.h}
       </div>
     </motion.div>
+  );
+}
+
+/* ------------------------- kiosk layout thumbnail ------------------------- */
+// A tiny portrait (9:16) wireframe of each kiosk layout's structure.
+function KioskLayoutThumb({ id, on }) {
+  const bar = on ? "bg-primary" : "bg-line-strong";
+  const soft = on ? "bg-primary/35" : "bg-line";
+  return (
+    <span className={`grid h-12 w-7 shrink-0 gap-0.5 rounded-md p-1 ring-1 ${on ? "bg-primary/10 ring-primary/30" : "bg-surface-2 ring-line"}`}>
+      {id === "grid" && (
+        <>
+          <span className={`h-1.5 rounded-sm ${bar}`} />
+          <span className="grid flex-1 grid-cols-2 gap-0.5">
+            {Array.from({ length: 6 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
+          </span>
+        </>
+      )}
+      {id === "stack" && (
+        <>
+          <span className={`h-3 rounded-sm ${bar}`} />
+          <span className="grid flex-1 grid-rows-4 gap-0.5">
+            {Array.from({ length: 4 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
+          </span>
+        </>
+      )}
+      {id === "spotlight" && (
+        <>
+          <span className={`h-5 rounded-sm ${bar}`} />
+          <span className="grid flex-1 grid-cols-2 gap-0.5">
+            {Array.from({ length: 4 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
+          </span>
+        </>
+      )}
+    </span>
   );
 }
 
@@ -358,9 +415,9 @@ export default function DesignStudio() {
   if (t.isPreview || !t.studioUnlocked) return null;
 
   const {
-    palettes, typographies, weights, devices, letterSpacings, lineHeights, radii,
-    palette, typography, weight, italic, device, letterSpacing, lineHeight, radius,
-    setPalette, setTypography, setWeight, setItalic, setDevice, setLetterSpacing, setLineHeight, setRadius,
+    palettes, typographies, weights, devices, kioskLayouts, letterSpacings, lineHeights, radii,
+    palette, typography, weight, italic, device, kioskLayout, letterSpacing, lineHeight, radius,
+    setPalette, setTypography, setWeight, setItalic, setDevice, setKioskLayout, setLetterSpacing, setLineHeight, setRadius,
     clearAllPaletteColors,
     studioOpen, setStudioOpen,
   } = t;
@@ -374,6 +431,7 @@ export default function DesignStudio() {
     setLineHeight(DEFAULTS.lineHeight);
     setRadius(DEFAULTS.radius);
     setDevice(DEFAULTS.device);
+    setKioskLayout(DEFAULTS.kioskLayout);
     clearAllPaletteColors();
   };
 
@@ -594,6 +652,34 @@ export default function DesignStudio() {
                 </div>
                 <p className="mt-2 text-[11px] leading-relaxed text-muted">
                   Opens the live site in a scaled phone · tablet · desktop · kiosk frame.
+                </p>
+              </Section>
+
+              {/* Kiosk layout — 3 portrait homepages for the Apolosign 32" screen */}
+              <Section icon={<Maximize size={14} />} title="Kiosk layout">
+                <div className="flex flex-col gap-2.5">
+                  {kioskLayouts.map((k) => {
+                    const on = k.id === kioskLayout.id;
+                    return (
+                      <button
+                        key={k.id}
+                        onClick={() => { setKioskLayout(k.id); setDevice("kiosk"); }}
+                        className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${
+                          on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
+                        }`}
+                      >
+                        <KioskLayoutThumb id={k.id} on={on} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[14px] font-semibold">{k.name}</span>
+                          <span className="block truncate text-[11px] text-muted">{k.tagline}</span>
+                        </span>
+                        {on && <Check size={16} className="text-primary shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-[11px] leading-relaxed text-muted">
+                  Portrait, touch-first homepages for the 32" kiosk — categories up front. Picking one jumps to the kiosk preview.
                 </p>
               </Section>
 

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -6,14 +6,64 @@ import { CONSULTS, CONSULT_ORDER } from "../data/consultations";
 import { track, EVENTS } from "../../lib/analytics";
 
 const EASE = [0.22, 0.61, 0.18, 1];
-function GlassCard({ c, delay }) {
+
+/* The 3 kiosk category layouts the client picks from in the Design Studio.
+   Each only restyles the hero category grid (bigger cards) — the rest of the
+   homepage is unchanged. `mode` per card: "tile" (vertical) or "row" (wide). */
+const KIOSK_VARIANTS = {
+  grid:      { wrap: "grid grid-cols-2 gap-4",  helpTile: true, card: () => ({ mode: "tile", span: "" }) },
+  stack:     { wrap: "grid grid-cols-1 gap-3.5", card: () => ({ mode: "row", span: "" }) },
+  spotlight: { wrap: "grid grid-cols-2 gap-4",  card: (i) => (i === 0 ? { mode: "row", span: "col-span-2", featured: true } : { mode: "tile", span: "" }) },
+};
+export const KIOSK_VARIANT_IDS = Object.keys(KIOSK_VARIANTS);
+
+/* Fills the spare cell in the 2-col Spotlight Grid — a high-contrast prompt
+   that gives walk-up, undecided visitors an obvious path into the quiz. */
+function HelpChooseTile({ delay }) {
+  const R = "rounded-[calc(22px*var(--nv-r-scale,1))]";
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: EASE, delay }}
+      className="h-full"
+    >
+      <Link
+        to="/start"
+        onClick={() => track(EVENTS.QUIZ_STARTED, { source: "hero-kiosk-help" })}
+        className={`group relative flex h-full min-h-[290px] flex-col justify-between overflow-hidden ${R} p-8 text-white nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5`}
+        style={{ background: "linear-gradient(150deg, var(--nv-primary), var(--nv-primary-deep))" }}
+      >
+        <span
+          className="pointer-events-none absolute -right-10 -top-12 h-48 w-48 rounded-full opacity-50"
+          style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--nv-accent) 55%, transparent), transparent 70%)" }}
+        />
+        <span className="relative z-[1] font-mono text-[0.84rem] uppercase tracking-[0.14em] text-white/75">
+          Not sure where to start?
+        </span>
+        <div className="relative z-[1]">
+          <h3 className="font-display text-[2.1rem] font-bold leading-tight">Take the 2-minute assessment</h3>
+          <p className="mt-2 max-w-[26ch] text-[1.02rem] leading-snug text-white/80">
+            Answer a few questions and we'll point you to the right care.
+          </p>
+          <span className="mt-5 inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 text-[1.02rem] font-semibold text-ink transition-all duration-300 group-hover:gap-3.5">
+            Start the assessment <ArrowRight size={17} strokeWidth={2.4} />
+          </span>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }) {
+  if (mode !== "auto") return <BigGlassCard c={c} delay={delay} row={mode === "row"} featured={featured} className={className} />;
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.7, ease: EASE, delay }}
-      className="h-full"
+      className={`h-full ${className}`}
     >
       <Link
         to={`/treatments?goal=${c.goalSlug}`}
@@ -60,8 +110,176 @@ function GlassCard({ c, delay }) {
   );
 }
 
-export default function HeroStage() {
+/* Enlarged version of the same glass card for the kiosk. Same look, bigger —
+   "tile" is a tall vertical card, "row" is a wide full-width card, and
+   `featured` is the premium hero banner at the top of the Featured layout. */
+function BigGlassCard({ c, delay, row, featured = false, className = "" }) {
+  const R = "rounded-[calc(22px*var(--nv-r-scale,1))]";
+
+  if (featured) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE, delay }}
+        className={`h-full ${className}`}
+      >
+        <Link
+          to={`/treatments?goal=${c.goalSlug}`}
+          onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero-kiosk" })}
+          className={`group relative flex h-full items-center gap-7 overflow-hidden ${R} p-8 nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5`}
+        >
+          <span className={`nv-glass absolute inset-0 ${R}`} />
+          {/* accent glow behind the pill */}
+          <span
+            className="pointer-events-none absolute -left-12 -top-16 h-60 w-60 rounded-full opacity-70"
+            style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--nv-accent) 40%, transparent), transparent 70%)" }}
+          />
+          {/* gloss sweep */}
+          <span className={`pointer-events-none absolute inset-0 z-[1] overflow-hidden ${R}`}>
+            <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
+          </span>
+
+          <img
+            src="/supplementpill.avif"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="nv-bob relative z-[3] h-[124px] w-[124px] shrink-0 object-contain drop-shadow-[0_18px_32px_rgba(15,22,34,0.55)] transition-transform duration-500 group-hover:scale-110"
+          />
+
+          <div className="relative z-[3] min-w-0 flex-1">
+            <span className="font-mono text-[0.86rem] uppercase tracking-[0.14em] text-white/80 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)]">
+              {c.tag}
+            </span>
+            <h3 className="mt-1.5 font-display text-[2.5rem] font-bold leading-[1.04] text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)]">
+              {c.name}
+            </h3>
+            <p className="mt-2.5 max-w-[46ch] text-[1.08rem] leading-snug text-white/85 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)]">
+              {c.blurb}
+            </p>
+          </div>
+
+          <span className="relative z-[3] inline-flex shrink-0 items-center gap-2.5 rounded-full bg-white px-7 py-4 text-[1.05rem] font-semibold text-ink transition-all duration-300 group-hover:gap-3.5 nv-shadow">
+            Browse treatments <ArrowRight size={18} strokeWidth={2.4} />
+          </span>
+        </Link>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: EASE, delay }}
+      className={`h-full ${className}`}
+    >
+      <Link
+        to={`/treatments?goal=${c.goalSlug}`}
+        onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero-kiosk" })}
+        className={`group relative flex h-full overflow-hidden ${R} nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5 ${
+          row ? "flex-row items-center gap-6 p-7" : "min-h-[290px] flex-col items-stretch p-8"
+        }`}
+      >
+        <span className={`nv-glass absolute inset-0 ${R}`} />
+        <span className={`pointer-events-none absolute inset-0 z-[1] hidden overflow-hidden ${R} sm:block`}>
+          <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
+        </span>
+
+        <img
+          src="/supplementpill.avif"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className={`nv-bob relative z-[3] shrink-0 object-contain drop-shadow-[0_14px_24px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110 ${
+            row ? "h-[84px] w-[84px]" : "mb-6 h-[104px] w-auto self-start"
+          }`}
+        />
+
+        <div className="relative z-[3] min-w-0 flex-1">
+          <span className="font-mono text-[0.84rem] uppercase tracking-[0.13em] text-white/80 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)]">
+            {c.tag}
+          </span>
+          <h3 className="mt-1.5 font-display text-[2.1rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)]">
+            {c.name}
+          </h3>
+          {!row && (
+            <span className="mt-auto inline-flex items-center gap-2 pt-5 text-[1.05rem] font-semibold text-white drop-shadow-[0_1px_10px_rgba(15,22,34,0.45)]">
+              Browse <ArrowRight size={18} strokeWidth={2.4} />
+            </span>
+          )}
+        </div>
+
+        {row && (
+          <span className="relative z-[3] grid h-14 w-14 shrink-0 place-items-center rounded-full border border-white/45 text-white transition-colors group-hover:bg-white/15">
+            <ArrowRight size={22} strokeWidth={2.2} />
+          </span>
+        )}
+      </Link>
+    </motion.div>
+  );
+}
+
+/* Wide homepage promo — just the looping video. It always plays (muted autoplay
+   is always allowed); the soundtrack is unmuted only while the card is on screen
+   and its volume fades with how visible it is. Scroll away → fades to silence;
+   leave the homepage → this unmounts, so the music stops entirely. */
+function KioskPromoCard() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    // start playing, muted (so autoplay is never blocked)
+    v.muted = true;
+    v.volume = 0;
+    v.play().catch(() => {});
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const r = entry.intersectionRatio;
+        if (r > 0.05) {
+          // on screen → fade the music in (full volume once ~half visible)
+          v.volume = Math.min(1, r / 0.5);
+          v.muted = false;
+          v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
+        } else {
+          // scrolled away → silence, but keep the video looping
+          v.volume = 0;
+          v.muted = true;
+        }
+      },
+      { threshold: Array.from({ length: 21 }, (_, i) => i / 20) }
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 26 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.9, ease: EASE }}
+      className="mt-4 overflow-hidden rounded-3xl"
+    >
+      <video
+        ref={videoRef}
+        src="/feeling-your-best.mp4"
+        autoPlay
+        loop
+        playsInline
+        className="block h-[380px] w-full object-cover object-center sm:h-[480px] lg:h-[560px]"
+      />
+    </motion.div>
+  );
+}
+
+export default function HeroStage({ kioskVariant = null }) {
   const stageRef = useRef(null);
+  const kiosk = kioskVariant && KIOSK_VARIANTS[kioskVariant] ? KIOSK_VARIANTS[kioskVariant] : null;
 
   const { scrollYProgress } = useScroll({
     target: stageRef,
@@ -106,7 +324,7 @@ export default function HeroStage() {
               style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
             >
               Better medicine begins with{" "}
-              <span className="nv-em italic font-medium">better attention.</span>
+              <span className="nv-em italic font-medium">Better attention</span>
             </h1>
             <p className="mt-[18px] max-w-[42ch] text-[clamp(1rem,1.3vw,1.1rem)] leading-relaxed text-muted">
               Doctor-formulated treatments, composed for you and delivered to your door in days.
@@ -136,56 +354,27 @@ export default function HeroStage() {
           </motion.div>
         </div>
 
-        {/* Categories — all visible: a stacked row list on mobile, a 3- then
-            5-up grid on larger screens. */}
-        <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-3 sm:gap-[clamp(0.7rem,1.2vw,1rem)] lg:grid-cols-5">
-          {CONSULT_ORDER.map((key, i) => (
-            <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} />
-          ))}
-        </div>
-
-        {/* Women's wide card — "not sure where to start?" assessment prompt */}
-        <motion.div
-          initial={{ opacity: 0, y: 26 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.9, ease: EASE }}
-          className="relative mt-[clamp(12px,2vw,24px)] flex min-h-[clamp(270px,38vw,460px)] items-center overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] bg-panel"
-        >
-          {/* photo fills the card */}
-          <img
-            src="/assessment.avif"
-            alt="A licensed clinician reviewing a patient's plan on a laptop"
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
-          />
-          {/* navy veil — opaque on the left for the copy, fading right to reveal the photo */}
-          <span
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(100deg, color-mix(in oklab, var(--nv-ink-panel) 96%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 76%, transparent) 38%, color-mix(in oklab, var(--nv-ink-panel) 30%, transparent) 66%, transparent 100%)",
-            }}
-          />
-          <div className="relative z-[3] max-w-[90%] p-[clamp(28px,4vw,46px)] md:max-w-[54%]">
-            <span className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-white/80 drop-shadow-[0_1px_10px_rgba(15,22,34,0.4)]">
-              Free 2-minute assessment
-            </span>
-            <h2 className="mt-3 font-display text-[clamp(1.7rem,3.2vw,2.7rem)] font-bold leading-tight tracking-tight text-white drop-shadow-[0_2px_18px_rgba(15,22,34,0.5)]">
-              Let's find what works for you
-            </h2>
-            <p className="mt-3.5 max-w-[40ch] leading-relaxed text-white/90 drop-shadow-[0_1px_12px_rgba(15,22,34,0.4)]">
-              Answer a few questions and a licensed provider will point you to the care that's right for
-              you. It's free, there's no commitment, and you only pay if you're prescribed.
-            </p>
-            <Link
-              to="/start"
-              className="mt-6 inline-flex items-center gap-2.5 rounded-full border-[1.5px] border-white/55 px-5 py-3 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-white hover:text-ink"
-            >
-              Start the assessment <ArrowRight size={14} />
-            </Link>
+        {/* Categories — all visible. Normal site: stacked rows on mobile, a 3-
+            then 5-up grid on larger screens. Kiosk: bigger cards in the layout
+            the client picked (grid · directory · spotlight). */}
+        {kiosk ? (
+          <div className={kiosk.wrap}>
+            {CONSULT_ORDER.map((key, i) => {
+              const { mode, span, featured } = kiosk.card(i);
+              return <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} mode={mode} featured={featured} className={span} />;
+            })}
+            {kiosk.helpTile && <HelpChooseTile delay={CONSULT_ORDER.length * 0.06} />}
           </div>
-        </motion.div>
+        ) : (
+          <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-3 sm:gap-[clamp(0.7rem,1.2vw,1rem)] lg:grid-cols-5">
+            {CONSULT_ORDER.map((key, i) => (
+              <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} />
+            ))}
+          </div>
+        )}
+
+        {/* Wide card — Smart Kiosk promo (looping video) */}
+        <KioskPromoCard />
       </div>
     </section>
   );

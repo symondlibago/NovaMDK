@@ -35,18 +35,12 @@ export default function ProductPage() {
 
   if (!product) return <Navigate to="/treatments" replace />;
 
-  // Peptides live under the supplements catalog but are presented on the RX /
-  // peptides side — re-label the breadcrumb, badges, and "related" accordingly.
-  const isPeptide = product.categorySlug === "supplements" && !!product.subCategorySlug;
-  const categoryLabel = isPeptide ? "Peptides" : product.categoryName;
-  const backLink = isPeptide ? "/treatments?goal=peptides" : `/treatments?goal=${product.categorySlug}`;
-
-  const related = isPeptide
-    ? productsData.filter((p) => p.subCategorySlug === product.subCategorySlug && p.id !== product.id)
-    : productsData
-        .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
-        .slice(0, 3);
-  const relatedHeading = isPeptide ? `More ${product.subCategoryName} strengths` : `More in ${product.categoryName}`;
+  const categoryLabel = product.categoryName;
+  const backLink = `/treatments?goal=${product.categorySlug}`;
+  const related = productsData
+    .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
+    .slice(0, 3);
+  const relatedHeading = `More in ${product.categoryName}`;
 
   // MDIntegrations trigger — the product page is where intake begins. Mint a
   // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final

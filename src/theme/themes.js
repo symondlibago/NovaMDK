@@ -664,6 +664,14 @@ export const DEVICES = [
   { id: "kiosk", name: "Kiosk", icon: "monitor-speaker", w: 1080, h: 1920 },
 ];
 
+/** Portrait kiosk homepage layouts (Apolosign 32" · 1080×1920). The studio
+ *  drives the chosen variant onto the kiosk preview via `?kiosk=<id>`. */
+export const KIOSK_LAYOUTS = [
+  { id: "grid", name: "Spotlight Grid", tagline: "Big category tiles, tap to start" },
+  { id: "stack", name: "Directory", tagline: "Full-width category rows" },
+  { id: "spotlight", name: "Featured Hero", tagline: "Photo-led, categories below" },
+];
+
 export const DEFAULTS = {
   palette: "slate",
   typography: "grotesk",
@@ -673,6 +681,7 @@ export const DEFAULTS = {
   lineHeight: "normal",
   radius: "soft",
   device: "live",
+  kioskLayout: "grid",
 };
 
 export const byId = (list, id) => list.find((x) => x.id === id) || list[0];

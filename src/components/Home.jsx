@@ -2,18 +2,24 @@ import React, { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Check, ShieldCheck, Truck, Clock, Ban,
+  ArrowRight, ShieldCheck, Truck, Clock, Ban,
   Stethoscope, Flag, FlaskConical,
 } from "lucide-react";
 
 import Navbar from "./Nav/Navbar";
 import Footer from "./Nav/Footer";
-import HeroStage from "./home/HeroStage";
-import HowItWorks from "./home/HowItWorks";
-import SmartKioskShowcase from "./home/SmartKioskShowcase";
+import HeroStage, { KIOSK_VARIANT_IDS } from "./home/HeroStage";
 import Reveal from "./ui/Reveal";
 import Photo from "./ui/Photo";
-import { scrollToId } from "../lib/smoothScroll";
+
+// `?kiosk=<variant>` keeps the normal homepage but enlarges + relays out the
+// hero category cards for the portrait kiosk. The Design Studio sets this on its
+// kiosk preview iframe so the client can flip layouts live. null = normal site.
+function useKioskVariant() {
+  if (typeof window === "undefined") return null;
+  const v = new URLSearchParams(window.location.search).get("kiosk");
+  return v && KIOSK_VARIANT_IDS.includes(v) ? v : null;
+}
 
 const Testimonials = lazy(() => import("./Testimonials"));
 const FAQ = lazy(() => import("./FAQ"));
@@ -70,11 +76,35 @@ const STATS = [
   { b: "$0", s: "To start your visit" },
 ];
 
+// The three-step "How it works" cards (replaces the old bento + steps section).
+const HOW_STEPS = [
+  {
+    n: "01", eyebrow: "Step one", title: "Pick a treatment",
+    desc: "Browse doctor-formulated options built around your goal.",
+    img: "/visit-phone.avif", alt: "Choosing a treatment on a tablet",
+    cta: "Browse treatments", to: "/treatments",
+  },
+  {
+    n: "02", eyebrow: "Step two", title: "Talk to a doctor",
+    desc: "Answer a few questions and a licensed provider reviews your plan and prescribes what fits.",
+    img: "/doctor-consult.avif", alt: "A licensed doctor on a telehealth consultation",
+    cta: "Start your assessment", to: "/start",
+  },
+  {
+    n: "03", eyebrow: "Step three", title: "Delivered discreetly",
+    desc: "Approved treatment ships free in plain, unmarked packaging, right to your door.",
+    img: "/courier-delivery.avif", alt: "A courier delivering a discreet package",
+    cta: "See treatments", to: "/treatments",
+  },
+];
+
 export default function Home() {
+  const kioskVariant = useKioskVariant();
+
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
       <Navbar />
-      <HeroStage />
+      <HeroStage kioskVariant={kioskVariant} />
 
       {/* ===== Trust strip ===== */}
       <section className="border-y border-line bg-surface">
@@ -87,85 +117,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== Bento intro tiles ===== */}
-      <section className="mx-auto w-full max-w-[1240px] px-5 pt-[clamp(1.75rem,4.5vw,4.5rem)] md:px-10">
-        <div className="grid grid-cols-1 items-stretch gap-3.5 md:grid-cols-2">
-          <Reveal className="h-full">
-            <Link to="/treatments" className="group relative flex h-full min-h-[clamp(248px,36vw,420px)] flex-col justify-between overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] p-6 text-white md:p-7 nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
-              <div className="absolute inset-0 z-0">
-                <Photo src="/visit-phone.avif" alt="Taking the five-minute online visit on a phone" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-              <span className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(105deg, color-mix(in oklab, var(--nv-ink-panel) 88%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 52%, transparent) 50%, color-mix(in oklab, var(--nv-ink-panel) 14%, transparent) 100%)" }} />
-              <div className="relative z-10">
-                <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-white/75">Start here · most chosen</span>
-                <h3 className="mt-2 max-w-[20ch] font-display text-[clamp(1.55rem,2.7vw,2.25rem)] font-extrabold leading-tight">Build your protocol in five minutes.</h3>
-              </div>
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[1rem] font-semibold">Take the free visit</span>
-                <span className="grid h-[38px] w-[38px] place-items-center rounded-full border border-white/50 transition-all group-hover:bg-white group-hover:text-ink"><ArrowRight size={15} /></span>
-              </div>
-            </Link>
-          </Reveal>
-          <Reveal delay={0.08} className="h-full">
-            <a href="#how" onClick={(e) => { e.preventDefault(); scrollToId("how"); }} className="group relative flex h-full min-h-[clamp(248px,36vw,420px)] flex-col justify-between overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] p-6 text-white md:p-7 nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg">
-              <div className="absolute inset-0 z-0">
-                <Photo src="/courier-delivery.avif" alt="A courier handing a package to a smiling customer" loading="eager" className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-              <span className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(105deg, color-mix(in oklab, var(--nv-ink-panel) 88%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 52%, transparent) 50%, color-mix(in oklab, var(--nv-ink-panel) 14%, transparent) 100%)" }} />
-              <div className="relative z-10">
-                <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-white/75">See how it works</span>
-                <h3 className="mt-2 max-w-[20ch] font-display text-[clamp(1.55rem,2.7vw,2.25rem)] font-extrabold leading-tight">From visit to doorstep in two days.</h3>
-              </div>
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[1rem] font-semibold">Watch the three steps</span>
-                <span className="grid h-[38px] w-[38px] place-items-center rounded-full border border-white/50 transition-all group-hover:bg-white group-hover:text-ink"><ArrowRight size={15} /></span>
-              </div>
-            </a>
-          </Reveal>
+      {/* ===== How it works (3 cards) ===== */}
+      <section id="how" className="mx-auto w-full max-w-[1240px] scroll-mt-24 px-5 pt-[clamp(1.75rem,4.5vw,4.5rem)] md:px-10">
+        <Reveal className="mx-auto mb-[clamp(1.5rem,3vw,2.5rem)] max-w-[60ch] text-center">
+          <span className="nv-eyebrow">How it works</span>
+          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Care in three simple steps</h2>
+        </Reveal>
+        <div className="grid grid-cols-1 items-stretch gap-3.5 md:grid-cols-3">
+          {HOW_STEPS.map((s, i) => (
+            <Reveal key={s.n} delay={(i % 3) * 0.08} className="h-full">
+              <Link
+                to={s.to}
+                className="group relative flex h-full min-h-[clamp(300px,40vw,440px)] flex-col justify-between overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] p-6 text-white md:p-7 nv-shadow transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg"
+              >
+                <div className="absolute inset-0 z-0">
+                  <Photo src={s.img} alt={s.alt} loading={i === 0 ? "eager" : "lazy"} className="h-full w-full" imgClassName="object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+                <span className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(180deg, color-mix(in oklab, var(--nv-ink-panel) 28%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 50%, transparent) 55%, color-mix(in oklab, var(--nv-ink-panel) 90%, transparent) 100%)" }} />
+                <div className="relative z-10 flex items-center gap-2.5">
+                  <span className="grid h-8 w-8 place-items-center rounded-full border border-white/45 font-mono text-[0.72rem] font-bold">{s.n}</span>
+                  <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-white/75">{s.eyebrow}</span>
+                </div>
+                <div className="relative z-10">
+                  <h3 className="max-w-[16ch] font-display text-[clamp(1.4rem,2.4vw,1.95rem)] font-extrabold leading-tight">{s.title}</h3>
+                  <p className="mt-2 max-w-[30ch] text-[0.92rem] leading-relaxed text-white/85">{s.desc}</p>
+                  <span className="mt-4 inline-flex items-center gap-2 text-[0.95rem] font-semibold">
+                    {s.cta}
+                    <span className="grid h-[34px] w-[34px] place-items-center rounded-full border border-white/50 transition-all group-hover:bg-white group-hover:text-ink"><ArrowRight size={14} /></span>
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
+          ))}
         </div>
       </section>
-
-      {/* ===== Why people stay (band) ===== */}
-      <section id="why" className="mx-auto max-w-[1240px] scroll-mt-24 px-5 py-[clamp(2rem,4vw,3.5rem)] md:px-10">
-        <div className="grid items-center gap-[clamp(2rem,5vw,4.5rem)] md:grid-cols-2">
-          <Reveal>
-            <div className="relative">
-              <Photo src="/why-people-stay.avif" alt="A smiling member outdoors after a wellness session" className="aspect-[5/4] rounded-[calc(26px*var(--nv-r-scale,1))] nv-shadow-lg" imgClassName="object-cover" />
-              <div className="absolute -bottom-5 -left-3 max-w-[230px] rounded-2xl border border-line bg-surface p-5 nv-shadow-lg">
-                <div className="text-[1.9rem] font-extrabold leading-none tracking-tight text-ink">8 weeks</div>
-                <div className="mt-1.5 text-[0.82rem] leading-snug text-muted">median time members say they felt a difference*</div>
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <span className="nv-eyebrow">Why people stay</span>
-            <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Treatment that works around you.</h2>
-            <p className="mt-4 max-w-[46ch] text-[1.06rem] text-muted">No waiting rooms, no four bottles to juggle, no second-guessing the timing. One protocol, made for you, delivered to your door.</p>
-            <ul className="mt-6 flex flex-col gap-3.5">
-              {["Adjusted as your body and goals change", "One message to pause, change, or cancel", "A real physician on the other side of it"].map((t) => (
-                <li key={t} className="flex items-center gap-3 text-[1rem] font-medium">
-                  <span className="grid h-[22px] w-[22px] shrink-0 place-items-center rounded-full bg-accent/15 text-accent"><Check size={12} strokeWidth={3} /></span>
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <a href="#how" onClick={(e) => { e.preventDefault(); scrollToId("how"); }} className="mt-7 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-6 py-3 text-[0.96rem] font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-primary">
-              See how it works
-            </a>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ===== How it works ===== */}
-      <HowItWorks />
 
       {/* ===== Treatments & Solutions showcase (moved from Treatments page) ===== */}
       <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>
         <TreatmentsCarousel />
       </Suspense>
-
-      {/* ===== Smart Kiosk showcase ===== */}
-      <SmartKioskShowcase />
 
       {/* ===== Stats band ===== */}
       <section className="bg-panel text-on-panel">
@@ -195,10 +185,10 @@ export default function Home() {
             <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(100deg, color-mix(in oklab, var(--nv-ink-panel) 86%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 55%, transparent) 52%, color-mix(in oklab, var(--nv-ink-panel) 18%, transparent) 100%)" }} />
             <div className="relative z-10 max-w-[34rem] p-[clamp(1.8rem,5vw,3rem)] text-white">
               <span className="nv-eyebrow text-accent">Begin</span>
-              <h2 className="mt-3 text-[clamp(1.9rem,4.5vw,3rem)] font-extrabold leading-[1.06] text-white">Five minutes to a protocol that's yours.</h2>
-              <p className="mb-7 mt-3 max-w-[42ch] text-[1.06rem] text-white/85">Answer a few questions and let a doctor do the rest. Nothing to pay until you see your formulation.</p>
+              <h2 className="mt-3 text-[clamp(1.9rem,4.5vw,3rem)] font-extrabold leading-[1.06] text-white">Five minutes to a protocol that's yours</h2>
+              <p className="mb-7 mt-3 max-w-[42ch] text-[1.06rem] text-white/85">Answer a few questions and let a doctor do the rest. Nothing to pay until you see your formulation</p>
               <Link to="/treatments" className="group inline-flex items-center gap-2 rounded-full bg-bg px-7 py-3.5 text-[0.96rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg">
-                Start your free visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </div>

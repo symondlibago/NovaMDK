@@ -8,7 +8,6 @@ import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
 import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
-import PeptideShop from "../components/shop/PeptideShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { productsData } from "../components/data/products";
@@ -17,24 +16,14 @@ import { track, EVENTS } from "../lib/analytics";
 const FAQ = lazy(() => import("../components/FAQ"));
 
 // Mirror the homepage funnels — each tile browses that goal's shoppable catalog.
-const TREATMENT_CATS = [
-  ...CONSULT_ORDER.map((k) => ({
-    name: CONSULTS[k].name,
-    tag: CONSULTS[k].tag,
-    blurb: CONSULTS[k].blurb,
-    cta: "Browse treatments",
-    goal: CONSULTS[k].goalSlug,
-    link: `/treatments?goal=${CONSULTS[k].goalSlug}`,
-  })),
-  {
-    name: "Explore Peptides",
-    tag: "Peptide therapy",
-    blurb: "11 compounded peptides — recovery, longevity, metabolic and skin.",
-    cta: "Browse peptides",
-    goal: "peptides",
-    link: "/treatments?goal=peptides",
-  },
-];
+const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
+  name: CONSULTS[k].name,
+  tag: CONSULTS[k].tag,
+  blurb: CONSULTS[k].blurb,
+  cta: "Browse treatments",
+  goal: CONSULTS[k].goalSlug,
+  link: `/treatments?goal=${CONSULTS[k].goalSlug}`,
+}));
 
 // Valid product categories a quiz can land on (everything but pure supplements).
 const VALID_GOALS = new Set(
@@ -81,7 +70,7 @@ function HowItWorks() {
     <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
       <Reveal className="mx-auto max-w-[60ch] text-center">
         <span className="nv-eyebrow">How it works</span>
-        <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">Care in three simple steps.</h2>
+        <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">Care in three simple steps</h2>
         <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">From first question to front door — no clinics, no waiting rooms, no awkward pharmacy runs.</p>
       </Reveal>
       <div className="mt-12 grid gap-5 sm:grid-cols-3">
@@ -137,7 +126,6 @@ function SocialProof() {
 export default function TreatmentsPage() {
   const [params] = useSearchParams();
   const goal = params.get("goal");
-  const isPeptides = goal === "peptides";
   const validGoal = goal && VALID_GOALS.has(goal) ? goal : null;
 
   return (
@@ -147,10 +135,7 @@ export default function TreatmentsPage() {
     >
       <Navbar />
 
-      {isPeptides ? (
-        /* Explore Peptides → the 11-molecule peptide catalog (its own header) */
-        <PeptideShop />
-      ) : validGoal ? (
+      {validGoal ? (
         /* Came from a consultation → only that category's products (their own header) */
         <TreatmentShop category={validGoal} />
       ) : (
@@ -158,16 +143,16 @@ export default function TreatmentsPage() {
         <>
           <PageHero
             eyebrow="Treatments"
-            title="Find the treatment that fits you."
-            subtitle="Prescription protocols formulated by licensed U.S. physicians, shipped to your door."
+            title="Find the treatment that fits you"
+            subtitle="Prescription protocols formulated by licensed U.S. physicians, shipped to your door"
             chips={["US-licensed pharmacy", "Five-minute visit", "Free 2-day shipping", "No lock-in"]}
           />
           <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <span className="nv-eyebrow">Browse by goal</span>
-                <h2 className="mt-2 text-[clamp(1.5rem,3vw,2.1rem)] font-extrabold leading-tight">What are you working on?</h2>
-                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Pick a goal to browse the treatments</p>
+                <h2 className="mt-2 text-[clamp(1.5rem,3vw,2.1rem)] font-extrabold leading-tight">What can we help you treat?</h2>
+                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Choose what you're focused on and browse the treatments matched to it.</p>
               </div>
               <div className="flex shrink-0 flex-col gap-1.5 sm:items-end">
                 <Link to="/start" className="text-[0.92rem] font-semibold text-primary transition-colors hover:text-accent">

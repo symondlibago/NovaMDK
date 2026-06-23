@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { PALETTES, TYPOGRAPHIES, WEIGHTS, DEVICES, LETTER_SPACINGS, LINE_HEIGHTS, RADII, DEFAULTS, byId } from "./themes";
+import { PALETTES, TYPOGRAPHIES, WEIGHTS, DEVICES, KIOSK_LAYOUTS, LETTER_SPACINGS, LINE_HEIGHTS, RADII, DEFAULTS, byId } from "./themes";
 import { decodeTheme } from "./share";
 
 const ThemeContext = createContext(null);
@@ -55,6 +55,7 @@ export default function ThemeProvider({ children }) {
   // Per-palette color overrides, keyed by palette id → { "--nv-*": "#hex" }.
   const [paletteOverrides, setPaletteOverridesState] = useState(() => readJSON(LS.paletteOverrides, {}));
   const [device, setDevice] = useState(DEFAULTS.device); // device preview is session-only
+  const [kioskLayoutId, setKioskLayoutId] = useState(DEFAULTS.kioskLayout); // session-only too
   const [studioOpen, setStudioOpen] = useState(false);
   const [studioUnlocked, setStudioUnlocked] = useState(() => urlFlags.studioParam !== "0");
 
@@ -66,6 +67,7 @@ export default function ThemeProvider({ children }) {
   const letterSpacing = byId(LETTER_SPACINGS, letterSpacingId);
   const lineHeight = byId(LINE_HEIGHTS, lineHeightId);
   const radius = byId(RADII, radiusId);
+  const kioskLayout = byId(KIOSK_LAYOUTS, kioskLayoutId);
 
   // Effective palette = base palette vars + any user customizations for it.
   const paletteVars = useMemo(
@@ -170,13 +172,14 @@ export default function ThemeProvider({ children }) {
   const value = {
     palette, typography, weight, italic, letterSpacing, lineHeight, radius,
     paletteVars, paletteOverrides,
-    device, studioOpen, studioUnlocked, isPreview,
+    device, kioskLayout, studioOpen, studioUnlocked, isPreview,
     palettes: PALETTES, typographies: TYPOGRAPHIES, weights: WEIGHTS, devices: DEVICES,
+    kioskLayouts: KIOSK_LAYOUTS,
     letterSpacings: LETTER_SPACINGS, lineHeights: LINE_HEIGHTS, radii: RADII,
     setPalette, setTypography, setWeight, setItalic: setItalicPersisted,
     setLetterSpacing, setLineHeight, setRadius,
     setPaletteColor, resetPaletteColors, clearAllPaletteColors,
-    setDevice, setStudioOpen, setStudioUnlocked,
+    setDevice, setKioskLayout: setKioskLayoutId, setStudioOpen, setStudioUnlocked,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
