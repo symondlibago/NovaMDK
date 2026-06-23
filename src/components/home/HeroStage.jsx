@@ -324,7 +324,7 @@ export default function HeroStage({ kioskVariant = null }) {
               style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
             >
               Better medicine begins with{" "}
-              <span className="nv-em italic font-medium">Better attention</span>
+              <span className="nv-em font-medium">better attention</span>
             </h1>
             <p className="mt-[18px] max-w-[42ch] text-[clamp(1rem,1.3vw,1.1rem)] leading-relaxed text-muted">
               Doctor-formulated treatments, composed for you and delivered to your door in days.
