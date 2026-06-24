@@ -7,6 +7,7 @@ import PageHero from "../components/shop/PageHero";
 // import CategoryGrid from "../components/shop/CategoryGrid"; // re-enable with the peptide list below
 import Photo from "../components/ui/Photo";
 import Reveal from "../components/ui/Reveal";
+import { CompoundedDisclaimer } from "../components/Compliance";
 
 /* ---------------------------------------------------------------------------
  * Peptide molecule list — HIDDEN at client request (2026-06-20). The page stays
@@ -32,6 +33,7 @@ export default function SupplementsPage() {
       <Navbar />
 
       <PageHero
+        showBack
         eyebrow="Supplements"
         title="Clinical-grade formulas, tailored to your labs."
         subtitle="Compounded peptides and daily-foundation supplements, prepared by FDA-regulated pharmacies and matched to your protocol."
@@ -62,6 +64,9 @@ export default function SupplementsPage() {
             <Photo src="/amber-bottles.avif" alt="Hands holding two amber supplement bottles" className="min-h-[320px] w-full rounded-[calc(26px*var(--nv-r-scale,1))] border border-line nv-shadow" imgClassName="object-cover" />
           </Reveal>
         </div>
+
+        {/* required compounded-drug + GLP-1 marketing disclaimers */}
+        <CompoundedDisclaimer className="mx-auto mt-12 max-w-[680px] border-t border-line pt-6 text-center" />
       </section>
 
       <Footer />

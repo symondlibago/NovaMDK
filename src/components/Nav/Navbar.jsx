@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { ChevronDown, ArrowRight, Menu, X } from "lucide-react";
 import { getLenis } from "../../lib/smoothScroll";
 
@@ -129,6 +129,10 @@ function MobileGroup({ title, items, close, viewAllLink, defaultOpen = false }) 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Horizontal scroll meter pinned to the bottom of the header.
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 });
+
   useEffect(() => {
     const lenis = getLenis();
     document.body.style.overflow = mobileOpen ? "hidden" : "unset";
@@ -167,6 +171,13 @@ export default function Navbar() {
             </button>
           </div>
         </nav>
+
+        {/* scroll progress meter */}
+        <motion.div
+          aria-hidden="true"
+          style={{ scaleX }}
+          className="absolute inset-x-0 bottom-0 h-[3px] origin-left bg-linear-to-r from-accent to-primary"
+        />
       </header>
 
       {/* mobile drawer */}
@@ -201,9 +212,6 @@ export default function Navbar() {
                 <div className="mt-auto flex flex-col gap-2.5 pb-4 pt-8">
                   <Link to="/treatments" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-[15px] font-semibold text-on-primary">
                     Get started <ArrowRight size={16} />
-                  </Link>
-                  <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full border border-line-strong py-3.5 text-[15px] font-medium text-ink">
-                    Contact us <ArrowRight size={16} />
                   </Link>
                 </div>
               </div>

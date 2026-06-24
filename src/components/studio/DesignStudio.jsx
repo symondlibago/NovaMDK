@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Palette, Type, Italic, Check, X, Sparkles, RotateCcw,
-  Smartphone, Tablet, Monitor, Maximize, Eye, Lock, MoveHorizontal,
+  Smartphone, Tablet, Monitor, Eye, Lock, MoveHorizontal,
   Pipette, ChevronDown, Square, Share2, Link2, Code2,
 } from "lucide-react";
 import { useTheme } from "../../theme/ThemeContext";
@@ -17,14 +17,14 @@ const DEVICE_ICON = {
   phone: Smartphone,
   tablet: Tablet,
   desktop: Monitor,
-  kiosk: Maximize,
 };
 
 /* ----------------------------- device preview ----------------------------- */
 function DevicePreview() {
   const { device, devices, setDevice, palette, typography, weight, italic, letterSpacing, lineHeight, radius, paletteOverrides, kioskLayout, kioskLayouts, setKioskLayout } = useTheme();
   const active = devices.find((d) => d.id === device);
-  const isKiosk = active?.id === "kiosk";
+  // The tablet frame carries the 3 portrait "kiosk" layout variants.
+  const isTablet = active?.id === "tablet";
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
@@ -45,11 +45,11 @@ function DevicePreview() {
   // Re-key on theme so the iframe re-renders with the active palette/type.
   // Include a signature of this palette's custom colors so edits show in-preview.
   const overrideSig = JSON.stringify(paletteOverrides[palette.id] || {});
-  // On the kiosk frame, force the homepage so the portrait layout is always
+  // On the tablet frame, force the homepage so the portrait layout is always
   // what's previewed, and carry the chosen variant through to it.
-  const previewPath = isKiosk ? "/" : path;
-  const kioskQuery = isKiosk ? `&kiosk=${kioskLayout.id}` : "";
-  const frameKey = `${previewPath}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}|${radius.id}|${overrideSig}|${isKiosk ? kioskLayout.id : ""}`;
+  const previewPath = isTablet ? "/" : path;
+  const kioskQuery = isTablet ? `&kiosk=${kioskLayout.id}` : "";
+  const frameKey = `${previewPath}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}|${radius.id}|${overrideSig}|${isTablet ? kioskLayout.id : ""}`;
 
   return (
     <motion.div
@@ -110,7 +110,7 @@ function DevicePreview() {
           </div>
         </div>
       </div>
-      {isKiosk && (
+      {isTablet && (
         <div className="flex items-center gap-1.5 rounded-full bg-white/10 p-1">
           <span className="px-2.5 text-[11px] text-white/50">Layout</span>
           {kioskLayouts.map((k) => (
@@ -162,6 +162,22 @@ function KioskLayoutThumb({ id, on }) {
           <span className={`h-5 rounded-sm ${bar}`} />
           <span className="grid flex-1 grid-cols-2 gap-0.5">
             {Array.from({ length: 4 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
+          </span>
+        </>
+      )}
+      {id === "list" && (
+        <>
+          <span className={`h-1 rounded-sm ${bar}`} />
+          <span className="grid flex-1 grid-rows-5 gap-0.5">
+            {Array.from({ length: 5 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
+          </span>
+        </>
+      )}
+      {id === "mosaic" && (
+        <>
+          <span className={`h-1 rounded-sm ${bar}`} />
+          <span className="grid flex-1 grid-cols-2 grid-rows-3 gap-0.5">
+            {Array.from({ length: 6 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
           </span>
         </>
       )}
@@ -651,19 +667,19 @@ export default function DesignStudio() {
                   })}
                 </div>
                 <p className="mt-2 text-[11px] leading-relaxed text-muted">
-                  Opens the live site in a scaled phone · tablet · desktop · kiosk frame.
+                  Opens the live site in a scaled phone · tablet · desktop frame.
                 </p>
               </Section>
 
-              {/* Kiosk layout — 3 portrait homepages for the Apolosign 32" screen */}
-              <Section icon={<Maximize size={14} />} title="Kiosk layout">
+              {/* Tablet layout — 3 portrait homepages (also the kiosk's tablet view) */}
+              <Section icon={<Tablet size={14} />} title="Tablet layout">
                 <div className="flex flex-col gap-2.5">
                   {kioskLayouts.map((k) => {
                     const on = k.id === kioskLayout.id;
                     return (
                       <button
                         key={k.id}
-                        onClick={() => { setKioskLayout(k.id); setDevice("kiosk"); }}
+                        onClick={() => { setKioskLayout(k.id); setDevice("tablet"); }}
                         className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${
                           on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
                         }`}
@@ -679,7 +695,7 @@ export default function DesignStudio() {
                   })}
                 </div>
                 <p className="mt-2 text-[11px] leading-relaxed text-muted">
-                  Portrait, touch-first homepages for the 32" kiosk — categories up front. Picking one jumps to the kiosk preview.
+                  Portrait, touch-first homepages — categories up front. This is the view the kiosk runs. Picking one jumps to the tablet preview.
                 </p>
               </Section>
 

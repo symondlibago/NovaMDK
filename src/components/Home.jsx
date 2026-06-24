@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -12,13 +12,25 @@ import HeroStage, { KIOSK_VARIANT_IDS } from "./home/HeroStage";
 import Reveal from "./ui/Reveal";
 import Photo from "./ui/Photo";
 
-// `?kiosk=<variant>` keeps the normal homepage but enlarges + relays out the
-// hero category cards for the portrait kiosk. The Design Studio sets this on its
-// kiosk preview iframe so the client can flip layouts live. null = normal site.
+const KIOSK_MQ = "(min-width: 600px) and (max-width: 1024px) and (orientation: portrait)";
+
 function useKioskVariant() {
-  if (typeof window === "undefined") return null;
-  const v = new URLSearchParams(window.location.search).get("kiosk");
-  return v && KIOSK_VARIANT_IDS.includes(v) ? v : null;
+  const read = () => {
+    if (typeof window === "undefined") return null;
+    const v = new URLSearchParams(window.location.search).get("kiosk");
+    if (v && KIOSK_VARIANT_IDS.includes(v)) return v;
+    return window.matchMedia(KIOSK_MQ).matches ? "grid" : null;
+  };
+
+  const [variant, setVariant] = useState(read);
+  useEffect(() => {
+    const mq = window.matchMedia(KIOSK_MQ);
+    const onChange = () => setVariant(read());
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  return variant;
 }
 
 const Testimonials = lazy(() => import("./Testimonials"));

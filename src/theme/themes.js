@@ -655,21 +655,25 @@ export const WEIGHTS = [
   { id: "bold", name: "Bold", vars: { "--nv-weight-heading": "900", "--nv-weight-body": "500" } },
 ];
 
-/** Device preview frames (px) used by the studio's responsive viewer. */
+/** Device preview frames (px) used by the studio's responsive viewer.
+ *  The real kiosk runs the tablet responsive view, so the portrait tablet
+ *  frame doubles as the kiosk preview (carries the 3 layout variants). */
 export const DEVICES = [
   { id: "live", name: "Live", icon: "monitor", w: null, h: null },
   { id: "phone", name: "Phone", icon: "smartphone", w: 390, h: 844 },
   { id: "tablet", name: "Tablet", icon: "tablet", w: 834, h: 1112 },
   { id: "desktop", name: "Desktop", icon: "monitor", w: 1280, h: 800 },
-  { id: "kiosk", name: "Kiosk", icon: "monitor-speaker", w: 1080, h: 1920 },
 ];
 
-/** Portrait kiosk homepage layouts (Apolosign 32" · 1080×1920). The studio
- *  drives the chosen variant onto the kiosk preview via `?kiosk=<id>`. */
+/** Portrait tablet / kiosk homepage layouts. The studio drives the chosen
+ *  variant onto the tablet preview via `?kiosk=<id>`; on a real tablet (or the
+ *  kiosk's tablet view) the portrait breakpoint shows the same big-card hero. */
 export const KIOSK_LAYOUTS = [
   { id: "grid", name: "Spotlight Grid", tagline: "Big category tiles, tap to start" },
   { id: "stack", name: "Directory", tagline: "Full-width category rows" },
   { id: "spotlight", name: "Featured Hero", tagline: "Photo-led, categories below" },
+  { id: "list", name: "Compact List", tagline: "Slim rows — whole list fits, no scroll" },
+  { id: "mosaic", name: "Compact Grid", tagline: "Small tiles — whole list fits, no scroll" },
 ];
 
 export const DEFAULTS = {

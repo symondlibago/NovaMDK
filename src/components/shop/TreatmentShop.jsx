@@ -2,7 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ShieldAlert } from "lucide-react";
-import { productsData } from "../data/products";
+import { productsData, isCompounded } from "../data/products";
+import { ComplianceBadges, CompoundedDisclaimer } from "../Compliance";
+import BackButton from "../ui/BackButton";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -20,18 +22,21 @@ function ProductCard({ p, delay }) {
         <span className="text-[13px] font-semibold text-muted">{p.price}</span>
       </div>
       <h3 className="text-[1.05rem] font-bold leading-snug text-ink">{p.name}</h3>
-      {p.dosageForm && (
-        <span className="mt-2 w-fit rounded-full bg-surface-2 px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-muted">
-          {p.dosageForm}
-        </span>
-      )}
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        {p.dosageForm && (
+          <span className="w-fit rounded-full bg-surface-2 px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-muted">
+            {p.dosageForm}
+          </span>
+        )}
+        <ComplianceBadges compounded={isCompounded(p)} />
+      </div>
 
-      <div className="pointer-events-none my-5 flex h-36 items-center justify-center px-2">
+      <div className="my-5 flex h-36 items-center justify-center px-2">
         <img
           src={p.img}
           alt={p.name}
           loading="lazy"
-          className="h-full w-full object-contain mix-blend-multiply drop-shadow-xl transition-transform duration-700 ease-out group-hover:-translate-y-1.5 group-hover:scale-105"
+          className="pointer-events-none h-full w-full object-contain mix-blend-multiply drop-shadow-xl transition-transform duration-700 ease-out group-hover:-translate-y-1.5 group-hover:scale-105"
         />
       </div>
 
@@ -55,7 +60,7 @@ function ProductCard({ p, delay }) {
 // Weight Loss → Ozempic (4) then Mounjaro (5) lead the catalog.
 const PINNED_FIRST = { "weight-loss": [4, 5] };
 
-export default function TreatmentShop({ category }) {
+export default function TreatmentShop({ category, showBack = false }) {
   const pinned = PINNED_FIRST[category] || [];
   const products = productsData
     .filter((p) => p.categorySlug === category)
@@ -73,6 +78,11 @@ export default function TreatmentShop({ category }) {
   return (
     <section id="shop" className="scroll-mt-24 bg-surface-2 py-[clamp(2.5rem,5.5vw,5rem)]">
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
+        {showBack && (
+          <div className="mb-8">
+            <BackButton />
+          </div>
+        )}
         <div className="mb-8 text-center">
           <span className="nv-eyebrow">Prescription treatments</span>
           <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.6rem)] font-extrabold leading-tight">
@@ -97,6 +107,9 @@ export default function TreatmentShop({ category }) {
             Explore other goals <ArrowRight size={15} />
           </Link>
         </div>
+
+        {/* required compounded-drug + GLP-1 marketing disclaimers */}
+        <CompoundedDisclaimer className="mx-auto mt-10 max-w-[680px] border-t border-line pt-6 text-center" />
       </div>
     </section>
   );

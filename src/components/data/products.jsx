@@ -130,6 +130,7 @@ export const productsData = [
     id: 4,
     categorySlug: "weight-loss",
     categoryName: "Weight Loss",
+    fdaApproved: true, // brand pen — FDA-approved finished drug, not compounded
     name: "Ozempic (Semaglutide)",
     subtitle: "Novo Nordisk's branded once-weekly semaglutide pen — FDA-approved GLP-1 receptor agonist for type 2 diabetes and widely used for weight management.",
     price: "$1,200",
@@ -167,6 +168,7 @@ export const productsData = [
     id: 5,
     categorySlug: "weight-loss",
     categoryName: "Weight Loss",
+    fdaApproved: true, // brand pen — FDA-approved finished drug, not compounded
     name: "Mounjaro (Tirzepatide)",
     subtitle: "Eli Lilly's branded once-weekly tirzepatide pen — first-in-class dual GIP / GLP-1 receptor agonist with the strongest weight-loss evidence to date.",
     price: "$1,200",
@@ -2485,6 +2487,13 @@ export const productsData = [
     },
   },
 ];
+
+/**
+ * Every product here is a prescription item; all are compounded EXCEPT the two
+ * FDA-approved brand pens (Ozempic, Mounjaro), which carry `fdaApproved: true`.
+ * Drives the "Compounded" image label and the compounded-drug FDA disclaimer.
+ */
+export const isCompounded = (product) => !product?.fdaApproved;
 
 export const categoryContent = {
   "All": {

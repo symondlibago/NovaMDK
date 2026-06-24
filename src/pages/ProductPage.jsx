@@ -7,7 +7,8 @@ import {
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
-import { productsData } from "../components/data/products";
+import { productsData, isCompounded } from "../components/data/products";
+import { ComplianceBadges, CompoundedDisclaimer } from "../components/Compliance";
 
 const TRUST = [
   { icon: Stethoscope, label: "U.S. licensed providers" },
@@ -130,6 +131,9 @@ export default function ProductPage() {
               <h1 className="mt-3 font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-tight tracking-tight">{product.name}</h1>
               <p className="mt-3 text-[1.05rem] leading-relaxed text-muted">{product.subtitle}</p>
 
+              {/* required regulatory labels */}
+              <ComplianceBadges compounded={isCompounded(product)} className="mt-4" />
+
               <div className="mt-6 flex items-baseline gap-3">
                 <span className="text-[2rem] font-extrabold tracking-tight">{product.price}</span>
                 <span className="flex items-center gap-1.5 text-[0.85rem] text-muted"><Truck size={14} /> {product.shipping}</span>
@@ -161,6 +165,11 @@ export default function ProductPage() {
               <p className="mt-3 flex items-center justify-center gap-2 text-[0.82rem] text-muted">
                 <ShieldAlert size={14} className="text-primary/70" /> Prescription product — requires an online medical evaluation.
               </p>
+
+              {/* required compounded-drug + GLP-1 marketing disclaimers */}
+              {isCompounded(product) && (
+                <CompoundedDisclaimer className="mt-5 rounded-2xl border border-line bg-surface-2/60 p-4" />
+              )}
             </div>
           </Reveal>
         </div>

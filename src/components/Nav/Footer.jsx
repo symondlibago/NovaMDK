@@ -63,6 +63,7 @@ export default function Footer() {
             <h4 className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.13em] text-accent md:mb-6">Legal</h4>
             <ul className="space-y-3 text-[14px] text-on-panel/60 md:space-y-4">
               <li><Link to="/legal/privacy-policy" className="transition-colors hover:text-on-panel">Privacy policy</Link></li>
+              <li><Link to="/legal/hipaa-notice-of-privacy-practices" className="transition-colors hover:text-on-panel">HIPAA Notice</Link></li>
               <li><Link to="/legal/terms-and-conditions" className="transition-colors hover:text-on-panel">Terms &amp; conditions</Link></li>
               <li><Link to="/legal/telehealth-consent" className="transition-colors hover:text-on-panel">Telehealth consent</Link></li>
               <li><Link to="/legal/consumer-health-data" className="transition-colors hover:text-on-panel">Consumer Health Data</Link></li>
@@ -73,12 +74,29 @@ export default function Footer() {
 
         <div className="flex flex-col gap-4 border-t border-white/10 pt-8 text-[13px] text-on-panel/50 md:flex-row md:items-center md:justify-between md:pt-10">
           <p>©2026 NovaMDK Inc. All rights reserved.</p>
-          <p>Made for your body — not the average.</p>
         </div>
 
-        <p className="mt-8 max-w-6xl text-left text-[10px] leading-relaxed text-on-panel/40 md:text-[11px]">
-          Prescription products require an online evaluation by a licensed medical professional. Medications are prescribed by licensed physicians as part of our programs, and actual product packaging may vary. The FDA does not review compounded medications for safety or effectiveness. For prescription items, NovaMDK will arrange a consultation with a qualified healthcare provider.
-        </p>
+        <div className="mt-8 max-w-6xl space-y-2 text-left text-[10px] leading-relaxed text-on-panel/40 md:text-[11px]">
+          <p>
+            Compounded drug products are not approved or evaluated for safety, effectiveness, or quality
+            by the FDA. Prescription required.
+          </p>
+          <p>
+            NovaMDK does not manufacture GLP-1 medications. The medication you receive may differ in
+            appearance from the website images. Weight loss is not guaranteed.
+          </p>
+          <p>
+            Prescription products require an online evaluation by a licensed medical professional.
+            Medications are prescribed by licensed physicians as part of our programs. For prescription
+            items, NovaMDK will arrange a consultation with a qualified healthcare provider.
+          </p>
+          <p>
+            Most online visits take approximately five minutes, but appointment length may vary based on
+            the patient's medical needs and the treating clinician's independent professional judgment.
+            The provider — not NovaMDK or its management services organization — determines how long each
+            clinical evaluation takes.
+          </p>
+        </div>
       </div>
     </footer>
   );

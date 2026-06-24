@@ -7,19 +7,24 @@ import { track, EVENTS } from "../../lib/analytics";
 
 const EASE = [0.22, 0.61, 0.18, 1];
 
-/* The 3 kiosk category layouts the client picks from in the Design Studio.
+/* The kiosk category layouts the client picks from in the Design Studio.
    Each only restyles the hero category grid (bigger cards) — the rest of the
-   homepage is unchanged. `mode` per card: "tile" (vertical) or "row" (wide). */
+   homepage is unchanged. `mode` per card: "tile"/"row" (large) or "comptile"/
+   "comprow" (compact). The compact layouts are sized so every category fits the
+   tablet/kiosk viewport without scrolling. */
 const KIOSK_VARIANTS = {
-  grid:      { wrap: "grid grid-cols-2 gap-4",  helpTile: true, card: () => ({ mode: "tile", span: "" }) },
-  stack:     { wrap: "grid grid-cols-1 gap-3.5", card: () => ({ mode: "row", span: "" }) },
-  spotlight: { wrap: "grid grid-cols-2 gap-4",  card: (i) => (i === 0 ? { mode: "row", span: "col-span-2", featured: true } : { mode: "tile", span: "" }) },
+  grid:      { wrap: "grid grid-cols-2 gap-4",   helpTile: true, card: () => ({ mode: "tile", span: "" }) },
+  stack:     { wrap: "grid grid-cols-1 gap-3.5",                 card: () => ({ mode: "row", span: "" }) },
+  spotlight: { wrap: "grid grid-cols-2 gap-4",   card: (i) => (i === 0 ? { mode: "row", span: "col-span-2", featured: true } : { mode: "tile", span: "" }) },
+  // Compact, fit-to-screen layouts — no scrolling to see the full category list.
+  list:      { wrap: "grid grid-cols-1 gap-2.5",                 card: () => ({ mode: "comprow", span: "" }) },
+  mosaic:    { wrap: "grid grid-cols-2 gap-2.5", helpTile: true, compact: true, card: () => ({ mode: "comptile", span: "" }) },
 };
 export const KIOSK_VARIANT_IDS = Object.keys(KIOSK_VARIANTS);
 
 /* Fills the spare cell in the 2-col Spotlight Grid — a high-contrast prompt
    that gives walk-up, undecided visitors an obvious path into the quiz. */
-function HelpChooseTile({ delay }) {
+function HelpChooseTile({ delay, compact = false }) {
   const R = "rounded-[calc(22px*var(--nv-r-scale,1))]";
   return (
     <motion.div
@@ -31,23 +36,25 @@ function HelpChooseTile({ delay }) {
       <Link
         to="/start"
         onClick={() => track(EVENTS.QUIZ_STARTED, { source: "hero-kiosk-help" })}
-        className={`group relative flex h-full min-h-[290px] flex-col justify-between overflow-hidden ${R} p-8 text-white nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5`}
+        className={`group relative flex h-full flex-col justify-between overflow-hidden ${R} text-white nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5 ${compact ? "min-h-[150px] p-5" : "min-h-[290px] p-8"}`}
         style={{ background: "linear-gradient(150deg, var(--nv-primary), var(--nv-primary-deep))" }}
       >
         <span
           className="pointer-events-none absolute -right-10 -top-12 h-48 w-48 rounded-full opacity-50"
           style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--nv-accent) 55%, transparent), transparent 70%)" }}
         />
-        <span className="relative z-[1] font-mono text-[0.84rem] uppercase tracking-[0.14em] text-white/75">
+        <span className={`relative z-[1] font-mono uppercase tracking-[0.14em] text-white/75 ${compact ? "text-[0.66rem]" : "text-[0.84rem]"}`}>
           Not sure where to start?
         </span>
         <div className="relative z-[1]">
-          <h3 className="font-display text-[2.1rem] font-bold leading-tight">Take the 2-minute assessment</h3>
-          <p className="mt-2 max-w-[26ch] text-[1.02rem] leading-snug text-white/80">
-            Answer a few questions and we'll point you to the right care.
-          </p>
-          <span className="mt-5 inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 text-[1.02rem] font-semibold text-ink transition-all duration-300 group-hover:gap-3.5">
-            Start the assessment <ArrowRight size={17} strokeWidth={2.4} />
+          <h3 className={`font-display font-bold leading-tight ${compact ? "text-[1.4rem]" : "text-[2.1rem]"}`}>Take the 2-minute assessment</h3>
+          {!compact && (
+            <p className="mt-2 max-w-[26ch] text-[1.02rem] leading-snug text-white/80">
+              Answer a few questions and we'll point you to the right care.
+            </p>
+          )}
+          <span className={`inline-flex items-center gap-2.5 rounded-full bg-white font-semibold text-ink transition-all duration-300 group-hover:gap-3.5 ${compact ? "mt-3 px-4 py-2.5 text-[0.9rem]" : "mt-5 px-6 py-3.5 text-[1.02rem]"}`}>
+            Start the assessment <ArrowRight size={compact ? 15 : 17} strokeWidth={2.4} />
           </span>
         </div>
       </Link>
@@ -56,7 +63,11 @@ function HelpChooseTile({ delay }) {
 }
 
 function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }) {
-  if (mode !== "auto") return <BigGlassCard c={c} delay={delay} row={mode === "row"} featured={featured} className={className} />;
+  if (mode !== "auto") {
+    const compact = mode === "comprow" || mode === "comptile";
+    const row = mode === "row" || mode === "comprow";
+    return <BigGlassCard c={c} delay={delay} row={row} compact={compact} featured={featured} className={className} />;
+  }
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -71,6 +82,8 @@ function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }
         className="group relative flex h-full flex-row items-center gap-3.5 overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] p-3.5 nv-shadow-lg transition-all duration-500 hover:-translate-y-1 sm:min-h-[212px] sm:flex-col sm:items-stretch sm:gap-0 sm:p-4 sm:hover:-translate-y-2"
       >
         <span className="nv-glass absolute inset-0 rounded-[calc(18px*var(--nv-r-scale,1))]" />
+        {/* mobile only: a touch darker for contrast on the photo */}
+        <span className="absolute inset-0 bg-panel/45 sm:hidden" />
 
         {/* gloss sweep on hover (sm+ cards) */}
         <span className="pointer-events-none absolute inset-0 z-[1] hidden overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] sm:block">
@@ -96,8 +109,8 @@ function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }
           </h3>
         </div>
 
-        {/* mobile trailing arrow */}
-        <span className="relative z-[3] grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/40 text-white transition-colors group-hover:bg-white/15 sm:hidden">
+        {/* mobile trailing arrow — solid dark circle so it reads as a button */}
+        <span className="relative z-[3] grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/55 bg-ink/45 text-white transition-colors group-hover:bg-ink/65 sm:hidden">
           <ArrowRight size={15} strokeWidth={2.4} />
         </span>
 
@@ -113,7 +126,7 @@ function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }
 /* Enlarged version of the same glass card for the kiosk. Same look, bigger —
    "tile" is a tall vertical card, "row" is a wide full-width card, and
    `featured` is the premium hero banner at the top of the Featured layout. */
-function BigGlassCard({ c, delay, row, featured = false, className = "" }) {
+function BigGlassCard({ c, delay, row, compact = false, featured = false, className = "" }) {
   const R = "rounded-[calc(22px*var(--nv-r-scale,1))]";
 
   if (featured) {
@@ -179,7 +192,9 @@ function BigGlassCard({ c, delay, row, featured = false, className = "" }) {
         to={`/treatments?goal=${c.goalSlug}`}
         onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero-kiosk" })}
         className={`group relative flex h-full overflow-hidden ${R} nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5 ${
-          row ? "flex-row items-center gap-6 p-7" : "min-h-[290px] flex-col items-stretch p-8"
+          row
+            ? (compact ? "flex-row items-center gap-4 p-4" : "flex-row items-center gap-6 p-7")
+            : (compact ? "min-h-[150px] flex-col items-stretch p-5" : "min-h-[290px] flex-col items-stretch p-8")
         }`}
       >
         <span className={`nv-glass absolute inset-0 ${R}`} />
@@ -193,18 +208,20 @@ function BigGlassCard({ c, delay, row, featured = false, className = "" }) {
           aria-hidden="true"
           loading="lazy"
           className={`nv-bob relative z-[3] shrink-0 object-contain drop-shadow-[0_14px_24px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110 ${
-            row ? "h-[84px] w-[84px]" : "mb-6 h-[104px] w-auto self-start"
+            row
+              ? (compact ? "h-[56px] w-[56px]" : "h-[84px] w-[84px]")
+              : (compact ? "mb-3 h-[64px] w-auto self-start" : "mb-6 h-[104px] w-auto self-start")
           }`}
         />
 
         <div className="relative z-[3] min-w-0 flex-1">
-          <span className="font-mono text-[0.84rem] uppercase tracking-[0.13em] text-white/80 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)]">
+          <span className={`font-mono uppercase tracking-[0.13em] text-white/80 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)] ${compact ? "text-[0.7rem]" : "text-[0.84rem]"}`}>
             {c.tag}
           </span>
-          <h3 className="mt-1.5 font-display text-[2.1rem] font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)]">
+          <h3 className={`mt-1.5 font-display font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)] ${compact ? "text-[1.45rem]" : "text-[2.1rem]"}`}>
             {c.name}
           </h3>
-          {!row && (
+          {!row && !compact && (
             <span className="mt-auto inline-flex items-center gap-2 pt-5 text-[1.05rem] font-semibold text-white drop-shadow-[0_1px_10px_rgba(15,22,34,0.45)]">
               Browse <ArrowRight size={18} strokeWidth={2.4} />
             </span>
@@ -212,8 +229,8 @@ function BigGlassCard({ c, delay, row, featured = false, className = "" }) {
         </div>
 
         {row && (
-          <span className="relative z-[3] grid h-14 w-14 shrink-0 place-items-center rounded-full border border-white/45 text-white transition-colors group-hover:bg-white/15">
-            <ArrowRight size={22} strokeWidth={2.2} />
+          <span className={`relative z-[3] grid shrink-0 place-items-center rounded-full border border-white/45 text-white transition-colors group-hover:bg-white/15 ${compact ? "h-11 w-11" : "h-14 w-14"}`}>
+            <ArrowRight size={compact ? 18 : 22} strokeWidth={2.2} />
           </span>
         )}
       </Link>
@@ -311,7 +328,7 @@ export default function HeroStage({ kioskVariant = null }) {
         style={{ background: "linear-gradient(180deg, transparent, color-mix(in oklab, var(--nv-primary) 20%, transparent))" }}
       />
 
-      <div className="mx-auto max-w-[1500px] px-5 pb-[clamp(48px,7vw,88px)] pt-[clamp(34px,6vw,72px)] md:px-10">
+      <div className="mx-auto max-w-[1500px] px-5 pb-[clamp(48px,7vw,88px)] pt-[clamp(16px,3vw,36px)] md:px-10">
         {/* Hero row */}
         <div className="mb-[clamp(30px,4vw,50px)] flex flex-col items-start justify-between gap-7 md:flex-row md:items-end">
           <motion.div
@@ -340,15 +357,15 @@ export default function HeroStage({ kioskVariant = null }) {
             <Link
               to="/treatments"
               onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
-              className="group relative inline-flex items-center gap-3.5 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] border-primary/55 px-6 py-4 text-[1.05rem] font-bold tracking-tight text-ink transition-colors duration-300 hover:border-primary hover:text-on-primary"
+              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] border-primary/55 px-4 py-2.5 text-[0.9rem] font-bold tracking-tight text-ink transition-colors duration-300 hover:border-primary hover:text-on-primary sm:px-5 sm:py-3 sm:text-[0.98rem]"
             >
               <span
                 className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0"
                 style={{ background: "linear-gradient(135deg, var(--nv-primary), var(--nv-primary-deep))" }}
               />
               <span className="relative z-10">Browse all treatments</span>
-              <span className="relative z-10 grid h-[26px] w-[26px] place-items-center rounded-full border-[1.5px] border-current transition-transform duration-300 group-hover:translate-x-1">
-                <ArrowRight size={13} strokeWidth={2.6} />
+              <span className="relative z-10 grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] border-current transition-transform duration-300 group-hover:translate-x-1">
+                <ArrowRight size={12} strokeWidth={2.6} />
               </span>
             </Link>
           </motion.div>
@@ -363,7 +380,7 @@ export default function HeroStage({ kioskVariant = null }) {
               const { mode, span, featured } = kiosk.card(i);
               return <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} mode={mode} featured={featured} className={span} />;
             })}
-            {kiosk.helpTile && <HelpChooseTile delay={CONSULT_ORDER.length * 0.06} />}
+            {kiosk.helpTile && <HelpChooseTile delay={CONSULT_ORDER.length * 0.06} compact={kiosk.compact} />}
           </div>
         ) : (
           <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-3 sm:gap-[clamp(0.7rem,1.2vw,1rem)] lg:grid-cols-5">

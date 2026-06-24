@@ -7,6 +7,7 @@ import {
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
+import BackButton from "../components/ui/BackButton";
 
 const STATS = [
   { b: "~2 min", s: "Guided questionnaire" },
@@ -40,7 +41,10 @@ export default function KioskPage() {
       <Navbar />
 
       {/* ===== Hero — Smart Kiosk showcase ===== */}
-      <section className="mx-auto max-w-[1240px] px-5 py-[clamp(2rem,4vw,3.5rem)] md:px-10">
+      <section className="mx-auto max-w-[1240px] px-5 pb-[clamp(2rem,4vw,3.5rem)] pt-6 md:px-10">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <Reveal>
           {/* dotted frame */}
           <div

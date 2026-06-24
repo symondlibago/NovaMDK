@@ -137,11 +137,12 @@ export default function TreatmentsPage() {
 
       {validGoal ? (
         /* Came from a consultation → only that category's products (their own header) */
-        <TreatmentShop category={validGoal} />
+        <TreatmentShop category={validGoal} showBack />
       ) : (
         /* Manual visit → page hero + explore by goal (each tile starts a consultation) */
         <>
           <PageHero
+            showBack
             eyebrow="Treatments"
             title="Find the treatment that fits you"
             subtitle="Prescription protocols formulated by licensed U.S. physicians, shipped to your door"

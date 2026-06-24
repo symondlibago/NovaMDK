@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from './Nav/Navbar';
 import Footer from './Nav/Footer';
+import BackButton from './ui/BackButton';
 
 const legalDocuments = {
   'terms-and-conditions': {
@@ -398,8 +399,8 @@ const legalDocuments = {
         links: [
           { label: 'Home', url: '/' },
           { label: 'About Us', url: '/' },
-          { label: 'Contact Us', url: '/support' },
-          { label: 'Help Center & FAQ', url: '/support' },
+          { label: 'Contact Us', url: '/contact' },
+          { label: 'Help Center & FAQ', url: '/#faq' },
           { label: 'Patient Portal', url: '#' }
         ]
       },
@@ -408,6 +409,7 @@ const legalDocuments = {
         links: [
           { label: 'Terms & Conditions', url: '/legal/terms-and-conditions' },
           { label: 'Privacy Policy', url: '/legal/privacy-policy' },
+          { label: 'HIPAA Notice of Privacy Practices', url: '/legal/hipaa-notice-of-privacy-practices' },
           { label: 'Telehealth Consent & Open Payments', url: '/legal/telehealth-consent' },
           { label: 'Consumer Health Data Privacy Notice', url: '/legal/consumer-health-data' }
         ]
@@ -527,6 +529,106 @@ const legalDocuments = {
     closing: 'PATIENT ACKNOWLEDGMENT\n\nI have read and understand this Telehealth Informed Consent. I have had the opportunity to ask questions and have received answers to my satisfaction. I voluntarily consent to receive healthcare services through telehealth as described in this Consent.\n\nWhen this Consent is accepted electronically through the Platform, your acceptance is recorded with a date and time stamp and constitutes your legal signature.',
   },
 
+  'hipaa-notice-of-privacy-practices': {
+    title: 'Notice of Privacy Practices',
+    subtitle: 'NovaMDK Physician Group',
+    lastUpdated: 'June 20, 2026',
+    intro: [
+      'THIS NOTICE DESCRIBES HOW MEDICAL INFORMATION ABOUT YOU MAY BE USED AND DISCLOSED AND HOW YOU CAN GET ACCESS TO THIS INFORMATION. PLEASE REVIEW IT CAREFULLY.',
+    ],
+    content: [
+      {
+        heading: '1. Who Follows This Notice',
+        text: 'This Notice of Privacy Practices ("Notice") is provided by NovaMDK Physician Group ("NPG," "we," "us," or "our"), the independent professional medical group whose affiliated physicians provide clinical care to you through the NovaMDK telehealth platform. NPG is a "covered entity" under the federal Health Insurance Portability and Accountability Act of 1996 and its implementing regulations ("HIPAA").\n\nThis Notice applies to the protected health information ("PHI") created or received by NPG and its affiliated providers and workforce in the course of providing you care. It describes our legal duties and your rights concerning your PHI. NovaMDK\'s handling of non-clinical platform information is described separately in the NovaMDK Privacy Policy and Consumer Health Data Privacy Notice; those notices are not a substitute for this Notice.',
+      },
+      {
+        heading: '2. Our Pledge Regarding Your Health Information',
+        text: 'We understand that information about you and your health is personal. We are committed to protecting it. We are required by law to: (i) maintain the privacy of your PHI; (ii) provide you with this Notice of our legal duties and privacy practices with respect to your PHI; (iii) notify you following a breach of unsecured PHI; and (iv) follow the terms of the Notice currently in effect.',
+      },
+      {
+        heading: '3. How We May Use and Disclose Your Health Information Without Your Authorization',
+        text: 'The following categories describe the ways we may use and disclose your PHI for treatment, payment, and healthcare operations, and other permitted purposes, without your written authorization:',
+        subsections: [
+          {
+            heading: 'For Treatment',
+            text: 'We may use and disclose your PHI to provide, coordinate, or manage your healthcare and related services. For example, a Provider may review your intake, history, photographs, and lab results to evaluate your condition, and may share your information with the affiliated pharmacy (NovaMDK Drug Group), a laboratory, or another provider involved in your care.',
+          },
+          {
+            heading: 'For Payment',
+            text: 'We may use and disclose your PHI to obtain payment for the services you receive — for example, to bill and collect from you or a payer, or to verify eligibility and coverage.',
+          },
+          {
+            heading: 'For Healthcare Operations',
+            text: 'We may use and disclose your PHI for our healthcare operations, such as quality assessment and improvement, reviewing the competence or qualifications of providers, care coordination, and general administrative activities. We may share PHI with our business associates (for example, the technology platform operator) who perform services on our behalf and who are required by written agreement to protect your PHI.',
+          },
+          {
+            heading: 'Appointment Reminders and Health-Related Communications',
+            text: 'We may contact you to provide appointment reminders, refill notifications, lab result notifications, or information about treatment alternatives or other health-related benefits and services that may be of interest to you.',
+          },
+          {
+            heading: 'As Required or Permitted by Law',
+            text: 'We may use or disclose your PHI when required by law, or as permitted for public health activities, reporting of abuse or neglect, health oversight activities, judicial and administrative proceedings, law enforcement purposes, to coroners or medical examiners, organ and tissue donation, research subject to applicable safeguards, to avert a serious threat to health or safety, for specialized government functions, and for workers\' compensation — in each case only to the extent permitted and as limited by applicable law.',
+          },
+        ],
+      },
+      {
+        heading: '4. Uses and Disclosures That Require Your Written Authorization',
+        text: 'Other uses and disclosures of your PHI not described in this Notice will be made only with your written authorization. In particular, the following uses and disclosures require your authorization: (i) most uses and disclosures of psychotherapy notes; (ii) uses and disclosures for marketing purposes; and (iii) disclosures that constitute a sale of PHI. You may revoke an authorization in writing at any time, except to the extent we have already acted in reliance on it.',
+      },
+      {
+        heading: '5. Your Rights Regarding Your Health Information',
+        text: 'You have the following rights with respect to your PHI:',
+        subsections: [
+          {
+            heading: 'Right to Access and Receive a Copy',
+            text: 'You have the right to inspect and obtain a copy of your PHI that we maintain in a designated record set, including in an electronic format where readily producible. We may charge a reasonable, cost-based fee. We may deny access in certain limited circumstances permitted by law, some of which are subject to review.',
+          },
+          {
+            heading: 'Right to Amend',
+            text: 'If you believe PHI we maintain about you is incorrect or incomplete, you may request that we amend it. We may deny your request in certain circumstances, and we will provide a written explanation if we do.',
+          },
+          {
+            heading: 'Right to an Accounting of Disclosures',
+            text: 'You have the right to request an accounting of certain disclosures of your PHI made by us, other than disclosures for treatment, payment, healthcare operations, and certain other excepted disclosures.',
+          },
+          {
+            heading: 'Right to Request Restrictions',
+            text: 'You have the right to request a restriction on how we use or disclose your PHI for treatment, payment, or healthcare operations. We are not required to agree to all requests, except that we will comply with a request to restrict disclosure to a health plan for payment or operations where you have paid for the item or service in full out of pocket, as required by law.',
+          },
+          {
+            heading: 'Right to Confidential Communications',
+            text: 'You have the right to request that we communicate with you about medical matters in a certain way or at a certain location. We will accommodate reasonable requests.',
+          },
+          {
+            heading: 'Right to a Paper Copy of This Notice',
+            text: 'You have the right to obtain a paper copy of this Notice upon request, even if you have agreed to receive it electronically.',
+          },
+          {
+            heading: 'Right to Breach Notification',
+            text: 'You have the right to be notified following a breach of your unsecured PHI, as required by law.',
+          },
+        ],
+      },
+      {
+        heading: '6. Our Duties',
+        text: 'We are required by law to maintain the privacy and security of your PHI, to provide you with this Notice of our legal duties and privacy practices, to notify affected individuals following a breach of unsecured PHI, and to abide by the terms of the Notice currently in effect. We reserve the right to change this Notice and to make the revised Notice effective for PHI we already have as well as any information we receive in the future.',
+      },
+      {
+        heading: '7. Changes to This Notice',
+        text: 'We may change the terms of this Notice at any time. The revised Notice will apply to all PHI that we maintain. When we make a material change, we will post the revised Notice on the NovaMDK platform and make it available upon request. The effective date is shown above.',
+      },
+      {
+        heading: '8. How to File a Complaint',
+        text: 'If you believe your privacy rights have been violated, you may file a complaint with us using the contact information below, or with the Secretary of the U.S. Department of Health and Human Services, Office for Civil Rights. You will not be retaliated against, penalized, or denied care for filing a complaint.\n\nU.S. Department of Health and Human Services\nOffice for Civil Rights\n200 Independence Avenue, S.W., Washington, D.C. 20201\n1-877-696-6775 • www.hhs.gov/ocr/privacy/hipaa/complaints/',
+      },
+      {
+        heading: '9. Contact — Privacy Officer',
+        text: 'To exercise any of your rights, to request a paper copy of this Notice, or to ask questions or file a complaint, contact our Privacy Officer:\n\nNovaMDK Physician Group — Privacy Officer\n15570 Brookhurst St #238\nWestminster, CA 92683\n\nprivacy@novamdk.com',
+      },
+    ],
+    closing: 'This Notice is provided in accordance with HIPAA (45 C.F.R. Parts 160 and 164). For your protections under California law, see also the Consumer Health Data Privacy Notice and the Telehealth Informed Consent.',
+  },
+
   'consumer-health-data': {
     title: 'Consumer Health Data Privacy Notice',
     lastUpdated: 'June 20, 2026',
@@ -630,6 +732,8 @@ export default function LegalPage() {
       <Navbar />
 
       <main className="flex-1 w-full max-w-[850px] mx-auto px-4 sm:px-6 md:px-12 py-8 md:py-24">
+
+        <BackButton className="mb-6" />
 
         <div className="bg-surface rounded-3xl md:rounded-[calc(40px*var(--nv-r-scale,1))] p-6 sm:p-8 md:p-16 border border-line shadow-sm">
 

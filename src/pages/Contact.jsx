@@ -95,6 +95,7 @@ export default function ContactPage() {
       <Navbar />
 
       <PageHero
+        showBack
         eyebrow="Contact"
         title="We're here to help."
         subtitle="Questions about your protocol, an order, or getting started? Message our care team — a real person replies, usually within one business day."
