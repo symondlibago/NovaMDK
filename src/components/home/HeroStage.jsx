@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -238,42 +238,9 @@ function BigGlassCard({ c, delay, row, compact = false, featured = false, classN
   );
 }
 
-/* Wide homepage promo — just the looping video. It always plays (muted autoplay
-   is always allowed); the soundtrack is unmuted only while the card is on screen
-   and its volume fades with how visible it is. Scroll away → fades to silence;
-   leave the homepage → this unmounts, so the music stops entirely. */
+/* Wide homepage promo — a silent, looping video. Muted autoplay is always
+   allowed, so it plays everywhere without sound. */
 function KioskPromoCard() {
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-
-    // start playing, muted (so autoplay is never blocked)
-    v.muted = true;
-    v.volume = 0;
-    v.play().catch(() => {});
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        const r = entry.intersectionRatio;
-        if (r > 0.05) {
-          // on screen → fade the music in (full volume once ~half visible)
-          v.volume = Math.min(1, r / 0.5);
-          v.muted = false;
-          v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
-        } else {
-          // scrolled away → silence, but keep the video looping
-          v.volume = 0;
-          v.muted = true;
-        }
-      },
-      { threshold: Array.from({ length: 21 }, (_, i) => i / 20) }
-    );
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 26 }}
@@ -283,10 +250,10 @@ function KioskPromoCard() {
       className="mt-4 overflow-hidden rounded-3xl"
     >
       <video
-        ref={videoRef}
         src="/feeling-your-best.mp4"
         autoPlay
         loop
+        muted
         playsInline
         className="block h-[380px] w-full object-cover object-center sm:h-[480px] lg:h-[560px]"
       />
