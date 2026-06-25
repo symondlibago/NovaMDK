@@ -3,12 +3,14 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical, Loader2,
+  QrCode, X, Smartphone,
 } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
 import { productsData, isCompounded } from "../components/data/products";
 import { ComplianceBadges, CompoundedDisclaimer } from "../components/Compliance";
+import useKioskMode from "../lib/useKioskMode";
 
 const TRUST = [
   { icon: Stethoscope, label: "U.S. licensed providers" },
@@ -24,6 +26,8 @@ export default function ProductPage() {
   const { id } = useParams();
   const product = productsData.find((p) => String(p.id) === String(id));
 
+  const isKiosk = useKioskMode();
+  const [showQR, setShowQR] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -150,20 +154,30 @@ export default function ProductPage() {
                 </ul>
               )}
 
-              <button
-                onClick={startVisit}
-                disabled={loading}
-                className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
-              >
-                {loading ? (
-                  <><Loader2 size={16} className="animate-spin" /> Starting your visit…</>
-                ) : (
-                  <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
-                )}
-              </button>
-              {err && <p className="mt-2 text-center text-[0.84rem] font-medium text-primary">{err}</p>}
+              {isKiosk ? (
+                <button
+                  onClick={() => setShowQR(true)}
+                  className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+                >
+                  Continue on your phone <QrCode size={17} className="transition-transform group-hover:scale-110" />
+                </button>
+              ) : (
+                <button
+                  onClick={startVisit}
+                  disabled={loading}
+                  className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
+                >
+                  {loading ? (
+                    <><Loader2 size={16} className="animate-spin" /> Starting your visit…</>
+                  ) : (
+                    <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                  )}
+                </button>
+              )}
+              {err && !isKiosk && <p className="mt-2 text-center text-[0.84rem] font-medium text-primary">{err}</p>}
               <p className="mt-3 flex items-center justify-center gap-2 text-[0.82rem] text-muted">
-                <ShieldAlert size={14} className="text-primary/70" /> Prescription product — requires an online medical evaluation.
+                <ShieldAlert size={14} className="text-primary/70" />
+                {isKiosk ? "Scan to continue privately on your own phone." : "Prescription product — requires an online medical evaluation."}
               </p>
 
               {/* required compounded-drug + GLP-1 marketing disclaimers */}
@@ -261,18 +275,27 @@ export default function ProductPage() {
             <div className="relative">
               <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">Start your visit for {product.name.split("(")[0].split("/")[0].trim()}.</h2>
               <p className="mx-auto mt-3 max-w-[46ch] text-[1rem] text-on-panel/70">A licensed provider reviews your intake and confirms the right fit. Nothing to pay until you're prescribed.</p>
-              <button
-                onClick={startVisit}
-                disabled={loading}
-                className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg disabled:opacity-70 disabled:hover:translate-y-0"
-              >
-                {loading ? (
-                  <><Loader2 size={16} className="animate-spin" /> Starting…</>
-                ) : (
-                  <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
-                )}
-              </button>
-              {err && <p className="mt-3 text-[0.84rem] font-medium text-on-panel/80">{err}</p>}
+              {isKiosk ? (
+                <button
+                  onClick={() => setShowQR(true)}
+                  className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg"
+                >
+                  Continue on your phone <QrCode size={17} className="transition-transform group-hover:scale-110" />
+                </button>
+              ) : (
+                <button
+                  onClick={startVisit}
+                  disabled={loading}
+                  className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg disabled:opacity-70 disabled:hover:translate-y-0"
+                >
+                  {loading ? (
+                    <><Loader2 size={16} className="animate-spin" /> Starting…</>
+                  ) : (
+                    <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                  )}
+                </button>
+              )}
+              {err && !isKiosk && <p className="mt-3 text-[0.84rem] font-medium text-on-panel/80">{err}</p>}
             </div>
           </div>
         </Reveal>
@@ -305,7 +328,64 @@ export default function ProductPage() {
         </section>
       )}
 
+      {showQR && <KioskQrModal product={product} onClose={() => setShowQR(false)} />}
+
       <Footer />
     </main>
+  );
+}
+
+const SITE_URL = "https://novamdk.vercel.app";
+function KioskQrModal({ product, onClose }) {
+  const target = `${SITE_URL}/product/${product.id}`;
+  const qrSrc = product.qrImg || `/qr/${product.id}.png`;
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-[120] grid place-items-center bg-ink/65 p-6 backdrop-blur-sm"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-[420px] rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface p-7 text-center nv-shadow-lg md:p-9"
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink"
+        >
+          <X size={18} />
+        </button>
+
+        <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-2 px-3.5 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-muted">
+          <Smartphone size={13} className="text-primary" /> Continue privately
+        </span>
+        <h3 className="mt-4 font-display text-[1.5rem] font-extrabold leading-tight">Scan to continue on your phone</h3>
+        <p className="mx-auto mt-2 max-w-[32ch] text-[0.92rem] leading-relaxed text-muted">
+          Point your camera at the code to pick up right here on <span className="font-semibold text-ink">{product.name}</span>, then start your visit privately on your own device.
+        </p>
+
+        <div className="mx-auto mt-6 grid h-[230px] w-[230px] place-items-center overflow-hidden rounded-2xl border border-line bg-white p-3">
+          {imgError ? (
+            <div className="flex flex-col items-center gap-2 text-muted">
+              <QrCode size={56} strokeWidth={1.4} />
+              <span className="px-3 text-[0.72rem] leading-snug">
+                Add a QR at <code className="text-ink">{qrSrc}</code> encoding the link below
+              </span>
+            </div>
+          ) : (
+            <img
+              src={qrSrc}
+              alt={`QR code to continue ${product.name} on your phone`}
+              onError={() => setImgError(true)}
+              className="h-full w-full object-contain"
+            />
+          )}
+        </div>
+
+        <p className="mt-4 break-all font-mono text-[0.72rem] text-muted">{target}</p>
+      </div>
+    </div>
   );
 }

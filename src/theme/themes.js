@@ -21,6 +21,27 @@ export const PALETTES = [
     },
   },
   {
+    id: "emerald-gold",
+    name: "Emerald & Gold",
+    tagline: "Emerald green + gold buttons · health & luxury",
+    swatch: ["#173D2E", "#8A6E22", "#C6AE73", "#E0DBCB", "#F5F2EA"],
+    vars: {
+      "--nv-bg": "#F5F2EA",
+      "--nv-surface": "#FFFFFF",
+      "--nv-surface-2": "#ECE7DA",
+      "--nv-ink": "#173D2E",
+      "--nv-ink-panel": "#143527",
+      "--nv-primary": "#8A6E22",
+      "--nv-primary-deep": "#6F571A",
+      "--nv-accent": "#C6AE73",
+      "--nv-line": "#E6E1D2",
+      "--nv-line-strong": "#D7D0BC",
+      "--nv-muted": "#586056",
+      "--nv-on-primary": "#FBF8EE",
+      "--nv-on-panel": "#E7E3D2",
+    },
+  },
+  {
     id: "midnight-champagne",
     name: "Midnight & Champagne",
     tagline: "Deep midnight navy + classic champagne",
@@ -685,7 +706,7 @@ export const DEFAULTS = {
   lineHeight: "normal",
   radius: "soft",
   device: "live",
-  kioskLayout: "grid",
+  kioskLayout: "mosaic",
 };
 
 export const byId = (list, id) => list.find((x) => x.id === id) || list[0];

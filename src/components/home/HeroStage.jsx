@@ -7,24 +7,46 @@ import { track, EVENTS } from "../../lib/analytics";
 
 const EASE = [0.22, 0.61, 0.18, 1];
 
-/* The kiosk category layouts the client picks from in the Design Studio.
-   Each only restyles the hero category grid (bigger cards) — the rest of the
-   homepage is unchanged. `mode` per card: "tile"/"row" (large) or "comptile"/
-   "comprow" (compact). The compact layouts are sized so every category fits the
-   tablet/kiosk viewport without scrolling. */
 const KIOSK_VARIANTS = {
   grid:      { wrap: "grid grid-cols-2 gap-4",   helpTile: true, card: () => ({ mode: "tile", span: "" }) },
   stack:     { wrap: "grid grid-cols-1 gap-3.5",                 card: () => ({ mode: "row", span: "" }) },
   spotlight: { wrap: "grid grid-cols-2 gap-4",   card: (i) => (i === 0 ? { mode: "row", span: "col-span-2", featured: true } : { mode: "tile", span: "" }) },
   // Compact, fit-to-screen layouts — no scrolling to see the full category list.
-  list:      { wrap: "grid grid-cols-1 gap-2.5",                 card: () => ({ mode: "comprow", span: "" }) },
-  mosaic:    { wrap: "grid grid-cols-2 gap-2.5", helpTile: true, compact: true, card: () => ({ mode: "comptile", span: "" }) },
+  list:      { wrap: "grid grid-cols-1 gap-2",                 card: () => ({ mode: "comprow", span: "" }) },
+  mosaic:    { wrap: "grid grid-cols-2 gap-2", helpTile: true, compact: true, cornerFrame: true, card: () => ({ mode: "comptile", span: "" }) },
 };
 export const KIOSK_VARIANT_IDS = Object.keys(KIOSK_VARIANTS);
 
+// For the Compact Grid "framed" look: square only the grid's four outer corners
+// (top-left, top-right, bottom-left, bottom-right) so it reads as one panel.
+function cornerClass(index, cols, rows) {
+  const row = Math.floor(index / cols);
+  const col = index % cols;
+  if (row === 0 && col === 0) return "rounded-tl-none";
+  if (row === 0 && col === cols - 1) return "rounded-tr-none";
+  if (row === rows - 1 && col === 0) return "rounded-bl-none";
+  if (row === rows - 1 && col === cols - 1) return "rounded-br-none";
+  return "";
+}
+
+/* The floating capsule shown on each category card. `size` sets its height;
+   width is auto so the pill keeps its aspect ratio. */
+function CategoryIcon({ size = 60, className = "" }) {
+  return (
+    <img
+      src="/novapill.avif"
+      alt=""
+      aria-hidden="true"
+      loading="lazy"
+      style={{ height: size }}
+      className={`nv-bob relative z-[3] w-auto shrink-0 object-contain drop-shadow-[0_12px_22px_rgba(15,22,34,0.45)] transition-transform duration-500 group-hover:scale-110 ${className}`}
+    />
+  );
+}
+
 /* Fills the spare cell in the 2-col Spotlight Grid — a high-contrast prompt
    that gives walk-up, undecided visitors an obvious path into the quiz. */
-function HelpChooseTile({ delay, compact = false }) {
+function HelpChooseTile({ delay, compact = false, corner = "" }) {
   const R = "rounded-[calc(22px*var(--nv-r-scale,1))]";
   return (
     <motion.div
@@ -36,7 +58,7 @@ function HelpChooseTile({ delay, compact = false }) {
       <Link
         to="/start"
         onClick={() => track(EVENTS.QUIZ_STARTED, { source: "hero-kiosk-help" })}
-        className={`group relative flex h-full flex-col justify-between overflow-hidden ${R} text-white nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5 ${compact ? "min-h-[150px] p-5" : "min-h-[290px] p-8"}`}
+        className={`group relative flex h-full flex-col justify-between overflow-hidden ${R} text-white nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5 ${compact ? "min-h-[132px] p-4" : "min-h-[290px] p-8"} ${corner}`}
         style={{ background: "linear-gradient(150deg, var(--nv-primary), var(--nv-primary-deep))" }}
       >
         <span
@@ -47,13 +69,13 @@ function HelpChooseTile({ delay, compact = false }) {
           Not sure where to start?
         </span>
         <div className="relative z-[1]">
-          <h3 className={`font-display font-bold leading-tight ${compact ? "text-[1.4rem]" : "text-[2.1rem]"}`}>Take the 2-minute assessment</h3>
+          <h3 className={`font-display font-bold leading-tight ${compact ? "text-[1.2rem]" : "text-[2.1rem]"}`}>Take the 2-minute assessment</h3>
           {!compact && (
             <p className="mt-2 max-w-[26ch] text-[1.02rem] leading-snug text-white/80">
               Answer a few questions and we'll point you to the right care.
             </p>
           )}
-          <span className={`inline-flex items-center gap-2.5 rounded-full bg-white font-semibold text-ink transition-all duration-300 group-hover:gap-3.5 ${compact ? "mt-3 px-4 py-2.5 text-[0.9rem]" : "mt-5 px-6 py-3.5 text-[1.02rem]"}`}>
+          <span className={`inline-flex items-center gap-2 rounded-full bg-white font-semibold text-ink transition-all duration-300 group-hover:gap-3 ${compact ? "mt-2 px-3.5 py-2 text-[0.82rem]" : "mt-5 px-6 py-3.5 text-[1.02rem]"}`}>
             Start the assessment <ArrowRight size={compact ? 15 : 17} strokeWidth={2.4} />
           </span>
         </div>
@@ -62,11 +84,11 @@ function HelpChooseTile({ delay, compact = false }) {
   );
 }
 
-function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }) {
+function GlassCard({ c, delay, mode = "auto", featured = false, className = "", corner = "" }) {
   if (mode !== "auto") {
     const compact = mode === "comprow" || mode === "comptile";
     const row = mode === "row" || mode === "comprow";
-    return <BigGlassCard c={c} delay={delay} row={row} compact={compact} featured={featured} className={className} />;
+    return <BigGlassCard c={c} delay={delay} row={row} compact={compact} featured={featured} className={className} corner={corner} />;
   }
   return (
     <motion.div
@@ -90,14 +112,8 @@ function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }
           <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
         </span>
 
-        {/* floating pill */}
-        <img
-          src="/supplementpill.avif"
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          className="nv-bob relative z-[3] h-14 w-14 shrink-0 object-contain drop-shadow-[0_12px_20px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110 sm:mb-3 sm:h-[72px] sm:w-auto sm:self-start"
-        />
+        {/* category icon */}
+        <CategoryIcon size={58} className="sm:mb-3 sm:self-start" />
 
         {/* tag · name */}
         <div className="relative z-[3] min-w-0 flex-1 sm:flex-none">
@@ -126,7 +142,7 @@ function GlassCard({ c, delay, mode = "auto", featured = false, className = "" }
 /* Enlarged version of the same glass card for the kiosk. Same look, bigger —
    "tile" is a tall vertical card, "row" is a wide full-width card, and
    `featured` is the premium hero banner at the top of the Featured layout. */
-function BigGlassCard({ c, delay, row, compact = false, featured = false, className = "" }) {
+function BigGlassCard({ c, delay, row, compact = false, featured = false, className = "", corner = "" }) {
   const R = "rounded-[calc(22px*var(--nv-r-scale,1))]";
 
   if (featured) {
@@ -153,13 +169,7 @@ function BigGlassCard({ c, delay, row, compact = false, featured = false, classN
             <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
           </span>
 
-          <img
-            src="/supplementpill.avif"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            className="nv-bob relative z-[3] h-[124px] w-[124px] shrink-0 object-contain drop-shadow-[0_18px_32px_rgba(15,22,34,0.55)] transition-transform duration-500 group-hover:scale-110"
-          />
+          <CategoryIcon size={112} />
 
           <div className="relative z-[3] min-w-0 flex-1">
             <span className="font-mono text-[0.86rem] uppercase tracking-[0.14em] text-white/80 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)]">
@@ -194,31 +204,24 @@ function BigGlassCard({ c, delay, row, compact = false, featured = false, classN
         className={`group relative flex h-full overflow-hidden ${R} nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5 ${
           row
             ? (compact ? "flex-row items-center gap-4 p-4" : "flex-row items-center gap-6 p-7")
-            : (compact ? "min-h-[150px] flex-col items-stretch p-5" : "min-h-[290px] flex-col items-stretch p-8")
-        }`}
+            : (compact ? "min-h-[132px] flex-row-reverse items-center gap-3 p-4" : "min-h-[290px] flex-col items-stretch p-8")
+        } ${corner}`}
       >
-        <span className={`nv-glass absolute inset-0 ${R}`} />
-        <span className={`pointer-events-none absolute inset-0 z-[1] hidden overflow-hidden ${R} sm:block`}>
+        <span className={`nv-glass absolute inset-0 ${R} ${corner}`} />
+        <span className={`pointer-events-none absolute inset-0 z-[1] hidden overflow-hidden ${R} ${corner} sm:block`}>
           <span className="absolute left-0 top-0 h-full w-[60%] -translate-x-[180%] -skew-x-12 bg-linear-to-r from-transparent via-accent/70 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[230%]" />
         </span>
 
-        <img
-          src="/supplementpill.avif"
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          className={`nv-bob relative z-[3] shrink-0 object-contain drop-shadow-[0_14px_24px_rgba(15,22,34,0.5)] transition-transform duration-500 group-hover:scale-110 ${
-            row
-              ? (compact ? "h-[56px] w-[56px]" : "h-[84px] w-[84px]")
-              : (compact ? "mb-3 h-[64px] w-auto self-start" : "mb-6 h-[104px] w-auto self-start")
-          }`}
+        <CategoryIcon
+          size={row ? (compact ? 52 : 80) : (compact ? 80 : 96)}
+          className={row ? "" : (compact ? "mr-2" : "mb-6 self-start")}
         />
 
         <div className="relative z-[3] min-w-0 flex-1">
           <span className={`font-mono uppercase tracking-[0.13em] text-white/80 drop-shadow-[0_1px_8px_rgba(15,22,34,0.4)] ${compact ? "text-[0.7rem]" : "text-[0.84rem]"}`}>
             {c.tag}
           </span>
-          <h3 className={`mt-1.5 font-display font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)] ${compact ? "text-[1.45rem]" : "text-[2.1rem]"}`}>
+          <h3 className={`mt-1 font-display font-bold leading-tight text-white drop-shadow-[0_1px_14px_rgba(15,22,34,0.55)] ${compact ? "text-[1.2rem]" : "text-[2.1rem]"}`}>
             {c.name}
           </h3>
           {!row && !compact && (
@@ -239,15 +242,16 @@ function BigGlassCard({ c, delay, row, compact = false, featured = false, classN
 }
 
 /* Wide homepage promo — a silent, looping video. Muted autoplay is always
-   allowed, so it plays everywhere without sound. */
-function KioskPromoCard() {
+   allowed, so it plays everywhere without sound. Shorter in kiosk mode so the
+   hero + cards + video all fit on one screen. */
+function KioskPromoCard({ kiosk = false }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.9, ease: EASE }}
-      className="mt-4 overflow-hidden rounded-3xl"
+      className={`overflow-hidden rounded-3xl ${kiosk ? "mt-3" : "mt-4"}`}
     >
       <video
         src="/feeling-your-best.mp4"
@@ -255,7 +259,7 @@ function KioskPromoCard() {
         loop
         muted
         playsInline
-        className="block h-[380px] w-full object-cover object-center sm:h-[480px] lg:h-[560px]"
+        className={`block w-full object-cover object-center ${kiosk ? "h-[320px]" : "h-[260px] sm:h-[340px] lg:h-[420px]"}`}
       />
     </motion.div>
   );
@@ -295,60 +299,77 @@ export default function HeroStage({ kioskVariant = null }) {
         style={{ background: "linear-gradient(180deg, transparent, color-mix(in oklab, var(--nv-primary) 20%, transparent))" }}
       />
 
-      <div className="mx-auto max-w-[1500px] px-5 pb-[clamp(48px,7vw,88px)] pt-[clamp(16px,3vw,36px)] md:px-10">
-        {/* Hero row */}
-        <div className="mb-[clamp(30px,4vw,50px)] flex flex-col items-start justify-between gap-7 md:flex-row md:items-end">
+      <div className={`mx-auto max-w-[1500px] px-5 md:px-10 ${kiosk ? "pb-5 pt-3" : "pb-[clamp(48px,7vw,88px)] pt-[clamp(16px,3vw,36px)]"}`}>
+        {/* Hero row — centered in the kiosk/tablet layout, left-aligned otherwise */}
+        <div className={`flex flex-col ${kiosk ? "mb-4 items-center gap-3 text-center" : "mb-[clamp(30px,4vw,50px)] items-start justify-between gap-7 md:flex-row md:items-end"}`}>
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: EASE }}
           >
             <h1
-              className="nv-weight-keep max-w-[16ch] text-[clamp(2.3rem,5.8vw,4.3rem)] font-medium leading-[1.02] tracking-[-0.01em] text-ink"
+              className={`nv-weight-keep max-w-[16ch] font-medium leading-[1.02] tracking-[-0.01em] text-ink ${kiosk ? "mx-auto text-[clamp(1.55rem,4.4vw,2.2rem)]" : "text-[clamp(2.3rem,5.8vw,4.3rem)]"}`}
               style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
             >
               Better medicine begins with{" "}
               <span className="nv-em font-medium">better attention</span>
             </h1>
-            <p className="mt-[18px] max-w-[42ch] text-[clamp(1rem,1.3vw,1.1rem)] leading-relaxed text-muted">
+            <p className={`max-w-[42ch] leading-relaxed text-muted ${kiosk ? "mx-auto mt-2 text-[clamp(0.82rem,1.1vw,0.95rem)]" : "mt-[18px] text-[clamp(1rem,1.3vw,1.1rem)]"}`}>
               Doctor-formulated treatments, composed for you and delivered to your door in days.
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 0.12 }}
-            className="shrink-0"
-          >
-            <Link
-              to="/treatments"
-              onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
-              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] border-primary/55 px-4 py-2.5 text-[0.9rem] font-bold tracking-tight text-ink transition-colors duration-300 hover:border-primary hover:text-on-primary sm:px-5 sm:py-3 sm:text-[0.98rem]"
+          {/* In kiosk mode the category cards are the primary CTA — hide the
+              redundant button so the hero fits on one screen. */}
+          {!kiosk && (
+            <motion.div
+              initial={{ opacity: 0, y: 26 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 0.12 }}
+              className="shrink-0"
             >
-              <span
-                className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0"
-                style={{ background: "linear-gradient(135deg, var(--nv-primary), var(--nv-primary-deep))" }}
-              />
-              <span className="relative z-10">Browse all treatments</span>
-              <span className="relative z-10 grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] border-current transition-transform duration-300 group-hover:translate-x-1">
-                <ArrowRight size={12} strokeWidth={2.6} />
-              </span>
-            </Link>
-          </motion.div>
+              <Link
+                to="/treatments"
+                onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
+                className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] border-[1.5px] border-primary/55 px-4 py-2.5 text-[0.9rem] font-bold tracking-tight text-ink transition-colors duration-300 hover:border-primary hover:text-on-primary sm:px-5 sm:py-3 sm:text-[0.98rem]"
+              >
+                <span
+                  className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0"
+                  style={{ background: "linear-gradient(135deg, var(--nv-primary), var(--nv-primary-deep))" }}
+                />
+                <span className="relative z-10">Browse all treatments</span>
+                <span className="relative z-10 grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] border-current transition-transform duration-300 group-hover:translate-x-1">
+                  <ArrowRight size={12} strokeWidth={2.6} />
+                </span>
+              </Link>
+            </motion.div>
+          )}
         </div>
 
         {/* Categories — all visible. Normal site: stacked rows on mobile, a 3-
             then 5-up grid on larger screens. Kiosk: bigger cards in the layout
             the client picked (grid · directory · spotlight). */}
         {kiosk ? (
-          <div className={kiosk.wrap}>
-            {CONSULT_ORDER.map((key, i) => {
-              const { mode, span, featured } = kiosk.card(i);
-              return <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} mode={mode} featured={featured} className={span} />;
-            })}
-            {kiosk.helpTile && <HelpChooseTile delay={CONSULT_ORDER.length * 0.06} compact={kiosk.compact} />}
-          </div>
+          (() => {
+            const cells = CONSULT_ORDER.length + (kiosk.helpTile ? 1 : 0);
+            const rows = Math.ceil(cells / 2);
+            return (
+              <div className={kiosk.wrap}>
+                {CONSULT_ORDER.map((key, i) => {
+                  const { mode, span, featured } = kiosk.card(i);
+                  const corner = kiosk.cornerFrame ? cornerClass(i, 2, rows) : "";
+                  return <GlassCard key={key} c={CONSULTS[key]} delay={(i % 5) * 0.06} mode={mode} featured={featured} className={span} corner={corner} />;
+                })}
+                {kiosk.helpTile && (
+                  <HelpChooseTile
+                    delay={CONSULT_ORDER.length * 0.06}
+                    compact={kiosk.compact}
+                    corner={kiosk.cornerFrame ? cornerClass(CONSULT_ORDER.length, 2, rows) : ""}
+                  />
+                )}
+              </div>
+            );
+          })()
         ) : (
           <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-3 sm:gap-[clamp(0.7rem,1.2vw,1rem)] lg:grid-cols-5">
             {CONSULT_ORDER.map((key, i) => (
@@ -358,7 +379,7 @@ export default function HeroStage({ kioskVariant = null }) {
         )}
 
         {/* Wide card — Smart Kiosk promo (looping video) */}
-        <KioskPromoCard />
+        <KioskPromoCard kiosk={!!kiosk} />
       </div>
     </section>
   );
