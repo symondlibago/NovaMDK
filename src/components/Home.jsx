@@ -1,9 +1,7 @@
 import React, { Suspense, lazy, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import {
   ArrowRight, ShieldCheck, Truck, Clock, Ban,
-  Stethoscope, Flag, FlaskConical,
 } from "lucide-react";
 
 import Navbar from "./Nav/Navbar";
@@ -43,43 +41,6 @@ const TRUST = [
   { text: "Five-minute online visit", icon: Clock },
   { text: "No subscription lock-in", icon: Ban },
 ];
-
-// Scrolling credential band at the foot of the page; re-skins with the theme.
-const MARQUEE_ITEMS = [
-  { text: "USA MDs ONLY", icon: Stethoscope },
-  { text: "50-STATE LICENSED PHYSICIANS", icon: Flag },
-  { text: "FDA-REGULATED PHARMACIES", icon: ShieldCheck },
-  { text: "USA MADE & SOURCED", icon: FlaskConical },
-  { text: "FREE 2-DAY SHIPPING", icon: Truck },
-  { text: "FIVE-MINUTE ONLINE VISIT", icon: Clock },
-];
-
-function Marquee({ speed = 42 }) {
-  return (
-    <div className="relative flex w-full overflow-hidden border-y border-white/5 bg-panel py-2.5 text-on-panel">
-      <motion.div
-        className="flex w-max shrink-0 will-change-transform"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ ease: "linear", duration: speed, repeat: Infinity }}
-        aria-hidden="true"
-      >
-        {[0, 1].map((dup) => (
-          <div key={dup} className="flex items-center">
-            {MARQUEE_ITEMS.map((item, i) => (
-              <span key={`${dup}-${i}`} className="flex items-center gap-2.5 px-7">
-                <item.icon size={14} className="text-accent" strokeWidth={1.8} />
-                <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.2em] text-on-panel/80">
-                  {item.text}
-                </span>
-                <span className="ml-7 text-accent/60">•</span>
-              </span>
-            ))}
-          </div>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
 
 const STATS = [
   { b: "100%", s: "Physician-reviewed" },
@@ -206,9 +167,6 @@ export default function Home() {
           </div>
         </Reveal>
       </section>
-
-      {/* ===== Marquee (foot of page) ===== */}
-      <Marquee />
 
       <Footer />
     </main>

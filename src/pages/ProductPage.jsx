@@ -3,7 +3,7 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical, Loader2,
-  QrCode, X, Smartphone,
+  QrCode, X,
 } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
@@ -88,23 +88,23 @@ export default function ProductPage() {
 
       {/* ===== Hero ===== */}
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(1.5rem,4vw,3rem)] md:px-10">
-        <div className="grid gap-8 md:grid-cols-2 md:items-center lg:gap-12">
+        <div className="grid gap-8 md:grid-cols-2 md:items-center lg:gap-14">
           {/* image */}
           <Reveal>
-            <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-7 md:min-h-[380px] md:p-10">
+            <div className="group/img relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-7 nv-shadow md:min-h-[460px] md:p-12">
               {/* champagne glow */}
               <div
                 className="pointer-events-none absolute inset-0"
-                style={{ background: "radial-gradient(58% 52% at 50% 44%, color-mix(in oklab, var(--nv-accent) 26%, transparent), transparent 70%)" }}
+                style={{ background: "radial-gradient(58% 52% at 50% 42%, color-mix(in oklab, var(--nv-accent) 28%, transparent), transparent 70%)" }}
               />
               {/* pedestal shadow */}
-              <div className="pointer-events-none absolute bottom-[18%] left-1/2 h-6 w-2/5 -translate-x-1/2 rounded-[50%] bg-ink/15 blur-xl" />
+              <div className="pointer-events-none absolute bottom-[16%] left-1/2 h-6 w-2/5 -translate-x-1/2 rounded-[50%] bg-ink/15 blur-xl" />
 
-              <span className="absolute left-5 top-5 z-10 rounded-full border border-line bg-surface px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-accent">
+              <span className="absolute left-6 top-6 z-10 rounded-full border border-line bg-surface/90 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-accent backdrop-blur-sm">
                 {categoryLabel}
               </span>
               {product.dosageForm && (
-                <span className="absolute bottom-5 left-5 z-10 rounded-full bg-ink px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-on-primary">
+                <span className="absolute bottom-6 left-6 z-10 rounded-full bg-ink px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-on-primary">
                   {product.dosageForm}
                 </span>
               )}
@@ -112,7 +112,7 @@ export default function ProductPage() {
               <img
                 src={product.img}
                 alt={product.name}
-                className="relative max-h-[300px] w-auto object-contain mix-blend-multiply drop-shadow-2xl"
+                className="relative max-h-[340px] w-auto object-contain mix-blend-multiply drop-shadow-2xl transition-transform duration-500 group-hover/img:scale-[1.03]"
               />
             </div>
           </Reveal>
@@ -132,19 +132,22 @@ export default function ProductPage() {
                 </span>
               </div>
 
-              <h1 className="mt-3 font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-tight tracking-tight">{product.name}</h1>
-              <p className="mt-3 text-[1.05rem] leading-relaxed text-muted">{product.subtitle}</p>
+              <h1 className="mt-3 font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight">{product.name}</h1>
+              <p className="mt-3 max-w-[46ch] text-[1.05rem] leading-relaxed text-muted">{product.subtitle}</p>
 
               {/* required regulatory labels */}
               <ComplianceBadges compounded={isCompounded(product)} className="mt-4" />
 
-              <div className="mt-6 flex items-baseline gap-3">
-                <span className="text-[2rem] font-extrabold tracking-tight">{product.price}</span>
-                <span className="flex items-center gap-1.5 text-[0.85rem] text-muted"><Truck size={14} /> {product.shipping}</span>
+              {/* price block */}
+              <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-2 border-t border-line pt-5">
+                <span className="font-display text-[clamp(2.1rem,3vw,2.5rem)] font-extrabold leading-none tracking-tight">{product.price}</span>
+                <span className="mb-0.5 flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1.5 text-[0.82rem] font-medium text-muted">
+                  <Truck size={14} className="text-accent" /> {product.shipping}
+                </span>
               </div>
 
               {product.highlights?.length > 0 && (
-                <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
+                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                   {product.highlights.map((h) => (
                     <li key={h.text} className="flex items-center gap-2.5 text-[0.94rem] font-medium">
                       <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent/20 text-accent"><Check size={12} strokeWidth={3} /></span>
@@ -168,9 +171,9 @@ export default function ProductPage() {
                   className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
                 >
                   {loading ? (
-                    <><Loader2 size={16} className="animate-spin" /> Starting your visit…</>
+                    <><Loader2 size={16} className="animate-spin" /> Starting consultation…</>
                   ) : (
-                    <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                    <>Start consultation <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
                   )}
                 </button>
               )}
@@ -273,7 +276,7 @@ export default function ProductPage() {
               style={{ background: "radial-gradient(50% 80% at 50% 0%, color-mix(in oklab, var(--nv-accent) 22%, transparent), transparent 70%)" }}
             />
             <div className="relative">
-              <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">Start your visit for {product.name.split("(")[0].split("/")[0].trim()}.</h2>
+              <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">Start consultation for {product.name.split("(")[0].split("/")[0].trim()}.</h2>
               <p className="mx-auto mt-3 max-w-[46ch] text-[1rem] text-on-panel/70">A licensed provider reviews your intake and confirms the right fit. Nothing to pay until you're prescribed.</p>
               {isKiosk ? (
                 <button
@@ -291,7 +294,7 @@ export default function ProductPage() {
                   {loading ? (
                     <><Loader2 size={16} className="animate-spin" /> Starting…</>
                   ) : (
-                    <>Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                    <>Start consultation <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
                   )}
                 </button>
               )}
@@ -328,18 +331,40 @@ export default function ProductPage() {
         </section>
       )}
 
-      {showQR && <KioskQrModal product={product} onClose={() => setShowQR(false)} />}
+      {showQR && (
+        <KioskQrModal
+          product={product}
+          loading={loading}
+          err={err}
+          onClose={() => setShowQR(false)}
+          onContinueHere={startVisit}
+        />
+      )}
 
       <Footer />
     </main>
   );
 }
 
-const SITE_URL = "https://novamdk.vercel.app";
-function KioskQrModal({ product, onClose }) {
-  const target = `${SITE_URL}/product/${product.id}`;
+const fmtCountdown = (s) => `${Math.floor(s / 60)}:${String(Math.max(0, s % 60)).padStart(2, "0")}`;
+
+/* Kiosk hand-off — two ways to continue: scan to finish privately on your own
+   phone (recommended), or continue right here on the public kiosk. Auto-closes
+   after 60s so the screen resets for the next patient. */
+function KioskQrModal({ product, onClose, onContinueHere, loading = false, err = "" }) {
   const qrSrc = product.qrImg || `/qr/${product.id}.png`;
   const [imgError, setImgError] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(60);
+
+  // Don't auto-close while a "continue here" request is in flight.
+  useEffect(() => {
+    if (loading) return;
+    const t = setInterval(() => setSecondsLeft((s) => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [loading]);
+  useEffect(() => {
+    if (secondsLeft <= 0) onClose();
+  }, [secondsLeft, onClose]);
 
   return (
     <div
@@ -348,7 +373,7 @@ function KioskQrModal({ product, onClose }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[420px] rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface p-7 text-center nv-shadow-lg md:p-9"
+        className="relative w-full max-w-[440px] rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface p-6 text-center nv-shadow-lg md:p-8"
       >
         <button
           onClick={onClose}
@@ -358,33 +383,66 @@ function KioskQrModal({ product, onClose }) {
           <X size={18} />
         </button>
 
-        <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-2 px-3.5 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-muted">
-          <Smartphone size={13} className="text-primary" /> Continue privately
-        </span>
-        <h3 className="mt-4 font-display text-[1.5rem] font-extrabold leading-tight">Scan to continue on your phone</h3>
-        <p className="mx-auto mt-2 max-w-[32ch] text-[0.92rem] leading-relaxed text-muted">
-          Point your camera at the code to pick up right here on <span className="font-semibold text-ink">{product.name}</span>, then start your visit privately on your own device.
+        <h3 className="mt-1 font-display text-[1.4rem] font-extrabold leading-tight">How would you like to continue?</h3>
+        <p className="mx-auto mt-1.5 max-w-[34ch] text-[0.86rem] text-muted">
+          Finishing on <span className="font-semibold text-ink">{product.name}</span>.
         </p>
 
-        <div className="mx-auto mt-6 grid h-[230px] w-[230px] place-items-center overflow-hidden rounded-2xl border border-line bg-white p-3">
-          {imgError ? (
-            <div className="flex flex-col items-center gap-2 text-muted">
-              <QrCode size={56} strokeWidth={1.4} />
-              <span className="px-3 text-[0.72rem] leading-snug">
-                Add a QR at <code className="text-ink">{qrSrc}</code> encoding the link below
-              </span>
-            </div>
-          ) : (
-            <img
-              src={qrSrc}
-              alt={`QR code to continue ${product.name} on your phone`}
-              onError={() => setImgError(true)}
-              className="h-full w-full object-contain"
-            />
-          )}
+        {/* Recommended — scan to your phone */}
+        <div className="relative mt-6 rounded-2xl border-2 border-primary/30 bg-surface-2/40 p-5">
+          <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-on-primary">
+            Recommended
+          </span>
+          <div className="mx-auto grid h-[190px] w-[190px] place-items-center overflow-hidden rounded-xl border border-line bg-white p-2.5">
+            {imgError ? (
+              <div className="flex flex-col items-center gap-2 text-muted">
+                <QrCode size={48} strokeWidth={1.4} />
+                <span className="px-3 text-[0.68rem] leading-snug">Add a QR at <code className="text-ink">{qrSrc}</code></span>
+              </div>
+            ) : (
+              <img
+                src={qrSrc}
+                alt={`QR code to continue ${product.name} on your phone`}
+                onError={() => setImgError(true)}
+                className="h-full w-full object-contain"
+              />
+            )}
+          </div>
+          <h4 className="mt-3.5 font-display text-[1.08rem] font-bold leading-tight">Scan to continue on your phone</h4>
+          <span className="mx-auto mt-2 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-[0.74rem] font-medium text-muted">
+            <Lock size={12} className="text-primary" /> Private to your own device
+          </span>
         </div>
 
-        <p className="mt-4 break-all font-mono text-[0.72rem] text-muted">{target}</p>
+        {/* divider */}
+        <div className="my-4 flex items-center gap-3 text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-muted">
+          <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
+        </div>
+
+        {/* Continue here on the kiosk */}
+        <button
+          onClick={onContinueHere}
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-surface px-6 py-3 text-[0.95rem] font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-surface-2 disabled:opacity-70 disabled:hover:translate-y-0"
+        >
+          {loading ? (
+            <><Loader2 size={15} className="animate-spin" /> Starting consultation…</>
+          ) : (
+            "Continue here on the kiosk"
+          )}
+        </button>
+        <p className="mx-auto mt-2.5 flex max-w-[34ch] items-start justify-center gap-1.5 text-left text-[0.76rem] leading-snug text-muted">
+          <ShieldAlert size={13} className="mt-px shrink-0 text-primary/70" /> This is a shared public screen — others nearby may see your answers.
+        </p>
+        {err && (
+          <p className="mx-auto mt-2.5 max-w-[34ch] rounded-lg bg-surface-2 px-3 py-2 text-[0.74rem] leading-snug text-muted">
+            {err}
+          </p>
+        )}
+
+        <p className="mt-5 border-t border-line pt-3 text-[0.72rem] text-muted">
+          This screen resets in <span className="font-semibold text-ink">{fmtCountdown(secondsLeft)}</span>
+        </p>
       </div>
     </div>
   );

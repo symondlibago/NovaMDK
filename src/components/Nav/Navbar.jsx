@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { ChevronDown, ArrowRight, Menu, X } from "lucide-react";
+import { ChevronDown, ArrowRight, Menu, X, ClipboardList } from "lucide-react";
 import { getLenis } from "../../lib/smoothScroll";
+import Marquee from "../ui/Marquee";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -142,13 +143,8 @@ export default function Navbar() {
 
   return (
     <>
-      {/* promo bar */}
-      <div className="bg-panel text-on-panel">
-        <div className="mx-auto flex min-h-[40px] max-w-[1240px] items-center justify-center gap-2 px-4 text-center font-mono text-[11px] tracking-[0.07em]">
-          <span>New — personalized longevity protocols, formulated by licensed U.S. physicians.</span>
-          <Link to="/treatments" className="hidden items-center gap-1 text-accent sm:inline-flex">Start your visit →</Link>
-        </div>
-      </div>
+      {/* promo bar — scrolling credential marquee */}
+      <Marquee />
 
       <header className="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-xl">
         <nav className="mx-auto flex min-h-[68px] max-w-[1340px] items-center justify-between px-5 md:px-10">
@@ -206,12 +202,23 @@ export default function Navbar() {
                 <Link to="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                   Kiosk <ArrowRight size={16} className="text-muted" />
                 </Link>
-                <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
-                  Contact <ArrowRight size={16} className="text-muted" />
+
+                {/* Get a Recommendation — starts the free 2-minute questionnaire */}
+                <Link
+                  to="/start"
+                  onClick={() => setMobileOpen(false)}
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-[15px] font-semibold text-on-primary nv-shadow transition-all hover:-translate-y-0.5 hover:bg-primary-deep"
+                >
+                  <ClipboardList size={17} /> Get a Recommendation
                 </Link>
+
+                {/* bottom actions — Contact lives here as a button under Get started */}
                 <div className="mt-auto flex flex-col gap-2.5 pb-4 pt-8">
-                  <Link to="/treatments" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-[15px] font-semibold text-on-primary">
+                  <Link to="/treatments" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-surface py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-surface-2">
                     Get started <ArrowRight size={16} />
+                  </Link>
+                  <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full border border-line bg-surface py-3.5 text-[15px] font-semibold text-muted transition-colors hover:text-ink">
+                    Contact
                   </Link>
                 </div>
               </div>
