@@ -154,7 +154,7 @@ function BigGlassCard({ c, delay, row, compact = false, featured = false, classN
         className={`h-full ${className}`}
       >
         <Link
-          to={`/treatments?goal=${c.goalSlug}`}
+          to={`/start/${c.slug}`}
           onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero-kiosk" })}
           className={`group relative flex h-full items-center gap-7 overflow-hidden ${R} p-8 nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5`}
         >
@@ -199,7 +199,7 @@ function BigGlassCard({ c, delay, row, compact = false, featured = false, classN
       className={`h-full ${className}`}
     >
       <Link
-        to={`/treatments?goal=${c.goalSlug}`}
+        to={`/start/${c.slug}`}
         onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero-kiosk" })}
         className={`group relative flex h-full overflow-hidden ${R} nv-shadow-lg transition-all duration-500 hover:-translate-y-1.5 ${
           row
