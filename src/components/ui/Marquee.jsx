@@ -9,8 +9,8 @@ const MARQUEE_ITEMS = [
   { text: "50-STATE LICENSED PHYSICIANS", icon: Flag },
   { text: "FDA-REGULATED PHARMACIES", icon: ShieldCheck },
   { text: "USA MADE & SOURCED", icon: FlaskConical },
-  { text: "FREE 2-DAY SHIPPING", icon: Truck },
-  { text: "FIVE-MINUTE ONLINE VISIT", icon: Clock },
+  { text: "FAST DELIVERY", icon: Truck },
+  { text: "DEDICATED ONLINE CARE", icon: Clock },
 ];
 
 export default function Marquee({ speed = 42 }) {

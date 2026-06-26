@@ -91,7 +91,7 @@ export default function Footer() {
             items, NovaMDK will arrange a consultation with a qualified healthcare provider.
           </p>
           <p>
-            Most online visits take approximately five minutes, but appointment length may vary based on
+            Most online visits are quick, but appointment length may vary based on
             the patient's medical needs and the treating clinician's independent professional judgment.
             The provider — not NovaMDK or its management services organization — determines how long each
             clinical evaluation takes.

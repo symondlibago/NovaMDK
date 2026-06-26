@@ -123,7 +123,7 @@ export default function KioskPage() {
           <Reveal>
             <span className="nv-eyebrow">The experience</span>
             <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.7rem)] font-extrabold leading-tight">
-              As easy as using your phone.
+              As easy as using your phone
             </h2>
             <p className="mt-4 max-w-[46ch] text-[1.04rem] leading-relaxed text-muted">
               No waiting rooms. No front desk. No app to install. You walk up, tap the screen, and use
@@ -164,7 +164,7 @@ export default function KioskPage() {
         <div className="mx-auto max-w-[1180px] px-5 md:px-10">
           <Reveal className="mx-auto max-w-[60ch] text-center">
             <span className="nv-eyebrow">How it works</span>
-            <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">From walk-up to your visit, in minutes.</h2>
+            <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">From walk-up to your visit, in minutes</h2>
             <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">No appointment, no clipboard, no waiting room. Just four simple steps.</p>
           </Reveal>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -186,7 +186,7 @@ export default function KioskPage() {
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,5rem)] md:px-10">
         <Reveal className="mx-auto max-w-[60ch] text-center">
           <span className="nv-eyebrow">Why it's different</span>
-          <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">If you can use your phone, you can use this.</h2>
+          <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">If you can use your phone, you can use this</h2>
           <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">Everything you need to get started, right there on the screen.</p>
         </Reveal>
 
@@ -274,7 +274,7 @@ export default function KioskPage() {
             <div className="relative">
               <span className="nv-eyebrow text-accent">For partners</span>
               <h2 className="mx-auto mt-3 max-w-[24ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
-                Host a NovaMDK Smart Kiosk.
+                Host a NovaMDK Smart Kiosk
               </h2>
               <p className="mx-auto mt-3 max-w-[48ch] text-[1rem] text-on-panel/70">
                 Own a gym, spa, or wellness space? Give your members provider-guided care on site. We handle the technology, the clinicians, and the fulfillment, so you don't have to.

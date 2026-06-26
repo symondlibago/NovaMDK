@@ -35,7 +35,7 @@ export default function SupplementsPage() {
       <PageHero
         showBack
         eyebrow="Supplements"
-        title="Clinical-grade formulas, tailored to your labs."
+        title="Clinical-grade formulas, tailored to your labs"
         subtitle="Compounded peptides and daily-foundation supplements, prepared by FDA-regulated pharmacies and matched to your protocol."
         chips={["503A compounding", "Physician-reviewed", "Purity tested"]}
       />
@@ -54,7 +54,7 @@ export default function SupplementsPage() {
         <div className="grid items-center gap-[clamp(2rem,5vw,4.5rem)] md:grid-cols-2">
           <Reveal>
             <span className="nv-eyebrow">What arrives</span>
-            <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.7rem)] font-extrabold leading-tight">Pre-sorted, dated, and ready to take.</h2>
+            <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.7rem)] font-extrabold leading-tight">Pre-sorted, dated, and ready to take</h2>
             <p className="mt-4 max-w-[46ch] text-[1.04rem] text-muted">Your supplements come split into morning and evening packs alongside any prescription treatments — one box, no juggling bottles.</p>
             <Link to="/contact" className="group mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.96rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow">
               Build your protocol <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />

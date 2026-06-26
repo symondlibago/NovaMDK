@@ -115,10 +115,10 @@ export default function ContactPage() {
                 <div className="relative flex h-full flex-col">
                   <span className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-accent">Talk to us</span>
                   <h2 className="mt-3 text-[clamp(1.5rem,2.6vw,2rem)] font-extrabold leading-tight">
-                    A care team that actually answers.
+                    A care team that actually answers
                   </h2>
                   <p className="mt-3 max-w-[34ch] text-[0.96rem] leading-relaxed text-on-panel/70">
-                    Reach the care team directly — no phone trees, no bots reading from a script.
+                    Reach the care team directly no phone trees, no bots reading from a script.
                   </p>
 
                   {/* contact methods */}

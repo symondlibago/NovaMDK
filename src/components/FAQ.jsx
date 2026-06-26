@@ -24,7 +24,7 @@ export default function FAQ() {
     },
     {
       q: "How fast will it arrive?",
-      a: "Free two-day shipping in discreet packaging, usually within a couple of business days of approval."
+      a: "Fast, discreet delivery — usually within a few business days of approval."
     },
     {
       q: "Can I pause or cancel anytime?",

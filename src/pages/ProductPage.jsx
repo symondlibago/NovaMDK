@@ -14,7 +14,7 @@ import useKioskMode from "../lib/useKioskMode";
 
 const TRUST = [
   { icon: Stethoscope, label: "U.S. licensed providers" },
-  { icon: Truck, label: "Free 2-day shipping" },
+  { icon: Truck, label: "Fast delivery" },
   { icon: Lock, label: "Discreet packaging" },
   { icon: FlaskConical, label: "Compounded in the USA" },
 ];
@@ -232,11 +232,11 @@ export default function ProductPage() {
       {/* ===== Specs ===== */}
       {product.specs?.length > 0 && (
         <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
-          <div className="grid gap-10 md:grid-cols-[1fr_1.25fr] md:items-start">
-            <Reveal>
+          <div className={`grid gap-10 ${isKiosk ? "" : "md:grid-cols-[1fr_1.25fr] md:items-start"}`}>
+            <Reveal className={isKiosk ? "text-center" : ""}>
               <span className="nv-eyebrow">The details</span>
               <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">What's inside &amp; how it's dosed.</h2>
-              <p className="mt-3 max-w-[40ch] text-[1rem] text-muted">Compounded by a licensed U.S. pharmacy and dispensed only after a provider's review of your intake.</p>
+              <p className={`mt-3 max-w-[40ch] text-[1rem] text-muted ${isKiosk ? "mx-auto" : ""}`}>Compounded by a licensed U.S. pharmacy and dispensed only after a provider's review of your intake.</p>
               <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-[0.85rem] font-medium text-ink">
                 <ShieldCheck size={15} className="text-accent" /> Quality-tested every batch
               </div>
@@ -431,9 +431,6 @@ function KioskQrModal({ product, onClose, onContinueHere, loading = false, err =
             "Continue here on the kiosk"
           )}
         </button>
-        <p className="mx-auto mt-2.5 flex max-w-[34ch] items-start justify-center gap-1.5 text-left text-[0.76rem] leading-snug text-muted">
-          <ShieldAlert size={13} className="mt-px shrink-0 text-primary/70" /> This is a shared public screen — others nearby may see your answers.
-        </p>
         {err && (
           <p className="mx-auto mt-2.5 max-w-[34ch] rounded-lg bg-surface-2 px-3 py-2 text-[0.74rem] leading-snug text-muted">
             {err}

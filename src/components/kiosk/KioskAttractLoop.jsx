@@ -2,16 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useKioskMode from "../../lib/useKioskMode";
 
-/* Kiosk attract loop — when the tablet sits idle, it fades to a full-screen
-   advertisement so the screen never looks "dead" between patients. Any touch
-   dismisses it and returns to the app. Only ever runs in kiosk mode.
-
-   PLACEHOLDER: using the homepage clip for now. Swap KIOSK_AD_SRC (and the
-   copy below) for the designer's finished ad video when it lands. */
-const KIOSK_AD_SRC = "/feeling-your-best.mp4";
+const KIOSK_AD_SRC = "/kioskads.mp4";
 const DEFAULT_IDLE_MS = 1 * 60 * 1000; // 1 minute of inactivity
 
-// QA helper: append ?idleSeconds=10 to the URL to shorten the wait while testing.
 function resolveIdleMs() {
   if (typeof window === "undefined") return DEFAULT_IDLE_MS;
   const raw = new URLSearchParams(window.location.search).get("idleSeconds");
@@ -92,18 +85,6 @@ export default function KioskAttractLoop() {
             <span className="inline-flex items-center rounded-full bg-white/90 px-5 py-2.5 backdrop-blur-sm nv-shadow-lg">
               <img src="/logo.png" alt="NovaMDK" className="h-9 w-auto md:h-10" />
             </span>
-
-            <div className="max-w-[22ch]">
-              <span className="font-mono text-[0.72rem] uppercase tracking-[0.28em] text-white/70">
-                Distinctly better healthcare
-              </span>
-              <h2 className="mt-3 font-display text-[clamp(2.4rem,7vw,3.6rem)] font-extrabold leading-[1.04] drop-shadow-lg">
-                Feel your best.
-              </h2>
-              <p className="mx-auto mt-4 max-w-[24ch] text-[1.05rem] leading-relaxed text-white/85 drop-shadow">
-                Doctor-trusted treatments, formulated by licensed U.S. physicians — delivered to your door.
-              </p>
-            </div>
 
             <motion.div
               animate={{ opacity: [0.55, 1, 0.55] }}

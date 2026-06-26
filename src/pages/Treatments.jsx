@@ -32,7 +32,7 @@ const VALID_GOALS = new Set(
 
 const TRUST = [
   { icon: Stethoscope, label: "U.S. licensed providers" },
-  { icon: Truck, label: "Free 2-day discreet shipping" },
+  { icon: Truck, label: "Fast, discreet delivery" },
   { icon: Ban, label: "No subscription lock-in" },
   { icon: ShieldCheck, label: "FDA-regulated pharmacies" },
 ];
@@ -40,12 +40,12 @@ const TRUST = [
 const STEPS = [
   { icon: ClipboardCheck, title: "Take the 2-minute assessment", desc: "Answer a few private questions about your goals and history — no wrong answers." },
   { icon: Stethoscope, title: "A provider builds your plan", desc: "A licensed U.S. clinician reviews your intake and prescribes what actually fits you." },
-  { icon: PackageOpen, title: "Delivered to your door", desc: "Free, discreet 2-day shipping — with ongoing care and easy adjustments anytime." },
+  { icon: PackageOpen, title: "Delivered to your door", desc: "Fast, discreet delivery — with ongoing care and easy adjustments anytime." },
 ];
 
 const STATS = [
   { b: "100%", s: "Physician-reviewed" },
-  { b: "2-day", s: "Average delivery" },
+  { b: "Fast", s: "Doorstep delivery" },
   { b: "50", s: "States served" },
 ];
 
@@ -146,7 +146,7 @@ export default function TreatmentsPage() {
             eyebrow="Treatments"
             title="Find the treatment that fits you"
             subtitle="Prescription protocols formulated by licensed U.S. physicians, shipped to your door"
-            chips={["US-licensed pharmacy", "Five-minute visit", "Free 2-day shipping", "No lock-in"]}
+            chips={["US-licensed pharmacy", "Dedicated online care", "Fast delivery", "No lock-in"]}
           />
           <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
