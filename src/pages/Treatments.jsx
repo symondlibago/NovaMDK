@@ -167,6 +167,7 @@ export default function TreatmentsPage() {
             <CategoryGrid
               items={TREATMENT_CATS}
               dark
+              featured
               art="/pill.avif"
               onItemClick={(it) => track(EVENTS.CATEGORY_SELECTED, { category: it.goal, source: "treatments" })}
             />

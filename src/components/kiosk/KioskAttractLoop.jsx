@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import useKioskMode from "../../lib/useKioskMode";
 
 const KIOSK_AD_SRC = "/kioskads.mp4";
@@ -17,9 +18,13 @@ const ACTIVITY_EVENTS = ["pointerdown", "touchstart", "mousedown", "keydown", "w
 
 export default function KioskAttractLoop() {
   const isKiosk = useKioskMode();
+  const navigate = useNavigate();
   const [active, setActive] = useState(false);
+  const activeRef = useRef(false);
   const timerRef = useRef(null);
   const idleMsRef = useRef(resolveIdleMs());
+
+  useEffect(() => { activeRef.current = active; }, [active]);
 
   // (Re)start the idle countdown that brings up the ad.
   const armTimer = useCallback(() => {
@@ -27,11 +32,14 @@ export default function KioskAttractLoop() {
     timerRef.current = setTimeout(() => setActive(true), idleMsRef.current);
   }, []);
 
-  // Any interaction dismisses the ad (if showing) and resets the countdown.
+  // Any interaction resets the countdown.
   const handleActivity = useCallback(() => {
-    setActive((cur) => (cur ? false : cur));
+    if (activeRef.current) {
+      setActive(false);
+      navigate("/");
+    }
     armTimer();
-  }, [armTimer]);
+  }, [armTimer, navigate]);
 
   useEffect(() => {
     if (!isKiosk) return undefined;

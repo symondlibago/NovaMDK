@@ -26,7 +26,8 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Drops",
     icon: <Droplet size={16} />,
-    img: "/supplementpill.avif",
+    img: "/Default.png",
+    tiltOnHover: true,
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "fa4e1aea-c4dc-4f01-93b0-2b16de1a2081",
     highlights: [

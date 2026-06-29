@@ -5,6 +5,11 @@ import { ArrowRight, ArrowLeft, X, Check, Lock, ShieldCheck } from "lucide-react
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { getLenis } from "../lib/smoothScroll";
 import { track, EVENTS } from "../lib/analytics";
+import useKioskMode from "../lib/useKioskMode";
+
+// On the kiosk, keep each step vertically centered so the patient isn't
+// reaching up/down — touch targets land in the comfortable middle band.
+const CENTER_KIOSK = "flex min-h-[calc(100vh-65px)] flex-col justify-center";
 
 const EASE = [0.4, 0, 0.2, 1];
 
@@ -163,6 +168,7 @@ export default function Consult() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const consult = CONSULTS[slug];
+  const isKiosk = useKioskMode();
 
   const [i, setI] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -194,7 +200,9 @@ export default function Consult() {
             <X size={18} />
           </button>
         </header>
-        <Picker onPick={(key) => navigate(`/start/${key}`)} />
+        <div className={isKiosk ? CENTER_KIOSK : undefined}>
+          <Picker onPick={(key) => navigate(`/start/${key}`)} />
+        </div>
       </main>
     );
   }
@@ -265,6 +273,7 @@ export default function Consult() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.32, ease: EASE }}
+          className={isKiosk ? CENTER_KIOSK : undefined}
         >
           {step.t === "intro" && <Intro step={step} onNext={advance} />}
           {step.t === "q" && <Question step={step} value={answers[i]} onPick={pick} onNext={advance} />}

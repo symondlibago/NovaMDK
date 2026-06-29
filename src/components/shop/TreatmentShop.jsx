@@ -15,7 +15,7 @@ function ProductCard({ p, delay }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, ease: EASE, delay }}
-      className="group flex flex-col rounded-[calc(26px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
+      className="group relative flex flex-col rounded-[calc(26px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
     >
       <div className="mb-2 flex items-center justify-between gap-3">
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.13em] text-accent">{p.categoryName}</span>
@@ -36,20 +36,26 @@ function ProductCard({ p, delay }) {
           src={p.img}
           alt={p.name}
           loading="lazy"
-          className="pointer-events-none h-full w-full object-contain mix-blend-multiply drop-shadow-xl transition-transform duration-700 ease-out group-hover:-translate-y-1.5 group-hover:scale-105"
+          className={`pointer-events-none h-full w-full object-contain mix-blend-multiply drop-shadow-xl transition-transform duration-500 ease-out ${
+            p.tiltOnHover
+              ? "origin-bottom translate-y-9 scale-[1.55] group-hover:-rotate-[12deg]"
+              : "group-hover:-translate-y-1.5 group-hover:scale-105"
+          }`}
         />
       </div>
 
       <p className="mb-5 line-clamp-2 text-[0.85rem] leading-relaxed text-muted">{p.subtitle}</p>
 
+      {/* Stretched link — the whole card (and image) navigates to the product */}
       <Link
         to={`/product/${p.id}`}
-        className="group/btn mt-auto flex items-center justify-center gap-1.5 rounded-full bg-primary py-3 text-[13.5px] font-semibold text-on-primary transition-all hover:bg-primary-deep nv-shadow"
+        aria-label={`View ${p.name}`}
+        className="group/btn mt-auto flex items-center justify-center gap-1.5 rounded-full bg-primary py-3 text-[13.5px] font-semibold text-on-primary transition-all hover:bg-primary-deep nv-shadow after:absolute after:inset-0 after:content-['']"
       >
         Shop now
         <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover/btn:translate-x-0.5" />
       </Link>
-      <button className="mt-2 flex w-full items-center justify-center gap-1.5 py-1 text-[11px] font-medium text-muted transition-colors hover:text-ink">
+      <button className="relative z-10 mt-2 flex w-full items-center justify-center gap-1.5 py-1 text-[11px] font-medium text-muted transition-colors hover:text-ink">
         <ShieldAlert size={13} className="text-primary/70" /> Important safety info
       </button>
     </motion.div>

@@ -9,7 +9,7 @@ import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
 import { productsData, isCompounded } from "../components/data/products";
-import { ComplianceBadges, CompoundedDisclaimer } from "../components/Compliance";
+import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
 import useKioskMode from "../lib/useKioskMode";
 
 const TRUST = [
@@ -162,7 +162,7 @@ export default function ProductPage() {
                   onClick={() => setShowQR(true)}
                   className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
                 >
-                  Continue on your phone <QrCode size={17} className="transition-transform group-hover:scale-110" />
+                  Start consultation <QrCode size={17} className="transition-transform group-hover:scale-110" />
                 </button>
               ) : (
                 <button
@@ -178,10 +178,12 @@ export default function ProductPage() {
                 </button>
               )}
               {err && !isKiosk && <p className="mt-2 text-center text-[0.84rem] font-medium text-primary">{err}</p>}
-              <p className="mt-3 flex items-center justify-center gap-2 text-[0.82rem] text-muted">
-                <ShieldAlert size={14} className="text-primary/70" />
-                {isKiosk ? "Scan to continue privately on your own phone." : "Prescription product — requires an online medical evaluation."}
-              </p>
+              {!isKiosk && (
+                <p className="mt-3 flex items-center justify-center gap-2 text-[0.82rem] text-muted">
+                  <ShieldAlert size={14} className="text-primary/70" />
+                  Prescription product — requires an online medical evaluation.
+                </p>
+              )}
 
               {/* required compounded-drug + GLP-1 marketing disclaimers */}
               {isCompounded(product) && (
@@ -256,13 +258,15 @@ export default function ProductPage() {
       )}
 
       {/* ===== Safety ===== */}
-      {product.safety && (
+      {(product.safety || fdaDisclaimer(product)) && (
         <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
           <div className="rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface-2 p-6 md:p-8">
             <h3 className="flex items-center gap-2 font-display text-[1.1rem] font-bold">
               <ShieldAlert size={18} className="text-primary" /> Important safety information
             </h3>
-            <p className="mt-3 text-[0.92rem] leading-relaxed text-muted">{product.safety}</p>
+            {product.safety && <p className="mt-3 text-[0.92rem] leading-relaxed text-muted">{product.safety}</p>}
+            {/* product-specific FDA disclaimer (client-provided, italicized) */}
+            <FdaDisclaimer product={product} className={product.safety ? "mt-4 border-t border-line pt-4" : "mt-3"} />
           </div>
         </section>
       )}
@@ -283,7 +287,7 @@ export default function ProductPage() {
                   onClick={() => setShowQR(true)}
                   className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg"
                 >
-                  Continue on your phone <QrCode size={17} className="transition-transform group-hover:scale-110" />
+                  Start consultation <QrCode size={17} className="transition-transform group-hover:scale-110" />
                 </button>
               ) : (
                 <button

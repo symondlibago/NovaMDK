@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { ChevronDown, ArrowRight, Menu, X, ClipboardList } from "lucide-react";
+import { ChevronDown, ArrowRight, Menu, X, ClipboardList, LogIn, LifeBuoy } from "lucide-react";
 import { getLenis } from "../../lib/smoothScroll";
 import Marquee from "../ui/Marquee";
+import useKioskMode from "../../lib/useKioskMode";
+import { productsData } from "../data/products";
+
+// Kiosk burger menu — top categories, each expanding to a few treatments plus
+// the consultation quiz. Slugs mirror the treatment catalog + questionnaires.
+const KIOSK_MENU = [
+  { label: "Anti Aging", goal: "unisex-anti-aging-rx", consult: "longevity" },
+  { label: "Sexual Health", goal: "mens-health", consult: "intimacy" },
+  { label: "Weight Loss", goal: "weight-loss", consult: "weight-loss" },
+  { label: "Skin Health", goal: "unisex-skin-health", consult: "skin" },
+  { label: "Sport Medicine", goal: "unisex-sports-medicine", consult: "recovery" },
+];
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -126,9 +138,44 @@ function MobileGroup({ title, items, close, viewAllLink, defaultOpen = false }) 
   );
 }
 
+/* ---------------------- kiosk category accordion ---------------------- */
+function KioskMenuGroup({ cat, close }) {
+  const [open, setOpen] = useState(false);
+  const treatments = productsData.filter((p) => p.categorySlug === cat.goal);
+  return (
+    <div className="border-b border-line py-4">
+      <button aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center justify-between text-[17px] font-medium text-ink">
+        {cat.label}
+        <ChevronDown size={18} className={`text-muted transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+            <div className="flex flex-col gap-1 pt-3">
+              {treatments.map((t) => (
+                <Link key={t.id} to={`/product/${t.id}`} onClick={close} className="flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-2">
+                    <img src={t.img} alt={t.name} loading="lazy" className="h-full w-full scale-[1.1] object-contain mix-blend-multiply" />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{t.name}</span>
+                  <ArrowRight size={14} className="shrink-0 opacity-50" />
+                </Link>
+              ))}
+              <Link to={`/start/${cat.consult}`} onClick={close} className="mt-2 flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-[14px] font-semibold text-on-primary transition-all hover:bg-primary-deep">
+                <ClipboardList size={15} /> Start a Consultation
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /* ------------------------------- navbar ------------------------------- */
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isKiosk = useKioskMode();
 
   // Horizontal scroll meter pinned to the bottom of the header.
   const { scrollYProgress } = useScroll();
@@ -156,6 +203,16 @@ export default function Navbar() {
             <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
             <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
           </div>
+
+          {/* Kiosk mode: primary sections live on the navbar (the burger holds the meds menu) */}
+          {isKiosk && (
+            <div className="flex items-center gap-6">
+              <Link to="/treatments" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Treatments</Link>
+              <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
+              <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
+              <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
+            </div>
+          )}
 
           <div className="flex items-center gap-2.5">
             <Link to="/treatments" className="hidden h-10 items-center gap-2 rounded-full bg-primary px-5 text-[14px] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow lg:flex">
@@ -186,6 +243,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 220, ease: EASE }}
+              data-lenis-prevent
               className="fixed right-0 top-0 z-[101] flex h-full w-[86%] max-w-sm flex-col overflow-y-auto bg-surface lg:hidden nv-scroll"
             >
               <div className="flex items-center justify-between border-b border-line p-4">
@@ -194,34 +252,52 @@ export default function Navbar() {
                   <X size={20} />
                 </button>
               </div>
-              <div className="flex grow flex-col p-4">
-                <MobileGroup title="Treatments" items={treatmentItems} close={() => setMobileOpen(false)} viewAllLink="/treatments" defaultOpen />
-                <Link to="/supplements" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
-                  Supplements <ArrowRight size={16} className="text-muted" />
-                </Link>
-                <Link to="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
-                  Kiosk <ArrowRight size={16} className="text-muted" />
-                </Link>
-
-                {/* Get a Recommendation — starts the free 2-minute questionnaire */}
-                <Link
-                  to="/start"
-                  onClick={() => setMobileOpen(false)}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-[15px] font-semibold text-on-primary nv-shadow transition-all hover:-translate-y-0.5 hover:bg-primary-deep"
-                >
-                  <ClipboardList size={17} /> Get a Recommendation
-                </Link>
-
-                {/* bottom actions — Contact lives here as a button under Get started */}
-                <div className="mt-auto flex flex-col gap-2.5 pb-4 pt-8">
-                  <Link to="/treatments" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-surface py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-surface-2">
-                    Get started <ArrowRight size={16} />
-                  </Link>
-                  <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full border border-line bg-surface py-3.5 text-[15px] font-semibold text-muted transition-colors hover:text-ink">
-                    Contact
-                  </Link>
+              {isKiosk ? (
+                /* Kiosk burger — category sections + sub-menus, Log In / Support at the foot */
+                <div className="flex grow flex-col p-4">
+                  {KIOSK_MENU.map((cat) => (
+                    <KioskMenuGroup key={cat.goal} cat={cat} close={() => setMobileOpen(false)} />
+                  ))}
+                  <div className="mt-auto flex flex-col gap-1 pb-2 pt-6">
+                    {/* Log In — no route yet; MDI auth will be wired here later. */}
+                    <button type="button" className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-left text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+                      <LogIn size={16} /> Log In
+                    </button>
+                    <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+                      <LifeBuoy size={16} /> Support
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex grow flex-col p-4">
+                  <MobileGroup title="Treatments" items={treatmentItems} close={() => setMobileOpen(false)} viewAllLink="/treatments" defaultOpen />
+                  <Link to="/supplements" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
+                    Supplements <ArrowRight size={16} className="text-muted" />
+                  </Link>
+                  <Link to="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
+                    Kiosk <ArrowRight size={16} className="text-muted" />
+                  </Link>
+
+                  {/* Get a Recommendation — starts the free 2-minute questionnaire */}
+                  <Link
+                    to="/start"
+                    onClick={() => setMobileOpen(false)}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-[15px] font-semibold text-on-primary nv-shadow transition-all hover:-translate-y-0.5 hover:bg-primary-deep"
+                  >
+                    <ClipboardList size={17} /> Get a Recommendation
+                  </Link>
+
+                  {/* bottom actions — Contact lives here as a button under Get started */}
+                  <div className="mt-auto flex flex-col gap-2.5 pb-4 pt-8">
+                    <Link to="/treatments" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-surface py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-surface-2">
+                      Get started <ArrowRight size={16} />
+                    </Link>
+                    <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-full border border-line bg-surface py-3.5 text-[15px] font-semibold text-muted transition-colors hover:text-ink">
+                      Contact
+                    </Link>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </>
         )}
