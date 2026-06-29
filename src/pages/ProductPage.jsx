@@ -46,6 +46,8 @@ export default function ProductPage() {
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
+  const hasCompounded = isCompounded(product);
+  const hasFda = !!fdaDisclaimer(product);
 
   // MDIntegrations trigger — the product page is where intake begins. Mint a
   // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final
@@ -88,7 +90,7 @@ export default function ProductPage() {
 
       {/* ===== Hero ===== */}
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(1.5rem,4vw,3rem)] md:px-10">
-        <div className="grid gap-8 md:grid-cols-2 md:items-center lg:gap-14">
+        <div className="grid gap-8 md:grid-cols-2 md:items-start lg:gap-14">
           {/* image */}
           <Reveal>
             <div className="group/img relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-7 nv-shadow md:min-h-[460px] md:p-12">
@@ -178,20 +180,38 @@ export default function ProductPage() {
                 </button>
               )}
               {err && !isKiosk && <p className="mt-2 text-center text-[0.84rem] font-medium text-primary">{err}</p>}
-              {!isKiosk && (
-                <p className="mt-3 flex items-center justify-center gap-2 text-[0.82rem] text-muted">
-                  <ShieldAlert size={14} className="text-primary/70" />
-                  Prescription product — requires an online medical evaluation.
-                </p>
-              )}
 
-              {/* required compounded-drug + GLP-1 marketing disclaimers */}
-              {isCompounded(product) && (
-                <CompoundedDisclaimer className="mt-5 rounded-2xl border border-line bg-surface-2/60 p-4" />
-              )}
             </div>
           </Reveal>
         </div>
+
+        {/* compliance disclaimers — one aligned row, icon + label so they're noticed quickly */}
+        {(hasCompounded || hasFda) && (
+          <div className={`mt-8 grid items-stretch gap-4 ${hasCompounded && hasFda ? "md:grid-cols-2" : "grid-cols-1"}`}>
+            {hasCompounded && (
+              <div className="flex gap-3.5 rounded-2xl border border-line bg-surface-2/60 p-5">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                  <FlaskConical size={16} />
+                </span>
+                <div>
+                  <h4 className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.13em] text-ink">Compounded drug notice</h4>
+                  <CompoundedDisclaimer className="mt-1.5" />
+                </div>
+              </div>
+            )}
+            {hasFda && (
+              <div className="flex gap-3.5 rounded-2xl border border-line bg-surface-2/60 p-5">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                  <ShieldAlert size={16} />
+                </span>
+                <div>
+                  <h4 className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.13em] text-ink">FDA disclaimer</h4>
+                  <FdaDisclaimer product={product} className="mt-1.5" />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* ===== Trust band ===== */}
@@ -258,15 +278,13 @@ export default function ProductPage() {
       )}
 
       {/* ===== Safety ===== */}
-      {(product.safety || fdaDisclaimer(product)) && (
+      {product.safety && (
         <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
           <div className="rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface-2 p-6 md:p-8">
             <h3 className="flex items-center gap-2 font-display text-[1.1rem] font-bold">
               <ShieldAlert size={18} className="text-primary" /> Important safety information
             </h3>
-            {product.safety && <p className="mt-3 text-[0.92rem] leading-relaxed text-muted">{product.safety}</p>}
-            {/* product-specific FDA disclaimer (client-provided, italicized) */}
-            <FdaDisclaimer product={product} className={product.safety ? "mt-4 border-t border-line pt-4" : "mt-3"} />
+            <p className="mt-3 text-[0.92rem] leading-relaxed text-muted">{product.safety}</p>
           </div>
         </section>
       )}
