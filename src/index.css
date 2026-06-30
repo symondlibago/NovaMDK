@@ -191,10 +191,16 @@
     0%, 100% { transform: translateY(0) rotate(0); }
     50%      { transform: translateY(-7px) rotate(-3deg); }
   }
+  /* Idle vertical float for product card images — wrapper-only so hover transforms compose. */
+  .nv-float { animation: nv-float 5.5s ease-in-out infinite; }
+  @keyframes nv-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nv-kenburns, .nv-bob { animation: none !important; }
+  .nv-kenburns, .nv-bob, .nv-float { animation: none !important; }
 }
 
 /* ---- Lenis smooth scroll ---- */

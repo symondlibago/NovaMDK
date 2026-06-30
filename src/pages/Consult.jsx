@@ -7,9 +7,10 @@ import { getLenis } from "../lib/smoothScroll";
 import { track, EVENTS } from "../lib/analytics";
 import useKioskMode from "../lib/useKioskMode";
 
-// On the kiosk, keep each step vertically centered so the patient isn't
-// reaching up/down — touch targets land in the comfortable middle band.
-const CENTER_KIOSK = "flex min-h-[calc(100vh-65px)] flex-col justify-center";
+// On the kiosk, keep each step vertically centered — but biased a little upward
+// (pb-40) because the physical kiosk is mounted low, so dead-center sits too far
+// down for a comfortable reach. Touch targets land in the upper-middle band.
+const CENTER_KIOSK = "flex min-h-[calc(100vh-65px)] flex-col justify-center pb-64";
 
 const EASE = [0.4, 0, 0.2, 1];
 

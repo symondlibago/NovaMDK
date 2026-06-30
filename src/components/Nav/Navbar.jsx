@@ -48,11 +48,17 @@ const supplementItems = [
 */
 
 /* --------------------------- desktop dropdown --------------------------- */
-function NavDropdown({ title, items, viewAllLink }) {
+function NavDropdown({ title, items, viewAllLink, openOnClick = false }) {
   const [open, setOpen] = useState(false);
+  // Touch screens (kiosk) can't hover — open on tap and dim-tap to close.
+  const hoverProps = openOnClick ? {} : { onMouseEnter: () => setOpen(true), onMouseLeave: () => setOpen(false) };
   return (
-    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button aria-expanded={open} className="flex items-center gap-1.5 py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">
+    <div className="relative" {...hoverProps}>
+      <button
+        aria-expanded={open}
+        onClick={openOnClick ? () => setOpen((o) => !o) : undefined}
+        className="flex items-center gap-1.5 py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink"
+      >
         {title}
         <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown size={14} className="opacity-50" />
@@ -60,6 +66,8 @@ function NavDropdown({ title, items, viewAllLink }) {
       </button>
       <AnimatePresence>
         {open && (
+          <>
+            {openOnClick && <div className="fixed inset-0 z-40" aria-hidden="true" onClick={() => setOpen(false)} />}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -100,6 +108,7 @@ function NavDropdown({ title, items, viewAllLink }) {
               ))}
             </ul>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
@@ -207,10 +216,10 @@ export default function Navbar() {
           {/* Kiosk mode: primary sections live on the navbar (the burger holds the meds menu) */}
           {isKiosk && (
             <div className="flex items-center gap-6">
-              <Link to="/treatments" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Treatments</Link>
+              {/* touch screen: tap opens the dropdown instead of jumping to /treatments */}
+              <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} openOnClick />
               <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
               <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
-              <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
             </div>
           )}
 
