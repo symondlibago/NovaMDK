@@ -84,9 +84,11 @@
 
 @layer base {
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
   body {
     margin: 0;
+    overflow-x: clip;
+    width: 100%;
     background-color: var(--nv-bg);
     color: var(--nv-ink);
     font-family: var(--nv-font-body);

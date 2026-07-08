@@ -5,9 +5,9 @@ const EASE = [0.2, 0.7, 0.3, 1];
 
 /**
  * Lightweight scroll-reveal wrapper used across marketing sections.
- * Replays by default — the animation re-fires every time the section
- * re-enters the viewport (scrolling down, back up, or down again). Pass
- * `once` to pin a reveal so it only plays the first time.
+ * Plays once by default and stays put — re-firing the fade every time the
+ * element re-enters the viewport reads as a glitch on mobile (fast up/down
+ * scrolling). Pass `once={false}` to opt a specific reveal back into replay.
  */
 export default function Reveal({
   children,
@@ -15,7 +15,7 @@ export default function Reveal({
   delay = 0,
   y = 24,
   duration = 0.7,
-  once = false,
+  once = true,
   className = "",
   ...rest
 }) {

@@ -22,11 +22,11 @@ const EASE = [0.16, 1, 0.3, 1];
 // Mirror the real treatment categories (see data/consultations.jsx). Each item
 // deep-links to that goal's shoppable catalog — keep in sync with the footer.
 const treatmentItems = [
-  { name: "Weight Loss", img: "/supplementpill.avif", link: "/treatments?goal=weight-loss" },
-  { name: "Anti-Aging", img: "/antipill.avif", link: "/treatments?goal=unisex-anti-aging-rx" },
-  { name: "Skin Health", img: "/womenpill.avif", link: "/treatments?goal=unisex-skin-health" },
-  { name: "Sexual Health", img: "/menpill.avif", link: "/treatments?goal=mens-health" },
-  { name: "Sports Medicine", img: "/sportpill.avif", link: "/treatments?goal=unisex-sports-medicine" },
+  { name: "Weight Loss", img: "/products/peptides.png", link: "/treatments?goal=weight-loss" },
+  { name: "Anti-Aging", img: "/products/peptides.png", link: "/treatments?goal=unisex-anti-aging-rx" },
+  { name: "Skin Health", img: "/products/ghcku.png", link: "/treatments?goal=unisex-skin-health" },
+  { name: "Sexual Health", img: "/products/peptides.png", link: "/treatments?goal=mens-health" },
+  { name: "Sports Medicine", img: "/products/peptides.png", link: "/treatments?goal=unisex-sports-medicine" },
 ];
 
 /* Peptide molecule list HIDDEN at client request (2026-06-20). "Supplements" is a

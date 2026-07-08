@@ -9,6 +9,9 @@ import BackButton from "../ui/BackButton";
 
 const EASE = [0.16, 1, 0.3, 1];
 
+// Tube/cream renders sit small inside a landscape frame — scale them up in the card.
+const isTube = (img = "") => /rapamycintropical|ghcku/.test(img);
+
 function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
   return (
     <motion.div
@@ -41,8 +44,8 @@ function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
             alt={p.name}
             loading="lazy"
             className={`pointer-events-none h-full w-full object-contain mix-blend-multiply drop-shadow-xl transition-transform duration-500 ease-out ${
-              p.tiltOnHover
-                ? "origin-bottom translate-y-9 scale-[1.55] group-hover:-rotate-[12deg]"
+              isTube(p.img)
+                ? "scale-150 group-hover:scale-[1.6]"
                 : "group-hover:-translate-y-1.5 group-hover:scale-105"
             }`}
           />

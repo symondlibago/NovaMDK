@@ -26,8 +26,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Drops",
     icon: <Droplet size={16} />,
-    img: "/Default.png",
-    tiltOnHover: true,
+    img: "/products/peptides.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "fa4e1aea-c4dc-4f01-93b0-2b16de1a2081",
     highlights: [
@@ -66,7 +65,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Weekly Injectable",
     icon: <Zap size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "d22b2e5e-f751-409d-a8a3-28a18d9d40ca",
     highlights: [
@@ -103,7 +102,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Daily Capsule",
     icon: <Pill size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/tesofensin.png",
     imgHowItWorks: "/weight3.avif",
     questionnaireId: "aece23a5-69c0-403c-90b8-405ab2ec4eae",
     highlights: [
@@ -215,7 +214,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Daily Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "25ee7920-dd2c-4b3c-bcb2-59a7037bb95a",
     highlights: [
@@ -251,7 +250,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Daily Subcutaneous Injection",
     icon: <Sparkles size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "1e389171-8298-42cc-87c9-d0c245eacec1",
     highlights: [
@@ -287,7 +286,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Daily Capsule",
     icon: <Pill size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/5amino.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "1fea7568-fc5f-41e0-a01d-c111ad7ddc62",
     highlights: [
@@ -324,7 +323,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Daily Subcutaneous Injection",
     icon: <Flame size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "97cc2764-6f24-4303-8b62-b2a508fdb60e",
     highlights: [
@@ -366,7 +365,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <Activity size={16} />,
-    img: "/antipill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "23372bcd-af24-41c8-a1e8-fdf87d31a915",
     highlights: [
@@ -403,7 +402,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Troche",
     icon: <Sparkles size={16} />,
-    img: "/antipill.avif",
+    img: "/products/dihexa.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "",
     highlights: [
@@ -439,7 +438,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Oral Capsule",
     icon: <Shield size={16} />,
-    img: "/antipill.avif",
+    img: "/products/dihexa.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "",
     highlights: [
@@ -475,7 +474,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
-    img: "/antipill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "e102cb31-8fb7-4091-95ed-d34a0c84553d",
     highlights: [
@@ -512,7 +511,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
-    img: "/antipill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "fcd41c6d-1c08-4dc2-b44a-92ec605a2abf",
     highlights: [
@@ -548,7 +547,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
-    img: "/antipill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "eefa9b94-32de-47de-b4ae-9cb1b65fd258",
     highlights: [
@@ -584,7 +583,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
-    img: "/antipill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "b83e4349-ac76-4699-85a6-b088afdfb8ef",
     highlights: [
@@ -620,7 +619,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <BatteryCharging size={16} />,
-    img: "/antipill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "d0aa947a-2c5d-49a6-9159-0cf5d2d9ae10",
     highlights: [
@@ -656,7 +655,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <Infinity size={16} />,
-    img: "/antipill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "ed08bc36-28fb-4cc8-a486-4378fe27ff64",
     highlights: [
@@ -692,7 +691,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Oral Capsule / Tablet",
     icon: <Pill size={16} />,
-    img: "/antipill.avif",
+    img: "/products/dihexa.png",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "b4ba8321-f16a-49f7-8074-e35882b06340",
     highlights: [
@@ -727,7 +726,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Transdermal Cream (TopiClick)",
     icon: <Heart size={16} />,
-    img: "/womenpill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/womenpill.avif",
     questionnaireId: "",
     highlights: [
@@ -769,7 +768,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <Shield size={16} />,
-    img: "/sportpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "f7c6477a-5d24-4a57-adae-ec70602c01e5",
     highlights: [
@@ -806,7 +805,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <Shield size={16} />,
-    img: "/sportpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "5574b30a-b219-451c-91ec-455ac66f8770",
     highlights: [
@@ -842,7 +841,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Transdermal Cream",
     icon: <Snowflake size={16} />,
-    img: "/sportpill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "",
     highlights: [
@@ -878,7 +877,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous / Intramuscular Injection",
     icon: <Flame size={16} />,
-    img: "/sportpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "aa9ad55f-e2c9-414d-be0d-f1ea952f1b1e",
     highlights: [
@@ -919,7 +918,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
-    img: "/pill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "ed92f6ee-7840-45d0-97e3-6500738870b8",
     highlights: [
@@ -955,7 +954,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
-    img: "/pill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "",
     highlights: [
@@ -990,7 +989,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
-    img: "/pill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "",
     highlights: [
@@ -1025,7 +1024,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Cream / Serum",
     icon: <Droplets size={16} />,
-    img: "/pill.avif",
+    img: "/products/ghcku.png",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "08bc811c-405d-444a-bcae-e55f423c6cb1",
     highlights: [
@@ -1061,7 +1060,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
-    img: "/pill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "b4ba8321-f16a-49f7-8074-e35882b06340",
     highlights: [
@@ -1101,7 +1100,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Troche",
     icon: <Flame size={16} />,
-    img: "/menpill.avif",
+    img: "/products/dihexa.png",
     imgHowItWorks: "/menpill.avif",
     questionnaireId: "",
     highlights: [
@@ -1137,7 +1136,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Troche",
     icon: <Flame size={16} />,
-    img: "/menpill.avif",
+    img: "/products/dihexa.png",
     imgHowItWorks: "/menpill.avif",
     questionnaireId: "",
     highlights: [
@@ -1173,7 +1172,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Scalp Solution",
     icon: <Droplet size={16} />,
-    img: "/menpill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/menpill.avif",
     questionnaireId: "",
     highlights: [
@@ -1213,7 +1212,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Topical Cream",
     icon: <Flame size={16} />,
-    img: "/womenpill.avif",
+    img: "/products/rapamycintropical.png",
     imgHowItWorks: "/womenpill.avif",
     questionnaireId: "",
     highlights: [
@@ -1249,7 +1248,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <Heart size={16} />,
-    img: "/womenpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/womenpill.avif",
     questionnaireId: "a279f901-991a-4fbf-9681-b47054375cf6",
     highlights: [
@@ -1285,7 +1284,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Subcutaneous Injection",
     icon: <Sun size={16} />,
-    img: "/womenpill.avif",
+    img: "/products/peptides.png",
     imgHowItWorks: "/womenpill.avif",
     questionnaireId: "2d0107ec-d232-4884-9bbf-4052eb85533d",
     highlights: [
@@ -1327,7 +1326,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Daily Capsule",
     icon: <Shield size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/kpv.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "b7f82b01-d377-47df-b815-4d8d7c3b710e",
     highlights: [
@@ -1364,7 +1363,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Daily Capsule",
     icon: <BrainCircuit size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/dihexa.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "60e63139-c0fd-4ebf-b4ae-ec805dc87621",
     highlights: [
@@ -1401,7 +1400,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Nasal Spray",
     icon: <Droplet size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/selank.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "1cdda54b-3185-4ac7-b88f-177f0037a190",
     highlights: [
@@ -1438,7 +1437,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Nasal Spray",
     icon: <BrainCircuit size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/semax.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "a6ea2b87-99fb-46b0-ae7b-da9228bb5282",
     highlights: [
@@ -1475,7 +1474,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Nasal Spray",
     icon: <Sparkles size={16} />,
-    img: "/supplementpill.avif",
+    img: "/products/semax+selank.png",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "1cddfacf-309c-42f7-93b8-9103e5afe7d3",
     highlights: [
