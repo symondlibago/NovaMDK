@@ -20,7 +20,6 @@ const KIOSK_MENU = [
 const EASE = [0.16, 1, 0.3, 1];
 
 // Mirror the real treatment categories (see data/consultations.jsx). Each item
-// deep-links to that goal's shoppable catalog — keep in sync with the footer.
 const treatmentItems = [
   { name: "Weight Loss", img: "/products/peptides.png", link: "/treatments?goal=weight-loss" },
   { name: "Anti-Aging", img: "/products/peptides.png", link: "/treatments?goal=unisex-anti-aging-rx" },
