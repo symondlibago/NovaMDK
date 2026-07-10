@@ -24,7 +24,7 @@ const EASE = [0.16, 1, 0.3, 1];
 const treatmentItems = [
   { name: "Weight Loss", img: "/products/peptides.png", link: "/treatments?goal=weight-loss" },
   { name: "Anti-Aging", img: "/products/peptides.png", link: "/treatments?goal=unisex-anti-aging-rx" },
-  { name: "Skin Health", img: "/products/ghcku.png", link: "/treatments?goal=unisex-skin-health" },
+  { name: "Skin Health", img: "/products/peptides.png", link: "/treatments?goal=unisex-skin-health" },
   { name: "Sexual Health", img: "/products/peptides.png", link: "/treatments?goal=mens-health" },
   { name: "Sports Medicine", img: "/products/peptides.png", link: "/treatments?goal=unisex-sports-medicine" },
 ];
