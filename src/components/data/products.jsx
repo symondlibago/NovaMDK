@@ -103,6 +103,7 @@ export const productsData = [
     dosageForm: "Daily Capsule",
     icon: <Pill size={16} />,
     img: "/products/tesofensin.png",
+    qrImg: "/qr/tesofensine.avif",
     imgHowItWorks: "/weight3.avif",
     questionnaireId: "aece23a5-69c0-403c-90b8-405ab2ec4eae",
     highlights: [
@@ -215,6 +216,7 @@ export const productsData = [
     dosageForm: "Daily Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/Tesamorelin.avif",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "25ee7920-dd2c-4b3c-bcb2-59a7037bb95a",
     highlights: [
@@ -251,6 +253,7 @@ export const productsData = [
     dosageForm: "Daily Subcutaneous Injection",
     icon: <Sparkles size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/Tesamorelin + Ipamorelin Combination.avif",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "1e389171-8298-42cc-87c9-d0c245eacec1",
     highlights: [
@@ -287,6 +290,7 @@ export const productsData = [
     dosageForm: "Daily Capsule",
     icon: <Pill size={16} />,
     img: "/products/5amino.png",
+    qrImg: "/qr/5-Amino-1MQ.avif",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "1fea7568-fc5f-41e0-a01d-c111ad7ddc62",
     highlights: [
@@ -324,6 +328,7 @@ export const productsData = [
     dosageForm: "Daily Subcutaneous Injection",
     icon: <Flame size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/AOD-9604.avif",
     imgHowItWorks: "/supplementpill.avif",
     questionnaireId: "97cc2764-6f24-4303-8b62-b2a508fdb60e",
     highlights: [
@@ -366,6 +371,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <Activity size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/NAD+ Injection.avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "23372bcd-af24-41c8-a1e8-fdf87d31a915",
     highlights: [
@@ -403,6 +409,7 @@ export const productsData = [
     dosageForm: "Sublingual Troche",
     icon: <Sparkles size={16} />,
     img: "/products/dihexa.png",
+    qrImg: "/qr/NAD _ Niacin Troche (NeuroRestore).avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "",
     highlights: [
@@ -439,6 +446,7 @@ export const productsData = [
     dosageForm: "Oral Capsule",
     icon: <Shield size={16} />,
     img: "/products/dihexa.png",
+    qrImg: "/qr/Low Dose Naltrexone (LDN).avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "",
     highlights: [
@@ -475,6 +483,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/CJC-1295 + Ipamorelin (Combination Peptide).avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "e102cb31-8fb7-4091-95ed-d34a0c84553d",
     highlights: [
@@ -512,6 +521,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/CJC-1295 (GHRH Analog).avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "fcd41c6d-1c08-4dc2-b44a-92ec605a2abf",
     highlights: [
@@ -548,6 +558,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/Ipamorelin.avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "eefa9b94-32de-47de-b4ae-9cb1b65fd258",
     highlights: [
@@ -584,6 +595,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <FlaskConical size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/Sermorelin.avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "b83e4349-ac76-4699-85a6-b088afdfb8ef",
     highlights: [
@@ -620,6 +632,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <BatteryCharging size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/MOTS-C.avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "d0aa947a-2c5d-49a6-9159-0cf5d2d9ae10",
     highlights: [
@@ -656,6 +669,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <Infinity size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/Epithalon (Epitalon).avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "ed08bc36-28fb-4cc8-a486-4378fe27ff64",
     highlights: [
@@ -692,6 +706,7 @@ export const productsData = [
     dosageForm: "Oral Capsule / Tablet",
     icon: <Pill size={16} />,
     img: "/products/dihexa.png",
+    qrImg: "/qr/Rapamycin (Sirolimus) — Oral.avif",
     imgHowItWorks: "/antipill.avif",
     questionnaireId: "b4ba8321-f16a-49f7-8074-e35882b06340",
     highlights: [
@@ -727,6 +742,7 @@ export const productsData = [
     dosageForm: "Transdermal Cream (TopiClick)",
     icon: <Heart size={16} />,
     img: "/products/rapamycintropical.png",
+    qrImg: "/qr/Women's Preventive Hormone Balancing Cream.avif",
     imgHowItWorks: "/womenpill.avif",
     questionnaireId: "",
     highlights: [
@@ -769,6 +785,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <Shield size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/BPC-157 (Body Protection Compound).avif",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "f7c6477a-5d24-4a57-adae-ec70602c01e5",
     highlights: [
@@ -806,6 +823,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <Shield size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/Thymosin Beta 4 (TB-500).avif",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "5574b30a-b219-451c-91ec-455ac66f8770",
     highlights: [
@@ -842,6 +860,7 @@ export const productsData = [
     dosageForm: "Topical Transdermal Cream",
     icon: <Snowflake size={16} />,
     img: "/products/rapamycintropical.png",
+    qrImg: "/qr/Sport Elite Muscle Recovery Cream.avif",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "",
     highlights: [
@@ -878,6 +897,7 @@ export const productsData = [
     dosageForm: "Subcutaneous / Intramuscular Injection",
     icon: <Flame size={16} />,
     img: "/products/peptides.png",
+    qrImg: "/qr/MGF (Mechano Growth Factor).avif",
     imgHowItWorks: "/sportpill.avif",
     questionnaireId: "aa9ad55f-e2c9-414d-be0d-f1ea952f1b1e",
     highlights: [
@@ -919,6 +939,7 @@ export const productsData = [
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
     img: "/products/rapamycintropical.png",
+    qrImg: "/qr/Collagen & Skin Brightening Rx Cream.avif",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "ed92f6ee-7840-45d0-97e3-6500738870b8",
     highlights: [
@@ -955,6 +976,7 @@ export const productsData = [
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
     img: "/products/rapamycintropical.png",
+    qrImg: "/qr/HyperPig Cream Rx — Formula I.avif",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "",
     highlights: [
@@ -990,6 +1012,7 @@ export const productsData = [
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
     img: "/products/rapamycintropical.png",
+    qrImg: "/qr/HyperPig Cream Rx — Formula II.avif",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "",
     highlights: [
@@ -1025,6 +1048,7 @@ export const productsData = [
     dosageForm: "Topical Cream / Serum",
     icon: <Droplets size={16} />,
     img: "/products/ghcku.png",
+    qrImg: "/qr/GHK-Cu Copper Peptide Serum.avif",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "08bc811c-405d-444a-bcae-e55f423c6cb1",
     highlights: [
@@ -1061,6 +1085,7 @@ export const productsData = [
     dosageForm: "Topical Cream",
     icon: <Sparkles size={16} />,
     img: "/products/rapamycintropical.png",
+    qrImg: "/qr/Rapamycin Topical Anti-Aging.avif",
     imgHowItWorks: "/pill.avif",
     questionnaireId: "b4ba8321-f16a-49f7-8074-e35882b06340",
     highlights: [
@@ -1101,6 +1126,7 @@ export const productsData = [
     dosageForm: "Sublingual Troche",
     icon: <Flame size={16} />,
     img: "/products/dihexa.png",
+    qrImg: "/qr/Tadalafil _ Oxytocin Sublingual Troche — 4 Pack.avif",
     imgHowItWorks: "/menpill.avif",
     questionnaireId: "",
     highlights: [
@@ -1137,6 +1163,7 @@ export const productsData = [
     dosageForm: "Sublingual Troche",
     icon: <Flame size={16} />,
     img: "/products/dihexa.png",
+    qrImg: "/qr/Tadalafil _ Oxytocin Sublingual Troche — 16 Pack.avif",
     imgHowItWorks: "/menpill.avif",
     questionnaireId: "",
     highlights: [
@@ -1173,6 +1200,7 @@ export const productsData = [
     dosageForm: "Topical Scalp Solution",
     icon: <Droplet size={16} />,
     img: "/products/rapamycintropical.png",
+    qrImg: "/qr/Minoxidil _Finasteride_ Tretinoin_Caffeine Solution.avif",
     imgHowItWorks: "/menpill.avif",
     questionnaireId: "",
     highlights: [
