@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import useKioskMode from "../../lib/useKioskMode";
 
 const KIOSK_AD_SRC = "/kioskads.mp4";
-const DEFAULT_IDLE_MS = 1 * 60 * 1000; // 1 minute of inactivity
+const DEFAULT_IDLE_MS = 2 * 60 * 1000; // 2 minutes of inactivity
 
 function resolveIdleMs() {
   if (typeof window === "undefined") return DEFAULT_IDLE_MS;
