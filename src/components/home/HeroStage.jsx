@@ -268,9 +268,10 @@ function KioskPromoCard({ kiosk = false }) {
 }
 
 /* One row of the "Explore by goal" list — pill thumb, gold tag, serif name. */
-function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false }) {
+function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false, snug = false }) {
   // Rows share a left edge (the column itself is centered) so the list never zigzags.
   // big = kiosk sizing — the goal list is the kiosk's hero element.
+  // snug = slightly smaller name for the tablet "Desktop Hero" columns.
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -288,7 +289,7 @@ function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false }
         <span className="min-w-0 text-left">
           <span className={`block font-mono uppercase tracking-[0.16em] text-accent ${big ? "text-[0.78rem]" : "text-[0.6rem]"}`}>{tag}</span>
           <span
-            className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.65rem]" : "text-[1.06rem]"}`}
+            className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.42rem]" : snug ? "text-[0.98rem]" : "text-[1.06rem]"}`}
             style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
           >
             {name}
@@ -347,17 +348,14 @@ function EditorialHero({ compact = false, forceWide = false }) {
     <section className="relative isolate overflow-hidden bg-bg">
       {/* right-side ambient video — soft-blended into the background */}
       {!compact && (
-        <div className={`pointer-events-none absolute inset-y-0 right-0 ${wide ? "block w-[80%]" : "hidden w-[20%] lg:block"}`}>
+        <div className={`pointer-events-none absolute inset-y-0 right-0 ${wide ? "block w-[80%]" : "hidden w-[46%] lg:block"}`}>
           <video src="/right-vid.mp4" autoPlay loop muted playsInline className="h-full w-full object-cover" />
-          {/* Eased multi-stop fade — the blend's slope never jumps, so no
-              visible band forms where the solid hold ends. The wide (tablet)
-              variant holds solid longer because the goal list overlaps it. */}
           <span
             className="absolute inset-y-0 -left-0.5 right-0"
             style={{
               background: wide
                 ? "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 30%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 36%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 44%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 53%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 62%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 71%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 79%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 87%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 93%, transparent 98%)"
-                : "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 10%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 16%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 24%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 34%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 44%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 54%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 64%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 74%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 83%, transparent 92%)",
+                : "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 6%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 11%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 18%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 26%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 34%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 42%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 49%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 56%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 61%, transparent 66%)",
             }}
           />
         </div>
@@ -408,7 +406,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
             >
               Explore by goal
             </motion.span>
-            <div className={`mt-3 grid sm:grid-cols-2 ${wide ? "gap-x-5" : "gap-x-8"}`}>
+            <div className={`mt-3 grid sm:grid-cols-2 ${wide ? "gap-x-5" : compact ? "gap-x-6" : "gap-x-8"}`}>
               {CONSULT_ORDER.map((key, i) => {
                 const c = CONSULTS[key];
                 return (
@@ -420,6 +418,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
                     onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero" })}
                     delay={0.2 + (i % 6) * 0.06}
                     big={compact}
+                    snug={wide}
                   />
                 );
               })}
@@ -431,6 +430,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
                 icon={<ArrowRight size={16} className="text-ink" />}
                 delay={0.2 + CONSULT_ORDER.length * 0.06}
                 big={compact}
+                snug={wide}
               />
             </div>
           </div>
