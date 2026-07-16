@@ -318,7 +318,7 @@ function HeroHeadline({ compact = false, wide = false }) {
         }`}
         style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
       >
-        Better medicine begins with <em className="italic text-accent">better attention</em>
+        Better medicine begins with <em className="whitespace-nowrap italic text-accent">better attention</em>
       </h1>
 
       <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${mx} ${compact ? "text-[0.95rem]" : "text-[clamp(0.95rem,1.1vw,1.02rem)]"}`}>
