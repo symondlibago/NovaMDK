@@ -17,7 +17,7 @@ function useKioskVariant() {
     if (typeof window === "undefined") return null;
     const v = new URLSearchParams(window.location.search).get("kiosk");
     if (v && KIOSK_VARIANT_IDS.includes(v)) return v;
-    return window.matchMedia(KIOSK_MQ).matches ? "mosaic" : null;
+    return window.matchMedia(KIOSK_MQ).matches ? "overlay" : null;
   };
 
   const [variant, setVariant] = useState(read);

@@ -686,15 +686,12 @@ export const DEVICES = [
   { id: "desktop", name: "Desktop", icon: "monitor", w: 1280, h: 800 },
 ];
 
-/** Portrait tablet / kiosk homepage layouts. The studio drives the chosen
+/** Portrait tablet / kiosk homepage hero layouts. The studio drives the chosen
  *  variant onto the tablet preview via `?kiosk=<id>`; on a real tablet (or the
- *  kiosk's tablet view) the portrait breakpoint shows the same big-card hero. */
+ *  kiosk's tablet view) the portrait breakpoint shows the same hero. */
 export const KIOSK_LAYOUTS = [
-  { id: "grid", name: "Spotlight Grid", tagline: "Big category tiles, tap to start" },
-  { id: "stack", name: "Directory", tagline: "Full-width category rows" },
-  { id: "spotlight", name: "Featured Hero", tagline: "Photo-led, categories below" },
-  { id: "list", name: "Compact List", tagline: "Slim rows — whole list fits, no scroll" },
-  { id: "mosaic", name: "Compact Grid", tagline: "Small tiles — whole list fits, no scroll" },
+  { id: "overlay", name: "Overlay Hero", tagline: "Headline over the full-width video, bigger goal list" },
+  { id: "desktop", name: "Desktop Hero", tagline: "Same split layout as the desktop site" },
 ];
 
 export const DEFAULTS = {
@@ -706,7 +703,7 @@ export const DEFAULTS = {
   lineHeight: "normal",
   radius: "soft",
   device: "live",
-  kioskLayout: "mosaic",
+  kioskLayout: "overlay",
 };
 
 export const byId = (list, id) => list.find((x) => x.id === id) || list[0];

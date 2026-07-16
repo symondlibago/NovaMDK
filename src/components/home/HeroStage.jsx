@@ -7,7 +7,9 @@ import { track, EVENTS } from "../../lib/analytics";
 
 const EASE = [0.22, 0.61, 0.18, 1];
 
-const KIOSK_VARIANTS = {
+// Legacy card-wall layouts — only used by the retired KioskHero below; kept
+// (and exported) so the big-card hero can be revived without re-building it.
+export const KIOSK_VARIANTS = {
   grid:      { wrap: "grid grid-cols-2 gap-4",   helpTile: true, card: () => ({ mode: "tile", span: "" }) },
   stack:     { wrap: "grid grid-cols-1 gap-3.5",                 card: () => ({ mode: "row", span: "" }) },
   spotlight: { wrap: "grid grid-cols-2 gap-4",   card: (i) => (i === 0 ? { mode: "row", span: "col-span-2", featured: true } : { mode: "tile", span: "" }) },
@@ -15,7 +17,7 @@ const KIOSK_VARIANTS = {
   list:      { wrap: "grid grid-cols-1 gap-2",                 card: () => ({ mode: "comprow", span: "" }) },
   mosaic:    { wrap: "grid grid-cols-2 gap-2", helpTile: true, compact: true, cornerFrame: true, card: () => ({ mode: "comptile", span: "" }) },
 };
-export const KIOSK_VARIANT_IDS = Object.keys(KIOSK_VARIANTS);
+export const KIOSK_VARIANT_IDS = ["overlay", "desktop"];
 
 // For the Compact Grid "framed" look: square only the grid's four outer corners
 // (top-left, top-right, bottom-left, bottom-right) so it reads as one panel.
@@ -278,15 +280,15 @@ function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false }
       <Link
         to={to}
         onClick={onClick}
-        className={`group flex items-center justify-start border-b border-line transition-colors hover:border-primary/40 ${big ? "gap-4 py-4" : "gap-3.5 py-3"}`}
+        className={`group flex items-center justify-start border-b border-line transition-colors hover:border-primary/40 ${big ? "gap-5 py-5" : "gap-3.5 py-3"}`}
       >
-        <span className={`grid shrink-0 place-items-center rounded-full border border-line bg-surface nv-shadow transition-transform duration-300 group-hover:scale-105 ${big ? "h-16 w-16" : "h-11 w-11"}`}>
-          {icon || <img src="/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-9" : "h-6"}`} />}
+        <span className={`grid shrink-0 place-items-center rounded-full border border-line bg-surface nv-shadow transition-transform duration-300 group-hover:scale-105 ${big ? "h-18 w-18" : "h-11 w-11"}`}>
+          {icon || <img src="/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-10" : "h-6"}`} />}
         </span>
         <span className="min-w-0 text-left">
-          <span className={`block font-mono uppercase tracking-[0.16em] text-accent ${big ? "text-[0.72rem]" : "text-[0.6rem]"}`}>{tag}</span>
+          <span className={`block font-mono uppercase tracking-[0.16em] text-accent ${big ? "text-[0.78rem]" : "text-[0.6rem]"}`}>{tag}</span>
           <span
-            className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.5rem]" : "text-[1.06rem]"}`}
+            className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.65rem]" : "text-[1.06rem]"}`}
             style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
           >
             {name}
@@ -297,74 +299,107 @@ function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false }
   );
 }
 
-/* Editorial hero — quiet left column (headline → CTAs → goal directory) with a
-   full-height ambient video on the right, blended into the page background. */
-function EditorialHero({ compact = false }) {
+/* The hero's eyebrow → headline → sub → CTAs block, shared by every layout.
+   compact = centered over the overlay video; wide = the desktop split forced
+   at tablet width; default = centered until lg, then left. */
+function HeroHeadline({ compact = false, wide = false }) {
+  const justify = compact ? "justify-center" : wide ? "justify-start" : "justify-center lg:justify-start";
+  const mx = compact ? "mx-auto" : wide ? "" : "mx-auto lg:mx-0";
+  return (
+    <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
+      {/* eyebrow */}
+      <span className={`flex items-center gap-3 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-accent ${justify}`}>
+        <span className="h-px w-6 bg-accent" aria-hidden="true" /> Physician-formulated care
+      </span>
+
+      <h1
+        className={`nv-weight-keep mt-4 max-w-[15ch] font-medium leading-[1.08] tracking-[-0.01em] text-ink ${mx} ${
+          compact ? "text-[clamp(1.9rem,5vw,2.6rem)]" : "text-[clamp(1.9rem,3.4vw,2.8rem)]"
+        }`}
+        style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
+      >
+        Better medicine begins with <em className="italic text-accent">better attention</em>
+      </h1>
+
+      <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${mx} ${compact ? "text-[0.95rem]" : "text-[clamp(0.95rem,1.1vw,1.02rem)]"}`}>
+        Doctor-formulated treatments, composed for you and delivered to your door in days.
+      </p>
+
+      {/* CTAs */}
+      <div className={`flex flex-wrap items-center gap-5 ${compact ? "mt-6" : "mt-6"} ${justify}`}>
+        <Link
+          to="/treatments"
+          onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
+          className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.95rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+        >
+          Get started <ArrowRight size={15} strokeWidth={2.4} className="transition-transform group-hover:translate-x-0.5" />
+        </Link>
+        <a href="#how" className="group inline-flex items-center gap-1.5 text-[0.92rem] font-medium text-ink transition-colors hover:text-primary">
+          See how it works <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+function EditorialHero({ compact = false, forceWide = false }) {
+  const wide = forceWide;
   return (
     <section className="relative isolate overflow-hidden bg-bg">
-      {/* right-side ambient video (lg+) — soft-blended into the background */}
+      {/* right-side ambient video — soft-blended into the background */}
       {!compact && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[46%] lg:block">
+        <div className={`pointer-events-none absolute inset-y-0 right-0 w-[46%] ${wide ? "block" : "hidden lg:block"}`}>
           <video src="/right-vid.mp4" autoPlay loop muted playsInline className="h-full w-full object-cover" />
+          {/* Eased multi-stop fade — the blend's slope never jumps, so no
+              visible band forms where the solid hold ends. The wide (tablet)
+              variant holds solid longer because the goal list overlaps it. */}
           <span
-            className="absolute inset-0"
+            className="absolute inset-y-0 -left-0.5 right-0"
             style={{
-              background:
-                "linear-gradient(90deg, var(--nv-bg) 0%, color-mix(in oklab, var(--nv-bg) 55%, transparent) 28%, transparent 62%)",
+              background: wide
+                ? "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 20%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 26%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 34%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 44%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 54%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 64%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 73%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 82%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 90%, transparent 97%)"
+                : "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 10%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 16%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 24%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 34%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 44%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 54%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 64%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 74%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 83%, transparent 92%)",
             }}
           />
         </div>
       )}
 
-      <div className={`pointer-events-none relative ${compact ? "" : "lg:hidden"}`}>
-        <video src="/right-vid.mp4" autoPlay loop muted playsInline className={`block w-full object-cover ${compact ? "h-96" : "h-72 sm:h-80"}`} />
-        <span
-          className="absolute left-0 right-0 top-0 -bottom-0.5"
-          style={{
-            background:
-              "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--nv-bg) 50%, transparent) 42%, var(--nv-bg) 70%)",
-          }}
-        />
-      </div>
+      {/* small-screen top video (default layout only) */}
+      {!compact && !wide && (
+        <div className="pointer-events-none relative lg:hidden">
+          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="block h-72 w-full object-cover sm:h-80" />
+          <span
+            className="absolute left-0 right-0 top-0 -bottom-0.5"
+            style={{
+              background:
+                "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--nv-bg) 50%, transparent) 42%, var(--nv-bg) 70%)",
+            }}
+          />
+        </div>
+      )}
 
-      <div className={`mx-auto max-w-[1500px] px-5 md:px-10 ${compact ? "pb-8" : "pb-[clamp(2.2rem,4.5vw,3.6rem)] lg:pt-[clamp(2.2rem,4.5vw,3.6rem)]"}`}>
-        <div className={`relative z-10 ${compact ? "-mt-36 mx-auto max-w-2xl text-center" : "-mt-24 mx-auto max-w-[560px] text-center lg:mx-0 lg:mt-0 lg:w-1/2 lg:text-left"}`}>
-          <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
-            {/* eyebrow */}
-            <span className={`flex items-center gap-3 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-accent ${compact ? "justify-center" : "justify-center lg:justify-start"}`}>
-              <span className="h-px w-6 bg-accent" aria-hidden="true" /> Physician-formulated care
-            </span>
+      {/* Overlay layout — full-bleed video with the headline block on top of it */}
+      {compact && (
+        <div className="relative">
+          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="block h-120 w-full object-cover" />
+          <span
+            className="absolute left-0 right-0 top-0 -bottom-0.5"
+            style={{
+              background:
+                "linear-gradient(180deg, color-mix(in oklab, var(--nv-bg) 72%, transparent) 0%, color-mix(in oklab, var(--nv-bg) 42%, transparent) 55%, var(--nv-bg) 97%)",
+            }}
+          />
+          <div className="absolute inset-0 z-10 mx-auto flex max-w-2xl flex-col items-center justify-center px-6 text-center">
+            <HeroHeadline compact />
+          </div>
+        </div>
+      )}
 
-            <h1
-              className={`nv-weight-keep mt-4 max-w-[15ch] font-medium leading-[1.08] tracking-[-0.01em] text-ink ${
-                compact ? "mx-auto text-[clamp(1.8rem,4.6vw,2.4rem)]" : "mx-auto text-[clamp(1.9rem,3.4vw,2.8rem)] lg:mx-0"
-              }`}
-              style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
-            >
-              Better medicine begins with <em className="italic text-accent">better attention</em>
-            </h1>
-
-            <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${compact ? "mx-auto text-[0.92rem]" : "mx-auto text-[clamp(0.95rem,1.1vw,1.02rem)] lg:mx-0"}`}>
-              Doctor-formulated treatments, composed for you and delivered to your door in days.
-            </p>
-
-            {/* CTAs */}
-            <div className={`flex flex-wrap items-center gap-5 ${compact ? "mt-5 justify-center" : "mt-6 justify-center lg:justify-start"}`}>
-              <Link
-                to="/treatments"
-                onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
-                className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.95rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
-              >
-                Get started <ArrowRight size={15} strokeWidth={2.4} className="transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <a href="#how" className="group inline-flex items-center gap-1.5 text-[0.92rem] font-medium text-ink transition-colors hover:text-primary">
-                See how it works <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-              </a>
-            </div>
-          </motion.div>
+      <div className={`mx-auto max-w-375 px-5 md:px-10 ${compact ? "pb-8" : wide ? "pb-[clamp(2.2rem,4.5vw,3.6rem)] pt-[clamp(2.2rem,4.5vw,3.6rem)]" : "pb-[clamp(2.2rem,4.5vw,3.6rem)] lg:pt-[clamp(2.2rem,4.5vw,3.6rem)]"}`}>
+        <div className={`relative z-10 ${compact ? "mx-auto max-w-2xl text-center" : wide ? "w-[66%] text-left" : "-mt-24 mx-auto max-w-140 text-center lg:mx-0 lg:mt-0 lg:w-1/2 lg:text-left"}`}>
+          {!compact && <HeroHeadline wide={wide} />}
 
           {/* explore by goal */}
-          <div className={`border-t border-line ${compact ? "mt-6 pt-4" : "mt-7 pt-5"}`}>
+          <div className={`border-t border-line ${compact ? "mt-2 pt-4" : "mt-7 pt-5"}`}>
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -373,7 +408,7 @@ function EditorialHero({ compact = false }) {
             >
               Explore by goal
             </motion.span>
-            <div className="mt-3 grid gap-x-8 sm:grid-cols-2">
+            <div className={`mt-3 grid sm:grid-cols-2 ${wide ? "gap-x-5" : "gap-x-8"}`}>
               {CONSULT_ORDER.map((key, i) => {
                 const c = CONSULTS[key];
                 return (
@@ -407,11 +442,8 @@ function EditorialHero({ compact = false }) {
 }
 
 export default function HeroStage({ kioskVariant = null }) {
-  const kiosk = kioskVariant && KIOSK_VARIANTS[kioskVariant] ? KIOSK_VARIANTS[kioskVariant] : null;
-  // Kiosk/tablet gets the same editorial hero, compacted to fit the portrait
-  // screen. The legacy card-wall hero (KioskHero) is kept below if we ever
-  // want the Design Studio layout picker to drive the hero again.
-  return <EditorialHero compact={!!kiosk} />;
+  if (kioskVariant === "desktop") return <EditorialHero forceWide />;
+  return <EditorialHero compact={!!kioskVariant} />;
 }
 
 /* Kiosk hero — unchanged: photo backdrop + the client-selected card layout. */

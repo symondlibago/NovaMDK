@@ -23,7 +23,7 @@ const DEVICE_ICON = {
 function DevicePreview() {
   const { device, devices, setDevice, palette, typography, weight, italic, letterSpacing, lineHeight, radius, paletteOverrides, kioskLayout, kioskLayouts, setKioskLayout } = useTheme();
   const active = devices.find((d) => d.id === device);
-  // The tablet frame carries the 3 portrait "kiosk" layout variants.
+  // The tablet frame carries the 2 portrait hero layout variants.
   const isTablet = active?.id === "tablet";
   const [scale, setScale] = useState(1);
 
@@ -117,52 +117,33 @@ function DevicePreview() {
   );
 }
 
-/* ------------------------- kiosk layout thumbnail ------------------------- */
-// A tiny portrait (9:16) wireframe of each kiosk layout's structure.
+/* ------------------------- hero layout thumbnail ------------------------- */
+// A tiny portrait (9:16) wireframe of each tablet hero layout.
 function KioskLayoutThumb({ id, on }) {
   const bar = on ? "bg-primary" : "bg-line-strong";
   const soft = on ? "bg-primary/35" : "bg-line";
   return (
     <span className={`grid h-12 w-7 shrink-0 gap-0.5 rounded-md p-1 ring-1 ${on ? "bg-primary/10 ring-primary/30" : "bg-surface-2 ring-line"}`}>
-      {id === "grid" && (
+      {id === "overlay" && (
         <>
-          <span className={`h-1.5 rounded-sm ${bar}`} />
-          <span className="grid flex-1 grid-cols-2 gap-0.5">
-            {Array.from({ length: 6 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
+          {/* headline centered on a full-bleed media block, goal rows below */}
+          <span className={`relative h-5 rounded-sm ${soft}`}>
+            <span className={`absolute left-1/2 top-1/2 h-1 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-sm ${bar}`} />
+          </span>
+          <span className="grid flex-1 grid-rows-3 gap-0.5">
+            {Array.from({ length: 3 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
           </span>
         </>
       )}
-      {id === "stack" && (
-        <>
-          <span className={`h-3 rounded-sm ${bar}`} />
-          <span className="grid flex-1 grid-rows-4 gap-0.5">
-            {Array.from({ length: 4 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
+      {id === "desktop" && (
+        /* text column left, ambient media right — the desktop split */
+        <span className="grid flex-1 grid-cols-2 gap-0.5">
+          <span className="grid grid-rows-3 gap-0.5">
+            <span className={`rounded-sm ${bar}`} />
+            {Array.from({ length: 2 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
           </span>
-        </>
-      )}
-      {id === "spotlight" && (
-        <>
-          <span className={`h-5 rounded-sm ${bar}`} />
-          <span className="grid flex-1 grid-cols-2 gap-0.5">
-            {Array.from({ length: 4 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
-          </span>
-        </>
-      )}
-      {id === "list" && (
-        <>
-          <span className={`h-1 rounded-sm ${bar}`} />
-          <span className="grid flex-1 grid-rows-5 gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
-          </span>
-        </>
-      )}
-      {id === "mosaic" && (
-        <>
-          <span className={`h-1 rounded-sm ${bar}`} />
-          <span className="grid flex-1 grid-cols-2 grid-rows-3 gap-0.5">
-            {Array.from({ length: 6 }).map((_, i) => <span key={i} className={`rounded-sm ${soft}`} />)}
-          </span>
-        </>
+          <span className={`rounded-sm ${soft}`} />
+        </span>
       )}
     </span>
   );
@@ -653,6 +634,36 @@ export default function DesignStudio() {
                   Opens the live site in a scaled phone · tablet · desktop frame.
                 </p>
               </Section>
+
+              {/* Tablet hero layout — only relevant while the tablet frame is up */}
+              {device === "tablet" && (
+                <Section icon={<Tablet size={14} />} title="Tablet hero layout">
+                  <div className="flex flex-col gap-2.5">
+                    {kioskLayouts.map((k) => {
+                      const on = k.id === kioskLayout.id;
+                      return (
+                        <button
+                          key={k.id}
+                          onClick={() => setKioskLayout(k.id)}
+                          className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${
+                            on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
+                          }`}
+                        >
+                          <KioskLayoutThumb id={k.id} on={on} />
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-[14px] font-semibold">{k.name}</span>
+                            <span className="block truncate text-[11px] text-muted">{k.tagline}</span>
+                          </span>
+                          {on && <Check size={16} className="text-primary shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-[11px] leading-relaxed text-muted">
+                    Changes the homepage hero on the portrait tablet / kiosk view.
+                  </p>
+                </Section>
+              )}
 
               {/* Share & handoff */}
               <Section icon={<Share2 size={14} />} title="Share & handoff">
