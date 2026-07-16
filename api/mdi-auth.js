@@ -1,3 +1,6 @@
+const CLIENT_ID = process.env.MDI_CLIENT_ID || "727bf2a9-ffa8-4aa6-8d10-23029907e8c9";
+const CLIENT_SECRET = process.env.MDI_CLIENT_SECRET || "Nv9EG1YSJDbzAl3DC8WCkyZxwBkpXgrOBeSFy6SS";
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -10,8 +13,8 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         grant_type: "client_credentials",
-        client_id: "5df9be13-5a14-4286-8541-128ffbd6bdd6",
-        client_secret: "RyvobYRXErAIRIo0NHQ3ZMsS2LO5f6HE1swBPV9N",
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
         scope: "*"
       })
     });
@@ -33,9 +36,9 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${accessToken}` 
       },
       body: JSON.stringify({
-        hold_status: false,
+        hold_status: true,
         patient_id: null,
-        questionnaire_id: req.body.questionnaire_id, 
+        questionnaire_id: req.body.questionnaire_id,
         case_offerings: [],
         disease: []
       })

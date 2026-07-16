@@ -26,8 +26,9 @@ function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.13em] text-accent">{p.categoryName}</span>
         <span className="text-[13px] font-semibold text-muted">{p.price}</span>
       </div>
-      <h3 className="text-[1.05rem] font-bold leading-snug text-ink">{p.name}</h3>
-      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+      {/* fixed-height zones keep image + description aligned across all cards */}
+      <h3 className="min-h-12 text-[1.05rem] font-bold leading-snug text-ink">{p.name}</h3>
+      <div className="mt-2 flex min-h-14 flex-wrap content-start items-center gap-1.5">
         {p.dosageForm && (
           <span className="w-fit rounded-full bg-surface-2 px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-muted">
             {p.dosageForm}
@@ -52,7 +53,7 @@ function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
         </span>
       </div>
 
-      <p className="mb-5 line-clamp-2 text-[0.85rem] leading-relaxed text-muted">{p.subtitle}</p>
+      <p className="mb-5 line-clamp-2 min-h-11 text-[0.85rem] leading-relaxed text-muted">{p.subtitle}</p>
 
       {/* Quick view — opens a preview modal so patients know the product before consulting */}
       <button
@@ -171,8 +172,8 @@ function QuickViewModal({ product, onClose }) {
 }
 
 // Product ids pinned to the front of a category's listing (marketing priority).
-// Weight Loss → Ozempic (4) then Mounjaro (5) lead the catalog.
-const PINNED_FIRST = { "weight-loss": [4, 5] };
+// Empty since the final-offerings catalog swap — repopulate with new ids as needed.
+const PINNED_FIRST = {};
 
 export default function TreatmentShop({ category, showBack = false }) {
   const [quickView, setQuickView] = useState(null);

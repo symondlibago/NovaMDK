@@ -110,23 +110,6 @@ function DevicePreview() {
           </div>
         </div>
       </div>
-      {isTablet && (
-        <div className="flex items-center gap-1.5 rounded-full bg-white/10 p-1">
-          <span className="px-2.5 text-[11px] text-white/50">Layout</span>
-          {kioskLayouts.map((k) => (
-            <button
-              key={k.id}
-              onClick={() => setKioskLayout(k.id)}
-              title={k.tagline}
-              className={`rounded-full px-3 py-1.5 text-[12px] transition-colors ${
-                k.id === kioskLayout.id ? "bg-white text-[#15171A]" : "text-white/70 hover:text-white"
-              }`}
-            >
-              {k.name}
-            </button>
-          ))}
-        </div>
-      )}
       <div className="pb-4 pt-2 text-[11px] text-white/40">
         {active.w} × {active.h}
       </div>
@@ -668,34 +651,6 @@ export default function DesignStudio() {
                 </div>
                 <p className="mt-2 text-[11px] leading-relaxed text-muted">
                   Opens the live site in a scaled phone · tablet · desktop frame.
-                </p>
-              </Section>
-
-              {/* Tablet layout — 3 portrait homepages (also the kiosk's tablet view) */}
-              <Section icon={<Tablet size={14} />} title="Tablet layout">
-                <div className="flex flex-col gap-2.5">
-                  {kioskLayouts.map((k) => {
-                    const on = k.id === kioskLayout.id;
-                    return (
-                      <button
-                        key={k.id}
-                        onClick={() => { setKioskLayout(k.id); setDevice("tablet"); }}
-                        className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${
-                          on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
-                        }`}
-                      >
-                        <KioskLayoutThumb id={k.id} on={on} />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[14px] font-semibold">{k.name}</span>
-                          <span className="block truncate text-[11px] text-muted">{k.tagline}</span>
-                        </span>
-                        {on && <Check size={16} className="text-primary shrink-0" />}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="mt-2 text-[11px] leading-relaxed text-muted">
-                  Portrait, touch-first homepages — categories up front. This is the view the kiosk runs. Picking one jumps to the tablet preview.
                 </p>
               </Section>
 

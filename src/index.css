@@ -205,6 +205,14 @@
   .nv-kenburns, .nv-bob, .nv-float { animation: none !important; }
 }
 
+/* Kiosk / portrait tablet (same media query as useKioskMode): hide the page
+   scrollbar — it's a touch screen, and the classic scrollbar track otherwise
+   paints a light vertical bar over the hero video. Touch scrolling unaffected. */
+@media (min-width: 600px) and (max-width: 1024px) and (orientation: portrait) {
+  html { scrollbar-width: none; }
+  html::-webkit-scrollbar { width: 0; height: 0; }
+}
+
 /* ---- Lenis smooth scroll ---- */
 html.lenis,
 html.lenis body { height: auto; }

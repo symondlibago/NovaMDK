@@ -14,6 +14,8 @@ import ContactPage from "./pages/Contact";
 import KioskPage from "./pages/Kiosk";
 import Consult from "./pages/Consult";
 import ProductPage from "./pages/ProductPage";
+import IntakePage from "./pages/Intake";
+import PatientPortalPage from "./pages/PatientPortal";
 import LegalPage from "./components/LegalPage";
 import KioskAttractLoop from "./components/kiosk/KioskAttractLoop";
 
@@ -43,6 +45,8 @@ function App() {
           <Route path="/start" element={<Consult />} />
           <Route path="/start/:slug" element={<Consult />} />
           <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/intake" element={<IntakePage />} />
+          <Route path="/portal" element={<PatientPortalPage />} />
           <Route path="/legal/:policyId" element={<LegalPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useKioskMode from "../../lib/useKioskMode";
 
 const KIOSK_AD_SRC = "/kioskads.mp4";
@@ -19,6 +19,10 @@ const ACTIVITY_EVENTS = ["pointerdown", "touchstart", "mousedown", "keydown", "w
 export default function KioskAttractLoop() {
   const isKiosk = useKioskMode();
   const navigate = useNavigate();
+  // Suspend on the intake and portal pages: both run in a cross-origin iframe,
+  // whose touches never reach our window — the ad would fire mid-visit.
+  const { pathname } = useLocation();
+  const suspended = pathname === "/intake" || pathname === "/portal";
   const [active, setActive] = useState(false);
   const activeRef = useRef(false);
   const timerRef = useRef(null);
@@ -42,14 +46,14 @@ export default function KioskAttractLoop() {
   }, [armTimer, navigate]);
 
   useEffect(() => {
-    if (!isKiosk) return undefined;
+    if (!isKiosk || suspended) return undefined;
     ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, handleActivity, { passive: true }));
     armTimer();
     return () => {
       clearTimeout(timerRef.current);
       ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, handleActivity));
     };
-  }, [isKiosk, handleActivity, armTimer]);
+  }, [isKiosk, suspended, handleActivity, armTimer]);
 
   // Lock the page behind the ad while it's up.
   useEffect(() => {

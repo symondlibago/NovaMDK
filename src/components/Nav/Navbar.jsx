@@ -223,6 +223,9 @@ export default function Navbar() {
           )}
 
           <div className="flex items-center gap-2.5">
+            <Link to="/portal" className="hidden h-10 items-center gap-2 rounded-full border-2 border-primary bg-surface px-5 text-[14px] font-semibold text-primary transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-on-primary nv-shadow lg:flex">
+              <LogIn size={15} /> Patient Portal
+            </Link>
             <Link to="/treatments" className="hidden h-10 items-center gap-2 rounded-full bg-primary px-5 text-[14px] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow lg:flex">
               Get started
             </Link>
@@ -267,10 +270,9 @@ export default function Navbar() {
                     <KioskMenuGroup key={cat.goal} cat={cat} close={() => setMobileOpen(false)} />
                   ))}
                   <div className="mt-auto flex flex-col gap-1 pb-2 pt-6">
-                    {/* Log In — no route yet; MDI auth will be wired here later. */}
-                    <button type="button" className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-left text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
-                      <LogIn size={16} /> Log In
-                    </button>
+                    <Link to="/portal" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-left text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+                      <LogIn size={16} /> Patient Portal
+                    </Link>
                     <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
                       <LifeBuoy size={16} /> Support
                     </Link>
@@ -284,6 +286,9 @@ export default function Navbar() {
                   </Link>
                   <Link to="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                     Kiosk <ArrowRight size={16} className="text-muted" />
+                  </Link>
+                  <Link to="/portal" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
+                    Patient Portal <ArrowRight size={16} className="text-muted" />
                   </Link>
 
                   {/* Get a Recommendation — starts the free 2-minute questionnaire */}

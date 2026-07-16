@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Navigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical, Loader2,
@@ -27,6 +27,7 @@ export default function ProductPage() {
   const product = productsData.find((p) => String(p.id) === String(id));
 
   const isKiosk = useKioskMode();
+  const navigate = useNavigate();
   const [showQR, setShowQR] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
@@ -64,9 +65,11 @@ export default function ProductPage() {
       });
       if (!res.ok) throw new Error("We couldn't start your visit just now — please try again.");
       const voucher = await res.json();
-      // If the minted voucher carries an intake/checkout URL, hand the patient off.
-      const url = voucher.url || voucher.intake_url || voucher.redirect_url || voucher.link || voucher.checkout_url;
-      if (url) { window.location.href = url; return; }
+      const token = voucher.id || new URL(voucher.onboarding_url || "https://x.invalid").searchParams.get("token");
+      if (token) {
+        navigate(`/intake?token=${encodeURIComponent(token)}&product=${encodeURIComponent(product.name)}&pid=${product.id}`);
+        return;
+      }
       // No URL on the voucher yet — surface it so the handoff can be finalized.
       console.info("MDI voucher minted:", voucher);
       setErr("Visit started — connecting you to intake shortly.");

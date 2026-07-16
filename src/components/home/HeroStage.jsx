@@ -265,9 +265,158 @@ function KioskPromoCard({ kiosk = false }) {
   );
 }
 
+/* One row of the "Explore by goal" list — pill thumb, gold tag, serif name. */
+function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false }) {
+  // Rows share a left edge (the column itself is centered) so the list never zigzags.
+  // big = kiosk sizing — the goal list is the kiosk's hero element.
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: EASE, delay }}
+    >
+      <Link
+        to={to}
+        onClick={onClick}
+        className={`group flex items-center justify-start border-b border-line transition-colors hover:border-primary/40 ${big ? "gap-4 py-4" : "gap-3.5 py-3"}`}
+      >
+        <span className={`grid shrink-0 place-items-center rounded-full border border-line bg-surface nv-shadow transition-transform duration-300 group-hover:scale-105 ${big ? "h-16 w-16" : "h-11 w-11"}`}>
+          {icon || <img src="/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-9" : "h-6"}`} />}
+        </span>
+        <span className="min-w-0 text-left">
+          <span className={`block font-mono uppercase tracking-[0.16em] text-accent ${big ? "text-[0.72rem]" : "text-[0.6rem]"}`}>{tag}</span>
+          <span
+            className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.5rem]" : "text-[1.06rem]"}`}
+            style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
+          >
+            {name}
+          </span>
+        </span>
+      </Link>
+    </motion.div>
+  );
+}
+
+/* Editorial hero — quiet left column (headline → CTAs → goal directory) with a
+   full-height ambient video on the right, blended into the page background. */
+function EditorialHero({ compact = false }) {
+  return (
+    <section className="relative isolate overflow-hidden bg-bg">
+      {/* right-side ambient video (lg+) — soft-blended into the background */}
+      {!compact && (
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[46%] lg:block">
+          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="h-full w-full object-cover" />
+          <span
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(90deg, var(--nv-bg) 0%, color-mix(in oklab, var(--nv-bg) 55%, transparent) 28%, transparent 62%)",
+            }}
+          />
+        </div>
+      )}
+
+      <div className={`pointer-events-none relative ${compact ? "" : "lg:hidden"}`}>
+        <video src="/right-vid.mp4" autoPlay loop muted playsInline className={`block w-full object-cover ${compact ? "h-96" : "h-72 sm:h-80"}`} />
+        <span
+          className="absolute left-0 right-0 top-0 -bottom-0.5"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--nv-bg) 50%, transparent) 42%, var(--nv-bg) 70%)",
+          }}
+        />
+      </div>
+
+      <div className={`mx-auto max-w-[1500px] px-5 md:px-10 ${compact ? "pb-8" : "pb-[clamp(2.2rem,4.5vw,3.6rem)] lg:pt-[clamp(2.2rem,4.5vw,3.6rem)]"}`}>
+        <div className={`relative z-10 ${compact ? "-mt-36 mx-auto max-w-2xl text-center" : "-mt-24 mx-auto max-w-[560px] text-center lg:mx-0 lg:mt-0 lg:w-1/2 lg:text-left"}`}>
+          <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
+            {/* eyebrow */}
+            <span className={`flex items-center gap-3 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-accent ${compact ? "justify-center" : "justify-center lg:justify-start"}`}>
+              <span className="h-px w-6 bg-accent" aria-hidden="true" /> Physician-formulated care
+            </span>
+
+            <h1
+              className={`nv-weight-keep mt-4 max-w-[15ch] font-medium leading-[1.08] tracking-[-0.01em] text-ink ${
+                compact ? "mx-auto text-[clamp(1.8rem,4.6vw,2.4rem)]" : "mx-auto text-[clamp(1.9rem,3.4vw,2.8rem)] lg:mx-0"
+              }`}
+              style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
+            >
+              Better medicine begins with <em className="italic text-accent">better attention</em>
+            </h1>
+
+            <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${compact ? "mx-auto text-[0.92rem]" : "mx-auto text-[clamp(0.95rem,1.1vw,1.02rem)] lg:mx-0"}`}>
+              Doctor-formulated treatments, composed for you and delivered to your door in days.
+            </p>
+
+            {/* CTAs */}
+            <div className={`flex flex-wrap items-center gap-5 ${compact ? "mt-5 justify-center" : "mt-6 justify-center lg:justify-start"}`}>
+              <Link
+                to="/treatments"
+                onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
+                className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.95rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+              >
+                Get started <ArrowRight size={15} strokeWidth={2.4} className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <a href="#how" className="group inline-flex items-center gap-1.5 text-[0.92rem] font-medium text-ink transition-colors hover:text-primary">
+                See how it works <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+              </a>
+            </div>
+          </motion.div>
+
+          {/* explore by goal */}
+          <div className={`border-t border-line ${compact ? "mt-6 pt-4" : "mt-7 pt-5"}`}>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
+              className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-muted"
+            >
+              Explore by goal
+            </motion.span>
+            <div className="mt-3 grid gap-x-8 sm:grid-cols-2">
+              {CONSULT_ORDER.map((key, i) => {
+                const c = CONSULTS[key];
+                return (
+                  <GoalRow
+                    key={key}
+                    tag={c.tag}
+                    name={c.name}
+                    to={`/treatments?goal=${c.goalSlug}`}
+                    onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero" })}
+                    delay={0.2 + (i % 6) * 0.06}
+                    big={compact}
+                  />
+                );
+              })}
+              <GoalRow
+                tag="All categories"
+                name="Browse all treatments"
+                to="/treatments"
+                onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero-goals" })}
+                icon={<ArrowRight size={16} className="text-ink" />}
+                delay={0.2 + CONSULT_ORDER.length * 0.06}
+                big={compact}
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HeroStage({ kioskVariant = null }) {
-  const stageRef = useRef(null);
   const kiosk = kioskVariant && KIOSK_VARIANTS[kioskVariant] ? KIOSK_VARIANTS[kioskVariant] : null;
+  // Kiosk/tablet gets the same editorial hero, compacted to fit the portrait
+  // screen. The legacy card-wall hero (KioskHero) is kept below if we ever
+  // want the Design Studio layout picker to drive the hero again.
+  return <EditorialHero compact={!!kiosk} />;
+}
+
+/* Kiosk hero — unchanged: photo backdrop + the client-selected card layout. */
+function KioskHero({ kiosk }) {
+  const stageRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: stageRef,
