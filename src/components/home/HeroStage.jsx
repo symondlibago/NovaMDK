@@ -347,7 +347,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
     <section className="relative isolate overflow-hidden bg-bg">
       {/* right-side ambient video — soft-blended into the background */}
       {!compact && (
-        <div className={`pointer-events-none absolute inset-y-0 right-0 w-[46%] ${wide ? "block" : "hidden lg:block"}`}>
+        <div className={`pointer-events-none absolute inset-y-0 right-0 ${wide ? "block w-[80%]" : "hidden w-[20%] lg:block"}`}>
           <video src="/right-vid.mp4" autoPlay loop muted playsInline className="h-full w-full object-cover" />
           {/* Eased multi-stop fade — the blend's slope never jumps, so no
               visible band forms where the solid hold ends. The wide (tablet)
@@ -356,7 +356,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
             className="absolute inset-y-0 -left-0.5 right-0"
             style={{
               background: wide
-                ? "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 20%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 26%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 34%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 44%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 54%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 64%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 73%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 82%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 90%, transparent 97%)"
+                ? "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 30%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 36%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 44%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 53%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 62%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 71%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 79%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 87%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 93%, transparent 98%)"
                 : "linear-gradient(90deg, var(--nv-bg) 0%, var(--nv-bg) 10%, color-mix(in oklab, var(--nv-bg) 97%, transparent) 16%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 24%, color-mix(in oklab, var(--nv-bg) 78%, transparent) 34%, color-mix(in oklab, var(--nv-bg) 62%, transparent) 44%, color-mix(in oklab, var(--nv-bg) 45%, transparent) 54%, color-mix(in oklab, var(--nv-bg) 29%, transparent) 64%, color-mix(in oklab, var(--nv-bg) 15%, transparent) 74%, color-mix(in oklab, var(--nv-bg) 5%, transparent) 83%, transparent 92%)",
             }}
           />
