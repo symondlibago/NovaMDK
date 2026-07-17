@@ -3,7 +3,7 @@ export const CONSULTS = {
   "weight-loss": {
     slug: "weight-loss",
     tag: "Weight & Metabolism",
-    name: "Unlock Your Best Body",
+    name: "Weight Management",
     short: "Weight Loss",
     blurb: "Address the biology behind weight — appetite, cravings, metabolism.",
     Icon: Scale,
@@ -63,7 +63,7 @@ export const CONSULTS = {
   intimacy: {
     slug: "intimacy",
     tag: "Sexual Health",
-    name: "Better Intimacy",
+    name: "Sexual Wellness",
     short: "Sexual Health",
     blurb: "Discreet, doctor-backed treatment delivered to your door.",
     Icon: Heart,
@@ -123,7 +123,7 @@ export const CONSULTS = {
   longevity: {
     slug: "longevity",
     tag: "Longevity & Anti-Aging",
-    name: "Stay Timeless",
+    name: "Longevity",
     short: "Longevity",
     blurb: "Support energy, skin, strength and healthspan — proactively.",
     Icon: InfinityIcon,

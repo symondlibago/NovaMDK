@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical, Loader2,
-  QrCode, X,
+  QrCode, X, UserRound, ChevronDown, MapPin,
 } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
@@ -29,6 +29,7 @@ export default function ProductPage() {
   const isKiosk = useKioskMode();
   const navigate = useNavigate();
   const [showQR, setShowQR] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -53,7 +54,9 @@ export default function ProductPage() {
   // MDIntegrations trigger — the product page is where intake begins. Mint a
   // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final
   // destination/handoff is wired once the team confirms it.)
-  const startVisit = async () => {
+  // `patient` (from the contact modal) is find-or-created in MDI first, so the
+  // embedded intake opens already knowing them — no double data entry.
+  const startVisit = async (patient) => {
     track(EVENTS.START_VISIT, { id: product.id, name: product.name, category: product.categorySlug });
     setErr("");
     setLoading(true);
@@ -61,10 +64,16 @@ export default function ProductPage() {
       const res = await fetch("/api/mdi-auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questionnaire_id: product.questionnaireId || DEFAULT_QUESTIONNAIRE_ID }),
+        body: JSON.stringify({
+          questionnaire_id: product.questionnaireId || DEFAULT_QUESTIONNAIRE_ID,
+          patient: patient?.email ? patient : null,
+        }),
       });
       if (!res.ok) throw new Error("We couldn't start your visit just now — please try again.");
       const voucher = await res.json();
+      // Contact-only submit + no MDI record found: the modal collects the
+      // rest of the profile (steps 2–3) before we mint the voucher.
+      if (voucher.need_profile) return { needProfile: true };
       const token = voucher.id || new URL(voucher.onboarding_url || "https://x.invalid").searchParams.get("token");
       if (token) {
         navigate(`/intake?token=${encodeURIComponent(token)}&product=${encodeURIComponent(product.name)}&pid=${product.id}`);
@@ -171,7 +180,7 @@ export default function ProductPage() {
                 </button>
               ) : (
                 <button
-                  onClick={startVisit}
+                  onClick={() => setShowInfo(true)}
                   disabled={loading}
                   className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
                 >
@@ -312,7 +321,7 @@ export default function ProductPage() {
                 </button>
               ) : (
                 <button
-                  onClick={startVisit}
+                  onClick={() => setShowInfo(true)}
                   disabled={loading}
                   className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg disabled:opacity-70 disabled:hover:translate-y-0"
                 >
@@ -362,7 +371,19 @@ export default function ProductPage() {
           loading={loading}
           err={err}
           onClose={() => setShowQR(false)}
-          onContinueHere={startVisit}
+          onContinueHere={() => {
+            setShowQR(false);
+            setShowInfo(true);
+          }}
+        />
+      )}
+
+      {showInfo && (
+        <PatientInfoModal
+          loading={loading}
+          err={err}
+          onClose={() => setShowInfo(false)}
+          onSubmit={startVisit}
         />
       )}
 
@@ -466,6 +487,388 @@ function KioskQrModal({ product, onClose, onContinueHere, loading = false, err =
           This screen resets in <span className="font-semibold text-ink">{fmtCountdown(secondsLeft)}</span>
         </p>
       </div>
+    </div>
+  );
+}
+
+const US_STATES = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
+  "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+  "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey",
+  "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+  "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah",
+  "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming",
+];
+
+const FEET_OPTIONS = ["3", "4", "5", "6", "7"].map((f) => ({ value: f, label: `${f} ft` }));
+const INCH_OPTIONS = Array.from({ length: 12 }, (_, i) => ({ value: String(i), label: `${i} in` }));
+
+/* Three-step pre-intake funnel. Step 1 captures the lead (the future
+   marketing-CRM contact); steps 2–3 complete the record MDI requires to
+   create the patient file up front — with it, the white-label intake skips
+   every contact/profile screen and opens straight at the medical questions.
+   Height/weight are entered in ft/in + lbs and converted to MDI's cm/kg. */
+function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
+  const [step, setStep] = useState(0); // 0 = email gate, then steps 1–3
+  const [form, setForm] = useState({
+    first_name: "", last_name: "", email: "", phone_number: "",
+    dob: "", gender: "", feet: "", inches: "", pounds: "",
+    street: "", city: "", state: "", zip: "",
+  });
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const setVal = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
+
+  const emailValid = /^\S+@\S+\.\S+$/.test(form.email.trim());
+  const step1Valid =
+    form.first_name.trim().length > 0 &&
+    form.last_name.trim().length > 0 &&
+    form.phone_number.replace(/\D/g, "").length >= 10;
+
+  const pounds = Number(form.pounds);
+  const step2Valid =
+    form.dob &&
+    (form.gender === "1" || form.gender === "2") &&
+    form.feet !== "" &&
+    form.inches !== "" &&
+    pounds >= 50 && pounds <= 999;
+
+  const step3Valid =
+    form.street.trim().length > 0 &&
+    form.city.trim().length > 0 &&
+    form.state &&
+    /^\d{5}(-\d{4})?$/.test(form.zip.trim());
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (loading) return;
+    if (step === 0) {
+      if (!emailValid) return;
+      // Email-first: an existing MDI record is bound and goes straight into
+      // the intake — returning patients never re-type their details.
+      const res = await onSubmit({ email: form.email.trim() });
+      if (res?.needProfile) setStep(1);
+      return;
+    }
+    if (step === 1) {
+      if (step1Valid) setStep(2);
+      return;
+    }
+    if (step === 2) {
+      if (step2Valid) setStep(3);
+      return;
+    }
+    if (!step3Valid) return;
+    const totalInches = Number(form.feet) * 12 + Number(form.inches);
+    onSubmit({
+      first_name: form.first_name.trim(),
+      last_name: form.last_name.trim(),
+      email: form.email.trim(),
+      phone_number: form.phone_number.trim(),
+      date_of_birth: form.dob, // <input type="date"> emits Y-m-d — MDI's format
+      gender: Number(form.gender), // MDI: 1 = male, 2 = female
+      height: Math.round(totalInches * 2.54), // MDI stores cm
+      weight: Math.round(pounds * 0.45359237 * 10) / 10, // MDI stores kg
+      address: {
+        address: form.street.trim(),
+        zip_code: form.zip.trim(),
+        city_name: form.city.trim(),
+        state_name: form.state,
+      },
+    });
+  };
+
+  const inputCls =
+    "w-full rounded-xl border border-line bg-bg px-3.5 py-3 text-[0.95rem] text-ink placeholder:text-muted/60 focus:border-primary focus:outline-none";
+  const labelCls = "flex flex-col gap-1 text-left text-[0.7rem] font-semibold uppercase tracking-wide text-muted";
+  const TITLES = {
+    0: ["What's your email address?", "If you've visited us before, we'll recognize you."],
+    1: ["First, a few details", "So your care team can reach you about your visit."],
+    2: ["About you", "These go on your private patient file — your intake will skip them."],
+    3: ["Where should we deliver?", "Physical delivery address — no PO boxes."],
+  };
+
+  return (
+    <div onClick={onClose} className="fixed inset-0 z-120 grid place-items-center bg-ink/65 p-6 backdrop-blur-sm">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-110 rounded-3xl border border-line bg-surface p-6 nv-shadow-lg md:p-8"
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink"
+        >
+          <X size={18} />
+        </button>
+
+        <span className="grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
+          <UserRound size={22} />
+        </span>
+        <h3 className="mt-3 font-display text-[1.35rem] font-extrabold leading-tight">{TITLES[step][0]}</h3>
+        <p className="mt-1 text-[0.86rem] text-muted">{TITLES[step][1]}</p>
+        {step > 0 && (
+          <p className="mt-2 font-mono text-[0.64rem] uppercase tracking-[0.16em] text-primary">Step {step} of 3</p>
+        )}
+
+        <form onSubmit={submit} className="mt-4 flex flex-col gap-3">
+          {step === 0 && (
+            <input
+              type="email"
+              value={form.email}
+              onChange={set("email")}
+              placeholder="Email address"
+              autoComplete="email"
+              autoFocus
+              className={inputCls}
+            />
+          )}
+
+          {step === 1 && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <input value={form.first_name} onChange={set("first_name")} placeholder="First name" autoComplete="given-name" className={inputCls} />
+                <input value={form.last_name} onChange={set("last_name")} placeholder="Last name" autoComplete="family-name" className={inputCls} />
+              </div>
+              <input type="tel" value={form.phone_number} onChange={set("phone_number")} placeholder="Mobile number" autoComplete="tel" className={inputCls} />
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <label className={labelCls}>
+                  Date of birth
+                  <input type="date" value={form.dob} onChange={set("dob")} autoComplete="bday" className={inputCls} />
+                </label>
+                <label className={labelCls}>
+                  Sex at birth
+                  <NvSelect
+                    value={form.gender}
+                    onChange={setVal("gender")}
+                    placeholder="Select…"
+                    options={[{ value: "1", label: "Male" }, { value: "2", label: "Female" }]}
+                  />
+                </label>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <label className={labelCls}>
+                  Height
+                  <NvSelect value={form.feet} onChange={setVal("feet")} placeholder="ft…" options={FEET_OPTIONS} />
+                </label>
+                <label className={`${labelCls} justify-end`}>
+                  <NvSelect value={form.inches} onChange={setVal("inches")} placeholder="in…" options={INCH_OPTIONS} />
+                </label>
+                <label className={labelCls}>
+                  Weight
+                  <input
+                    value={form.pounds}
+                    onChange={set("pounds")}
+                    placeholder="lbs"
+                    inputMode="numeric"
+                    className={inputCls}
+                  />
+                </label>
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              {/* Street with live suggestions — picking one fills city/state/ZIP too */}
+              <AddressAutocomplete
+                value={form.street}
+                onChange={set("street")}
+                onPick={({ street, city, state, zip }) =>
+                  setForm((f) => ({
+                    ...f,
+                    street: street || f.street,
+                    city: city || f.city,
+                    state: US_STATES.includes(state) ? state : f.state,
+                    zip: zip || f.zip,
+                  }))
+                }
+                className={inputCls}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <input value={form.city} onChange={set("city")} placeholder="City" autoComplete="address-level2" className={inputCls} />
+                <input value={form.zip} onChange={set("zip")} placeholder="ZIP code" autoComplete="postal-code" inputMode="numeric" className={inputCls} />
+              </div>
+              <NvSelect value={form.state} onChange={setVal("state")} placeholder="State…" options={US_STATES} />
+            </>
+          )}
+
+          <div className="mt-1 flex gap-2.5">
+            {step > 0 && (
+              <button
+                type="button"
+                onClick={() => setStep(step - 1)}
+                disabled={loading}
+                className="flex items-center justify-center gap-1.5 rounded-full border border-line px-5 py-3.5 text-[0.92rem] font-semibold text-muted transition-colors hover:border-line-strong hover:text-ink disabled:opacity-60"
+              >
+                <ArrowLeft size={15} /> Back
+              </button>
+            )}
+            <button
+              type="submit"
+              disabled={(step === 0 ? !emailValid : step === 1 ? !step1Valid : step === 2 ? !step2Valid : !step3Valid) || loading}
+              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.98rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-60 disabled:hover:translate-y-0"
+            >
+              {loading ? (
+                <><Loader2 size={16} className="animate-spin" /> {step === 0 ? "Checking your records…" : "Preparing your intake…"}</>
+              ) : step < 3 ? (
+                <>Continue <ArrowRight size={16} /></>
+              ) : (
+                <>Continue to intake <ArrowRight size={16} /></>
+              )}
+            </button>
+          </div>
+        </form>
+
+        {err && (
+          <p className="mt-2.5 rounded-lg bg-surface-2 px-3 py-2 text-center text-[0.74rem] leading-snug text-muted">{err}</p>
+        )}
+
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-[0.74rem] font-medium text-muted">
+          <Lock size={12} className="text-primary" /> Encrypted &amp; used only for your medical visit
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* Themed dropdown — same pattern as Contact's TopicSelect: a button + branded
+   menu instead of the unstylable native <select>. Options are strings or
+   {value, label}; long lists scroll. */
+function NvSelect({ value, onChange, options, placeholder = "Select…" }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, []);
+
+  const opts = options.map((o) => (typeof o === "string" ? { value: o, label: o } : o));
+  const current = opts.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex w-full items-center justify-between gap-2 rounded-xl border bg-bg px-3.5 py-3 text-left text-[0.95rem] transition-colors focus:outline-none ${
+          open ? "border-primary ring-2 ring-primary/15" : "border-line"
+        } ${current ? "text-ink" : "text-muted/60"}`}
+      >
+        <span className="truncate">{current ? current.label : placeholder}</span>
+        <ChevronDown size={17} className={`shrink-0 text-muted transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {open && (
+        <ul
+          role="listbox"
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-y-auto rounded-xl border border-line bg-surface p-1.5 nv-shadow-lg nv-scroll"
+        >
+          {opts.map((o) => {
+            const on = o.value === value;
+            return (
+              <li key={o.value} role="option" aria-selected={on}>
+                <button
+                  type="button"
+                  onClick={() => { onChange(o.value); setOpen(false); }}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-[0.92rem] transition-colors ${
+                    on ? "bg-surface-2 font-semibold text-primary" : "text-ink hover:bg-surface-2"
+                  }`}
+                >
+                  {o.label}
+                  {on && <Check size={14} className="text-primary" />}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/* Street-address input with live suggestions (OpenStreetMap/Nominatim — free,
+   no API key). Picking a suggestion also fills city, state, and ZIP. Swap the
+   fetch for Google Places when an API key lands. */
+function AddressAutocomplete({ value, onChange, onPick, className }) {
+  const [sugs, setSugs] = useState([]);
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    return () => { document.removeEventListener("mousedown", onDoc); clearTimeout(timer.current); };
+  }, []);
+
+  const onInput = (e) => {
+    onChange(e);
+    const q = e.target.value.trim();
+    clearTimeout(timer.current);
+    if (q.length < 4) { setSugs([]); setOpen(false); return; }
+    timer.current = setTimeout(async () => {
+      try {
+        const r = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&countrycodes=us&limit=5&q=${encodeURIComponent(q)}`
+        );
+        const list = await r.json();
+        setSugs(Array.isArray(list) ? list : []);
+        setOpen(Array.isArray(list) && list.length > 0);
+      } catch {
+        /* suggestions are best-effort — typing manually always works */
+      }
+    }, 350);
+  };
+
+  const pick = (s) => {
+    const a = s.address || {};
+    onPick({
+      street: [a.house_number, a.road].filter(Boolean).join(" "),
+      city: a.city || a.town || a.village || a.hamlet || "",
+      state: a.state || "",
+      zip: (a.postcode || "").slice(0, 5),
+    });
+    setOpen(false);
+    setSugs([]);
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <input
+        value={value}
+        onChange={onInput}
+        placeholder="Street address"
+        autoComplete="off"
+        className={className}
+      />
+      {open && (
+        <ul className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-y-auto rounded-xl border border-line bg-surface p-1.5 nv-shadow-lg nv-scroll">
+          {sugs.map((s) => (
+            <li key={s.place_id}>
+              <button
+                type="button"
+                onClick={() => pick(s)}
+                className="flex w-full items-start gap-2 rounded-lg px-3 py-2.5 text-left text-[0.88rem] leading-snug text-ink transition-colors hover:bg-surface-2"
+              >
+                <MapPin size={14} className="mt-0.5 shrink-0 text-primary" />
+                <span className="min-w-0">{s.display_name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

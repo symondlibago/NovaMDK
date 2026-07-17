@@ -319,11 +319,11 @@ function HeroHeadline({ compact = false, wide = false }) {
         }`}
         style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
       >
-        Better medicine begins with <em className="whitespace-nowrap italic text-accent">better attention</em>
+        Modern healthcare, <em className="whitespace-nowrap italic text-accent">built around you</em>
       </h1>
 
       <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${mx} ${compact ? "text-[0.95rem]" : "text-[clamp(0.95rem,1.1vw,1.02rem)]"}`}>
-        Doctor-formulated treatments, composed for you and delivered to your door in days.
+        Personalized treatment plans designed by licensed medical providers.
       </p>
 
       {/* CTAs */}
@@ -492,11 +492,11 @@ function KioskHero({ kiosk }) {
               className={`nv-weight-keep max-w-[16ch] font-medium leading-[1.02] tracking-[-0.01em] text-ink ${kiosk ? "mx-auto text-[clamp(1.55rem,4.4vw,2.2rem)]" : "text-[clamp(2.3rem,5.8vw,4.3rem)]"}`}
               style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
             >
-              Better medicine begins with{" "}
-              <span className="nv-em font-medium">better attention</span>
+              Modern healthcare,{" "}
+              <span className="nv-em font-medium">built around you</span>
             </h1>
             <p className={`max-w-[42ch] leading-relaxed text-muted ${kiosk ? "mx-auto mt-2 text-[clamp(0.82rem,1.1vw,0.95rem)]" : "mt-[18px] text-[clamp(1rem,1.3vw,1.1rem)]"}`}>
-              Doctor-formulated treatments, composed for you and delivered to your door in days.
+              Personalized treatment plans designed by licensed medical providers.
             </p>
           </motion.div>
 
