@@ -20,7 +20,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "3430d019-a236-426b-9356-7a781396aefb",
+    questionnaireId: "df9d89e6-db14-4b17-8c34-a178b75c8f95",
     highlights: [
       { text: "Weekly GLP-1 Dosing" },
       { text: "Added B12 Support" },
@@ -47,7 +47,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "b8583d31-6f0b-4c2b-9462-0c7544bc7934",
     highlights: [
       { text: "Continuation Vial" },
       { text: "Added B12 Support" },
@@ -74,10 +74,10 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "d35b721b-1a34-4894-b3e0-64f2dcd3053c",
     highlights: [
       { text: "Weekly GLP-1 Dosing" },
-      { text: "Glycine Helps Reduce Muscle Wasting" },
+      { text: "Glycine Helps Support Muscle Retention" },
       { text: "Insulin Syringes Included" },
     ],
     specs: [
@@ -101,10 +101,10 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "b655c9c5-c6e7-4cb7-8bf0-2d37dc3609a5",
     highlights: [
       { text: "Continuation Vial" },
-      { text: "Glycine Helps Reduce Muscle Wasting" },
+      { text: "Glycine Helps Support Muscle Retention" },
       { text: "Titrate to 2.5 mg Max" },
     ],
     specs: [
@@ -128,7 +128,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "7ec64059-bbff-4448-a48a-39278f111bfa",
     highlights: [
       { text: "Dual GIP / GLP-1" },
       { text: "Niacinamide Support" },
@@ -155,7 +155,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "71ceae4f-b7b1-4788-9556-52e32ba02b7e",
     highlights: [
       { text: "Dual GIP / GLP-1" },
       { text: "Mid-Dose Step" },
@@ -182,7 +182,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "71ceae4f-b7b1-4788-9556-52e32ba02b7e",
     highlights: [
       { text: "Dual GIP / GLP-1" },
       { text: "Maintenance Vial" },
@@ -209,10 +209,10 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "98f2af82-a1a8-4aad-98a9-730e9040fcf1",
     highlights: [
       { text: "Dual GIP / GLP-1" },
-      { text: "Glycine Helps Reduce Muscle Wasting" },
+      { text: "Glycine Helps Support Muscle Retention" },
       { text: "Insulin Syringes Included" },
     ],
     specs: [
@@ -236,7 +236,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "d61cbcb1-f9a9-4407-87b3-c4148a9c21fe",
     highlights: [
       { text: "Dual GIP / GLP-1" },
       { text: "Mid-Dose Step" },
@@ -263,7 +263,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "d61cbcb1-f9a9-4407-87b3-c4148a9c21fe",
     highlights: [
       { text: "Dual GIP / GLP-1" },
       { text: "Maintenance Vial" },
@@ -290,7 +290,7 @@ export const productsData = [
     dosageForm: "Nasal Spray",
     icon: <Droplets size={16} />,
     img: "/products/selank.png",
-    questionnaireId: "",
+    questionnaireId: "89a610eb-569e-4db6-9f12-3173bf7c553c",
     highlights: [
       { text: "Needle-Free" },
       { text: "Nightly at Bedtime" },
@@ -316,7 +316,7 @@ export const productsData = [
     dosageForm: "Injection (IM or SC)",
     icon: <Flame size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "79c1e11a-ffd0-4dbb-8193-4dc8685510da",
     highlights: [
       { text: "Lipotropic Blend" },
       { text: "With L-Carnitine" },
@@ -344,7 +344,7 @@ export const productsData = [
     dosageForm: "Sublingual Drops",
     icon: <Droplet size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "3430d019-a236-426b-9356-7a781396aefb",
+    questionnaireId: "268d77e8-6ffe-4df1-9164-04e4b7d09e0f",
     highlights: [
       { text: "No Needles Required" },
       { text: "Once-Daily Drops" },
@@ -371,7 +371,7 @@ export const productsData = [
     dosageForm: "Sublingual Drops",
     icon: <Droplet size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "3430d019-a236-426b-9356-7a781396aefb",
+    questionnaireId: "92eccddb-5040-4f9a-8714-fadaf80b9167",
     highlights: [
       { text: "No Needles Required" },
       { text: "Once-Daily Drops" },
@@ -398,7 +398,7 @@ export const productsData = [
     dosageForm: "Sublingual Drops",
     icon: <Droplet size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "3430d019-a236-426b-9356-7a781396aefb",
+    questionnaireId: "92eccddb-5040-4f9a-8714-fadaf80b9167",
     highlights: [
       { text: "No Needles Required" },
       { text: "Once-Daily Drops" },
@@ -429,7 +429,7 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Zap size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "1e74716c-356b-4680-a026-1245bdce42b6",
     highlights: [
       { text: "Cellular Energy" },
       { text: "Gradual Titration" },
@@ -457,7 +457,7 @@ export const productsData = [
     dosageForm: "Injection (SC or IM)",
     icon: <ShieldCheck size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "247c0a3c-f6bc-43ec-a01b-8dd400257a7c",
     highlights: [
       { text: "Master Antioxidant" },
       { text: "1–2× Weekly" },
@@ -485,7 +485,7 @@ export const productsData = [
     dosageForm: "Subcutaneous / IM Injection",
     icon: <Zap size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "23372bcd-af24-41c8-a1e8-fdf87d31a915",
+    questionnaireId: "1e74716c-356b-4680-a026-1245bdce42b6",
     highlights: [
       { text: "Cellular Energy" },
       { text: "3× Weekly Protocol" },
@@ -512,7 +512,7 @@ export const productsData = [
     dosageForm: "Subcutaneous / IM Injection",
     icon: <Zap size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "23372bcd-af24-41c8-a1e8-fdf87d31a915",
+    questionnaireId: "1e74716c-356b-4680-a026-1245bdce42b6",
     highlights: [
       { text: "Cellular Energy" },
       { text: "3× Weekly Protocol" },
@@ -539,7 +539,7 @@ export const productsData = [
     dosageForm: "Subcutaneous / IM Injection",
     icon: <Zap size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "23372bcd-af24-41c8-a1e8-fdf87d31a915",
+    questionnaireId: "1e74716c-356b-4680-a026-1245bdce42b6",
     highlights: [
       { text: "Cellular Energy" },
       { text: "3× Weekly Protocol" },
@@ -566,7 +566,7 @@ export const productsData = [
     dosageForm: "IV Infusion",
     icon: <Activity size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "1e74716c-356b-4680-a026-1245bdce42b6",
     highlights: [
       { text: "250 mg NAD+" },
       { text: "2-Hour Infusion" },
@@ -592,7 +592,7 @@ export const productsData = [
     dosageForm: "IV Infusion",
     icon: <BrainCircuit size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "1e74716c-356b-4680-a026-1245bdce42b6",
     highlights: [
       { text: "500 mg NAD+" },
       { text: "4-Hour Infusion" },
@@ -619,7 +619,7 @@ export const productsData = [
     dosageForm: "Sublingual Tablet",
     icon: <Pill size={16} />,
     img: "/products/dihexa.png",
-    questionnaireId: "",
+    questionnaireId: "91480561-864e-4bda-8bad-694696ac2e1f",
     highlights: [
       { text: "Needle-Free" },
       { text: "Once Daily" },
@@ -644,7 +644,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <Moon size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "89a610eb-569e-4db6-9f12-3173bf7c553c",
     highlights: [
       { text: "Nightly Protocol" },
       { text: "5 of 7 Days" },
@@ -670,7 +670,7 @@ export const productsData = [
     dosageForm: "Buccal Mini Troche",
     icon: <Pill size={16} />,
     img: "/products/dihexa.png",
-    questionnaireId: "",
+    questionnaireId: "89a610eb-569e-4db6-9f12-3173bf7c553c",
     highlights: [
       { text: "Needle-Free" },
       { text: "Nightly Protocol" },
@@ -699,7 +699,7 @@ export const productsData = [
     dosageForm: "Oral Tablet",
     icon: <Shield size={16} />,
     img: "/products/dihexa.png",
-    questionnaireId: "",
+    questionnaireId: "c5535eaa-f54c-4be1-a613-323122cd275f",
     highlights: [
       { text: "Bedtime Dosing" },
       { text: "14 Tablets" },
@@ -726,7 +726,7 @@ export const productsData = [
     dosageForm: "Oral Tablet",
     icon: <Shield size={16} />,
     img: "/products/dihexa.png",
-    questionnaireId: "",
+    questionnaireId: "c5535eaa-f54c-4be1-a613-323122cd275f",
     highlights: [
       { text: "Bedtime Dosing" },
       { text: "14 Tablets" },
@@ -753,7 +753,7 @@ export const productsData = [
     dosageForm: "Oral Tablet",
     icon: <Shield size={16} />,
     img: "/products/dihexa.png",
-    questionnaireId: "",
+    questionnaireId: "c5535eaa-f54c-4be1-a613-323122cd275f",
     highlights: [
       { text: "Bedtime Dosing" },
       { text: "90 Tablets" },
@@ -933,8 +933,8 @@ export const productsData = [
 
   {
     id: 35,
-    categorySlug: "womens-sexual-health",
-    categoryName: "Women's Sexual Health",
+    categorySlug: "mens-health",
+    categoryName: "Sexual Health",
     name: "Euphoria Cream O",
     subtitle: "Topical arousal cream with L-arginine and oxytocin, applied shortly before intimacy.",
     price: "$0",
@@ -958,8 +958,8 @@ export const productsData = [
   },
   {
     id: 36,
-    categorySlug: "womens-sexual-health",
-    categoryName: "Women's Sexual Health",
+    categorySlug: "mens-health",
+    categoryName: "Sexual Health",
     name: "Euphoria Cream S",
     subtitle: "Four-active arousal cream — L-arginine, pentoxifylline, sildenafil, and testosterone.",
     price: "$0",
@@ -983,8 +983,8 @@ export const productsData = [
   },
   {
     id: 37,
-    categorySlug: "womens-sexual-health",
-    categoryName: "Women's Sexual Health",
+    categorySlug: "mens-health",
+    categoryName: "Sexual Health",
     name: "Bremelanotide Injection - 5 mL vial",
     subtitle: "On-demand PT-141 injection taken about an hour before anticipated intimacy.",
     price: "$0",
@@ -992,7 +992,7 @@ export const productsData = [
     dosageForm: "Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/products/peptides.png",
-    questionnaireId: "",
+    questionnaireId: "77fef9b3-aa56-4dc6-ac4d-4dc3c04da262",
     highlights: [
       { text: "On-Demand Dosing" },
       { text: "45–60 Min Onset" },
@@ -1011,8 +1011,8 @@ export const productsData = [
   },
   {
     id: 38,
-    categorySlug: "womens-sexual-health",
-    categoryName: "Women's Sexual Health",
+    categorySlug: "mens-health",
+    categoryName: "Sexual Health",
     name: "Bremelanotide Mini Troche - 1 mg or 2 mg",
     subtitle: "Needle-free PT-141 — a mini troche dissolved 30–60 minutes before intimacy.",
     price: "$0",
@@ -1020,7 +1020,7 @@ export const productsData = [
     dosageForm: "Sublingual Mini Troche",
     icon: <Pill size={16} />,
     img: "/products/dihexa.png",
-    questionnaireId: "",
+    questionnaireId: "f99bcee9-db6f-449a-81fa-34d842a4a834",
     highlights: [
       { text: "Needle-Free" },
       { text: "30–60 Min Onset" },
@@ -1037,8 +1037,8 @@ export const productsData = [
   },
   {
     id: 39,
-    categorySlug: "womens-sexual-health",
-    categoryName: "Women's Sexual Health",
+    categorySlug: "mens-health",
+    categoryName: "Sexual Health",
     name: "Bremelanotide Nasal Spray - 10 or 25 mg/mL",
     subtitle: "On-demand PT-141 nasal spray — two sprays per nostril about 30 minutes before intimacy.",
     price: "$0",
@@ -1046,7 +1046,7 @@ export const productsData = [
     dosageForm: "Nasal Spray",
     icon: <Droplets size={16} />,
     img: "/products/selank.png",
-    questionnaireId: "",
+    questionnaireId: "496b14b5-15c3-4e63-94ea-b063c3729976",
     highlights: [
       { text: "Needle-Free" },
       { text: "~30 Min Onset" },
@@ -2296,7 +2296,7 @@ export const categoryContent = {
       { icon: Sparkles, text: "Youthful Glow", color: "text-emerald-600" }
     ]
   },
-  "Men's Health": {
+  "Sexual Health": {
     title: "Confidence restored,",
     highlight: "without compromise",
     desc: "From targeted hair regrowth formulas to fast-acting performance enhancements, our discreet clinical solutions put you back in control.",
@@ -2318,18 +2318,6 @@ export const categoryContent = {
       { icon: Sparkles, text: "Age-Defying", color: "text-teal-600" },
       { icon: Shield, text: "Blemish Control", color: "text-teal-600" },
       { icon: ShieldCheck, text: "Dermatologist Approved", color: "text-teal-600" }
-    ]
-  },
-  "Women's Sexual Health": {
-    title: "Reignite passion,",
-    highlight: "on your own terms",
-    desc: "Enhance intimacy and physical response with targeted, clinical formulations designed specifically to support female sexual wellness and comfort.",
-    conclusion: "Embrace a more fulfilling intimate life.",
-    features: [
-      { icon: Flame, text: "Heightened Sensation", color: "text-pink-500" },
-      { icon: Heart, text: "Increased Desire", color: "text-pink-500" },
-      { icon: Droplets, text: "Enhanced Comfort", color: "text-pink-500" },
-      { icon: ShieldCheck, text: "Discreet & Safe", color: "text-pink-500" }
     ]
   },
   "Supplements": {

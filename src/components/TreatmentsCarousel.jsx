@@ -11,7 +11,7 @@ const CATEGORIES = [
   { name: "Dermatology", img: "/dermatology.avif", goal: "unisex-skin-health" },
   { name: "Longevity & Anti-Aging", img: "/mens-health.avif", goal: "unisex-anti-aging-rx" },
   { name: "Sexual Health", img: "/sexual-health.avif", goal: "mens-health" },
-  { name: "Pain & Recovery", img: "/pain-recovery.avif", goal: "unisex-sports-medicine" },
+  { name: "Sports Medicine", img: "/pain-recovery.avif", goal: "unisex-sports-medicine" },
 ];
 
 export default function Treatments() {

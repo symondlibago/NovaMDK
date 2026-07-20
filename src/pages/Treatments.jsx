@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
-  Stethoscope, Truck, Ban, ShieldCheck, ClipboardCheck, PackageOpen, Star,
+  Stethoscope, Truck, Ban, ShieldCheck, ClipboardCheck, PackageOpen,
 } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
@@ -100,13 +100,7 @@ function SocialProof() {
           />
           <div className="relative flex flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
             <div>
-              <div className="flex items-center justify-center gap-2 md:justify-start">
-                <span className="flex text-accent">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={16} fill="currentColor" strokeWidth={0} />)}
-                </span>
-                <span className="text-[0.86rem] text-on-panel/75">4.8 average · 12,000+ reviews</span>
-              </div>
-              <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(1.5rem,3vw,2.2rem)] font-extrabold leading-tight">Care patients actually stick with.</h2>
+              <h2 className="max-w-[20ch] font-display text-[clamp(1.5rem,3vw,2.2rem)] font-extrabold leading-tight">Care patients can actually stick with.</h2>
             </div>
             <div className="grid grid-cols-3 gap-x-8 gap-y-4 sm:gap-x-12">
               {STATS.map((s) => (

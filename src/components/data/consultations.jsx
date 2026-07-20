@@ -92,15 +92,15 @@ export const CONSULTS = {
 
   recovery: {
     slug: "recovery",
-    tag: "Pain & Recovery",
-    name: "Recover Faster",
+    tag: "Sports Medicine",
+    name: "Recover & Soothe",
     short: "Recovery",
     blurb: "Targeted, doctor-guided recovery — less downtime, fewer re-injuries.",
     Icon: Activity,
     img: "/sportpill.avif",
     goalSlug: "unisex-sports-medicine",
     steps: [
-      { t: "intro", eyebrow: "Pain & Recovery", title: "Let’s get you recovering faster.",
+      { t: "intro", eyebrow: "Sports Medicine", title: "Let’s get you recovering faster.",
         body: "A few questions about your body and how you move, so we can target the right support. About 2 minutes.", cta: "Begin" },
       { t: "q", q: "What are you dealing with?",
         opts: ["A specific injury", "Chronic joint or muscle pain", "Soreness & slow recovery", "Performance & mobility"] },

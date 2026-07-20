@@ -348,8 +348,12 @@ function EditorialHero({ compact = false, forceWide = false }) {
     <section className="relative isolate overflow-hidden bg-bg">
       {/* right-side ambient video — soft-blended into the background */}
       {!compact && (
-        <div className={`pointer-events-none absolute inset-y-0 right-0 ${wide ? "block w-[80%]" : "hidden w-[46%] lg:block"}`}>
-          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="h-full w-full object-cover" />
+        <div className={`pointer-events-none absolute inset-y-0 right-0 ${wide ? "block w-[80%]" : "hidden w-[65%] lg:block"}`}>
+          <video
+            src={wide ? "/right-side-portrait.mp4" : "/right-vid.mp4"}
+            autoPlay loop muted playsInline
+            className="h-full w-full object-cover object-right"
+          />
           <span
             className="absolute inset-y-0 -left-0.5 right-0"
             style={{
@@ -375,10 +379,10 @@ function EditorialHero({ compact = false, forceWide = false }) {
         </div>
       )}
 
-      {/* Overlay layout — full-bleed video with the headline block on top of it */}
+      {/* Overlay layout — full-bleed portrait video with the headline on top */}
       {compact && (
         <div className="relative">
-          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="block h-120 w-full object-cover" />
+          <video src="/right-side-portrait.mp4" autoPlay loop muted playsInline className="block h-120 w-full object-cover" />
           <span
             className="absolute left-0 right-0 top-0 -bottom-0.5"
             style={{
@@ -392,7 +396,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
         </div>
       )}
 
-      <div className={`mx-auto max-w-375 px-5 md:px-10 ${compact ? "pb-8" : wide ? "pb-[clamp(2.2rem,4.5vw,3.6rem)] pt-[clamp(2.2rem,4.5vw,3.6rem)]" : "pb-[clamp(2.2rem,4.5vw,3.6rem)] lg:pt-[clamp(2.2rem,4.5vw,3.6rem)]"}`}>
+      <div className={`mx-auto flex max-w-375 flex-col justify-center px-5 md:px-10 ${compact ? "pb-8" : wide ? "pb-[clamp(2.2rem,4.5vw,3.6rem)] pt-[clamp(2.2rem,4.5vw,3.6rem)]" : "pb-[clamp(2.2rem,4.5vw,3.6rem)] lg:min-h-168 lg:py-[clamp(3rem,6vw,5.5rem)]"}`}>
         <div className={`relative z-10 ${compact ? "mx-auto max-w-2xl text-center" : wide ? "w-[66%] text-left" : "-mt-24 mx-auto max-w-140 text-center lg:mx-0 lg:mt-0 lg:w-1/2 lg:text-left"}`}>
           {!compact && <HeroHeadline wide={wide} />}
 

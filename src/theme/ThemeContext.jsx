@@ -14,6 +14,7 @@ const LS = {
   lineHeight: "nv_line",
   radius: "nv_radius",
   paletteOverrides: "nv_palette_overrides",
+  kioskLayout: "nv_kiosk_layout",
   studio: "nv_studio_unlocked",
 };
 
@@ -55,7 +56,9 @@ export default function ThemeProvider({ children }) {
   // Per-palette color overrides, keyed by palette id → { "--nv-*": "#hex" }.
   const [paletteOverrides, setPaletteOverridesState] = useState(() => readJSON(LS.paletteOverrides, {}));
   const [device, setDevice] = useState(DEFAULTS.device); // device preview is session-only
-  const [kioskLayoutId, setKioskLayoutId] = useState(DEFAULTS.kioskLayout); // session-only too
+  // Persisted: the chosen tablet/kiosk hero layout drives the live kiosk view,
+  // so a selection sticks across reloads on the kiosk itself.
+  const [kioskLayoutId, setKioskLayoutId] = useState(() => read(LS.kioskLayout, DEFAULTS.kioskLayout));
   const [studioOpen, setStudioOpen] = useState(false);
   const [studioUnlocked, setStudioUnlocked] = useState(() => urlFlags.studioParam !== "0");
 
@@ -125,6 +128,7 @@ export default function ThemeProvider({ children }) {
   const setLetterSpacing = (id) => { setLetterSpacingId(id); try { localStorage.setItem(LS.letterSpacing, id); } catch {} };
   const setLineHeight = (id) => { setLineHeightId(id); try { localStorage.setItem(LS.lineHeight, id); } catch {} };
   const setRadius = (id) => { setRadiusId(id); try { localStorage.setItem(LS.radius, id); } catch {} };
+  const setKioskLayout = (id) => { setKioskLayoutId(id); try { localStorage.setItem(LS.kioskLayout, id); } catch {} };
 
   const persistOverrides = (next) => { try { localStorage.setItem(LS.paletteOverrides, JSON.stringify(next)); } catch {} };
   // Override one token on the *currently active* palette.
@@ -179,7 +183,7 @@ export default function ThemeProvider({ children }) {
     setPalette, setTypography, setWeight, setItalic: setItalicPersisted,
     setLetterSpacing, setLineHeight, setRadius,
     setPaletteColor, resetPaletteColors, clearAllPaletteColors,
-    setDevice, setKioskLayout: setKioskLayoutId, setStudioOpen, setStudioUnlocked,
+    setDevice, setKioskLayout, setStudioOpen, setStudioUnlocked,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -635,35 +635,35 @@ export default function DesignStudio() {
                 </p>
               </Section>
 
-              {/* Tablet hero layout — only relevant while the tablet frame is up */}
-              {device === "tablet" && (
-                <Section icon={<Tablet size={14} />} title="Tablet hero layout">
-                  <div className="flex flex-col gap-2.5">
-                    {kioskLayouts.map((k) => {
-                      const on = k.id === kioskLayout.id;
-                      return (
-                        <button
-                          key={k.id}
-                          onClick={() => setKioskLayout(k.id)}
-                          className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${
-                            on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
-                          }`}
-                        >
-                          <KioskLayoutThumb id={k.id} on={on} />
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-[14px] font-semibold">{k.name}</span>
-                            <span className="block truncate text-[11px] text-muted">{k.tagline}</span>
-                          </span>
-                          {on && <Check size={16} className="text-primary shrink-0" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="mt-2 text-[11px] leading-relaxed text-muted">
-                    Changes the homepage hero on the portrait tablet / kiosk view.
-                  </p>
-                </Section>
-              )}
+              {/* Tablet hero layout — always available. Picking a layout applies
+                  it to the LIVE portrait tablet / kiosk view immediately (and
+                  persists), so a client on the kiosk sees the change at once. */}
+              <Section icon={<Tablet size={14} />} title="Tablet hero layout">
+                <div className="flex flex-col gap-2.5">
+                  {kioskLayouts.map((k) => {
+                    const on = k.id === kioskLayout.id;
+                    return (
+                      <button
+                        key={k.id}
+                        onClick={() => setKioskLayout(k.id)}
+                        className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${
+                          on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
+                        }`}
+                      >
+                        <KioskLayoutThumb id={k.id} on={on} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[14px] font-semibold">{k.name}</span>
+                          <span className="block truncate text-[11px] text-muted">{k.tagline}</span>
+                        </span>
+                        {on && <Check size={16} className="text-primary shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-[11px] leading-relaxed text-muted">
+                  Applies live to the portrait tablet / kiosk homepage hero. Use the Tablet preview above to see it on other screens.
+                </p>
+              </Section>
 
               {/* Share & handoff */}
               <Section icon={<Share2 size={14} />} title="Share & handoff">

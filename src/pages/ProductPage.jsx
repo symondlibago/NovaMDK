@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
-  ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Star, Stethoscope, Lock, FlaskConical, Loader2,
+  ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Stethoscope, Lock, FlaskConical, Loader2,
   QrCode, X, UserRound, ChevronDown, MapPin,
 } from "lucide-react";
 import Navbar from "../components/Nav/Navbar";
@@ -49,7 +49,10 @@ export default function ProductPage() {
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(product);
-  const hasFda = !!fdaDisclaimer(product);
+  // Prescription treatment pages show a single general compounded notice (per
+  // counsel). The research/FDA disclaimer is reserved for the supplement line.
+  const isSupplement = product.categorySlug === "supplements";
+  const hasFda = isSupplement && !!fdaDisclaimer(product);
 
   // MDIntegrations trigger — the product page is where intake begins. Mint a
   // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final
@@ -136,14 +139,6 @@ export default function ProductPage() {
             <div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <span className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-accent">{categoryLabel}</span>
-                <span className="flex items-center gap-1.5">
-                  <span className="flex text-accent">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} size={13} fill="currentColor" strokeWidth={0} />
-                    ))}
-                  </span>
-                  <span className="text-[0.82rem] text-muted">4.8 · 2,400+ reviews</span>
-                </span>
               </div>
 
               <h1 className="mt-3 font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight">{product.name}</h1>

@@ -9,29 +9,42 @@ import Footer from "./Nav/Footer";
 import HeroStage, { KIOSK_VARIANT_IDS } from "./home/HeroStage";
 import Reveal from "./ui/Reveal";
 import Photo from "./ui/Photo";
+import { useTheme } from "../theme/ThemeContext";
 
 const KIOSK_MQ = "(min-width: 600px) and (max-width: 1024px) and (orientation: portrait)";
 
+// Which hero the homepage shows on the portrait tablet / kiosk view.
+//   • `?kiosk=<id>` (the studio preview iframe) forces a specific layout.
+//   • Otherwise, on a real kiosk/portrait-tablet screen, the layout chosen in
+//     the Design Studio drives the LIVE view — so picking "Desktop Hero"
+//     changes the kiosk immediately, no preview needed. Persisted across reloads.
+//   • On any other screen (normal desktop), returns null → standard hero.
 function useKioskVariant() {
-  const read = () => {
+  const { kioskLayout } = useTheme();
+
+  const paramVariant = () => {
     if (typeof window === "undefined") return null;
     const v = new URLSearchParams(window.location.search).get("kiosk");
-    if (v && KIOSK_VARIANT_IDS.includes(v)) return v;
-    return window.matchMedia(KIOSK_MQ).matches ? "overlay" : null;
+    return v && KIOSK_VARIANT_IDS.includes(v) ? v : null;
   };
 
-  const [variant, setVariant] = useState(read);
+  const [isKiosk, setIsKiosk] = useState(
+    () => typeof window !== "undefined" && window.matchMedia(KIOSK_MQ).matches
+  );
   useEffect(() => {
     const mq = window.matchMedia(KIOSK_MQ);
-    const onChange = () => setVariant(read());
+    const onChange = () => setIsKiosk(mq.matches);
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  return variant;
+  const forced = paramVariant();
+  if (forced) return forced;
+  return isKiosk ? kioskLayout.id : null;
 }
 
-const Testimonials = lazy(() => import("./Testimonials"));
+// Testimonials disabled per legal review (no verified member feedback yet).
+// const Testimonials = lazy(() => import("./Testimonials"));
 const FAQ = lazy(() => import("./FAQ"));
 const TreatmentsCarousel = lazy(() => import("./TreatmentsCarousel"));
 
@@ -142,9 +155,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== Testimonials + FAQ (reused, re-themed) ===== */}
+      {/* ===== FAQ ===== */}
+      {/* Testimonials disabled per legal review until we have verified member
+          feedback from actual clinician services. Re-enable <Testimonials />
+          here once real reviews exist. */}
       <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>
-        <div id="reviews" className="scroll-mt-24"><Testimonials /></div>
         <div id="faq" className="scroll-mt-24"><FAQ /></div>
       </Suspense>
 

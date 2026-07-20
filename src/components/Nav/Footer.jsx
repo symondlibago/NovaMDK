@@ -22,12 +22,7 @@ export default function Footer() {
             <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-on-panel/60">
               Personalized supplements and treatments, formulated by licensed physicians and delivered to your door.
             </p>
-            <div className="mb-8 mt-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs">
-              <span className="font-medium text-on-panel">4.8</span>
-              <span className="tracking-tighter text-accent">★★★★★</span>
-              <span className="text-on-panel/60">12,000+ reviews</span>
-            </div>
-            <div className="flex gap-3">
+            <div className="mt-6 flex gap-3">
               <a href="https://www.facebook.com/novamdk" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={social}><Facebook size={18} strokeWidth={1.5} /></a>
               <a href="https://www.instagram.com/novamdk" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={social}><Instagram size={18} strokeWidth={1.5} /></a>
               <a href="https://www.tiktok.com/@novamdk" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className={social}><TikTokIcon size={18} /></a>
@@ -63,7 +58,7 @@ export default function Footer() {
             <h4 className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.13em] text-accent md:mb-6">Legal</h4>
             <ul className="space-y-3 text-[14px] text-on-panel/60 md:space-y-4">
               <li><Link to="/legal/privacy-policy" className="transition-colors hover:text-on-panel">Privacy policy</Link></li>
-              <li><Link to="/legal/hipaa-notice-of-privacy-practices" className="transition-colors hover:text-on-panel">HIPAA Notice</Link></li>
+              <li><Link to="/legal/hipaa-notice-of-privacy-practices" className="transition-colors hover:text-on-panel">Notice of Privacy Practices</Link></li>
               <li><Link to="/legal/terms-and-conditions" className="transition-colors hover:text-on-panel">Terms &amp; conditions</Link></li>
               <li><Link to="/legal/telehealth-consent" className="transition-colors hover:text-on-panel">Telehealth consent</Link></li>
               <li><Link to="/legal/consumer-health-data" className="transition-colors hover:text-on-panel">Consumer Health Data</Link></li>
@@ -74,16 +69,22 @@ export default function Footer() {
 
         <div className="flex flex-col gap-4 border-t border-white/10 pt-8 text-[13px] text-on-panel/50 md:flex-row md:items-center md:justify-between md:pt-10">
           <p>©2026 NovaMDK Inc. All rights reserved.</p>
+          <a
+            href="mailto:privacy@novamdk.com?subject=Do%20Not%20Sell%20or%20Share%20My%20Personal%20Information&body=I%20am%20requesting%20to%20opt%20out%20of%20the%20sale%20or%20sharing%20of%20my%20personal%20information.%20Please%20process%20this%20request%20for%20the%20email%20address%20on%20file."
+            className="font-medium text-on-panel/70 underline underline-offset-2 transition-colors hover:text-on-panel"
+          >
+            Do Not Sell or Share My Personal Information
+          </a>
         </div>
 
         <div className="mt-8 max-w-6xl space-y-2 text-left text-[10px] leading-relaxed text-on-panel/40 md:text-[11px]">
           <p>
             Compounded drug products are not approved or evaluated for safety, effectiveness, or quality
-            by the FDA. Prescription required.
+            by the FDA. Prescription required. NovaMDK does not manufacture drug products.
           </p>
           <p>
-            NovaMDK does not manufacture GLP-1 medications. The medication you receive may differ in
-            appearance from the website images. Weight loss is not guaranteed.
+            The medication you receive may differ in appearance from the website images. Results not
+            guaranteed and side effects may occur.
           </p>
           <p>
             Prescription products require an online evaluation by a licensed medical professional.
