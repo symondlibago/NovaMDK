@@ -34,6 +34,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "GLP-1 receptor agonist; the added cyanocobalamin (B12) helps reduce nausea and vomiting. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
   },
   {
     id: 2,
@@ -61,6 +62,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "GLP-1 receptor agonist; the added cyanocobalamin (B12) helps reduce nausea and vomiting. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 2.5 mg per week.",
   },
   {
     id: 3,
@@ -88,6 +90,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "GLP-1 receptor agonist; the added glycine helps support muscle retention. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
   },
   {
     id: 4,
@@ -115,6 +118,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "GLP-1 receptor agonist; the added glycine helps support muscle retention. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 2.5 mg per week.",
   },
   {
     id: 5,
@@ -142,6 +146,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Dual GIP/GLP-1 receptor agonist; niacinamide supports metabolic function. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
   },
   {
     id: 6,
@@ -169,6 +174,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Dual GIP/GLP-1 receptor agonist; niacinamide supports metabolic function. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
   },
   {
     id: 7,
@@ -196,6 +202,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Dual GIP/GLP-1 receptor agonist; niacinamide supports metabolic function. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 15.3 mg per week.",
   },
   {
     id: 8,
@@ -223,6 +230,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Dual GIP/GLP-1 receptor agonist; glycine helps support muscle retention. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
   },
   {
     id: 9,
@@ -250,6 +258,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Dual GIP/GLP-1 receptor agonist; glycine helps support muscle retention. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
   },
   {
     id: 10,
@@ -277,6 +286,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Dual GIP/GLP-1 receptor agonist; glycine helps support muscle retention. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 15.3 mg per week.",
   },
   {
     id: 11,
@@ -304,6 +314,7 @@ export const productsData = [
       { label: "Formulation", value: "Nasal Spray" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Stimulates the body's own growth hormone release to support fat metabolism, lean-muscle preservation, and metabolic recovery, without suppressing your natural GH axis. May cause transient flushing or headache.",
   },
   {
     id: 12,
@@ -331,6 +342,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Lipotropic injection that supports fat mobilization and energy metabolism — choline and methionine aid hepatic fat processing while carnitine enhances fatty-acid oxidation. Generally well tolerated; mild redness at the injection site may occur.",
   },
   {
     id: 13,
@@ -358,6 +370,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "GLP-1 receptor agonist; sublingual delivery in the SubMagna® vehicle bypasses the GI tract and first-pass metabolism. Common: nausea, vomiting, diarrhea, constipation. Serious but rare: pancreatitis and gallbladder problems. Contraindicated in personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Because it slows gastric emptying, tell your provider before any anesthesia or surgery. Store refrigerated.",
   },
   {
     id: 14,
@@ -385,6 +398,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "GLP-1 receptor agonist; sublingual delivery in the SubMagna® vehicle bypasses the GI tract and first-pass metabolism. Common: nausea, vomiting, diarrhea, constipation. Serious but rare: pancreatitis and gallbladder problems. Contraindicated in personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Because it slows gastric emptying, tell your provider before any anesthesia or surgery. Store refrigerated.",
   },
   {
     id: 15,
@@ -412,6 +426,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "GLP-1 receptor agonist; sublingual delivery in the SubMagna® vehicle bypasses the GI tract and first-pass metabolism. Common: nausea, vomiting, diarrhea, constipation. Serious but rare: pancreatitis and gallbladder problems. Contraindicated in personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Because it slows gastric emptying, tell your provider before any anesthesia or surgery. Store refrigerated.",
   },
   /* ============================================================ */
   /* UNISEX ANTI-AGING RX (Longevity / Wellness)                  */
@@ -472,6 +487,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
+    safety: "Master antioxidant that supports immune function and liver detoxification, with a skin-brightening benefit. Rare hypersensitivity reactions have been reported. Monitor zinc levels with long-term, high-dose use.",
   },
   {
     id: 18,
@@ -499,6 +515,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "NAD+ cofactor supporting mitochondrial energy production, cellular signaling, and healthy aging. Because it may enhance glycolysis, use with caution if you have a personal history of or susceptibility to cancer. Side effects may include headache, nausea, dizziness, and transient injection-site or muscle tightness.",
   },
   {
     id: 19,
@@ -526,6 +543,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "NAD+ cofactor supporting mitochondrial energy production, cellular signaling, and healthy aging. Because it may enhance glycolysis, use with caution if you have a personal history of or susceptibility to cancer. Side effects may include headache, nausea, dizziness, and transient injection-site or muscle tightness.",
   },
   {
     id: 20,
@@ -631,6 +649,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "NAD+ cofactor supporting mitochondrial energy production, cellular signaling, and healthy aging. Because it may enhance glycolysis, use with caution if you have a personal history of or susceptibility to cancer.",
   },
   {
     id: 24,
@@ -657,6 +676,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Synthetic GHRH analog (29 amino acids) that stimulates the pituitary to release growth hormone — supporting recovery, muscle gain, bone density, sleep quality, immune function, and skin elasticity. Not for use in pregnancy or breastfeeding. Tell your provider about all medications and supplements, especially corticosteroids and thyroid medications. Side effects: injection-site reactions; fewer than 1% report dizziness, flushing, or headache. Store refrigerated.",
   },
   {
     id: 25,
@@ -682,6 +702,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Synthetic GHRH analog (29 amino acids) that stimulates the pituitary to release growth hormone — supporting recovery, muscle gain, bone density, sleep quality, immune function, and skin elasticity. Not for use in pregnancy or breastfeeding. Tell your provider about all medications and supplements, especially corticosteroids and thyroid medications. Side effects: injection-site reactions; fewer than 1% report dizziness, flushing, or headache. Store refrigerated.",
   },
   /* ============================================================ */
   /* UNISEX SPORTS MEDICINE                                       */
@@ -713,6 +734,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Low-dose opioid antagonist that may boost endorphin production. May cause vivid dreams (first few weeks), fatigue, insomnia, flu-like symptoms, decreased appetite, anxiety, headache, or dizziness. Contraindicated in anyone taking opioid analgesics, who is opioid-dependent, or who has a positive opioid screen or failed naloxone challenge.",
   },
   {
     id: 27,
@@ -740,6 +762,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Low-dose opioid antagonist that may boost endorphin production. May cause vivid dreams (first few weeks), fatigue, insomnia, flu-like symptoms, decreased appetite, anxiety, headache, or dizziness. Contraindicated in anyone taking opioid analgesics, who is opioid-dependent, or who has a positive opioid screen or failed naloxone challenge.",
   },
   {
     id: 28,
@@ -767,6 +790,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Low-dose opioid antagonist that may boost endorphin production. May cause vivid dreams (first few weeks), fatigue, insomnia, flu-like symptoms, decreased appetite, anxiety, headache, or dizziness. Contraindicated in anyone taking opioid analgesics, who is opioid-dependent, or who has a positive opioid screen or failed naloxone challenge. Dispensed up to a 3-month supply per policy.",
   },
   /* ============================================================ */
   /* UNISEX SKIN HEALTH (Dermatology)                             */
@@ -826,6 +850,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Supports sexual receptivity, arousal, and orgasm through oxytocin (receptivity) and bremelanotide (rapid arousal onset and genital blood flow). Potential side effects: headache, flushing, nausea, nasal congestion, dizziness or fatigue, upset stomach, muscle or back pain, mood changes, and temporary vision changes.",
   },
   {
     id: 31,
@@ -851,6 +876,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Supports sexual receptivity, arousal, and orgasm through oxytocin (receptivity), bremelanotide (rapid arousal onset and genital blood flow), and tadalafil (a PDE5 inhibitor supporting erectile and clitoral blood flow). Potential side effects: headache, flushing, nausea, nasal congestion, dizziness or fatigue, upset stomach, muscle or back pain, mood changes, and temporary vision changes; rarely, an erection lasting over 4 hours (priapism) with tadalafil — seek immediate care.",
   },
   {
     id: 32,
@@ -876,6 +902,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Supports sexual receptivity, arousal, and orgasm through oxytocin (receptivity), bremelanotide (rapid arousal onset and genital blood flow), and tadalafil (a PDE5 inhibitor supporting erectile and clitoral blood flow). Potential side effects: headache, flushing, nausea, nasal congestion, dizziness or fatigue, upset stomach, muscle or back pain, mood changes, and temporary vision changes; rarely, an erection lasting over 4 hours (priapism) with tadalafil — seek immediate care.",
   },
   {
     id: 33,
@@ -901,6 +928,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Supports sexual receptivity, arousal, and orgasm through oxytocin (receptivity) and bremelanotide (rapid arousal onset and genital blood flow). Potential side effects: headache, flushing, nausea, nasal congestion, dizziness or fatigue, upset stomach, muscle or back pain, mood changes, and temporary vision changes.",
   },
   {
     id: 34,
@@ -926,6 +954,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Supports sexual receptivity, arousal, and orgasm through oxytocin (receptivity), bremelanotide (rapid arousal onset and genital blood flow), and tadalafil (a PDE5 inhibitor supporting erectile and clitoral blood flow). Potential side effects: headache, flushing, nausea, nasal congestion, dizziness or fatigue, upset stomach, muscle or back pain, mood changes, and temporary vision changes; rarely, an erection lasting over 4 hours (priapism) with tadalafil — seek immediate care.",
   },
   /* ============================================================ */
   /* WOMEN'S SEXUAL HEALTH                                        */
@@ -955,6 +984,7 @@ export const productsData = [
       { label: "Formulation", value: "Topical" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Supports libido, sexual receptiveness, vaginal blood flow, and feelings of closeness (L-arginine, oxytocin, and niacin promote blood flow and bonding). Potential side effects: headache, dizziness, irritation, or numbness. Store refrigerated.",
   },
   {
     id: 36,
@@ -980,6 +1010,7 @@ export const productsData = [
       { label: "Formulation", value: "Topical" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Supports libido, sexual receptiveness, and vaginal blood flow (L-arginine and pentoxifylline increase blood flow; sildenafil increases clitoral and vaginal blood flow; testosterone supports desire and arousal). Potential side effects: headache, dizziness, irritation, or numbness. Store at room temperature.",
   },
   {
     id: 37,
@@ -1034,6 +1065,7 @@ export const productsData = [
       { label: "Formulation", value: "Oral / Sublingual" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Melanocortin-receptor agonist that enhances sexual arousal and desire through central nervous system pathways with minimal systemic hormonal impact; may improve erections in men and reduce distress from low libido in women. Common side effects: nausea, flushing, headache, and rapid heartbeat. Less common but serious: elevated blood pressure and skin or gum pigmentation changes — your provider will monitor your blood pressure.",
   },
   {
     id: 39,
@@ -1060,6 +1092,7 @@ export const productsData = [
       { label: "Formulation", value: "Nasal Spray" },
       { label: "Pharmacy", value: "Strive Compounding Pharmacy, 1275 E Baseline Rd #104, Gilbert, AZ 85233" },
     ],
+    safety: "Melanocortin-receptor agonist that enhances sexual arousal and desire through central nervous system pathways with minimal systemic hormonal impact; may improve erections in men and reduce distress from low libido in women. Common side effects: nausea, flushing, headache, and rapid heartbeat. Less common but serious: elevated blood pressure and skin or gum pigmentation changes — your provider will monitor your blood pressure.",
   },
 
   /* ============================================================ */
