@@ -34,6 +34,7 @@ export default async function handler(req, res) {
     });
     let patientId = null;
     const p = req.body.patient;
+    const consent = req.body.consent || null;
     if (p?.email) {
       try {
         for (const body of [{ search: p.email }, { search: p.email, is_sandbox: true }]) {
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
             },
             is_sms_enabled: true,
             is_email_enabled: true,
-            metadata: p.metadata || null
+            metadata: { ...(p.metadata || {}), consent }
           });
           if (createRes.ok) {
             const created = await createRes.json();
@@ -88,6 +89,13 @@ export default async function handler(req, res) {
       } catch (e) {
         console.error('MDI patient prefill failed:', e.message);
       }
+    }
+    if (consent && (patientId || p?.email)) {
+      console.info('NovaMDK consent:', JSON.stringify({
+        patient_id: patientId,
+        email: p?.email || null,
+        ...consent,
+      }));
     }
 
     // STEP 3: Generate Voucher (bound to the patient when we have one)

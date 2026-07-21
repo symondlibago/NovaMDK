@@ -70,6 +70,7 @@ export default function ProductPage() {
         body: JSON.stringify({
           questionnaire_id: product.questionnaireId || DEFAULT_QUESTIONNAIRE_ID,
           patient: patient?.email ? patient : null,
+          consent: patient?.consent || null,
         }),
       });
       if (!res.ok) throw new Error("We couldn't start your visit just now — please try again.");
@@ -514,6 +515,24 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const setVal = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
 
+  // Consent lives on the email gate (step 0) — the one screen every patient
+  // passes through, new or returning. We stamp the moment they agree and carry
+  // it to MDI so it's recorded on the patient file, not just enforced in the UI.
+  const [consent, setConsent] = useState({ telehealth: false, terms: false });
+  const [consentAt, setConsentAt] = useState("");
+  const toggleConsent = (k) => () => setConsent((c) => ({ ...c, [k]: !c[k] }));
+  const consentValid = consent.telehealth && consent.terms;
+  const consentRecord = (at) => ({
+    telehealth_informed_consent: consent.telehealth,
+    terms_and_privacy: consent.terms,
+    accepted_at: at || consentAt,
+    documents: {
+      telehealth_consent: "/legal/telehealth-consent",
+      terms_and_conditions: "/legal/terms-and-conditions",
+      notice_of_privacy_practices: "/legal/hipaa-notice-of-privacy-practices",
+    },
+  });
+
   const emailValid = /^\S+@\S+\.\S+$/.test(form.email.trim());
   const step1Valid =
     form.first_name.trim().length > 0 &&
@@ -538,10 +557,14 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
     e.preventDefault();
     if (loading) return;
     if (step === 0) {
-      if (!emailValid) return;
+      if (!emailValid || !consentValid) return;
+      // Stamp consent at the moment they agree, then reuse that same timestamp
+      // when the new-patient record is created a few steps later.
+      const at = new Date().toISOString();
+      setConsentAt(at);
       // Email-first: an existing MDI record is bound and goes straight into
       // the intake — returning patients never re-type their details.
-      const res = await onSubmit({ email: form.email.trim() });
+      const res = await onSubmit({ email: form.email.trim(), consent: consentRecord(at) });
       if (res?.needProfile) setStep(1);
       return;
     }
@@ -570,6 +593,7 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
         city_name: form.city.trim(),
         state_name: form.state,
       },
+      consent: consentRecord(), // agreed at step 0; stored on the patient file
     });
   };
 
@@ -608,15 +632,30 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
 
         <form onSubmit={submit} className="mt-4 flex flex-col gap-3">
           {step === 0 && (
-            <input
-              type="email"
-              value={form.email}
-              onChange={set("email")}
-              placeholder="Email address"
-              autoComplete="email"
-              autoFocus
-              className={inputCls}
-            />
+            <>
+              <input
+                type="email"
+                value={form.email}
+                onChange={set("email")}
+                placeholder="Email address"
+                autoComplete="email"
+                autoFocus
+                className={inputCls}
+              />
+              <div className="mt-1 flex flex-col gap-2.5">
+                <ConsentCheck checked={consent.telehealth} onToggle={toggleConsent("telehealth")}>
+                  I consent to receive care via telehealth and agree to the{" "}
+                  <ConsentLink href="/legal/telehealth-consent">Telehealth Consent</ConsentLink>.
+                </ConsentCheck>
+                <ConsentCheck checked={consent.terms} onToggle={toggleConsent("terms")}>
+                  I agree to the{" "}
+                  <ConsentLink href="/legal/terms-and-conditions">Terms &amp; Conditions</ConsentLink>{" "}
+                  and{" "}
+                  <ConsentLink href="/legal/hipaa-notice-of-privacy-practices">Notice of Privacy Practices</ConsentLink>,
+                  and authorize NovaMDK to process my health information to provide care.
+                </ConsentCheck>
+              </div>
+            </>
           )}
 
           {step === 1 && (
@@ -706,7 +745,7 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
             )}
             <button
               type="submit"
-              disabled={(step === 0 ? !emailValid : step === 1 ? !step1Valid : step === 2 ? !step2Valid : !step3Valid) || loading}
+              disabled={(step === 0 ? !emailValid || !consentValid : step === 1 ? !step1Valid : step === 2 ? !step2Valid : !step3Valid) || loading}
               className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.98rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {loading ? (
@@ -729,6 +768,43 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
         </p>
       </div>
     </div>
+  );
+}
+
+/* A required-consent checkbox row. Legal links open in a new tab so tapping one
+   never navigates the patient out of the modal mid-consent. */
+function ConsentCheck({ checked, onToggle, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      role="checkbox"
+      aria-checked={checked}
+      className="flex items-start gap-2.5 text-left text-[0.8rem] leading-snug text-muted"
+    >
+      <span
+        className={`mt-px grid h-4.5 w-4.5 shrink-0 place-items-center rounded-md border transition-colors ${
+          checked ? "border-primary bg-primary text-on-primary" : "border-line-strong bg-bg"
+        }`}
+      >
+        {checked && <Check size={12} strokeWidth={3} />}
+      </span>
+      <span>{children}</span>
+    </button>
+  );
+}
+
+function ConsentLink({ href, children }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(e) => e.stopPropagation()}
+      className="font-semibold text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+    >
+      {children}
+    </a>
   );
 }
 
