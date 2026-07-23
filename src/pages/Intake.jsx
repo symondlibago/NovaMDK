@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { ArrowLeft, Loader2, Lock, CreditCard, CheckCircle2, ShieldCheck } from "lucide-react";
 import { productsData } from "../components/data/products";
+import Seo from "../components/Seo";
 
 const MDI_ORIGIN = "https://patient.mdintegrations.com";
 const PAYMENT_TRIGGER_EVENTS = ["finish"];
@@ -59,6 +60,7 @@ export default function IntakePage() {
 
   return (
     <main className="flex h-screen w-full flex-col overflow-hidden bg-bg text-ink">
+      <Seo title="Medical Intake" noindex />
       {/* slim header — logo home, context label, exit back to the product */}
       <header className="flex h-[60px] shrink-0 items-center justify-between border-b border-line bg-surface px-4 md:px-6">
         <Link to="/" aria-label="NovaMDK home">

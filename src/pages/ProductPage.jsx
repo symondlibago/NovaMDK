@@ -5,10 +5,12 @@ import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Stethoscope, Lock, FlaskConical, Loader2,
   QrCode, X, UserRound, ChevronDown, MapPin,
 } from "lucide-react";
+import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
 import { productsData, isCompounded } from "../components/data/products";
+import { productSlug, productPath } from "../lib/slug";
 import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
 import useKioskMode from "../lib/useKioskMode";
 
@@ -24,7 +26,9 @@ const DEFAULT_QUESTIONNAIRE_ID = "";
 
 export default function ProductPage() {
   const { id } = useParams();
-  const product = productsData.find((p) => String(p.id) === String(id));
+  // URLs use keyword slugs (/product/semaglutide-…); legacy numeric ids still
+  // resolve and 301-style redirect to the slug so old links and QR codes work.
+  const product = productsData.find((p) => String(p.id) === String(id) || productSlug(p) === id);
 
   const isKiosk = useKioskMode();
   const navigate = useNavigate();
@@ -41,9 +45,10 @@ export default function ProductPage() {
   }, [product?.id]);
 
   if (!product) return <Navigate to="/treatments" replace />;
+  if (id !== productSlug(product)) return <Navigate to={productPath(product)} replace />;
 
   const categoryLabel = product.categoryName;
-  const backLink = `/treatments?goal=${product.categorySlug}`;
+  const backLink = `/treatments/${product.categorySlug}`;
   const related = productsData
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
     .slice(0, 3);
@@ -95,6 +100,21 @@ export default function ProductPage() {
 
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
+      <Seo
+        title={`${product.name} — ${product.categoryName}`}
+        description={product.subtitle || `${product.name} from NovaMDK — physician-guided telehealth treatment, delivered to your door.`}
+        path={productPath(product)}
+        image={product.img}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          description: product.subtitle || undefined,
+          image: `https://www.novamdk.com${product.img}`,
+          category: product.categoryName,
+          brand: { "@type": "Brand", name: "NovaMDK" },
+        }}
+      />
       <Navbar />
 
       {/* breadcrumb */}
@@ -342,7 +362,7 @@ export default function ProductPage() {
             {related.map((r) => (
               <Link
                 key={r.id}
-                to={`/product/${r.id}`}
+                to={productPath(r)}
                 className="group rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
               >
                 <div className="pointer-events-none flex h-32 items-center justify-center rounded-[calc(16px*var(--nv-r-scale,1))] bg-linear-to-br from-surface to-surface-2">

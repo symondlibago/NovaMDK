@@ -34,11 +34,11 @@ export default function Footer() {
             <h4 className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.13em] text-accent md:mb-6">Treatments</h4>
             <ul className="space-y-3 text-[14px] text-on-panel/60 md:space-y-4">
               <li><Link to="/treatments" className="transition-colors hover:text-on-panel">All Treatments</Link></li>
-              <li><Link to="/treatments?goal=weight-loss" className="transition-colors hover:text-on-panel">Weight Loss</Link></li>
-              <li><Link to="/treatments?goal=unisex-anti-aging-rx" className="transition-colors hover:text-on-panel">Anti-Aging</Link></li>
-              <li><Link to="/treatments?goal=unisex-skin-health" className="transition-colors hover:text-on-panel">Skin Health</Link></li>
-              <li><Link to="/treatments?goal=mens-health" className="transition-colors hover:text-on-panel">Sexual Health</Link></li>
-              <li><Link to="/treatments?goal=unisex-sports-medicine" className="transition-colors hover:text-on-panel">Sports Medicine</Link></li>
+              <li><Link to="/treatments/weight-loss" className="transition-colors hover:text-on-panel">Weight Loss</Link></li>
+              <li><Link to="/treatments/unisex-anti-aging-rx" className="transition-colors hover:text-on-panel">Anti-Aging</Link></li>
+              <li><Link to="/treatments/unisex-skin-health" className="transition-colors hover:text-on-panel">Skin Health</Link></li>
+              <li><Link to="/treatments/mens-health" className="transition-colors hover:text-on-panel">Sexual Health</Link></li>
+              <li><Link to="/treatments/unisex-sports-medicine" className="transition-colors hover:text-on-panel">Sports Medicine</Link></li>
             </ul>
           </div>
 

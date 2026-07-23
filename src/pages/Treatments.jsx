@@ -1,8 +1,9 @@
 import React, { Suspense, lazy } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams, Navigate } from "react-router-dom";
 import {
   Stethoscope, Truck, Ban, ShieldCheck, ClipboardCheck, PackageOpen,
 } from "lucide-react";
+import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
@@ -11,6 +12,7 @@ import TreatmentShop from "../components/shop/TreatmentShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { productsData } from "../components/data/products";
+import { CATEGORY_META } from "../lib/categoryMeta";
 import { track, EVENTS } from "../lib/analytics";
 
 const FAQ = lazy(() => import("../components/FAQ"));
@@ -22,7 +24,7 @@ const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   blurb: CONSULTS[k].blurb,
   cta: "Browse treatments",
   goal: CONSULTS[k].goalSlug,
-  link: `/treatments?goal=${CONSULTS[k].goalSlug}`,
+  link: `/treatments/${CONSULTS[k].goalSlug}`,
 }));
 
 // Valid product categories a quiz can land on (everything but pure supplements).
@@ -118,15 +120,30 @@ function SocialProof() {
 }
 
 export default function TreatmentsPage() {
+  const { goal: goalParam } = useParams();
   const [params] = useSearchParams();
-  const goal = params.get("goal");
-  const validGoal = goal && VALID_GOALS.has(goal) ? goal : null;
+  const legacyGoal = params.get("goal");
+
+  // Legacy ?goal= URLs redirect to the crawlable /treatments/:goal path.
+  if (legacyGoal && VALID_GOALS.has(legacyGoal)) {
+    return <Navigate to={`/treatments/${legacyGoal}`} replace />;
+  }
+  if (goalParam && !VALID_GOALS.has(goalParam)) {
+    return <Navigate to="/treatments" replace />;
+  }
+  const validGoal = goalParam || null;
+  const catMeta = validGoal ? CATEGORY_META[validGoal] : null;
 
   return (
     <main
       className="min-h-screen w-full text-ink"
       style={{ background: "color-mix(in oklab, var(--nv-accent) 30%, var(--nv-surface))" }}
     >
+      <Seo
+        title={catMeta ? catMeta.title : "Treatments — Physician-Prescribed Telehealth Care"}
+        description={catMeta ? catMeta.description : "Explore NovaMDK treatments for weight loss, longevity, skin health, sexual wellness and recovery — prescribed online by licensed physicians and shipped to your door."}
+        path={validGoal ? `/treatments/${validGoal}` : "/treatments"}
+      />
       <Navbar />
 
       {validGoal ? (

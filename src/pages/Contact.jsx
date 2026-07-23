@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Clock, Check, ArrowRight, MessageSquare, ShieldCheck, ChevronDown } from "lucide-react";
+import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
@@ -92,6 +93,11 @@ export default function ContactPage() {
 
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
+      <Seo
+        title="Contact Us"
+        description="Get in touch with the NovaMDK care team — questions about treatments, orders, kiosk partnerships or anything else."
+        path="/contact"
+      />
       <Navbar />
 
       <PageHero

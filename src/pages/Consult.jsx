@@ -6,6 +6,7 @@ import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { getLenis } from "../lib/smoothScroll";
 import { track, EVENTS } from "../lib/analytics";
 import useKioskMode from "../lib/useKioskMode";
+import Seo from "../components/Seo";
 
 // On the kiosk, keep each step vertically centered — but biased a little upward
 // (pb-40) because the physical kiosk is mounted low, so dead-center sits too far
@@ -192,6 +193,7 @@ export default function Consult() {
   if (!slug) {
     return (
       <main className="min-h-screen w-full bg-bg text-ink">
+        <Seo title="Start Your Consultation" noindex />
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-bg/85 px-4 py-3 backdrop-blur-md md:px-5">
           <button onClick={() => navigate("/treatments")} aria-label="Back" className="grid h-[38px] w-[38px] place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink">
             <ArrowLeft size={18} />
@@ -219,7 +221,7 @@ export default function Consult() {
   const back = () => (i === 0 ? goHome() : setI((p) => p - 1));
   const finish = () => {
     track(EVENTS.QUIZ_COMPLETED, { slug, goal: consult.goalSlug });
-    navigate(`/treatments?goal=${consult.goalSlug}`);
+    navigate(`/treatments/${consult.goalSlug}`);
   };
 
   // progress + counter
@@ -248,6 +250,7 @@ export default function Consult() {
 
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
+      <Seo title={consult.name} noindex />
       {/* progress bar */}
       <header className="sticky top-0 z-20 flex items-center gap-3.5 border-b border-line bg-bg/85 px-4 py-3 backdrop-blur-md md:px-5">
         <button onClick={back} aria-label="Back" className="grid h-[38px] w-[38px] flex-none place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink">

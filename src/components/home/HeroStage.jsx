@@ -101,7 +101,7 @@ function GlassCard({ c, delay, mode = "auto", featured = false, className = "", 
       className={`h-full ${className}`}
     >
       <Link
-        to={`/treatments?goal=${c.goalSlug}`}
+        to={`/treatments/${c.goalSlug}`}
         onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero" })}
         className="group relative flex h-full flex-row items-center gap-3.5 overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] p-3.5 nv-shadow-lg transition-all duration-500 hover:-translate-y-1 sm:min-h-[212px] sm:flex-col sm:items-stretch sm:gap-0 sm:p-4 sm:hover:-translate-y-2"
       >
@@ -418,7 +418,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
                     key={key}
                     tag={c.tag}
                     name={c.name}
-                    to={`/treatments?goal=${c.goalSlug}`}
+                    to={`/treatments/${c.goalSlug}`}
                     onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: c.goalSlug, source: "hero" })}
                     delay={0.2 + (i % 6) * 0.06}
                     big={compact}

@@ -4,6 +4,7 @@ import {
   ArrowRight, ClipboardCheck, Stethoscope, PackageOpen, LayoutGrid,
   ShieldCheck, Truck, Building2, Monitor, Smartphone,
 } from "lucide-react";
+import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
@@ -38,6 +39,11 @@ const VENUES = ["Flagship centers", "Premium gyms", "Luxury med spas", "Wellness
 export default function KioskPage() {
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
+      <Seo
+        title="Smart Kiosk — Telehealth in Gyms, Med Spas & Clubs"
+        description="NovaMDK Smart Kiosks bring physician-guided telehealth consultations to flagship centers, premium gyms, luxury med spas and member clubs."
+        path="/kiosk"
+      />
       <Navbar />
 
       {/* ===== Hero — Smart Kiosk showcase ===== */}

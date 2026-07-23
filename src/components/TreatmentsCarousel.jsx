@@ -132,7 +132,7 @@ export default function Treatments() {
   const renderCards = () => products.map((c, i) => (
     <Link
       key={i}
-      to={`/treatments?goal=${c.goal}`}
+      to={`/treatments/${c.goal}`}
       className={`treatment-card group relative block shrink-0 overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] nv-shadow transition-all duration-500 hover:-translate-y-1 hover:nv-shadow-lg ${
         isMobile ? 'h-[150px] w-[80vw] max-w-[330px] snap-center' : 'h-[164px] w-[340px]'
       }`}

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import Navbar from './Nav/Navbar';
 import Footer from './Nav/Footer';
 import BackButton from './ui/BackButton';
+import Seo from './Seo';
 
 const legalDocuments = {
   'terms-and-conditions': {
@@ -747,6 +748,11 @@ export default function LegalPage() {
 
   return (
     <div className="min-h-screen bg-bg flex flex-col font-sans text-ink">
+      <Seo
+        title={documentData.title}
+        description={`${documentData.title} for NovaMDK telehealth services. Last updated ${documentData.lastUpdated}.`}
+        path={`/legal/${policyId}`}
+      />
       <Navbar />
 
       <main className="flex-1 w-full max-w-[850px] mx-auto px-4 sm:px-6 md:px-12 py-8 md:py-24">

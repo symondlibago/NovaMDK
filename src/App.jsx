@@ -1,23 +1,23 @@
 import "./App.css";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import ThemeProvider from "./theme/ThemeContext";
 import ScrollToTop from "./components/Nav/ScrollToTop";
 import { trackPageView } from "./lib/analytics";
 import SmoothScroll from "./components/SmoothScroll";
 import RouteTransition from "./components/transition/RouteTransition";
-import DesignStudio from "./components/studio/DesignStudio";
 import Platform from "./pages/Platform";
-import TreatmentsPage from "./pages/Treatments";
-import SupplementsPage from "./pages/Supplements";
-import ContactPage from "./pages/Contact";
-import KioskPage from "./pages/Kiosk";
-import Consult from "./pages/Consult";
-import ProductPage from "./pages/ProductPage";
-import IntakePage from "./pages/Intake";
-import PatientPortalPage from "./pages/PatientPortal";
-import LegalPage from "./components/LegalPage";
 import KioskAttractLoop from "./components/kiosk/KioskAttractLoop";
+const TreatmentsPage = lazy(() => import("./pages/Treatments"));
+const SupplementsPage = lazy(() => import("./pages/Supplements"));
+const ContactPage = lazy(() => import("./pages/Contact"));
+const KioskPage = lazy(() => import("./pages/Kiosk"));
+const Consult = lazy(() => import("./pages/Consult"));
+const ProductPage = lazy(() => import("./pages/ProductPage"));
+const IntakePage = lazy(() => import("./pages/Intake"));
+const PatientPortalPage = lazy(() => import("./pages/PatientPortal"));
+const LegalPage = lazy(() => import("./components/LegalPage"));
+const DesignStudio = lazy(() => import("./components/studio/DesignStudio"));
 
 // Fires a single page_view per route change (pathname only — no query noise).
 function RouteAnalytics() {
@@ -36,9 +36,11 @@ function App() {
         <ScrollToTop />
         <RouteAnalytics />
         <RouteTransition />
+        <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Platform />} />
           <Route path="/treatments" element={<TreatmentsPage />} />
+          <Route path="/treatments/:goal" element={<TreatmentsPage />} />
           <Route path="/supplements" element={<SupplementsPage />} />
           <Route path="/kiosk" element={<KioskPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -51,6 +53,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <DesignStudio />
+        </Suspense>
         <KioskAttractLoop />
       </BrowserRouter>
     </ThemeProvider>

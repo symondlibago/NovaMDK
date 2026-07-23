@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Loader2, Lock } from "lucide-react";
+import Seo from "../components/Seo";
 
 export default function PatientPortalPage() {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ export default function PatientPortalPage() {
 
   return (
     <main className="flex h-screen w-full flex-col overflow-hidden bg-bg text-ink">
+      <Seo title="Patient Portal" noindex />
       <header className="flex h-15 shrink-0 items-center justify-between border-b border-line bg-surface px-4 md:px-6">
         <Link to="/" aria-label="NovaMDK home">
           <img src="/logo.png" alt="NovaMDK" className="h-9 w-auto" />

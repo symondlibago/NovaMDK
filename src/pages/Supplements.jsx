@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
@@ -30,6 +31,11 @@ const SUPPLEMENT_CATS = [
 export default function SupplementsPage() {
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
+      <Seo
+        title="Supplements — Clinical-Grade Formulas"
+        description="Compounded peptides and daily-foundation supplements from NovaMDK, prepared by FDA-regulated pharmacies and matched to your protocol."
+        path="/supplements"
+      />
       <Navbar />
 
       <PageHero

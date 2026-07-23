@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ShieldAlert, X, Check } from "lucide-react";
 import { productsData, isCompounded } from "../data/products";
+import { productPath } from "../../lib/slug";
 import { ComplianceBadges, CompoundedDisclaimer } from "../Compliance";
 import { getLenis } from "../../lib/smoothScroll";
 import BackButton from "../ui/BackButton";
@@ -156,7 +157,7 @@ function QuickViewModal({ product, onClose }) {
                 )}
 
                 <Link
-                  to={`/product/${product.id}`}
+                  to={productPath(product)}
                   onClick={onClose}
                   className="group/cta mt-6 flex items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-[0.95rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
                 >

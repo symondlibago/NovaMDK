@@ -6,6 +6,7 @@ import { getLenis } from "../../lib/smoothScroll";
 import Marquee from "../ui/Marquee";
 import useKioskMode from "../../lib/useKioskMode";
 import { productsData } from "../data/products";
+import { productPath } from "../../lib/slug";
 
 // Kiosk burger menu — top categories, each expanding to a few treatments plus
 // the consultation quiz. Slugs mirror the treatment catalog + questionnaires.
@@ -21,11 +22,11 @@ const EASE = [0.16, 1, 0.3, 1];
 
 // Mirror the real treatment categories (see data/consultations.jsx). Each item
 const treatmentItems = [
-  { name: "Weight Loss", img: "/products/peptides.png", link: "/treatments?goal=weight-loss" },
-  { name: "Anti-Aging", img: "/products/peptides.png", link: "/treatments?goal=unisex-anti-aging-rx" },
-  { name: "Skin Health", img: "/products/peptides.png", link: "/treatments?goal=unisex-skin-health" },
-  { name: "Sexual Health", img: "/products/peptides.png", link: "/treatments?goal=mens-health" },
-  { name: "Sports Medicine", img: "/products/peptides.png", link: "/treatments?goal=unisex-sports-medicine" },
+  { name: "Weight Loss", img: "/products/peptides.png", link: "/treatments/weight-loss" },
+  { name: "Anti-Aging", img: "/products/peptides.png", link: "/treatments/unisex-anti-aging-rx" },
+  { name: "Skin Health", img: "/products/peptides.png", link: "/treatments/unisex-skin-health" },
+  { name: "Sexual Health", img: "/products/peptides.png", link: "/treatments/mens-health" },
+  { name: "Sports Medicine", img: "/products/peptides.png", link: "/treatments/unisex-sports-medicine" },
 ];
 
 /* Peptide molecule list HIDDEN at client request (2026-06-20). "Supplements" is a
@@ -161,7 +162,7 @@ function KioskMenuGroup({ cat, close }) {
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
             <div className="flex flex-col gap-1 pt-3">
               {treatments.map((t) => (
-                <Link key={t.id} to={`/product/${t.id}`} onClick={close} className="flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+                <Link key={t.id} to={productPath(t)} onClick={close} className="flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] text-muted transition-colors hover:bg-surface-2 hover:text-ink">
                   <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-2">
                     <img src={t.img} alt={t.name} loading="lazy" className="h-full w-full scale-[1.1] object-contain mix-blend-multiply" />
                   </span>
