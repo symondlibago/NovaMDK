@@ -105,7 +105,7 @@ export default function ContactPage() {
         eyebrow="Contact"
         title="We're here to help."
         subtitle="Questions about your protocol, an order, or getting started? Message our care team — a real person replies, usually within one business day."
-        chips={["Reply within 1 business day", "HIPAA-compliant", "Licensed in all 50 states"]}
+        chips={["Reply within 1 business day", "HIPAA-compliant", "U.S.-licensed providers"]}
       />
 
       <section className="mx-auto max-w-[1140px] px-5 py-[clamp(2.8rem,6vw,4.5rem)] md:px-10">

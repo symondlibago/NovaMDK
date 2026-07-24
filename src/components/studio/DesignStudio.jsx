@@ -17,6 +17,7 @@ const DEVICE_ICON = {
   phone: Smartphone,
   tablet: Tablet,
   desktop: Monitor,
+  kiosk: Monitor,
 };
 
 /* ----------------------------- device preview ----------------------------- */
@@ -46,10 +47,13 @@ function DevicePreview() {
   // Include a signature of this palette's custom colors so edits show in-preview.
   const overrideSig = JSON.stringify(paletteOverrides[palette.id] || {});
   // On the tablet frame, force the homepage so the portrait layout is always
-  // what's previewed, and carry the chosen variant through to it.
+  // what's previewed, and carry the chosen variant through to it. The kiosk
+  // frame keeps the current page but also runs in kiosk mode — it's the
+  // physical 32" unit at native resolution.
+  const isKioskFrame = active?.id === "kiosk";
   const previewPath = isTablet ? "/" : path;
-  const kioskQuery = isTablet ? `&kiosk=${kioskLayout.id}` : "";
-  const frameKey = `${previewPath}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}|${radius.id}|${overrideSig}|${isTablet ? kioskLayout.id : ""}`;
+  const kioskQuery = isTablet || isKioskFrame ? `&kiosk=${kioskLayout.id}` : "";
+  const frameKey = `${previewPath}|${palette.id}|${typography.id}|${weight.id}|${italic}|${letterSpacing.id}|${lineHeight.id}|${radius.id}|${overrideSig}|${isTablet || isKioskFrame ? kioskLayout.id : ""}`;
 
   return (
     <motion.div

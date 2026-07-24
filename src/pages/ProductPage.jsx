@@ -13,6 +13,7 @@ import { productsData, isCompounded } from "../components/data/products";
 import { productSlug, productPath } from "../lib/slug";
 import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
 import useKioskMode from "../lib/useKioskMode";
+import useLockBodyScroll from "../lib/useLockBodyScroll";
 
 const TRUST = [
   { icon: Stethoscope, label: "U.S. licensed providers" },
@@ -126,9 +127,12 @@ export default function ProductPage() {
 
       {/* ===== Hero ===== */}
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(1.5rem,4vw,3rem)] md:px-10">
+        {/* min-w-0 on the columns: long unbreakable product names (e.g.
+            "Semaglutide/Cyanocobalamin") must not widen the grid track past
+            the viewport on phones */}
         <div className="grid gap-8 md:grid-cols-2 md:items-start lg:gap-14">
           {/* image */}
-          <Reveal>
+          <Reveal className="min-w-0">
             <div className="group/img relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-7 nv-shadow md:min-h-[460px] md:p-12">
               {/* champagne glow */}
               <div
@@ -156,13 +160,13 @@ export default function ProductPage() {
           </Reveal>
 
           {/* info */}
-          <Reveal delay={0.08}>
+          <Reveal delay={0.08} className="min-w-0">
             <div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <span className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-accent">{categoryLabel}</span>
               </div>
 
-              <h1 className="mt-3 font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight">{product.name}</h1>
+              <h1 className="mt-3 wrap-break-word font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight">{product.name}</h1>
               <p className="mt-3 max-w-[46ch] text-[1.05rem] leading-relaxed text-muted">{product.subtitle}</p>
 
               {/* required regulatory labels */}
@@ -526,6 +530,7 @@ const INCH_OPTIONS = Array.from({ length: 12 }, (_, i) => ({ value: String(i), l
    every contact/profile screen and opens straight at the medical questions.
    Height/weight are entered in ft/in + lbs and converted to MDI's cm/kg. */
 function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
+  useLockBodyScroll(); // mobile: page behind the modal must not scroll
   const [step, setStep] = useState(0); // 0 = email gate, then steps 1–3
   const [form, setForm] = useState({
     first_name: "", last_name: "", email: "", phone_number: "",
@@ -621,17 +626,17 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
     "w-full rounded-xl border border-line bg-bg px-3.5 py-3 text-[0.95rem] text-ink placeholder:text-muted/60 focus:border-primary focus:outline-none";
   const labelCls = "flex flex-col gap-1 text-left text-[0.7rem] font-semibold uppercase tracking-wide text-muted";
   const TITLES = {
-    0: ["What's your email address?", "If you've visited us before, we'll recognize you."],
+    0: ["What's your email address?", ""],
     1: ["First, a few details", "So your care team can reach you about your visit."],
     2: ["About you", "These go on your private patient file — your intake will skip them."],
     3: ["Where should we deliver?", "Physical delivery address — no PO boxes."],
   };
 
   return (
-    <div onClick={onClose} className="fixed inset-0 z-120 grid place-items-center bg-ink/65 p-6 backdrop-blur-sm">
+    <div onClick={onClose} className="fixed inset-0 z-120 flex overflow-y-auto bg-ink/65 p-6 backdrop-blur-sm">
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-110 rounded-3xl border border-line bg-surface p-6 nv-shadow-lg md:p-8"
+        className="relative m-auto w-full max-w-110 rounded-3xl border border-line bg-surface p-6 nv-shadow-lg md:p-8"
       >
         <button
           onClick={onClose}
@@ -645,7 +650,7 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
           <UserRound size={22} />
         </span>
         <h3 className="mt-3 font-display text-[1.35rem] font-extrabold leading-tight">{TITLES[step][0]}</h3>
-        <p className="mt-1 text-[0.86rem] text-muted">{TITLES[step][1]}</p>
+        {TITLES[step][1] && <p className="mt-1 text-[0.86rem] text-muted">{TITLES[step][1]}</p>}
         {step > 0 && (
           <p className="mt-2 font-mono text-[0.64rem] uppercase tracking-[0.16em] text-primary">Step {step} of 3</p>
         )}

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useState, useEffect } from "react";
+import React, { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight, ShieldCheck, Truck, Clock, Ban,
@@ -10,8 +10,7 @@ import HeroStage, { KIOSK_VARIANT_IDS } from "./home/HeroStage";
 import Reveal from "./ui/Reveal";
 import Photo from "./ui/Photo";
 import { useTheme } from "../theme/ThemeContext";
-
-const KIOSK_MQ = "(min-width: 600px) and (max-width: 1024px) and (orientation: portrait)";
+import useKioskMode from "../lib/useKioskMode";
 
 // Which hero the homepage shows on the portrait tablet / kiosk view.
 //   • `?kiosk=<id>` (the studio preview iframe) forces a specific layout.
@@ -21,22 +20,15 @@ const KIOSK_MQ = "(min-width: 600px) and (max-width: 1024px) and (orientation: p
 //   • On any other screen (normal desktop), returns null → standard hero.
 function useKioskVariant() {
   const { kioskLayout } = useTheme();
+  // Shared detection (param-sticky + portrait MQ) — must match the navbar and
+  // the rest of the kiosk chrome, or the hero and nav disagree mid-session.
+  const isKiosk = useKioskMode();
 
   const paramVariant = () => {
     if (typeof window === "undefined") return null;
     const v = new URLSearchParams(window.location.search).get("kiosk");
     return v && KIOSK_VARIANT_IDS.includes(v) ? v : null;
   };
-
-  const [isKiosk, setIsKiosk] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(KIOSK_MQ).matches
-  );
-  useEffect(() => {
-    const mq = window.matchMedia(KIOSK_MQ);
-    const onChange = () => setIsKiosk(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
 
   const forced = paramVariant();
   if (forced) return forced;
@@ -58,8 +50,8 @@ const TRUST = [
 const STATS = [
   { b: "100%", s: "Physician-reviewed" },
   { b: "Fast", s: "Doorstep delivery" },
-  { b: "50", s: "States served" },
-  { b: "$0", s: "To start your visit" },
+  { b: "~2 min", s: "Guided questionnaire" },
+  { b: "0", s: "Waiting rooms" },
 ];
 
 // The three-step "How it works" cards (replaces the old bento + steps section).

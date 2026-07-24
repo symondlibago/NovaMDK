@@ -684,6 +684,9 @@ export const DEVICES = [
   { id: "phone", name: "Phone", icon: "smartphone", w: 390, h: 844 },
   { id: "tablet", name: "Tablet", icon: "tablet", w: 834, h: 1112 },
   { id: "desktop", name: "Desktop", icon: "monitor", w: 1280, h: 800 },
+  // The physical unit: Apolosign 32" display mounted portrait (1080×1920).
+  // Frames the page with ?kiosk= so the preview shows true kiosk mode.
+  { id: "kiosk", name: "Kiosk 32″", icon: "monitor", w: 1080, h: 1920 },
 ];
 
 /** Portrait tablet / kiosk homepage hero layouts. The studio drives the chosen

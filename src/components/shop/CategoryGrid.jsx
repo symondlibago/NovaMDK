@@ -3,11 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Reveal from "../ui/Reveal";
 
-/**
- * Category tiles used by the Treatments / Supplements pages.
- * Each item: { name, tag, link, blurb?, cta?, art? }.
- * `dark` renders the navy product-card style (Treatments funnels).
- */
 function DarkCard({ it, art, onClick, hero = false }) {
   return (
     <Link
@@ -51,6 +46,70 @@ function DarkCard({ it, art, onClick, hero = false }) {
           <ArrowRight size={14} strokeWidth={2.4} />
         </span>
         {it.cta || "Start assessment"}
+      </span>
+    </Link>
+  );
+}
+
+/* Full-bleed photo card (2026-07 design refresh). The image is the card's
+   background; a scrim from the text side keeps copy legible. `tone` sets the
+   text/scrim direction: "light" = pale photo + dark text, "dark" = inverse.
+   Optional `overlay` floats a transparent cutout (pens, vials) over the photo. */
+function PhotoCard({ it, onClick, hero = false }) {
+  const darkTone = it.tone === "dark";
+  return (
+    <Link
+      to={it.link}
+      onClick={onClick}
+      className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg ${
+        darkTone ? "bg-panel text-on-panel" : "border border-line bg-surface text-ink"
+      } ${hero ? "min-h-[clamp(220px,30vw,280px)] p-7 sm:p-9" : "min-h-[clamp(196px,24vw,220px)] p-6"}`}
+    >
+      <img
+        src={it.photo}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+        style={it.photoPos ? { objectPosition: it.photoPos } : undefined}
+      />
+      <span
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: darkTone
+            ? "linear-gradient(90deg, color-mix(in oklab, var(--nv-ink-panel) 88%, black) 0%, color-mix(in oklab, var(--nv-ink-panel) 55%, transparent) 48%, transparent 78%)"
+            : "linear-gradient(90deg, color-mix(in oklab, var(--nv-surface) 94%, transparent) 0%, color-mix(in oklab, var(--nv-surface) 62%, transparent) 48%, transparent 78%)",
+        }}
+      />
+      {it.overlay && (
+        <img
+          src={it.overlay}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className={`nv-bob pointer-events-none absolute top-1/2 z-[1] -translate-y-1/2 object-contain transition-transform duration-500 group-hover:scale-105 ${
+            hero ? "right-[2%] h-[90%]" : "right-2 h-[74%]"
+          }`}
+        />
+      )}
+
+      <div className={`relative z-[2] ${hero ? "max-w-[68%]" : "max-w-[70%]"}`}>
+        <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-accent">{it.tag}</span>
+        <h3 className={`mt-1.5 font-display font-bold leading-tight tracking-tight ${darkTone ? "text-white" : "text-ink"} ${hero ? "text-[clamp(1.6rem,3.4vw,2.15rem)]" : "text-[1.3rem]"}`}>{it.name}</h3>
+        {it.blurb && <p className={`mt-2 leading-snug ${darkTone ? "text-on-panel/70" : "text-muted"} ${hero ? "max-w-[42ch] text-[0.95rem]" : "max-w-[26ch] text-[0.83rem]"}`}>{it.blurb}</p>}
+      </div>
+
+      <span
+        className={`relative z-[2] inline-flex w-fit items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 font-semibold transition-colors duration-300 ${
+          darkTone
+            ? "border border-white/15 bg-white/10 text-white group-hover:bg-white group-hover:text-ink"
+            : "bg-ink/85 text-white group-hover:bg-ink"
+        } ${hero ? "mt-6 text-[0.9rem]" : "mt-4 text-[0.84rem]"}`}
+      >
+        <span className={`grid h-7 w-7 place-items-center rounded-full transition-colors duration-300 ${darkTone ? "bg-white/10 group-hover:bg-ink/10" : "bg-white/15"}`}>
+          <ArrowRight size={14} strokeWidth={2.4} />
+        </span>
+        {it.cta || "Browse treatments"}
       </span>
     </Link>
   );
@@ -101,7 +160,7 @@ export default function CategoryGrid({ items, art = "/pills-float.avif", dark = 
       {items.map((it, i) => {
         const onClick = onItemClick ? () => onItemClick(it) : undefined;
         const hero = featured && i === 0;
-        const Card = dark ? DarkCard : LightCard;
+        const Card = it.photo ? PhotoCard : dark ? DarkCard : LightCard;
         return (
           <Reveal as="div" key={it.name} delay={(i % 3) * 0.06} className={`h-full ${hero ? "sm:col-span-2" : ""}`}>
             <Card it={it} art={art} onClick={onClick} hero={hero} />

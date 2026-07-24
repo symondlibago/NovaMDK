@@ -383,15 +383,19 @@ function EditorialHero({ compact = false, forceWide = false }) {
       {compact && (
         <div className="relative">
           <video src="/right-side-portrait.mp4" autoPlay loop muted playsInline className="block h-120 w-full object-cover" />
+          {/* video stays clean — only a short blend at the very bottom into the page bg */}
           <span
-            className="absolute left-0 right-0 top-0 -bottom-0.5"
+            className="absolute inset-x-0 -bottom-0.5 h-28"
             style={{
               background:
-                "linear-gradient(180deg, color-mix(in oklab, var(--nv-bg) 72%, transparent) 0%, color-mix(in oklab, var(--nv-bg) 42%, transparent) 55%, var(--nv-bg) 97%)",
+                "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--nv-bg) 55%, transparent) 60%, var(--nv-bg) 100%)",
             }}
           />
           <div className="absolute inset-0 z-10 mx-auto flex max-w-2xl flex-col items-center justify-center px-6 text-center">
-            <HeroHeadline compact />
+            {/* readability comes from the panel behind the text, not a full-video fade */}
+            <div className="rounded-[calc(24px*var(--nv-r-scale,1))] bg-bg/85 px-7 py-8 backdrop-blur-sm nv-shadow sm:px-10">
+              <HeroHeadline compact />
+            </div>
           </div>
         </div>
       )}

@@ -21,24 +21,24 @@ function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, ease: EASE, delay }}
       onClick={() => onQuickView(p)}
-      className="group relative flex cursor-pointer flex-col rounded-[calc(26px*var(--nv-r-scale,1))] border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg"
+      className="group relative flex cursor-pointer flex-col rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-3 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:nv-shadow-lg sm:p-6 md:p-4 lg:p-6"
     >
       <div className="mb-2 flex items-center justify-between gap-3">
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.13em] text-accent">{p.categoryName}</span>
         <span className="text-[13px] font-semibold text-muted">{p.price}</span>
       </div>
       {/* fixed-height zones keep image + description aligned across all cards */}
-      <h3 className="min-h-12 text-[1.05rem] font-bold leading-snug text-ink">{p.name}</h3>
-      <div className="mt-2 flex min-h-14 flex-wrap content-start items-center gap-1.5">
+      <h3 className="min-h-8 wrap-break-word text-[0.7rem] font-bold leading-snug text-ink sm:min-h-12 sm:text-[1.05rem] md:text-[0.85rem] lg:text-[1rem]">{p.name}</h3>
+      <div className="mt-1.5 flex min-h-8 flex-wrap content-start items-center gap-1 sm:mt-2 sm:min-h-14 sm:gap-1.5">
         {p.dosageForm && (
-          <span className="w-fit rounded-full bg-surface-2 px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-muted">
+          <span className="w-fit rounded-full bg-surface-2 px-2 py-0.5 font-mono text-[0.5rem] uppercase tracking-[0.06em] text-muted sm:px-2.5 sm:py-1 sm:text-[0.6rem] sm:tracking-[0.1em]">
             {p.dosageForm}
           </span>
         )}
         <ComplianceBadges compounded={isCompounded(p)} />
       </div>
 
-      <div className="my-5 flex h-36 items-center justify-center px-2">
+      <div className="my-2 flex h-20 items-center justify-center px-2 sm:my-5 sm:h-36 md:h-24 lg:h-32">
         {/* wrapper carries the idle vertical float so the img keeps its hover transform */}
         <span className="nv-float flex h-full w-full items-center justify-center" style={{ animationDelay: `${floatDelay}s` }}>
           <img
@@ -54,12 +54,12 @@ function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
         </span>
       </div>
 
-      <p className="mb-5 line-clamp-2 min-h-11 text-[0.85rem] leading-relaxed text-muted">{p.subtitle}</p>
+      <p className="mb-2.5 line-clamp-2 min-h-7 text-[0.65rem] leading-snug text-muted sm:mb-5 sm:min-h-11 sm:leading-relaxed sm:text-[0.85rem] md:text-[0.75rem] lg:text-[0.82rem]">{p.subtitle}</p>
 
       {/* Quick view — opens a preview modal so patients know the product before consulting */}
       <button
         onClick={(e) => { e.stopPropagation(); onQuickView(p); }}
-        className="group/btn mt-auto flex items-center justify-center gap-1.5 rounded-full bg-primary py-3 text-[13.5px] font-semibold text-on-primary transition-all hover:bg-primary-deep nv-shadow"
+        className="group/btn mt-auto flex items-center justify-center gap-1.5 rounded-full bg-primary py-1.5 text-[11.5px] font-semibold text-on-primary transition-all hover:bg-primary-deep nv-shadow sm:py-3 sm:text-[13.5px]"
       >
         Quick view
         <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover/btn:translate-x-0.5" />
@@ -193,24 +193,27 @@ export default function TreatmentShop({ category, showBack = false }) {
   const name = products[0].categoryName;
 
   return (
-    <section id="shop" className="scroll-mt-24 bg-surface-2 py-[clamp(2.5rem,5.5vw,5rem)]">
+    <section id="shop" className="scroll-mt-24 bg-surface-2 pb-[clamp(2.5rem,5.5vw,5rem)] pt-2">
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
-        {showBack && (
-          <div className="mb-8">
-            <BackButton />
-          </div>
-        )}
-        <div className="mb-8 text-center">
+        {/* Back sits inline-left of the centered header from sm up — no stacked
+            row above the title, so the header starts at the section's top edge */}
+        <div className="relative mb-5 text-center sm:mb-6">
+          {showBack && (
+            <div className="mb-2 text-left sm:absolute sm:left-0 sm:top-0 sm:mb-0">
+              <BackButton />
+            </div>
+          )}
           <span className="nv-eyebrow">Prescription treatments</span>
-          <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.6rem)] font-extrabold leading-tight">
+          <h2 className="mt-1.5 text-[1.4rem] font-extrabold leading-tight sm:mt-2 sm:text-[clamp(1.8rem,4vw,2.6rem)]">
             {name}
           </h2>
-          <p className="mx-auto mt-3 max-w-[44ch] text-[1.02rem] text-muted">
+          <p className="mx-auto mt-1.5 max-w-[44ch] text-[0.78rem] text-muted sm:mt-2 sm:text-[1.02rem]">
             Pick a treatment to start your visit — a licensed provider confirms the right fit before anything ships.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-[clamp(0.9rem,1.6vw,1.25rem)] sm:grid-cols-2 lg:grid-cols-3">
+        {/* 2-up on phones, 3-up from tablet/kiosk width, keeps the list scannable */}
+        <div className="grid grid-cols-2 gap-[clamp(0.9rem,1.6vw,1.25rem)] md:grid-cols-3">
           {products.map((p, i) => (
             <ProductCard key={p.id} p={p} delay={(i % 3) * 0.05} floatDelay={-(i % 4) * 0.9} onQuickView={setQuickView} />
           ))}

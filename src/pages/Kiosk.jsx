@@ -12,8 +12,8 @@ import BackButton from "../components/ui/BackButton";
 
 const STATS = [
   { b: "~2 min", s: "Guided questionnaire" },
-  { b: "50", s: "States served" },
-  { b: "$0", s: "To start your visit" },
+  { b: "100%", s: "Physician-reviewed" },
+  { b: "Fast", s: "Doorstep delivery" },
   { b: "0", s: "Apps to download" },
 ];
 
@@ -152,13 +152,26 @@ export default function KioskPage() {
                 className="pointer-events-none absolute inset-0"
                 style={{ background: "radial-gradient(60% 60% at 50% 30%, color-mix(in oklab, var(--nv-accent) 22%, transparent), transparent 72%)" }}
               />
-              <div className="relative flex min-h-[300px] items-center justify-center p-8">
-                <img
-                  src="/kioskmonitor.avif"
-                  alt="Close-up of the NovaMDK Smart Kiosk touchscreen"
-                  loading="lazy"
-                  className="max-h-[320px] w-auto object-contain drop-shadow-2xl"
-                />
+              {/* bottom-anchored (items-end, no bottom padding) so the stand's
+                  tip lands exactly on the card's bottom edge */}
+              <div className="relative flex min-h-[300px] items-end justify-center px-8 pt-8">
+                <div className="relative">
+                  <img
+                    src="/kioskmonitor.avif"
+                    alt="Close-up of the NovaMDK Smart Kiosk touchscreen"
+                    loading="lazy"
+                    className="max-h-96 w-auto object-contain drop-shadow-2xl"
+                  />
+                  <video
+                    src="/right-vid.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute object-cover"
+                    style={{ left: "3.4%", top: "6.2%", width: "92%", height: "62%" }}
+                  />
+                </div>
               </div>
             </div>
           </Reveal>

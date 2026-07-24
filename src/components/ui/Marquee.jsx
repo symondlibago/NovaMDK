@@ -6,7 +6,7 @@ import { ShieldCheck, Truck, Clock, Stethoscope, Flag, FlaskConical } from "luci
 // navbar (promo slot) and at the foot of the homepage.
 const MARQUEE_ITEMS = [
   { text: "USA MDs ONLY", icon: Stethoscope },
-  { text: "50-STATE LICENSED PHYSICIANS", icon: Flag },
+  { text: "U.S. LICENSED PHYSICIANS", icon: Flag },
   { text: "FDA-REGULATED PHARMACIES", icon: ShieldCheck },
   { text: "USA MADE & SOURCED", icon: FlaskConical },
   { text: "FAST DELIVERY", icon: Truck },

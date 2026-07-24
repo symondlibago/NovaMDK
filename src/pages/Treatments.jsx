@@ -17,6 +17,16 @@ import { track, EVENTS } from "../lib/analytics";
 
 const FAQ = lazy(() => import("../components/FAQ"));
 
+// Per-goal card artwork (2026-07 design refresh): the photo is the card's
+// background; `overlay` floats a transparent product cutout on top. Sexual
+// health has no exported asset yet, so it falls back to the navy DarkCard.
+const CAT_PHOTOS = {
+  "weight-loss": { photo: "/cat-weightloss.webp?v=2", overlay: "/cat-weightloss-pen.webp", tone: "light", photoPos: "right 16%" },
+  "unisex-skin-health": { photo: "/cat-skinhealth.webp", tone: "light", photoPos: "right center" },
+  "unisex-sports-medicine": { photo: "/cat-sportsmedicine.webp", tone: "dark", photoPos: "right center" },
+  "unisex-anti-aging-rx": { photo: "/cat-longetivity.webp", overlay: "/cat-longetivity-bottle.webp", tone: "dark", photoPos: "right center" },
+};
+
 // Mirror the homepage funnels — each tile browses that goal's shoppable catalog.
 const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   name: CONSULTS[k].name,
@@ -25,6 +35,7 @@ const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   cta: "Browse treatments",
   goal: CONSULTS[k].goalSlug,
   link: `/treatments/${CONSULTS[k].goalSlug}`,
+  ...(CAT_PHOTOS[CONSULTS[k].goalSlug] || {}),
 }));
 
 // Valid product categories a quiz can land on (everything but pure supplements).
@@ -48,7 +59,7 @@ const STEPS = [
 const STATS = [
   { b: "100%", s: "Physician-reviewed" },
   { b: "Fast", s: "Doorstep delivery" },
-  { b: "50", s: "States served" },
+  { b: "0", s: "Waiting rooms" },
 ];
 
 /* ------------------------------- sections ------------------------------- */

@@ -206,12 +206,16 @@ export default function Navbar() {
         <nav className="mx-auto flex min-h-[68px] max-w-[1340px] items-center justify-between px-5 md:px-10">
           <Link to="/" aria-label="NovaMDK home"><img src="/logo.png" alt="NovaMDK" className="h-[46px] w-auto md:h-[52px]" /></Link>
 
-          <div className="hidden items-center gap-7 lg:flex">
-            <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
-            <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
-            <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
-            <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
-          </div>
+          {/* Desktop links stay off in kiosk mode at ANY width — the physical
+              kiosk is 1080px wide (≥ lg), which otherwise doubles the menu */}
+          {!isKiosk && (
+            <div className="hidden items-center gap-7 lg:flex">
+              <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
+              <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
+              <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
+              <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
+            </div>
+          )}
 
           {/* Kiosk mode: primary sections live on the navbar (the burger holds the meds menu) */}
           {isKiosk && (
@@ -224,14 +228,19 @@ export default function Navbar() {
           )}
 
           <div className="flex items-center gap-2.5">
-            <Link to="/portal" className="hidden h-10 items-center gap-2 rounded-full border-2 border-primary bg-surface px-5 text-[14px] font-semibold text-primary transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-on-primary nv-shadow lg:flex">
-              <LogIn size={15} /> Patient Portal
-            </Link>
-            <Link to="/treatments" className="hidden h-10 items-center gap-2 rounded-full bg-primary px-5 text-[14px] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow lg:flex">
-              Get started
-            </Link>
+            {!isKiosk && (
+              <>
+                <Link to="/portal" className="hidden h-10 items-center gap-2 rounded-full border-2 border-primary bg-surface px-5 text-[14px] font-semibold text-primary transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-on-primary nv-shadow lg:flex">
+                  <LogIn size={15} /> Patient Portal
+                </Link>
+                <Link to="/treatments" className="hidden h-10 items-center gap-2 rounded-full bg-primary px-5 text-[14px] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow lg:flex">
+                  Get started
+                </Link>
+              </>
+            )}
 
-            <button aria-label="Menu" aria-expanded={mobileOpen} onClick={() => setMobileOpen(true)} className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-ink lg:hidden">
+            {/* kiosk keeps the burger at any width — it holds the meds menu */}
+            <button aria-label="Menu" aria-expanded={mobileOpen} onClick={() => setMobileOpen(true)} className={`grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-ink ${isKiosk ? "" : "lg:hidden"}`}>
               <Menu size={20} />
             </button>
           </div>
