@@ -1096,9 +1096,58 @@ export const productsData = [
   },
 
   /* ============================================================ */
-  /* SUPPLEMENTS — UNCHANGED (mock data, awaiting product list)    */
+  /* SUPPLEMENTS                                                  */
+  /* ------------------------------------------------------------ */
+  /* Everything from id 102 down is mock data awaiting the real    */
+  /* product list, so it stays hidden. Only entries flagged        */
+  /* `live: true` are listed on /supplements.                      */
   /* ============================================================ */
 
+  {
+    id: 301,
+    categorySlug: "supplements",
+    categoryName: "Supplements",
+    name: "Glutaryl — Topical Glutathione Spray",
+    // Non-prescription retail product carried alongside the Rx catalog:
+    // `otc` drops the Rx-only / compounded labelling and the intake handoff.
+    otc: true,
+    live: true,
+    brandName: "Auro Wellness",
+    subtitle: "Topical glutathione spray built on the Auro GSH™ sub-nano delivery system — antioxidant support you apply to the skin, no injections and no prescription.",
+    price: "$125.95",
+    shipping: "Discreetly to Your Door",
+    dosageForm: "Topical Spray",
+    icon: <Droplets size={16} />,
+    img: "/products/glutaryl.png",
+    questionnaireId: "",
+    highlights: [
+      { text: "Master Antioxidant — Glutathione" },
+      { text: "Auro GSH™ Sub-Nano Delivery" },
+      { text: "Third-Party Lab Tested" },
+      { text: "No Prescription Needed" },
+    ],
+    specs: [
+      { label: "Key Ingredient", value: "Glutathione (GSH) in the Auro GSH™ cyclodextrin delivery complex" },
+      { label: "Size", value: "1.0 fl oz (30 mL) pump spray" },
+      { label: "How To Use", value: "Four sprays on clean skin twice daily. Rub in for about 90 seconds until dry and leave on at least 45 minutes — the abdomen is the most common application site." },
+      { label: "Full Ingredients", value: "Purified water, glutathione, cyclodextrin, ascorbic acid, sodium hydroxide, dexpanthenol, Leuconostoc/radish root ferment filtrate, Lonicera japonica flower extract, Lonicera caprifolium flower extract, Populus tremuloides bark extract, potassium sorbate, gluconolactone." },
+      { label: "Free From", value: "Parabens, sulfates, added fragrance, mineral oil, artificial preservatives, artificial colors, gluten and dairy. Non-comedogenic." },
+      { label: "Brand", value: "Auro Wellness" },
+    ],
+    safety: "For external use only — apply to a non-hairy area of skin and avoid the eyes. A faint sulfur-like odor is normal for a high-concentration glutathione formula and fades as it dries; the formula is fragrance-free by design. Stop use and speak with your provider if irritation develops. Talk to your clinician before starting any new supplement, especially if you are pregnant, nursing, or taking prescription medication.",
+    // DSHEA statement — required wording for a non-Rx supplement listing.
+    fdaDisclaimer:
+      "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+    howItWorks: {
+      title: "Glutathione, Delivered Through the Skin",
+      description: "Glutathione is a tripeptide the body makes on its own and one of its most abundant antioxidants. Auro GSH™ pairs it with a cyclodextrin carrier so the molecule stays intact through the skin instead of being broken down in the gut.",
+      steps: [
+        { icon: <Droplets/>, title: "Spray On", description: "Four sprays on clean skin, twice daily — no needles, no capsules." },
+        { icon: <Shield/>, title: "Sub-Nano Carrier", description: "The cyclodextrin complex protects the glutathione molecule on the way in." },
+        { icon: <Sparkles/>, title: "Antioxidant Support", description: "Supports the body's own free-radical defenses and skin health." },
+      ],
+    },
+  },
   {
     id: 102,
     categorySlug: "supplements",
@@ -2274,11 +2323,14 @@ export const productsData = [
 ];
 
 /**
- * Every product here is a prescription item; the current offering list is
- * entirely compounded. A brand-name (FDA-approved) product would opt out by
- * carrying `fdaApproved: true`. Drives the "Compounded" label and disclaimer.
+ * The prescription catalog is entirely compounded. A brand-name (FDA-approved)
+ * product opts out with `fdaApproved: true`, and a non-prescription retail item
+ * opts out with `otc: true`. Drives the "Compounded" label and disclaimer.
  */
-export const isCompounded = (product) => !product?.fdaApproved;
+export const isCompounded = (product) => !product?.fdaApproved && !product?.otc;
+
+/** Non-prescription retail products — no Rx label, no intake handoff. */
+export const isOtc = (product) => !!product?.otc;
 
 export const categoryContent = {
   "All": {

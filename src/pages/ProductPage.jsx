@@ -9,7 +9,7 @@ import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
-import { productsData, isCompounded } from "../components/data/products";
+import { productsData, isCompounded, isOtc } from "../components/data/products";
 import { productSlug, productPath } from "../lib/slug";
 import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
 import useKioskMode from "../lib/useKioskMode";
@@ -20,6 +20,14 @@ const TRUST = [
   { icon: Truck, label: "Fast delivery" },
   { icon: Lock, label: "Discreet packaging" },
   { icon: FlaskConical, label: "Compounded in the USA" },
+];
+
+// The retail (non-Rx) line isn't compounded and doesn't run through a provider.
+const TRUST_OTC = [
+  { icon: Truck, label: "Fast delivery" },
+  { icon: Lock, label: "Discreet packaging" },
+  { icon: FlaskConical, label: "Third-party lab tested" },
+  { icon: ShieldCheck, label: "No prescription needed" },
 ];
 
 // Fallback questionnaire used when a product has no questionnaireId yet.
@@ -49,9 +57,12 @@ export default function ProductPage() {
   if (id !== productSlug(product)) return <Navigate to={productPath(product)} replace />;
 
   const categoryLabel = product.categoryName;
-  const backLink = `/treatments/${product.categorySlug}`;
+  // Retail items live on /supplements; the mock supplement catalog has no
+  // /treatments/supplements listing to go back to.
+  const otc = isOtc(product);
+  const backLink = otc ? "/supplements" : `/treatments/${product.categorySlug}`;
   const related = productsData
-    .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
+    .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && isOtc(p) === otc)
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(product);
@@ -113,7 +124,7 @@ export default function ProductPage() {
           description: product.subtitle || undefined,
           image: `https://www.novamdk.com${product.img}`,
           category: product.categoryName,
-          brand: { "@type": "Brand", name: "NovaMDK" },
+          brand: { "@type": "Brand", name: product.brandName || "NovaMDK" },
         }}
       />
       <Navbar />
@@ -170,7 +181,7 @@ export default function ProductPage() {
               <p className="mt-3 max-w-[46ch] text-[1.05rem] leading-relaxed text-muted">{product.subtitle}</p>
 
               {/* required regulatory labels */}
-              <ComplianceBadges compounded={isCompounded(product)} className="mt-4" />
+              <ComplianceBadges compounded={isCompounded(product)} rx={!otc} className="mt-4" />
 
               {/* price block */}
               <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-2 border-t border-line pt-5">
@@ -191,7 +202,15 @@ export default function ProductPage() {
                 </ul>
               )}
 
-              {isKiosk ? (
+              {otc ? (
+                /* No prescription, so no intake — the care team handles retail orders. */
+                <Link
+                  to="/contact"
+                  className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+                >
+                  Ask about this supplement <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </Link>
+              ) : isKiosk ? (
                 <button
                   onClick={() => setShowQR(true)}
                   className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
@@ -249,7 +268,7 @@ export default function ProductPage() {
       {/* ===== Trust band ===== */}
       <section className="border-y border-line bg-surface">
         <div className="mx-auto grid max-w-[1180px] grid-cols-2 gap-x-6 gap-y-5 px-5 py-6 md:grid-cols-4 md:px-10">
-          {TRUST.map((t) => (
+          {(otc ? TRUST_OTC : TRUST).map((t) => (
             <div key={t.label} className="flex items-center gap-3">
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-2 text-primary"><t.icon size={16} /></span>
               <span className="text-[0.88rem] font-medium leading-tight">{t.label}</span>
@@ -290,7 +309,11 @@ export default function ProductPage() {
             <Reveal className={isKiosk ? "text-center" : ""}>
               <span className="nv-eyebrow">The details</span>
               <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">What's inside &amp; how it's dosed.</h2>
-              <p className={`mt-3 max-w-[40ch] text-[1rem] text-muted ${isKiosk ? "mx-auto" : ""}`}>Compounded by a licensed U.S. pharmacy and dispensed only after a provider's review of your intake.</p>
+              <p className={`mt-3 max-w-[40ch] text-[1rem] text-muted ${isKiosk ? "mx-auto" : ""}`}>
+                {otc
+                  ? "A non-prescription formula you can add to your routine — our care team can tell you how it fits alongside your protocol."
+                  : "Compounded by a licensed U.S. pharmacy and dispensed only after a provider's review of your intake."}
+              </p>
               <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-[0.85rem] font-medium text-ink">
                 <ShieldCheck size={15} className="text-accent" /> Quality-tested every batch
               </div>
@@ -330,9 +353,24 @@ export default function ProductPage() {
               style={{ background: "radial-gradient(50% 80% at 50% 0%, color-mix(in oklab, var(--nv-accent) 22%, transparent), transparent 70%)" }}
             />
             <div className="relative">
-              <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">Start consultation for {product.name.split("(")[0].split("/")[0].trim()}.</h2>
-              <p className="mx-auto mt-3 max-w-[46ch] text-[1rem] text-on-panel/70">A licensed provider reviews your intake and confirms the right fit. Nothing to pay until you're prescribed.</p>
-              {isKiosk ? (
+              <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
+                {otc ? "Add " : "Start consultation for "}
+                {product.name.split("—")[0].split("(")[0].split("/")[0].trim()}
+                {otc ? " to your routine." : "."}
+              </h2>
+              <p className="mx-auto mt-3 max-w-[46ch] text-[1rem] text-on-panel/70">
+                {otc
+                  ? "No prescription or intake required. Message the care team and we'll get it on its way — and tell you how it pairs with your protocol."
+                  : "A licensed provider reviews your intake and confirms the right fit. Nothing to pay until you're prescribed."}
+              </p>
+              {otc ? (
+                <Link
+                  to="/contact"
+                  className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg"
+                >
+                  Ask about this supplement <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </Link>
+              ) : isKiosk ? (
                 <button
                   onClick={() => setShowQR(true)}
                   className="group mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-8 py-4 text-[1rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg"

@@ -27,6 +27,7 @@ function extractProducts() {
       categoryName: field(block, "categoryName"),
       categorySlug: field(block, "categorySlug"),
       img: field(block, "img"),
+      brandName: field(block, "brandName"),
     };
   });
   // Guard against slug collisions — two products must never share a URL.
@@ -105,7 +106,7 @@ export function buildRoutes() {
         description: p.subtitle || undefined,
         image: p.img ? `${SITE_URL}${p.img}` : undefined,
         category: p.categoryName,
-        brand: { "@type": "Brand", name: SITE_NAME },
+        brand: { "@type": "Brand", name: p.brandName || SITE_NAME },
       },
     });
   }

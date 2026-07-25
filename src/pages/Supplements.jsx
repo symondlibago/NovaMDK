@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Seo from "../components/Seo";
@@ -9,6 +9,12 @@ import PageHero from "../components/shop/PageHero";
 import Photo from "../components/ui/Photo";
 import Reveal from "../components/ui/Reveal";
 import { CompoundedDisclaimer } from "../components/Compliance";
+import { ProductCard, QuickViewModal } from "../components/shop/ProductCard";
+import { productsData } from "../components/data/products";
+
+// Only products flagged `live: true` are shoppable — the rest of the supplement
+// catalog in products.jsx is placeholder data still awaiting the real list.
+const LIVE_SUPPLEMENTS = productsData.filter((p) => p.categorySlug === "supplements" && p.live);
 
 /* ---------------------------------------------------------------------------
  * Peptide molecule list — HIDDEN at client request (2026-06-20). The page stays
@@ -29,6 +35,8 @@ const SUPPLEMENT_CATS = [
 --------------------------------------------------------------------------- */
 
 export default function SupplementsPage() {
+  const [quickView, setQuickView] = useState(null);
+
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
       <Seo
@@ -45,6 +53,32 @@ export default function SupplementsPage() {
         subtitle="Compounded peptides and daily-foundation supplements, prepared by FDA-regulated pharmacies and matched to your protocol."
         chips={["503A compounding", "Physician-reviewed", "Purity tested"]}
       />
+
+      {/* ===== Shoppable supplements — same card grid as the treatment listings ===== */}
+      {LIVE_SUPPLEMENTS.length > 0 && (
+        <section className="bg-surface-2 py-[clamp(2.5rem,5.5vw,4rem)]">
+          <div className="mx-auto max-w-[1180px] px-5 md:px-10">
+            <div className="mb-5 text-center sm:mb-6">
+              <span className="nv-eyebrow">Available now</span>
+              <h2 className="mt-1.5 text-[1.4rem] font-extrabold leading-tight sm:mt-2 sm:text-[clamp(1.8rem,4vw,2.6rem)]">
+                Shop supplements
+              </h2>
+              <p className="mx-auto mt-1.5 max-w-[44ch] text-[0.78rem] text-muted sm:mt-2 sm:text-[1.02rem]">
+                Non-prescription formulas we stock alongside your protocol — no intake required.
+              </p>
+            </div>
+
+            {/* 2-up on phones, 3-up from tablet/kiosk width — matches the treatment shop */}
+            <div className="grid grid-cols-2 gap-[clamp(0.9rem,1.6vw,1.25rem)] md:grid-cols-3">
+              {LIVE_SUPPLEMENTS.map((p, i) => (
+                <ProductCard key={p.id} p={p} delay={(i % 3) * 0.05} floatDelay={-(i % 4) * 0.9} onQuickView={setQuickView} />
+              ))}
+            </div>
+          </div>
+
+          <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />
+        </section>
+      )}
 
       {/* Peptide molecule list hidden at client request (2026-06-20) — restore with SUPPLEMENT_CATS above.
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
