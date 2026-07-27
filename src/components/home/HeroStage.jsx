@@ -268,7 +268,7 @@ function KioskPromoCard({ kiosk = false }) {
 }
 
 /* One row of the "Explore by goal" list — pill thumb, gold tag, serif name. */
-function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false, snug = false }) {
+function GoalRow({ tag, name, shortName = null, to, onClick, icon = null, delay = 0, big = false, snug = false }) {
   // Rows share a left edge (the column itself is centered) so the list never zigzags.
   // big = kiosk sizing — the goal list is the kiosk's hero element.
   // snug = slightly smaller name for the tablet "Desktop Hero" columns.
@@ -281,18 +281,28 @@ function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false, 
       <Link
         to={to}
         onClick={onClick}
-        className={`group flex items-center justify-start border-b border-line transition-colors hover:border-primary/40 ${big ? "gap-5 py-5" : "gap-3.5 py-3"}`}
+        className={`group flex items-center justify-start border-b border-line transition-colors hover:border-primary/40 ${big ? "gap-5 py-5" : "gap-2 py-2.5 sm:gap-3.5 sm:py-3"}`}
       >
-        <span className={`grid shrink-0 place-items-center rounded-full border border-line bg-surface nv-shadow transition-transform duration-300 group-hover:scale-105 ${big ? "h-18 w-18" : "h-11 w-11"}`}>
-          {icon || <img src="/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-10" : "h-6"}`} />}
+        <span className={`grid shrink-0 place-items-center rounded-full border border-line bg-surface nv-shadow transition-transform duration-300 group-hover:scale-105 ${big ? "h-18 w-18" : "h-8 w-8 sm:h-11 sm:w-11"}`}>
+          {icon || <img src="/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-10" : "h-4.5 sm:h-6"}`} />}
         </span>
         <span className="min-w-0 text-left">
-          <span className={`block font-mono uppercase tracking-[0.16em] text-accent ${big ? "text-[0.78rem]" : "text-[0.6rem]"}`}>{tag}</span>
+          {/* tag truncates too: a wrapped 2-line tag would make this row taller
+              than its neighbour and knock the two columns' dividers out of line */}
+          <span className={`block truncate font-mono uppercase tracking-widest text-accent sm:tracking-[0.16em] ${big ? "text-[0.78rem]" : "text-[0.46rem] sm:text-[0.6rem]"}`}>{tag}</span>
           <span
-            className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.42rem]" : snug ? "text-[0.98rem]" : "text-[1.06rem]"}`}
+            className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.42rem]" : snug ? "text-[0.98rem]" : "text-[0.78rem] sm:text-[1.06rem]"}`}
             style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
           >
-            {name}
+            {/* Two columns leave ~127px of text on a phone (and ~232px at the
+                kiosk's larger type) — the longest label gets a short form
+                instead of an ellipsis. Roomy layouts keep the full wording. */}
+            {!shortName ? name : big ? shortName : (
+              <>
+                <span className="sm:hidden">{shortName}</span>
+                <span className="hidden sm:inline">{name}</span>
+              </>
+            )}
           </span>
         </span>
       </Link>
@@ -306,6 +316,10 @@ function GoalRow({ tag, name, to, onClick, icon = null, delay = 0, big = false, 
 function HeroHeadline({ compact = false, wide = false }) {
   const justify = compact ? "justify-center" : wide ? "justify-start" : "justify-center lg:justify-start";
   const mx = compact ? "mx-auto" : wide ? "" : "mx-auto lg:mx-0";
+  // Phone/tablet in the default layout runs the editorial stack: video →
+  // eyebrow → headline → goal grid. The sub-line and buttons return at lg,
+  // where the split hero has room for them beside the video.
+  const minimal = !compact && !wide;
   return (
     <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
       {/* eyebrow */}
@@ -322,12 +336,12 @@ function HeroHeadline({ compact = false, wide = false }) {
         Modern healthcare, <em className="whitespace-nowrap italic text-accent">built around you</em>
       </h1>
 
-      <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${mx} ${compact ? "text-[0.95rem]" : "text-[clamp(0.95rem,1.1vw,1.02rem)]"}`}>
+      <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${mx} ${minimal ? "hidden lg:block" : ""} ${compact ? "text-[0.95rem]" : "text-[clamp(0.95rem,1.1vw,1.02rem)]"}`}>
         Personalized treatment plans designed by licensed medical providers.
       </p>
 
       {/* CTAs */}
-      <div className={`flex flex-wrap items-center gap-5 ${compact ? "mt-6" : "mt-6"} ${justify}`}>
+      <div className={`flex-wrap items-center gap-5 mt-6 ${justify} ${minimal ? "hidden lg:flex" : "flex"}`}>
         <Link
           to="/treatments"
           onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero" })}
@@ -365,17 +379,11 @@ function EditorialHero({ compact = false, forceWide = false }) {
         </div>
       )}
 
-      {/* small-screen top video (default layout only) */}
+      {/* small-screen top video (default layout only) — full-bleed with a clean
+          bottom edge; the copy sits below it rather than inside a fade */}
       {!compact && !wide && (
         <div className="pointer-events-none relative lg:hidden">
-          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="block h-72 w-full object-cover sm:h-80" />
-          <span
-            className="absolute left-0 right-0 top-0 -bottom-0.5"
-            style={{
-              background:
-                "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--nv-bg) 50%, transparent) 42%, var(--nv-bg) 70%)",
-            }}
-          />
+          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="block h-76 w-full object-cover sm:h-88" />
         </div>
       )}
 
@@ -401,20 +409,22 @@ function EditorialHero({ compact = false, forceWide = false }) {
       )}
 
       <div className={`mx-auto flex max-w-375 flex-col justify-center px-5 md:px-10 ${compact ? "pb-8" : wide ? "pb-[clamp(2.2rem,4.5vw,3.6rem)] pt-[clamp(2.2rem,4.5vw,3.6rem)]" : "pb-[clamp(2.2rem,4.5vw,3.6rem)] lg:min-h-168 lg:py-[clamp(3rem,6vw,5.5rem)]"}`}>
-        <div className={`relative z-10 ${compact ? "mx-auto max-w-2xl text-center" : wide ? "w-[66%] text-left" : "-mt-24 mx-auto max-w-140 text-center lg:mx-0 lg:mt-0 lg:w-1/2 lg:text-left"}`}>
+        <div className={`relative z-10 ${compact ? "mx-auto max-w-2xl text-center" : wide ? "w-[66%] text-left" : "mt-10 mx-auto max-w-140 text-center lg:mx-0 lg:mt-0 lg:w-1/2 lg:text-left"}`}>
           {!compact && <HeroHeadline wide={wide} />}
 
           {/* explore by goal */}
-          <div className={`border-t border-line ${compact ? "mt-2 pt-4" : "mt-7 pt-5"}`}>
+          {/* On phones the rows carry their own dividers, so no section rule
+              and no label above them — the grid follows the headline directly */}
+          <div className={`border-line ${compact ? "mt-2 border-t pt-4" : "mt-6 lg:mt-7 lg:border-t lg:pt-5"}`}>
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-              className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-muted"
+              className={`font-mono text-[0.62rem] uppercase tracking-[0.2em] text-muted ${compact || wide ? "" : "hidden lg:block"}`}
             >
               Explore by goal
             </motion.span>
-            <div className={`mt-3 grid sm:grid-cols-2 ${wide ? "gap-x-5" : compact ? "gap-x-6" : "gap-x-8"}`}>
+            <div className={`grid grid-cols-2 ${compact || wide ? "mt-3" : "lg:mt-3"} ${wide ? "gap-x-5" : compact ? "gap-x-6" : "gap-x-4 sm:gap-x-8"}`}>
               {CONSULT_ORDER.map((key, i) => {
                 const c = CONSULTS[key];
                 return (
@@ -433,6 +443,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
               <GoalRow
                 tag="All categories"
                 name="Browse all treatments"
+                shortName="All treatments"
                 to="/treatments"
                 onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero-goals" })}
                 icon={<ArrowRight size={16} className="text-ink" />}
