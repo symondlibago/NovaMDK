@@ -92,17 +92,20 @@ export default function KioskPage() {
                 </div>
 
                 {/* kiosk devices — matched scale, overlapping; the card's own
-                    overflow-hidden clips the stands right at its bottom line */}
-                <div className="relative h-[clamp(360px,42vw,520px)]">
+                    overflow-hidden clips the stands right at its bottom line.
+                    Sized by HEIGHT, not width: these renders are tall portraits
+                    (~0.4 ratio), so a width-based size overflows the box upward
+                    and lands on the copy once the grid stacks on phones. */}
+                <div className="relative h-[clamp(340px,44vw,520px)]">
                   <img
                     src="/kiosk-2.avif"
                     alt="The NovaMDK website running on a portrait touchscreen kiosk"
-                    className="absolute left-[2%] bottom-[-15%] w-[46%]"
+                    className="absolute bottom-[-12%] left-[2%] h-[104%] w-auto md:bottom-[-15%] md:h-[122%]"
                   />
                   <img
                     src="/kiosk-1.avif"
                     alt="A NovaMDK kiosk showing a patient check-in and queue screen"
-                    className="absolute left-[60%] top-[24%] w-[42%]"
+                    className="absolute left-[54%] top-[22%] h-[76%] w-auto md:left-[60%] md:h-[94%]"
                   />
                 </div>
               </div>
@@ -125,7 +128,8 @@ export default function KioskPage() {
 
       {/* ===== What it is (with monitor detail) ===== */}
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4.5rem)] md:px-10">
-        <div className="grid items-center gap-[clamp(1.8rem,5vw,4.5rem)] md:grid-cols-2">
+        {/* image column gets the wider track — the monitor render is what sells this section */}
+        <div className="grid items-center gap-[clamp(1.8rem,5vw,3.5rem)] md:grid-cols-[0.88fr_1.12fr]">
           <Reveal>
             <span className="nv-eyebrow">The experience</span>
             <h2 className="mt-3 text-[clamp(1.8rem,4vw,2.7rem)] font-extrabold leading-tight">
@@ -154,13 +158,13 @@ export default function KioskPage() {
               />
               {/* bottom-anchored (items-end, no bottom padding) so the stand's
                   tip lands exactly on the card's bottom edge */}
-              <div className="relative flex min-h-[300px] items-end justify-center px-8 pt-8">
-                <div className="relative">
+              <div className="relative flex min-h-80 items-end justify-center px-3 pt-6 sm:px-5 md:min-h-105 md:pt-9">
+                <div className="relative w-full max-w-xl">
                   <img
                     src="/kioskmonitor.avif"
                     alt="Close-up of the NovaMDK Smart Kiosk touchscreen"
                     loading="lazy"
-                    className="max-h-96 w-auto object-contain drop-shadow-2xl"
+                    className="h-auto w-full object-contain drop-shadow-2xl"
                   />
                   <video
                     src="/right-vid.mp4"
