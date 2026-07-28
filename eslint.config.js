@@ -30,4 +30,8 @@ export default [
       ],
     },
   },
+  {
+    files: ['api/**/*.js', 'scripts/**/*.mjs'],
+    languageOptions: { globals: globals.node },
+  },
 ]

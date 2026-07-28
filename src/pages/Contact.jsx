@@ -7,6 +7,7 @@ import Footer from "../components/Nav/Footer";
 import PageHero from "../components/shop/PageHero";
 import Reveal from "../components/ui/Reveal";
 import { track, EVENTS } from "../lib/analytics";
+import { syncToGhl } from "../lib/ghl";
 
 const DETAILS = [
   { icon: Mail, label: "Email", value: "care@novamdk.com", href: "mailto:care@novamdk.com" },
@@ -80,15 +81,28 @@ function TopicSelect({ value, onChange }) {
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", topic: "General", message: "" });
 
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+    if (sending) return;
     // Record the submission (topic only — never name/email/message).
     track(EVENTS.CONTACT_SUBMITTED, { topic: form.topic });
-    // Front-end demo: no backend wired. Surface a success state.
-    setSent(true);
+    setSending(true);
+    setFailed(false);
+    const [first_name, ...rest] = form.name.trim().split(/\s+/);
+    const res = await syncToGhl({
+      patient: { first_name, last_name: rest.join(" "), email: form.email.trim() },
+      source: "NovaMDK contact form",
+      tags: ["contact-form", `topic-${form.topic.toLowerCase().replace(/\s+/g, "-")}`],
+      note: `Contact form — ${form.topic}\n\n${form.message.trim()}`,
+    });
+    setSending(false);
+    if (res?.ok) setSent(true);
+    else setFailed(true);
   };
 
   return (
@@ -220,10 +234,24 @@ export default function ContactPage() {
                       </label>
                       <button
                         type="submit"
-                        className="group mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.96rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+                        disabled={sending}
+                        className="group mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.96rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
                       >
-                        Send message <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                        {sending ? (
+                          <>Sending…</>
+                        ) : (
+                          <>Send message <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                        )}
                       </button>
+                      {failed && (
+                        <p className="rounded-xl bg-surface-2 px-3.5 py-2.5 text-center text-[0.82rem] leading-snug text-muted">
+                          We couldn't send that just now. Please try again, or email us directly at{" "}
+                          <a href="mailto:care@novamdk.com" className="font-semibold text-primary underline underline-offset-2">
+                            care@novamdk.com
+                          </a>
+                          .
+                        </p>
+                      )}
                       <p className="flex items-center justify-center gap-1.5 text-[0.78rem] text-muted">
                         <ShieldCheck size={13} className="text-primary" /> Your details are private and never sold.
                       </p>

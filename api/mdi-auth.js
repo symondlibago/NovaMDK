@@ -32,6 +32,9 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
       body: JSON.stringify(body)
     });
+    const mdiGet = (path) => fetch(`https://api.mdintegrations.com/v1/partner${path}`, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
     let patientId = null;
     const p = req.body.patient;
     const consent = req.body.consent || null;
@@ -58,6 +61,21 @@ export default async function handler(req, res) {
         // Creating (vs re-using) a patient requires the full record — MDI
         // rejects creates without DOB, gender, address, weight, and height.
         if (!patientId && hasFullProfile) {
+          const consentMeta = consent
+            ? {
+                consent: [
+                  consent.telehealth_informed_consent && 'telehealth',
+                  consent.terms_and_privacy && 'terms_privacy',
+                ].filter(Boolean).join(','),
+                consent_at: consent.accepted_at,
+              }
+            : {};
+          const metadata = [
+            JSON.stringify({ ...(p.metadata || {}), ...consentMeta }),
+            JSON.stringify(consentMeta),
+            JSON.stringify({ consent_at: consentMeta.consent_at || null }),
+          ].find((m) => m.length <= 255) ?? '';
+
           const createRes = await mdi('/patients', {
             first_name: p.first_name,
             last_name: p.last_name,
@@ -77,7 +95,7 @@ export default async function handler(req, res) {
             },
             is_sms_enabled: true,
             is_email_enabled: true,
-            metadata: { ...(p.metadata || {}), consent }
+            metadata
           });
           if (createRes.ok) {
             const created = await createRes.json();
@@ -90,6 +108,40 @@ export default async function handler(req, res) {
         console.error('MDI patient prefill failed:', e.message);
       }
     }
+    // A returning patient only types an email — MDI recognises them and the
+    // modal skips every profile step, so the client has nothing more to pass
+    // on. Pull the record back from MDI instead, otherwise the CRM contact for
+    // a repeat visit is an email address with every other column blank.
+    let patientProfile = null;
+    if (patientId) {
+      try {
+        const profileRes = await mdiGet(`/patients/${patientId}`);
+        if (profileRes.ok) {
+          const full = await profileRes.json();
+          const d = full.data || full;
+          patientProfile = {
+            first_name: d.first_name || null,
+            last_name: d.last_name || null,
+            email: d.email || p?.email || null,
+            phone_number: d.phone_number || null,
+            date_of_birth: d.date_of_birth || null,
+            gender: d.gender ?? null,
+            address: d.address ? {
+              address: d.address.address || null,
+              zip_code: d.address.zip_code || null,
+              city_name: d.address.city_name || null,
+              // MDI nests the state; GHL wants the plain name.
+              state_name: d.address.state?.name || null
+            } : null
+          };
+        } else {
+          console.error('MDI Patient Fetch Rejected:', await profileRes.text());
+        }
+      } catch (e) {
+        console.error('MDI patient fetch failed:', e.message);
+      }
+    }
+
     if (consent && (patientId || p?.email)) {
       console.info('NovaMDK consent:', JSON.stringify({
         patient_id: patientId,
@@ -114,7 +166,12 @@ export default async function handler(req, res) {
     }
 
     const voucherData = await voucherResponse.json();
-    return res.status(200).json({ ...voucherData, patient_id: patientId, prefill: !!patientId });
+    return res.status(200).json({
+      ...voucherData,
+      patient_id: patientId,
+      prefill: !!patientId,
+      patient_profile: patientProfile
+    });
 
   } catch (error) {
     console.error("Internal API Error:", error.message);

@@ -11,9 +11,11 @@ import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
 import { productsData, isCompounded, isOtc } from "../components/data/products";
 import { productSlug, productPath } from "../lib/slug";
+import { syncToGhl, treatmentLabel } from "../lib/ghl";
 import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
 import useKioskMode from "../lib/useKioskMode";
 import useLockBodyScroll from "../lib/useLockBodyScroll";
+import DatePicker from "../components/ui/DatePicker";
 
 const TRUST = [
   { icon: Stethoscope, label: "U.S. licensed providers" },
@@ -66,16 +68,8 @@ export default function ProductPage() {
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(product);
-  // Prescription treatment pages show a single general compounded notice (per
-  // counsel). The research/FDA disclaimer is reserved for the supplement line.
   const isSupplement = product.categorySlug === "supplements";
   const hasFda = isSupplement && !!fdaDisclaimer(product);
-
-  // MDIntegrations trigger — the product page is where intake begins. Mint a
-  // questionnaire voucher via /api/mdi-auth, then hand off to MDI. (Final
-  // destination/handoff is wired once the team confirms it.)
-  // `patient` (from the contact modal) is find-or-created in MDI first, so the
-  // embedded intake opens already knowing them — no double data entry.
   const startVisit = async (patient) => {
     track(EVENTS.START_VISIT, { id: product.id, name: product.name, category: product.categorySlug });
     setErr("");
@@ -95,6 +89,34 @@ export default function ProductPage() {
       // Contact-only submit + no MDI record found: the modal collects the
       // rest of the profile (steps 2–3) before we mint the voucher.
       if (voucher.need_profile) return { needProfile: true };
+
+      // The one and only CRM write, deliberately placed after the profile is
+      // complete. Syncing at the email gate meant every abandoned funnel — and
+      // every mistyped address — left a contact behind with nothing but an
+      // email, so the CRM filled with junk rows.
+      //
+      // Reaching this line means the profile exists: either MDI recognised a
+      // returning patient (who never sees steps 1–3), or a new patient finished
+      // step 3 and MDI created them. `patient_profile` is MDI's own record and
+      // is authoritative; fall back to the modal's data if MDI couldn't be
+      // read, so a completed profile is never lost.
+      const profile = voucher.patient_profile || (patient?.first_name ? patient : null);
+      if (profile?.email) {
+        syncToGhl({
+          patient: profile,
+          treatment: treatmentLabel(product),
+          // Prices are display strings ("$249"), so strip to a number for the
+          // opportunity's value — GHL rejects anything non-numeric.
+          value: Number(String(product.price).replace(/[^0-9.]/g, "")) || undefined,
+          source: "NovaMDK website",
+          tags: ["website-lead", product.categorySlug, "intake-started"],
+          note: `Started ${treatmentLabel(product)}.` +
+            (patient?.consent?.accepted_at
+              ? ` Accepted telehealth consent and terms at ${patient.consent.accepted_at}.`
+              : ""),
+        });
+      }
+
       const token = voucher.id || new URL(voucher.onboarding_url || "https://x.invalid").searchParams.get("token");
       if (token) {
         navigate(`/intake?token=${encodeURIComponent(token)}&product=${encodeURIComponent(product.name)}&pid=${product.id}`);
@@ -671,7 +693,9 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
   };
 
   return (
-    <div onClick={onClose} className="fixed inset-0 z-120 flex overflow-y-auto bg-ink/65 p-6 backdrop-blur-sm">
+    /* data-lenis-prevent: Lenis intercepts touchmove globally, so without it a
+       modal taller than the phone viewport can't be scrolled at all. */
+    <div onClick={onClose} data-lenis-prevent className="fixed inset-0 z-120 flex overflow-y-auto bg-ink/65 p-6 backdrop-blur-sm">
       <div
         onClick={(e) => e.stopPropagation()}
         className="relative m-auto w-full max-w-110 rounded-3xl border border-line bg-surface p-6 nv-shadow-lg md:p-8"
@@ -736,7 +760,7 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
               <div className="grid grid-cols-2 gap-3">
                 <label className={labelCls}>
                   Date of birth
-                  <input type="date" value={form.dob} onChange={set("dob")} autoComplete="bday" className={inputCls} />
+                  <DatePicker value={form.dob} onChange={setVal("dob")} placeholder="Select…" />
                 </label>
                 <label className={labelCls}>
                   Sex at birth
@@ -907,6 +931,7 @@ function NvSelect({ value, onChange, options, placeholder = "Select…" }) {
       {open && (
         <ul
           role="listbox"
+          data-lenis-prevent
           className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-y-auto rounded-xl border border-line bg-surface p-1.5 nv-shadow-lg nv-scroll"
         >
           {opts.map((o) => {
@@ -988,7 +1013,7 @@ function AddressAutocomplete({ value, onChange, onPick, className }) {
         className={className}
       />
       {open && (
-        <ul className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-y-auto rounded-xl border border-line bg-surface p-1.5 nv-shadow-lg nv-scroll">
+        <ul data-lenis-prevent className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-y-auto rounded-xl border border-line bg-surface p-1.5 nv-shadow-lg nv-scroll">
           {sugs.map((s) => (
             <li key={s.place_id}>
               <button
