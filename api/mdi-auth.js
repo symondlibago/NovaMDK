@@ -1,9 +1,14 @@
-const CLIENT_ID = process.env.MDI_CLIENT_ID || "727bf2a9-ffa8-4aa6-8d10-23029907e8c9";
-const CLIENT_SECRET = process.env.MDI_CLIENT_SECRET || "Nv9EG1YSJDbzAl3DC8WCkyZxwBkpXgrOBeSFy6SS";
+const CLIENT_ID = process.env.MDI_CLIENT_ID;
+const CLIENT_SECRET = process.env.MDI_CLIENT_SECRET;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  if (!CLIENT_ID || !CLIENT_SECRET) {
+    console.error('MDI credentials missing — set MDI_CLIENT_ID and MDI_CLIENT_SECRET.');
+    return res.status(500).json({ error: 'MDI not configured' });
   }
 
   try {
