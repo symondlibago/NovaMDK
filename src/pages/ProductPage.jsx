@@ -9,7 +9,7 @@ import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
-import { productsData, isCompounded, isOtc } from "../components/data/products";
+import { productsData, visibleProducts, isCompounded, isOtc, isHidden } from "../components/data/products";
 import { productSlug, productPath } from "../lib/slug";
 import { syncToGhl, treatmentLabel } from "../lib/ghl";
 import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
@@ -56,6 +56,11 @@ export default function ProductPage() {
   }, [product?.id]);
 
   if (!product) return <Navigate to="/treatments" replace />;
+  // Pulled from the catalogue: bounce to the category rather than leaving a
+  // buyable page reachable by old links, QR codes or a stale search result.
+  if (isHidden(product)) {
+    return <Navigate to={isOtc(product) ? "/supplements" : `/treatments/${product.categorySlug}`} replace />;
+  }
   if (id !== productSlug(product)) return <Navigate to={productPath(product)} replace />;
 
   const categoryLabel = product.categoryName;
@@ -63,7 +68,7 @@ export default function ProductPage() {
   // /treatments/supplements listing to go back to.
   const otc = isOtc(product);
   const backLink = otc ? "/supplements" : `/treatments/${product.categorySlug}`;
-  const related = productsData
+  const related = visibleProducts
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && isOtc(p) === otc)
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;

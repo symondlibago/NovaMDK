@@ -10,11 +10,11 @@ import Photo from "../components/ui/Photo";
 import Reveal from "../components/ui/Reveal";
 import { CompoundedDisclaimer } from "../components/Compliance";
 import { ProductCard, QuickViewModal } from "../components/shop/ProductCard";
-import { productsData } from "../components/data/products";
+import { visibleProducts } from "../components/data/products";
 
 // Only products flagged `live: true` are shoppable — the rest of the supplement
 // catalog in products.jsx is placeholder data still awaiting the real list.
-const LIVE_SUPPLEMENTS = productsData.filter((p) => p.categorySlug === "supplements" && p.live);
+const LIVE_SUPPLEMENTS = visibleProducts.filter((p) => p.categorySlug === "supplements" && p.live);
 
 /* ---------------------------------------------------------------------------
  * Peptide molecule list — HIDDEN at client request (2026-06-20). The page stays

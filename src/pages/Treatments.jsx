@@ -11,7 +11,7 @@ import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
-import { productsData } from "../components/data/products";
+import { visibleProducts } from "../components/data/products";
 import { CATEGORY_META } from "../lib/categoryMeta";
 import { track, EVENTS } from "../lib/analytics";
 
@@ -35,12 +35,15 @@ const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   cta: "Browse treatments",
   goal: CONSULTS[k].goalSlug,
   link: `/treatments/${CONSULTS[k].goalSlug}`,
+  // Every product in the goal is hidden — badge the tile rather than sending
+  // people to an empty shelf expecting something to buy.
+  comingSoon: !visibleProducts.some((p) => p.categorySlug === CONSULTS[k].goalSlug),
   ...(CAT_PHOTOS[CONSULTS[k].goalSlug] || {}),
 }));
 
 // Valid product categories a quiz can land on (everything but pure supplements).
 const VALID_GOALS = new Set(
-  productsData.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
+  visibleProducts.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
 );
 
 const TRUST = [

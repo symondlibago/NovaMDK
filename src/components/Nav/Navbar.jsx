@@ -5,7 +5,7 @@ import { ChevronDown, ArrowRight, Menu, X, ClipboardList, LogIn, LifeBuoy } from
 import { getLenis } from "../../lib/smoothScroll";
 import Marquee from "../ui/Marquee";
 import useKioskMode from "../../lib/useKioskMode";
-import { productsData } from "../data/products";
+import { visibleProducts } from "../data/products";
 import { productPath } from "../../lib/slug";
 
 // Kiosk burger menu — top categories, each expanding to a few treatments plus
@@ -150,7 +150,7 @@ function MobileGroup({ title, items, close, viewAllLink, defaultOpen = false }) 
 /* ---------------------- kiosk category accordion ---------------------- */
 function KioskMenuGroup({ cat, close }) {
   const [open, setOpen] = useState(false);
-  const treatments = productsData.filter((p) => p.categorySlug === cat.goal);
+  const treatments = visibleProducts.filter((p) => p.categorySlug === cat.goal);
   return (
     <div className="border-b border-line py-4">
       <button aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center justify-between text-[17px] font-medium text-ink">

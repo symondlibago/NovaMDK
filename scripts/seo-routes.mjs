@@ -17,19 +17,32 @@ function extractProducts() {
     throw new Error("seo-routes: no product ids found in products.jsx — regex out of sync?");
   }
   const field = (block, name) => block.match(new RegExp(`${name}:\\s*"([^"]*)"`))?.[1] ?? "";
-  const products = idMatches.map((m, i) => {
-    const end = i + 1 < idMatches.length ? idMatches[i + 1].index : src.length;
-    const block = src.slice(m.index, end);
-    return {
-      id: Number(m[1]),
-      name: field(block, "name"),
-      subtitle: field(block, "subtitle"),
-      categoryName: field(block, "categoryName"),
-      categorySlug: field(block, "categorySlug"),
-      img: field(block, "img"),
-      brandName: field(block, "brandName"),
-    };
-  });
+  const flag = (block, name) => new RegExp(`${name}:\\s*true`).test(block);
+  // Stop the last product's block at the array's closing bracket. Left to run
+  // to end-of-file it swallows the helpers and comments below, so merely
+  // mentioning `hidden: true` in prose down there would delist a real product.
+  const lastIndex = idMatches[idMatches.length - 1].index;
+  const arrayEnd = src.indexOf("\n];", lastIndex);
+  const limit = arrayEnd === -1 ? src.length : arrayEnd;
+
+  const products = idMatches
+    .map((m, i) => {
+      const end = i + 1 < idMatches.length ? idMatches[i + 1].index : limit;
+      const block = src.slice(m.index, end);
+      return {
+        id: Number(m[1]),
+        name: field(block, "name"),
+        subtitle: field(block, "subtitle"),
+        categoryName: field(block, "categoryName"),
+        categorySlug: field(block, "categorySlug"),
+        img: field(block, "img"),
+        brandName: field(block, "brandName"),
+        hidden: flag(block, "hidden"),
+      };
+    })
+    // `hidden: true` products redirect to their category, so listing them would
+    // hand Google a sitemap full of redirects.
+    .filter((p) => !p.hidden);
   // Guard against slug collisions — two products must never share a URL.
   const seen = new Map();
   for (const p of products) {
