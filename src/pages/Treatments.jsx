@@ -11,7 +11,7 @@ import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
-import { visibleProducts } from "../components/data/products";
+import { productsData, visibleProducts } from "../components/data/products";
 import { CATEGORY_META } from "../lib/categoryMeta";
 import { track, EVENTS } from "../lib/analytics";
 
@@ -42,8 +42,12 @@ const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
 }));
 
 // Valid product categories a quiz can land on (everything but pure supplements).
+// Read from the full catalogue, not the visible list: a category whose products
+// are all hidden still has a real page — the Coming soon holding state — and it's
+// linked from the nav, the tiles above and the sitemap. Filtering by visibility
+// here would bounce all of those back to /treatments.
 const VALID_GOALS = new Set(
-  visibleProducts.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
+  productsData.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
 );
 
 const TRUST = [

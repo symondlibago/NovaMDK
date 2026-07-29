@@ -14,6 +14,13 @@ const EASE = [0.16, 1, 0.3, 1];
 // Tube/cream renders sit small inside a landscape frame — scale them up in the card.
 const isTube = (img = "") => /rapamycintropical|ghcku/.test(img);
 
+// Most branded GLP-1 pens are tall portrait renders, so object-contain fits them
+// to the frame's height and leaves half its width empty. Scaled less than the
+// tubes above: growth here is vertical too, and the frame has no room to spare.
+// Zepbound is deliberately absent — its render is near-square, so it already
+// fills the frame and scaling it just overflows.
+const isPen = (img = "") => /mounjaro|ozempic|wegovy/.test(img);
+
 export function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
   return (
     <motion.div
@@ -49,7 +56,9 @@ export function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
             className={`pointer-events-none h-full w-full object-contain mix-blend-multiply drop-shadow-xl transition-transform duration-500 ease-out ${
               isTube(p.img)
                 ? "scale-150 group-hover:scale-[1.6]"
-                : "group-hover:-translate-y-1.5 group-hover:scale-105"
+                : isPen(p.img)
+                  ? "scale-[1.35] group-hover:scale-[1.45]"
+                  : "group-hover:-translate-y-1.5 group-hover:scale-105"
             }`}
           />
         </span>
