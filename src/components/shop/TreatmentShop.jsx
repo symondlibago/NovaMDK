@@ -23,38 +23,17 @@ export default function TreatmentShop({ category, showBack = false }) {
       if (bi === -1) return -1;
       return ai - bi;                            // both pinned â†’ pinned order
     });
-  // The display name has to come from the full catalogue, not the visible list:
-  // when every product in a category is hidden there's nothing left to read it
-  // from, and that's exactly when the holding state needs it.
+  // The display name has to come from the full catalogue, not the visible list,
+  // so the safety net below still has a heading to show.
   const name =
     products[0]?.categoryName ||
     productsData.find((p) => p.categorySlug === category)?.categoryName ||
     "";
 
-  // More treatments exist in this category but aren't shoppable yet. Counting
-  // them here means the block appears and disappears purely by flipping
-  // `hidden` on a product — no second list to keep in sync.
-  const soonCount = productsData.filter((p) => p.categorySlug === category && p.hidden).length;
-
-  const comingSoonBlock = soonCount > 0 && (
-    <div className="mt-12 overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] bg-panel px-6 py-[clamp(2.4rem,5vw,3.4rem)] text-center text-on-panel">
-      <span className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-accent">More {name}</span>
-      <h3 className="mt-2.5 font-display text-[clamp(1.7rem,4vw,2.6rem)] font-extrabold leading-tight">Coming soon</h3>
-      <p className="mx-auto mt-3 max-w-[46ch] text-[1rem] leading-relaxed text-on-panel/70">
-        We're expanding this range. Our care team can walk you through what's coming and what fits you today.
-      </p>
-      <Link
-        to="/contact"
-        className="mt-7 inline-flex items-center gap-2 rounded-full bg-bg px-7 py-3.5 text-[0.95rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg"
-      >
-        Talk to our care team <ArrowRight size={15} />
-      </Link>
-    </div>
-  );
-
-  // Nothing shoppable at all — the block becomes the whole page. The category is
-  // still linked from the nav, /treatments and any indexed page, so rendering
-  // nothing would read as broken.
+  // Safety net only. Categories with nothing shoppable are commented out of the
+  // nav, footer, carousel and categoryMeta, and Treatments.jsx redirects their
+  // URLs — so this should never render. It exists so a stray link degrades to a
+  // sentence rather than a blank page.
   if (!products.length) {
     return (
       <section id="shop" className="scroll-mt-24 bg-surface-2 pb-[clamp(2.5rem,5.5vw,5rem)] pt-2">
@@ -64,21 +43,19 @@ export default function TreatmentShop({ category, showBack = false }) {
               <BackButton />
             </div>
           )}
-          {comingSoonBlock || (
-            <div className="mx-auto max-w-[520px] rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface px-6 py-[clamp(2.5rem,6vw,4rem)] text-center nv-shadow">
-              <span className="nv-eyebrow">{name}</span>
-              <h2 className="mt-2 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">Coming soon</h2>
-              <p className="mx-auto mt-3 max-w-[38ch] text-[1rem] leading-relaxed text-muted">
-                We're updating this range. Our care team can talk you through the options in the meantime.
-              </p>
-              <Link
-                to="/contact"
-                className="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.95rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
-              >
-                Talk to our care team <ArrowRight size={15} />
-              </Link>
-            </div>
-          )}
+          <div className="mx-auto max-w-[520px] rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface px-6 py-[clamp(2.5rem,6vw,4rem)] text-center nv-shadow">
+            <span className="nv-eyebrow">{name}</span>
+            <h2 className="mt-2 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">Not available right now</h2>
+            <p className="mx-auto mt-3 max-w-[38ch] text-[1rem] leading-relaxed text-muted">
+              Our care team can talk you through the treatments we do offer.
+            </p>
+            <Link
+              to="/contact"
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[0.95rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+            >
+              Talk to our care team <ArrowRight size={15} />
+            </Link>
+          </div>
         </div>
       </section>
     );
@@ -110,8 +87,6 @@ export default function TreatmentShop({ category, showBack = false }) {
             <ProductCard key={p.id} p={p} delay={(i % 3) * 0.05} floatDelay={-(i % 4) * 0.9} onQuickView={setQuickView} />
           ))}
         </div>
-
-        {comingSoonBlock}
 
         <div className="mt-10 text-center">
           <Link

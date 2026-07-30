@@ -11,7 +11,7 @@ import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
-import { productsData, visibleProducts } from "../components/data/products";
+import { visibleProducts } from "../components/data/products";
 import { CATEGORY_META } from "../lib/categoryMeta";
 import { track, EVENTS } from "../lib/analytics";
 
@@ -22,7 +22,7 @@ const FAQ = lazy(() => import("../components/FAQ"));
 // health has no exported asset yet, so it falls back to the navy DarkCard.
 const CAT_PHOTOS = {
   "weight-loss": { photo: "/cat-weightloss.webp?v=2", overlay: "/cat-weightloss-pen.webp", tone: "light", photoPos: "right 16%" },
-  "unisex-skin-health": { photo: "/cat-skinhealth.webp", tone: "light", photoPos: "right center" },
+  // "unisex-skin-health": { photo: "/cat-skinhealth.webp", tone: "light", photoPos: "right center" }, // no shoppable products (2026-07-31)
   "unisex-sports-medicine": { photo: "/cat-sportsmedicine.webp", tone: "dark", photoPos: "right center" },
   "unisex-anti-aging-rx": { photo: "/cat-longetivity.webp", overlay: "/cat-longetivity-bottle.webp", tone: "dark", photoPos: "right center" },
 };
@@ -35,19 +35,15 @@ const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
   cta: "Browse treatments",
   goal: CONSULTS[k].goalSlug,
   link: `/treatments/${CONSULTS[k].goalSlug}`,
-  // Every product in the goal is hidden — badge the tile rather than sending
-  // people to an empty shelf expecting something to buy.
-  comingSoon: !visibleProducts.some((p) => p.categorySlug === CONSULTS[k].goalSlug),
   ...(CAT_PHOTOS[CONSULTS[k].goalSlug] || {}),
 }));
 
 // Valid product categories a quiz can land on (everything but pure supplements).
-// Read from the full catalogue, not the visible list: a category whose products
-// are all hidden still has a real page — the Coming soon holding state — and it's
-// linked from the nav, the tiles above and the sitemap. Filtering by visibility
-// here would bounce all of those back to /treatments.
+// Driven by visibility: a category with nothing shoppable is commented out of the
+// nav, footer and carousel, so its URL should redirect here rather than render an
+// empty shelf.
 const VALID_GOALS = new Set(
-  productsData.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
+  visibleProducts.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
 );
 
 const TRUST = [

@@ -3,21 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Reveal from "../ui/Reveal";
 
-/* Category with nothing shoppable right now. Covers the whole tile so the state
-   is unmissable, but stays pointer-events-none: the card still links through to
-   the category page, which explains the gap and offers the care team. The dark
-   scrim means one treatment works on every card variant. */
-function ComingSoonOverlay() {
-  return (
-    <span className="pointer-events-none absolute inset-0 z-[4] grid place-items-center overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))]">
-      <span className="absolute inset-0 bg-ink/55 backdrop-blur-[2px]" />
-      <span className="relative rotate-[-4deg] rounded-2xl border-2 border-white/75 bg-ink/75 px-[clamp(1.1rem,3vw,2rem)] py-[clamp(0.6rem,1.4vw,1rem)] text-center font-display text-[clamp(1.05rem,2.6vw,1.6rem)] font-extrabold uppercase leading-none tracking-[0.12em] text-white nv-shadow-lg">
-        Coming soon
-      </span>
-    </span>
-  );
-}
-
 function DarkCard({ it, art, onClick, hero = false }) {
   return (
     <Link
@@ -60,9 +45,8 @@ function DarkCard({ it, art, onClick, hero = false }) {
         <span className="grid h-7 w-7 place-items-center rounded-full bg-white/10 transition-colors duration-300 group-hover:bg-ink/10">
           <ArrowRight size={14} strokeWidth={2.4} />
         </span>
-        {it.comingSoon ? "Learn more" : it.cta || "Start assessment"}
+        {it.cta || "Start assessment"}
       </span>
-      {it.comingSoon && <ComingSoonOverlay />}
     </Link>
   );
 }
@@ -121,9 +105,8 @@ function PhotoCard({ it, onClick, hero = false }) {
         <span className={`grid h-7 w-7 place-items-center rounded-full transition-colors duration-300 ${darkTone ? "bg-white/10 group-hover:bg-ink/10" : "bg-white/15"}`}>
           <ArrowRight size={14} strokeWidth={2.4} />
         </span>
-        {it.comingSoon ? "Learn more" : it.cta || "Browse treatments"}
+        {it.cta || "Browse treatments"}
       </span>
-      {it.comingSoon && <ComingSoonOverlay />}
     </Link>
   );
 }
@@ -159,9 +142,8 @@ function LightCard({ it, art, onClick, hero = false }) {
         <span className="grid h-8 w-8 place-items-center rounded-full border border-line text-muted transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-on-primary">
           <ArrowRight size={14} strokeWidth={2.4} />
         </span>
-        {it.comingSoon ? "Learn more" : it.cta || "Explore"}
+        {it.cta || "Explore"}
       </span>
-      {it.comingSoon && <ComingSoonOverlay />}
     </Link>
   );
 }
