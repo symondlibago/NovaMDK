@@ -8,7 +8,7 @@ const liquidEase = [0.16, 1, 0.3, 1];
 // Category cards — full-bleed photo + brand badge; each links into that goal's catalog.
 const CATEGORIES = [
   { name: "Weight & Metabolism", img: "/weight-metabolism.avif", goal: "weight-loss" },
-  // { name: "Dermatology", img: "/dermatology.avif", goal: "unisex-skin-health" }, // no shoppable products (2026-07-31)
+  { name: "Dermatology", img: "/dermatology.avif", goal: "unisex-skin-health" },
   { name: "Longevity & Anti-Aging", img: "/mens-health.avif", goal: "unisex-anti-aging-rx" },
   { name: "Sexual Health", img: "/sexual-health.avif", goal: "mens-health" },
   { name: "Sports Medicine", img: "/pain-recovery.avif", goal: "unisex-sports-medicine" },
