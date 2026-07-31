@@ -41,11 +41,6 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.novamdk.com/treatments/unisex-skin-health</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.9</priority>
-  </url>
-  <url>
     <loc>https://www.novamdk.com/treatments/mens-health</loc>
     <lastmod>2026-07-31</lastmod>
     <priority>0.9</priority>
@@ -67,81 +62,6 @@
   </url>
   <url>
     <loc>https://www.novamdk.com/product/wegovy-semaglutide</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/semaglutide-cyanocobalamin-b12-1-ml-vial-2-mg-starter</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/semaglutide-cyanocobalamin-b12-2-ml-vial-10-mg-maintenance</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/semaglutide-glycine-injection-1-ml-vial-2-mg-starter</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/semaglutide-glycine-injection-2-ml-vial-10-mg-maintenance</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/tirzepatide-niacinamide-2-5-ml-vial-20-mg-starter</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/tirzepatide-niacinamide-2-ml-vial-34-mg-mid-dose</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/tirzepatide-niacinamide-4-ml-vial-68-mg-maintenance</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/tirzepatide-glycine-2-5-ml-vial-20-mg-starter</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/tirzepatide-glycine-2-ml-vial-34-mg-mid-dose</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/tirzepatide-glycine-4-ml-vial-68-mg-maintenance</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/sermorelin-nasal-spray-10-ml-bottle</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/lipo-c-injection-10-ml-vial</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/semaglutide-sublingual-drops-submagna-15-ml-bottle-1-mg-ml-starter</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/semaglutide-sublingual-drops-submagna-30-ml-23-ml-bottles-mid-dose</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/semaglutide-sublingual-drops-submagna-30-ml-bottle-2-mg-ml-maintenance</loc>
     <lastmod>2026-07-31</lastmod>
     <priority>0.8</priority>
   </url>
@@ -186,16 +106,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.novamdk.com/product/sermorelin-injection-3-ml-or-9-ml-vial</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/sermorelin-mini-troche-600-mcg</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.novamdk.com/product/low-dose-naltrexone-ldn-1-5-mg-flex-dose-starter</loc>
     <lastmod>2026-07-31</lastmod>
     <priority>0.8</priority>
@@ -207,11 +117,6 @@
   </url>
   <url>
     <loc>https://www.novamdk.com/product/low-dose-naltrexone-ldn-4-5-mg-flex-dose-maintenance</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/luminance-brightening-cream</loc>
     <lastmod>2026-07-31</lastmod>
     <priority>0.8</priority>
   </url>
@@ -262,11 +167,6 @@
   </url>
   <url>
     <loc>https://www.novamdk.com/product/bremelanotide-nasal-spray-10-or-25-mg-ml</loc>
-    <lastmod>2026-07-31</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.novamdk.com/product/glutaryl-topical-glutathione-spray</loc>
     <lastmod>2026-07-31</lastmod>
     <priority>0.8</priority>
   </url>

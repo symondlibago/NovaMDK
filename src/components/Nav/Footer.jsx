@@ -36,7 +36,7 @@ export default function Footer() {
               <li><Link to="/treatments" className="transition-colors hover:text-on-panel">All Treatments</Link></li>
               <li><Link to="/treatments/weight-loss" className="transition-colors hover:text-on-panel">Weight Loss</Link></li>
               <li><Link to="/treatments/unisex-anti-aging-rx" className="transition-colors hover:text-on-panel">Anti-Aging</Link></li>
-              <li><Link to="/treatments/unisex-skin-health" className="transition-colors hover:text-on-panel">Skin Health</Link></li>
+              {/* Skin Health commented out (2026-07-31) — no shoppable products */}
               <li><Link to="/treatments/mens-health" className="transition-colors hover:text-on-panel">Sexual Health</Link></li>
               <li><Link to="/treatments/unisex-sports-medicine" className="transition-colors hover:text-on-panel">Sports Medicine</Link></li>
             </ul>

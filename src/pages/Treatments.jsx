@@ -22,7 +22,7 @@ const FAQ = lazy(() => import("../components/FAQ"));
 // health has no exported asset yet, so it falls back to the navy DarkCard.
 const CAT_PHOTOS = {
   "weight-loss": { photo: "/cat-weightloss.webp?v=2", overlay: "/cat-weightloss-pen.webp", tone: "light", photoPos: "right 16%" },
-  "unisex-skin-health": { photo: "/cat-skinhealth.webp", tone: "light", photoPos: "right center" },
+  // "unisex-skin-health": { photo: "/cat-skinhealth.webp", tone: "light", photoPos: "right center" }, // no shoppable products (2026-07-31)
   "unisex-sports-medicine": { photo: "/cat-sportsmedicine.webp", tone: "dark", photoPos: "right center" },
   "unisex-anti-aging-rx": { photo: "/cat-longetivity.webp", overlay: "/cat-longetivity-bottle.webp", tone: "dark", photoPos: "right center" },
 };
