@@ -1,3 +1,5 @@
+import { blocked, signReleaseToken } from './_guard.js';
+
 const CLIENT_ID = process.env.MDI_CLIENT_ID;
 const CLIENT_SECRET = process.env.MDI_CLIENT_SECRET;
 
@@ -5,6 +7,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
+
+  if (blocked(req, res)) return;
 
   if (!CLIENT_ID || !CLIENT_SECRET) {
     console.error('MDI credentials missing — set MDI_CLIENT_ID and MDI_CLIENT_SECRET.');
@@ -25,9 +29,8 @@ export default async function handler(req, res) {
     });
 
     if (!authResponse.ok) {
-      const errText = await authResponse.text();
-      console.error("MDI Auth Rejected:", errText);
-      return res.status(500).json({ error: "Auth Failed", details: errText });
+      console.error("MDI Auth Rejected:", await authResponse.text());
+      return res.status(502).json({ error: "Upstream request failed" });
     }
     
     const authData = await authResponse.json();
@@ -148,11 +151,7 @@ export default async function handler(req, res) {
     }
 
     if (consent && (patientId || p?.email)) {
-      console.info('NovaMDK consent:', JSON.stringify({
-        patient_id: patientId,
-        email: p?.email || null,
-        ...consent,
-      }));
+      console.info('NovaMDK consent:', JSON.stringify({ patient_id: patientId, ...consent }));
     }
 
     // STEP 3: Generate Voucher (bound to the patient when we have one)
@@ -165,9 +164,8 @@ export default async function handler(req, res) {
     });
 
     if (!voucherResponse.ok) {
-      const errText = await voucherResponse.text();
-      console.error("MDI Voucher Rejected:", errText);
-      return res.status(500).json({ error: "Voucher Failed", details: errText });
+      console.error("MDI Voucher Rejected:", await voucherResponse.text());
+      return res.status(502).json({ error: "Voucher failed" });
     }
 
     const voucherData = await voucherResponse.json();
@@ -175,11 +173,13 @@ export default async function handler(req, res) {
       ...voucherData,
       patient_id: patientId,
       prefill: !!patientId,
-      patient_profile: patientProfile
+      patient_profile: patientProfile,
+      // Null unless API_SIGNING_SECRET is set — see api/_guard.js.
+      release_token: signReleaseToken(patientId)
     });
 
   } catch (error) {
     console.error("Internal API Error:", error.message);
-    return res.status(500).json({ error: 'Catch Block Triggered', details: error.message });
+    return res.status(500).json({ error: 'Internal error' });
   }
 }

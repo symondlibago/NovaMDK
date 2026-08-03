@@ -107,12 +107,8 @@ export async function upsertContact({ patient = {}, treatment, tags = [], source
   const data = await ghlFetch("/contacts/upsert", { method: "POST", body });
   const contact = data?.contact || null;
 
-  // GHL matches on email first and phone second. When the email already exists
-  // but the phone is registered to a DIFFERENT contact, it keeps the two
-  // records apart and silently discards the number — so say so, rather than
-  // leaving an unexplained blank in the Phone column.
   if (phone && contact && !contact.phone) {
-    console.warn(`GHL saved ${email || phone} without its phone (${phone}) — that number already belongs to another contact.`);
+    console.warn(`GHL saved contact ${contact.id} without its phone — that number already belongs to another contact.`);
   }
 
   if (contact?.id && nextTreatment) {

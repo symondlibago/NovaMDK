@@ -27,11 +27,9 @@ export default function IntakePage() {
   useEffect(() => {
     const onMessage = (event) => {
       if (event.origin !== MDI_ORIGIN) return;
-      console.log("[MDI message]", event.data);
+      if (import.meta.env.DEV) console.log("[MDI message]", event.data);
       const msg = typeof event.data === "object" && event.data !== null ? event.data : {};
       if (msg.event === "encounter_created" && msg.data) {
-        // encounter_id here IS the partner-API case_id — needed to release
-        // the held case once payment succeeds.
         setCaseId(msg.data.encounter_id || null);
         sessionStorage.setItem("mdi_encounter", JSON.stringify(msg.data));
       }
@@ -123,10 +121,12 @@ function PaymentGateModal({ productName, price, caseId, onPaid }) {
     await new Promise((r) => setTimeout(r, 1600)); // fake card charge
     if (caseId) {
       try {
+        let releaseToken = null;
+        try { releaseToken = sessionStorage.getItem("mdi_release_token"); } catch { /* private mode */ }
         const res = await fetch("/api/mdi-release", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ case_id: caseId }),
+          body: JSON.stringify({ case_id: caseId, release_token: releaseToken }),
         });
         if (!res.ok) throw new Error("release failed");
       } catch {

@@ -1,9 +1,23 @@
-const CLIENT_ID = process.env.MDI_CLIENT_ID || "727bf2a9-ffa8-4aa6-8d10-23029907e8c9";
-const CLIENT_SECRET = process.env.MDI_CLIENT_SECRET || "Nv9EG1YSJDbzAl3DC8WCkyZxwBkpXgrOBeSFy6SS";
+import { blocked, verifyReleaseToken } from './_guard.js';
+
+const CLIENT_ID = process.env.MDI_CLIENT_ID;
+const CLIENT_SECRET = process.env.MDI_CLIENT_SECRET;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  if (!CLIENT_ID || !CLIENT_SECRET) {
+    console.error('MDI credentials missing — set MDI_CLIENT_ID and MDI_CLIENT_SECRET.');
+    return res.status(500).json({ error: 'MDI not configured' });
+  }
+
+  if (blocked(req, res)) return;
+
+  if (!verifyReleaseToken(req.body?.release_token)) {
+    console.warn('Rejected /api/mdi-release: missing or expired release token');
+    return res.status(403).json({ error: 'Forbidden' });
   }
 
   const caseId = req.body?.case_id;
@@ -24,9 +38,8 @@ export default async function handler(req, res) {
     });
 
     if (!authResponse.ok) {
-      const errText = await authResponse.text();
-      console.error("MDI Auth Rejected:", errText);
-      return res.status(500).json({ error: "Auth Failed", details: errText });
+      console.error("MDI Auth Rejected:", await authResponse.text());
+      return res.status(502).json({ error: "Upstream request failed" });
     }
 
     const { access_token } = await authResponse.json();
@@ -44,15 +57,14 @@ export default async function handler(req, res) {
     );
 
     if (!releaseResponse.ok) {
-      const errText = await releaseResponse.text();
-      console.error("MDI Release Rejected:", errText);
-      return res.status(500).json({ error: "Release Failed", details: errText });
+      console.error("MDI Release Rejected:", await releaseResponse.text());
+      return res.status(502).json({ error: "Release failed" });
     }
 
     return res.status(200).json({ released: true, case_id: caseId });
 
   } catch (error) {
     console.error("Internal API Error:", error.message);
-    return res.status(500).json({ error: 'Catch Block Triggered', details: error.message });
+    return res.status(500).json({ error: 'Internal error' });
   }
 }

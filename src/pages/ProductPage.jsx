@@ -124,6 +124,10 @@ export default function ProductPage() {
 
       const token = voucher.id || new URL(voucher.onboarding_url || "https://x.invalid").searchParams.get("token");
       if (token) {
+
+        if (voucher.release_token) {
+          try { sessionStorage.setItem("mdi_release_token", voucher.release_token); } catch { /* private mode */ }
+        }
         navigate(`/intake?token=${encodeURIComponent(token)}&product=${encodeURIComponent(product.name)}&pid=${product.id}`);
         return;
       }

@@ -1,8 +1,11 @@
 import { ghlConfigured, upsertContact, addContactNote, createVisitOpportunity } from "./_ghl.js";
+import { blocked } from "./_guard.js";
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
+
+  if (blocked(req, res)) return;
 
   if (!ghlConfigured()) {
     console.warn("GHL env vars missing (GHL_API_TOKEN / GHL_LOCATION_ID) — skipping contact sync.");
