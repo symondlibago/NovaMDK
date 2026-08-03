@@ -29,7 +29,7 @@ const FEATURES = [
   { icon: Smartphone, title: "Scroll like your phone", desc: "A big, familiar touchscreen with no app to download and nothing new to learn." },
   { icon: ClipboardCheck, title: "Take the questionnaire", desc: "Answer the guided intake right on the screen to start your visit." },
   { icon: Stethoscope, title: "Provider-reviewed", desc: "A licensed U.S. clinician reviews your answers and prescribes what fits. No guesswork." },
-  { icon: Truck, title: "Shipped to your door", desc: "Approved treatments arrive free and discreetly, usually within two days." },
+  { icon: Truck, title: "Shipped to your door", desc: "Approved treatments ship priority — free and discreetly, right to your door." },
   { icon: ShieldCheck, title: "Private & secure", desc: "Your own private session, HIPAA-compliant and encrypted end to end." },
 ];
 
