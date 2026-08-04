@@ -107,7 +107,6 @@ export const productsData = [
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
     img: "/wegovy.webp",
-    // Same active ingredient as Ozempic — see the note on Zepbound above.
     questionnaireId: "df9d89e6-db14-4b17-8c34-a178b75c8f95",
     highlights: [
       { text: "FDA-Approved Product" },
