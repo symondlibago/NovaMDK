@@ -15,7 +15,7 @@ const MARQUEE_ITEMS = [
 
 export default function Marquee({ speed = 42 }) {
   return (
-    <div className="relative flex w-full overflow-hidden border-y border-white/5 bg-panel py-2.5 text-on-panel">
+    <div className="relative flex w-full overflow-hidden border-y border-line bg-surface py-2.5 text-ink">
       <motion.div
         className="flex w-max shrink-0 will-change-transform"
         animate={{ x: ["0%", "-50%"] }}
@@ -26,11 +26,11 @@ export default function Marquee({ speed = 42 }) {
           <div key={dup} className="flex items-center">
             {MARQUEE_ITEMS.map((item, i) => (
               <span key={`${dup}-${i}`} className="flex items-center gap-2.5 px-7">
-                <item.icon size={14} className="text-accent" strokeWidth={1.8} />
-                <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.2em] text-on-panel/80">
+                <item.icon size={14} className="text-primary" strokeWidth={1.8} />
+                <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.2em] text-muted">
                   {item.text}
                 </span>
-                <span className="ml-7 text-accent/60">•</span>
+                <span className="ml-7 text-line-strong">•</span>
               </span>
             ))}
           </div>

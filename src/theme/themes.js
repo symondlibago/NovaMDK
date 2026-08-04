@@ -1,5 +1,26 @@
 export const PALETTES = [
   {
+    id: "bronze-gold",
+    name: "Bronze & Gold",
+    tagline: "Warm cream + bronze and gold · apothecary luxury",
+    swatch: ["#33271B", "#8A6B3D", "#A8813C", "#E6DECD", "#F7F3EA"],
+    vars: {
+      "--nv-bg": "#F7F3EA",
+      "--nv-surface": "#FFFFFF",
+      "--nv-surface-2": "#EFE7D8",
+      "--nv-ink": "#33271B",
+      "--nv-ink-panel": "#2B2117",
+      "--nv-primary": "#8A6B3D",
+      "--nv-primary-deep": "#6E5430",
+      "--nv-accent": "#A8813C",
+      "--nv-line": "#E6DECD",
+      "--nv-line-strong": "#D6CAB2",
+      "--nv-muted": "#6B5F50",
+      "--nv-on-primary": "#FDFAF3",
+      "--nv-on-panel": "#E8DFCD",
+    },
+  },
+  {
     id: "slate",
     name: "Health & Luxury",
     tagline: "Deep navy + champagne gold · quiet luxury",

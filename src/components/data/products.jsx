@@ -19,7 +19,7 @@ export const productsData = [
     fdaApproved: true,
     brandName: "Eli Lilly",
     subtitle: "FDA-approved once-weekly tirzepatide — a dual GIP/GLP-1 receptor agonist, dispensed as the branded manufacturer product.",
-    price: "$0",
+    price: "$1150",
     shipping: "Discreetly to Your Door",
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
@@ -46,7 +46,7 @@ export const productsData = [
     fdaApproved: true,
     brandName: "Novo Nordisk",
     subtitle: "FDA-approved once-weekly semaglutide — a GLP-1 receptor agonist, dispensed as the branded manufacturer product.",
-    price: "$0",
+    price: "$1050",
     shipping: "Discreetly to Your Door",
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
@@ -73,7 +73,7 @@ export const productsData = [
     fdaApproved: true,
     brandName: "Eli Lilly",
     subtitle: "FDA-approved once-weekly tirzepatide indicated for chronic weight management, dispensed as the branded manufacturer product.",
-    price: "$0",
+    price: "$1100",
     shipping: "Discreetly to Your Door",
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
@@ -102,7 +102,7 @@ export const productsData = [
     fdaApproved: true,
     brandName: "Novo Nordisk",
     subtitle: "FDA-approved once-weekly semaglutide indicated for chronic weight management, dispensed as the branded manufacturer product.",
-    price: "$0",
+    price: "$1350",
     shipping: "Discreetly to Your Door",
     dosageForm: "Weekly Subcutaneous Injection",
     icon: <Syringe size={16} />,
@@ -416,7 +416,6 @@ export const productsData = [
     id: 11,
     categorySlug: "weight-loss",
     categoryName: "Weight Loss",
-    hidden: true,
     name: "Sermorelin Nasal Spray - 10 mL bottle",
     qrImg: "/qr/Sermorelin.avif",
     subtitle: "Needle-free GHRH analog spray taken nightly to support the natural growth-hormone pulse.",
@@ -1235,6 +1234,51 @@ export const productsData = [
   /* `live: true` are listed on /supplements.                      */
   /* ============================================================ */
 
+  {
+    // Added at John's request (2026-08-04) — the Auro Wellness copper serum, the
+    // "Copper Tri-Peptide Serum" in the kiosk brief. Same brand and delivery
+    // system as Glutaryl below, so it's listed the same way: retail, not Rx.
+    id: 302,
+    categorySlug: "supplements",
+    categoryName: "Supplements",
+    name: "Copper Tri-Peptide — Pro-Collagen Plumping Serum",
+    otc: true,
+    live: true,
+    brandName: "Auro Wellness",
+    subtitle: "High-potency GHK-Cu serum on the Auro GSH™ delivery system — optimizes collagen to restore youthful fullness and bounce.",
+    price: "$159.00",
+    shipping: "Discreetly to Your Door",
+    dosageForm: "Topical Serum",
+    icon: <Droplets size={16} />,
+    img: "/products/copper-peptide.png",
+    questionnaireId: "",
+    highlights: [
+      { text: "GHK-Cu Copper Tripeptide" },
+      { text: "Auro GSH™ Delivery" },
+      { text: "Plumps & Firms" },
+      { text: "No Prescription Needed" },
+    ],
+    specs: [
+      { label: "Key Ingredient", value: "GHK-Cu (naturally occurring copper tripeptide) in the Auro GSH™ delivery complex" },
+      { label: "Size", value: "1.0 fl oz (30 mL) pump bottle" },
+      { label: "Also Contains", value: "Glutathione, squalane, niacinamide, sodium hyaluronate and aloe vera." },
+      { label: "How To Use", value: "Apply to clean skin and allow to absorb before layering other products. Follow the directions on the bottle." },
+      { label: "Free From", value: "Parabens, sulfates, added fragrance and artificial colors." },
+      { label: "Brand", value: "Auro Wellness" },
+    ],
+    safety: "For external use only; avoid contact with the eyes. Patch test before first use and stop use if irritation develops. Talk to your clinician before starting any new product, especially if you are pregnant, nursing, or using prescription topicals.",
+    fdaDisclaimer:
+      "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+    howItWorks: {
+      title: "Copper, Carried Into the Skin",
+      description: "GHK-Cu is a copper-binding tripeptide the body produces naturally, and levels fall with age. Auro GSH™ pairs it with a cyclodextrin carrier so the peptide stays intact on the way in rather than sitting on the surface.",
+      steps: [
+        { icon: <Droplets/>, title: "Apply", description: "A pro-collagen serum layered onto clean skin." },
+        { icon: <Shield/>, title: "Sub-Nano Carrier", description: "The cyclodextrin complex protects the peptide through the skin barrier." },
+        { icon: <Sparkles/>, title: "Plump & Firm", description: "Supports the skin's own collagen and elastin for fullness and bounce." },
+      ],
+    },
+  },
   {
     id: 301,
     categorySlug: "supplements",

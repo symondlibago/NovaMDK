@@ -147,13 +147,11 @@ function MobileGroup({ title, items, close, viewAllLink, defaultOpen = false }) 
   );
 }
 
-/* ---------------------- kiosk category accordion ---------------------- */
-function KioskMenuGroup({ cat, close }) {
-  const [open, setOpen] = useState(false);
+function KioskMenuGroup({ cat, close, open, onToggle }) {
   const treatments = visibleProducts.filter((p) => p.categorySlug === cat.goal);
   return (
     <div className="border-b border-line py-4">
-      <button aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center justify-between text-[17px] font-medium text-ink">
+      <button aria-expanded={open} onClick={onToggle} className="flex w-full items-center justify-between text-[17px] font-medium text-ink">
         {cat.label}
         <ChevronDown size={18} className={`text-muted transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
@@ -184,6 +182,9 @@ function KioskMenuGroup({ cat, close }) {
 /* ------------------------------- navbar ------------------------------- */
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Which kiosk category is expanded — null for none. Single value, so opening
+  // one closes whichever was open.
+  const [openKioskGoal, setOpenKioskGoal] = useState(null);
   const isKiosk = useKioskMode();
 
   // Horizontal scroll meter pinned to the bottom of the header.
@@ -277,7 +278,13 @@ export default function Navbar() {
                 /* Kiosk burger — category sections + sub-menus, Log In / Support at the foot */
                 <div className="flex grow flex-col p-4">
                   {KIOSK_MENU.map((cat) => (
-                    <KioskMenuGroup key={cat.goal} cat={cat} close={() => setMobileOpen(false)} />
+                    <KioskMenuGroup
+                      key={cat.goal}
+                      cat={cat}
+                      open={openKioskGoal === cat.goal}
+                      onToggle={() => setOpenKioskGoal((g) => (g === cat.goal ? null : cat.goal))}
+                      close={() => setMobileOpen(false)}
+                    />
                   ))}
                   <div className="mt-auto flex flex-col gap-1 pb-2 pt-6">
                     <Link to="/portal" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-left text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">

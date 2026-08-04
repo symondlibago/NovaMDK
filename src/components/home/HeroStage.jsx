@@ -3,9 +3,34 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { CONSULTS, CONSULT_ORDER } from "../data/consultations";
+import { productsData, isHidden } from "../data/products";
+import { productPath } from "../../lib/slug";
 import { track, EVENTS } from "../../lib/analytics";
 
 const EASE = [0.22, 0.61, 0.18, 1];
+
+/* Shelf artwork lives in /products/shelf/ rather than reusing the catalogue
+   images directly. Those are cropped inconsistently — one vial sits at 23% of its
+   canvas width, another fills 100% — so identical CSS rendered them at wildly
+   different sizes. Each file here is the same canvas with the subject at 88% of
+   the height, bottom-anchored, so every tile carries equal visual weight.
+   Regenerate with scratchpad/normalize.mjs if a product photo changes. */
+const FEATURED = {
+  eyebrow: "Most Requested",
+  title: "Tirzepatide",
+  subtitle: "Metabolic and weight management",
+  to: "/treatments/weight-loss",
+  img: "/products/shelf/tirzepatide.png",
+};
+
+const SHELF = [
+  { id: 17, label: "Antioxidant Support", short: "Glutathione", img: "/products/shelf/vial.png" },
+  { id: 16, label: "Cellular Energy", short: "NAD+", img: "/products/shelf/vial.png" },
+  { id: 222, label: "Metabolic Wellness", short: "Tesamorelin", img: "/products/shelf/vial.png" },
+  { id: 302, label: "Skin Rejuvenation", short: "Copper Tri-Peptide", img: "/products/shelf/copper.png" },
+  { id: 11, label: "Healthy Aging", short: "Sermorelin", img: "/products/shelf/nasal.png" },
+  { id: 37, label: "Sexual Wellness", short: "PT-141", img: "/products/shelf/vial.png" },
+];
 
 // Legacy card-wall layouts — only used by the retired KioskHero below; kept
 // (and exported) so the big-card hero can be revived without re-building it.
@@ -141,9 +166,6 @@ function GlassCard({ c, delay, mode = "auto", featured = false, className = "", 
   );
 }
 
-/* Enlarged version of the same glass card for the kiosk. Same look, bigger —
-   "tile" is a tall vertical card, "row" is a wide full-width card, and
-   `featured` is the premium hero banner at the top of the Featured layout. */
 function BigGlassCard({ c, delay, row, compact = false, featured = false, className = "", corner = "" }) {
   const R = "rounded-[calc(22px*var(--nv-r-scale,1))]";
 
@@ -243,9 +265,6 @@ function BigGlassCard({ c, delay, row, compact = false, featured = false, classN
   );
 }
 
-/* Wide homepage promo — a silent, looping video. Muted autoplay is always
-   allowed, so it plays everywhere without sound. Shorter in kiosk mode so the
-   hero + cards + video all fit on one screen. */
 function KioskPromoCard({ kiosk = false }) {
   return (
     <motion.div
@@ -269,9 +288,6 @@ function KioskPromoCard({ kiosk = false }) {
 
 /* One row of the "Explore by goal" list — pill thumb, gold tag, serif name. */
 function GoalRow({ tag, name, shortName = null, to, onClick, icon = null, delay = 0, big = false, snug = false }) {
-  // Rows share a left edge (the column itself is centered) so the list never zigzags.
-  // big = kiosk sizing — the goal list is the kiosk's hero element.
-  // snug = slightly smaller name for the tablet "Desktop Hero" columns.
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -287,16 +303,11 @@ function GoalRow({ tag, name, shortName = null, to, onClick, icon = null, delay 
           {icon || <img src="/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-10" : "h-4.5 sm:h-6"}`} />}
         </span>
         <span className="min-w-0 text-left">
-          {/* tag truncates too: a wrapped 2-line tag would make this row taller
-              than its neighbour and knock the two columns' dividers out of line */}
           <span className={`block truncate font-mono uppercase tracking-widest text-accent sm:tracking-[0.16em] ${big ? "text-[0.78rem]" : "text-[0.46rem] sm:text-[0.6rem]"}`}>{tag}</span>
           <span
             className={`block truncate leading-snug text-ink transition-colors group-hover:text-primary ${big ? "text-[1.42rem]" : snug ? "text-[0.98rem]" : "text-[0.78rem] sm:text-[1.06rem]"}`}
             style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
           >
-            {/* Two columns leave ~127px of text on a phone (and ~232px at the
-                kiosk's larger type) — the longest label gets a short form
-                instead of an ellipsis. Roomy layouts keep the full wording. */}
             {!shortName ? name : big ? shortName : (
               <>
                 <span className="sm:hidden">{shortName}</span>
@@ -310,15 +321,131 @@ function GoalRow({ tag, name, shortName = null, to, onClick, icon = null, delay 
   );
 }
 
-/* The hero's eyebrow → headline → sub → CTAs block, shared by every layout.
-   compact = centered over the overlay video; wide = the desktop split forced
-   at tablet width; default = centered until lg, then left. */
+const SERIF = { fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" };
+function ExploreTreatments({ large = false }) {
+  const shelf = SHELF
+    .map((s) => ({ ...s, product: productsData.find((p) => p.id === s.id) }))
+    .filter((s) => s.product && !isHidden(s.product));
+
+  return (
+    <>
+      <div className="flex items-baseline justify-between gap-4">
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
+          className={`font-mono uppercase tracking-[0.2em] text-muted ${large ? "text-[0.8rem]" : "text-[0.62rem]"}`}
+        >
+          Explore treatments
+        </motion.span>
+        <Link
+          to="/treatments"
+          onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero-treatments" })}
+          className={`group flex items-center gap-1.5 font-mono uppercase tracking-[0.16em] text-muted transition-colors hover:text-ink ${
+            large ? "text-[0.74rem]" : "text-[0.58rem] lg:text-[0.62rem]"
+          }`}
+        >
+          All treatments
+          <ArrowRight size={large ? 15 : 12} className="transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
+        className={large ? "mt-5" : "mt-4"}
+      >
+        <Link
+          to={FEATURED.to}
+          onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: "weight-loss", source: "hero-featured" })}
+          className={`group relative flex items-center gap-3 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] transition-transform duration-300 hover:-translate-y-0.5 ${
+            large ? "px-6 py-6" : "px-4 py-4 lg:py-5"
+          }`}
+          style={{
+            background:
+              "linear-gradient(100deg, color-mix(in srgb, var(--nv-accent) 74%, var(--nv-bg)) 0%, color-mix(in srgb, var(--nv-accent) 88%, var(--nv-bg)) 48%, color-mix(in srgb, var(--nv-accent) 100%, var(--nv-bg)) 100%)",
+          }}
+        >
+          <span className="relative z-10 min-w-0 flex-1 text-left">
+            <span className={`block font-mono uppercase tracking-[0.18em] text-ink/70 ${large ? "text-[0.72rem]" : "text-[0.5rem] lg:text-[0.58rem]"}`}>
+              {FEATURED.eyebrow}
+            </span>
+            <span
+              className={`mt-0.5 block leading-tight text-ink ${large ? "text-[2.2rem]" : "text-[1.25rem] lg:text-[1.7rem]"}`}
+              style={SERIF}
+            >
+              {FEATURED.title}
+            </span>
+            <span className={`mt-0.5 block leading-snug text-ink/75 ${large ? "text-[1.02rem]" : "text-[0.68rem] lg:text-[0.84rem]"}`}>
+              {FEATURED.subtitle}
+            </span>
+          </span>
+          <span className={`relative z-0 shrink-0 self-stretch ${large ? "w-40" : "w-12 lg:w-36"}`}>
+            <img
+              src={FEATURED.img}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              className={`absolute left-1/2 w-auto max-w-none origin-bottom -translate-x-1/2 object-contain object-bottom transition-transform duration-500 ${
+                large
+                  ? "-bottom-16 h-[calc(100%+3.5rem)] translate-y-12 scale-[1.6] group-hover:scale-[1.68]"
+                  : "bottom-0 h-full translate-y-0 scale-100 group-hover:scale-105 lg:-bottom-14 lg:h-[calc(100%+3rem)] lg:translate-y-11 lg:scale-[1.6] lg:group-hover:scale-[1.68]"
+              }`}
+            />
+          </span>
+          <ArrowRight size={large ? 26 : 18} className="relative z-10 shrink-0 text-ink transition-transform group-hover:translate-x-1" />
+        </Link>
+      </motion.div>
+
+      <div className={`grid grid-cols-2 items-stretch ${large ? "mt-4 gap-4" : "mt-3 gap-3 lg:gap-3.5"}`}>
+        {shelf.map((s, i) => (
+          <motion.div
+            key={s.id}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.26 + i * 0.05 }}
+            className="h-full min-w-0"
+          >
+            <Link
+              to={productPath(s.product)}
+              onClick={() => track(EVENTS.PRODUCT_VIEWED, { id: s.product.id, name: s.product.name, source: "hero-treatments" })}
+              className={`group relative flex h-full items-center gap-2 overflow-hidden rounded-[calc(12px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/45 ${
+                large ? "min-h-31 px-5 py-5" : "min-h-22 px-3 py-3.5 lg:min-h-26 lg:py-4"
+              }`}
+            >
+              <span className="relative z-10 flex min-w-0 flex-1 flex-col items-start text-left">
+                <span className={`font-semibold leading-tight text-ink transition-colors group-hover:text-primary ${large ? "text-[1.24rem]" : "text-[0.78rem] lg:text-[0.94rem]"}`}>
+                  {s.short || s.product.name.split(/[-–—(]/)[0].trim()}
+                </span>
+                <span className={`mt-0.5 leading-snug text-muted ${large ? "text-[0.9rem]" : "text-[0.6rem] lg:text-[0.72rem]"}`}>{s.label}</span>
+                <span className={`mt-1.5 block h-0.5 rounded-full bg-accent/60 ${large ? "w-7" : "w-5"}`} />
+              </span>
+              <span className={`relative z-0 shrink-0 self-stretch ${large ? "w-28" : "w-10 lg:w-24"}`}>
+                <img
+                  src={s.img || s.product.img}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className={`absolute left-1/2 w-auto max-w-none origin-bottom -translate-x-1/2 object-contain object-bottom transition-transform duration-500 ${
+                    large
+                      ? "-bottom-11 h-[calc(100%+3rem)] translate-y-9 scale-[1.40] group-hover:scale-[1.50]"
+                      : "bottom-0 h-full translate-y-0 scale-100 group-hover:scale-105 lg:-bottom-9 lg:h-[calc(100%+2.2rem)] lg:translate-y-7 lg:scale-[1.42] lg:group-hover:scale-[1.5]"
+                  }`}
+                />
+              </span>
+              <ArrowRight size={large ? 20 : 14} className="relative z-10 shrink-0 text-ink transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function HeroHeadline({ compact = false, wide = false }) {
   const justify = compact ? "justify-center" : wide ? "justify-start" : "justify-center lg:justify-start";
   const mx = compact ? "mx-auto" : wide ? "" : "mx-auto lg:mx-0";
-  // Phone/tablet in the default layout runs the editorial stack: video →
-  // eyebrow → headline → goal grid. The sub-line and buttons return at lg,
-  // where the split hero has room for them beside the video.
   const minimal = !compact && !wide;
   return (
     <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
@@ -378,9 +505,6 @@ function EditorialHero({ compact = false, forceWide = false }) {
           />
         </div>
       )}
-
-      {/* small-screen top video (default layout only) — full-bleed with a clean
-          bottom edge; the copy sits below it rather than inside a fade */}
       {!compact && !wide && (
         <div className="pointer-events-none relative lg:hidden">
           <video src="/right-vid.mp4" autoPlay loop muted playsInline className="block h-76 w-full object-cover sm:h-88" />
@@ -399,22 +523,24 @@ function EditorialHero({ compact = false, forceWide = false }) {
                 "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--nv-bg) 55%, transparent) 60%, var(--nv-bg) 100%)",
             }}
           />
-          <div className="absolute inset-0 z-10 mx-auto flex max-w-2xl flex-col items-center justify-center px-6 text-center">
-            {/* readability comes from the panel behind the text, not a full-video fade */}
-            <div className="rounded-[calc(24px*var(--nv-r-scale,1))] bg-bg/85 px-7 py-8 backdrop-blur-sm nv-shadow sm:px-10">
-              <HeroHeadline compact />
-            </div>
-          </div>
         </div>
       )}
 
       <div className={`mx-auto flex max-w-375 flex-col justify-center px-5 md:px-10 ${compact ? "pb-8" : wide ? "pb-[clamp(2.2rem,4.5vw,3.6rem)] pt-[clamp(2.2rem,4.5vw,3.6rem)]" : "pb-[clamp(2.2rem,4.5vw,3.6rem)] lg:min-h-168 lg:py-[clamp(3rem,6vw,5.5rem)]"}`}>
         <div className={`relative z-10 ${compact ? "mx-auto max-w-2xl text-center" : wide ? "w-[66%] text-left" : "mt-10 mx-auto max-w-140 text-center lg:mx-0 lg:mt-0 lg:w-1/2 lg:text-left"}`}>
           {!compact && <HeroHeadline wide={wide} />}
+          <div
+            className={
+              compact || wide
+                ? `border-t border-line text-left ${compact ? "mt-2 pt-4" : "mt-7 pt-5"}`
+                : "mt-6 text-left lg:mt-7 lg:border-t lg:border-line lg:pt-5"
+            }
+          >
+            <ExploreTreatments large={compact} />
+          </div>
 
-          {/* explore by goal */}
-          {/* On phones the rows carry their own dividers, so no section rule
-              and no label above them — the grid follows the headline directly */}
+          {/* Explore by goal — retired in favour of the shelf above (kiosk brief
+              items 4-6). Kept so the goal rows can be restored if wanted.
           <div className={`border-line ${compact ? "mt-2 border-t pt-4" : "mt-6 lg:mt-7 lg:border-t lg:pt-5"}`}>
             <motion.span
               initial={{ opacity: 0 }}
@@ -453,6 +579,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
               />
             </div>
           </div>
+          */}
 
         </div>
       </div>
@@ -508,7 +635,7 @@ function KioskHero({ kiosk }) {
             transition={{ duration: 0.9, ease: EASE }}
           >
             <h1
-              className={`nv-weight-keep max-w-[16ch] font-medium leading-[1.02] tracking-[-0.01em] text-ink ${kiosk ? "mx-auto text-[clamp(1.55rem,4.4vw,2.2rem)]" : "text-[clamp(2.3rem,5.8vw,4.3rem)]"}`}
+              className={`nv-weight-keep max-w-[16ch] font-medium leading-[1.02] tracking-[-0.01em] text-ink ${kiosk ? "mx-auto text-[clamp(1.40rem,4.4vw,2.2rem)]" : "text-[clamp(2.3rem,5.8vw,4.3rem)]"}`}
               style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
             >
               Modern healthcare,{" "}
@@ -518,9 +645,6 @@ function KioskHero({ kiosk }) {
               Personalized treatment plans designed by licensed medical providers.
             </p>
           </motion.div>
-
-          {/* In kiosk mode the category cards are the primary CTA — hide the
-              redundant button so the hero fits on one screen. */}
           {!kiosk && (
             <motion.div
               initial={{ opacity: 0, y: 26 }}
@@ -545,10 +669,6 @@ function KioskHero({ kiosk }) {
             </motion.div>
           )}
         </div>
-
-        {/* Categories — all visible. Normal site: stacked rows on mobile, a 3-
-            then 5-up grid on larger screens. Kiosk: bigger cards in the layout
-            the client picked (grid · directory · spotlight). */}
         {kiosk ? (
           (() => {
             const cells = CONSULT_ORDER.length + (kiosk.helpTile ? 1 : 0);

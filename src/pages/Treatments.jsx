@@ -106,10 +106,10 @@ function SocialProof() {
   return (
     <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(2rem,4vw,3rem)] md:px-10">
       <Reveal>
-        <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] bg-panel px-6 py-[clamp(2.4rem,5vw,3.4rem)] text-on-panel md:px-10">
+        <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface-2 px-6 py-[clamp(2.4rem,5vw,3.4rem)] text-ink md:px-10">
           <div
             className="pointer-events-none absolute inset-0"
-            style={{ background: "radial-gradient(60% 90% at 85% 0%, color-mix(in oklab, var(--nv-accent) 22%, transparent), transparent 70%)" }}
+            style={{ background: "radial-gradient(60% 90% at 85% 0%, color-mix(in srgb, var(--nv-accent) 18%, transparent), transparent 70%)" }}
           />
           <div className="relative flex flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
             <div>
@@ -118,8 +118,8 @@ function SocialProof() {
             <div className="grid grid-cols-3 gap-x-8 gap-y-4 sm:gap-x-12">
               {STATS.map((s) => (
                 <div key={s.s} className="text-center">
-                  <b className="block text-[clamp(1.6rem,3.5vw,2.4rem)] font-extrabold tracking-tight">{s.b}</b>
-                  <span className="mt-1 block font-mono text-[0.66rem] uppercase tracking-[0.12em] text-on-panel/60">{s.s}</span>
+                  <b className="block text-[clamp(1.6rem,3.5vw,2.4rem)] font-extrabold tracking-tight text-primary">{s.b}</b>
+                  <span className="mt-1 block font-mono text-[0.66rem] uppercase tracking-[0.12em] text-muted">{s.s}</span>
                 </div>
               ))}
             </div>
