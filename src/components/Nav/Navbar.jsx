@@ -14,7 +14,7 @@ const KIOSK_MENU = [
   { label: "Anti Aging", goal: "unisex-anti-aging-rx", consult: "longevity" },
   { label: "Sexual Health", goal: "mens-health", consult: "intimacy" },
   { label: "Weight Loss", goal: "weight-loss", consult: "weight-loss" },
-  // { label: "Skin Health", goal: "unisex-skin-health", consult: "skin" }, // no shoppable products (2026-07-31)
+  { label: "Skin Health", goal: "unisex-skin-health", consult: "skin" },
   { label: "Sport Medicine", goal: "unisex-sports-medicine", consult: "recovery" },
 ];
 
@@ -24,7 +24,7 @@ const EASE = [0.16, 1, 0.3, 1];
 const treatmentItems = [
   { name: "Weight Loss", img: "/products/peptides.png", link: "/treatments/weight-loss" },
   { name: "Anti-Aging", img: "/products/peptides.png", link: "/treatments/unisex-anti-aging-rx" },
-  // { name: "Skin Health", img: "/products/peptides.png", link: "/treatments/unisex-skin-health" }, // no shoppable products (2026-07-31)
+  { name: "Skin Health", img: "/products/peptides.png", link: "/treatments/unisex-skin-health" },
   { name: "Sexual Health", img: "/products/peptides.png", link: "/treatments/mens-health" },
   { name: "Sports Medicine", img: "/products/peptides.png", link: "/treatments/unisex-sports-medicine" },
 ];
