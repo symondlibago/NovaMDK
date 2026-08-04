@@ -14,11 +14,15 @@ export const CATEGORY_META = {
     description:
       "Low-dose naltrexone (LDN) and recovery-focused treatments, prescribed online by licensed physicians for pain, inflammation and performance recovery.",
   },
+  /* Skin Health commented out (2026-07-31) — no shoppable products. Keeping it
+     here would keep /treatments/unisex-skin-health in the sitemap pointing at a
+     page that no longer exists. See data/consultations.jsx.
   "unisex-skin-health": {
     title: "Prescription Skin Health Treatments Online",
     description:
       "Physician-prescribed skincare, including compounded brightening treatments — prescribed online after a private assessment and delivered to your door.",
   },
+  */
   "mens-health": {
     title: "Men's Health & Sexual Wellness Treatments Online",
     description:
