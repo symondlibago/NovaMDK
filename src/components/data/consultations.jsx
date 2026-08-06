@@ -30,11 +30,6 @@ export const CONSULTS = {
     ],
   },
 
-  /* Skin Health commented out (2026-07-31): Luminance Brightening Cream is the
-     only product in the category and the client has it hidden, so the goal has
-     nothing to sell. Restore this block, its CONSULT_ORDER entry, and the
-     matching nav/footer/carousel/categoryMeta entries when a product returns.
-
   skin: {
     slug: "skin",
     tag: "Dermatology",
@@ -64,7 +59,6 @@ export const CONSULTS = {
         cta: "See my treatment options", note: "No commitment. You only pay if prescribed." },
     ],
   },
-  */
 
   intimacy: {
     slug: "intimacy",
@@ -157,4 +151,4 @@ export const CONSULTS = {
   },
 };
 
-export const CONSULT_ORDER = ["weight-loss", "intimacy", "recovery", "longevity"];
+export const CONSULT_ORDER = ["weight-loss", "intimacy", "recovery", "longevity", "skin"];
