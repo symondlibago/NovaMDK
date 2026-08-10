@@ -22,30 +22,16 @@ const EASE = [0.16, 1, 0.3, 1];
 
 // Mirror the real treatment categories (see data/consultations.jsx). Each item
 const treatmentItems = [
-  { name: "Weight Loss", img: "/products/peptides.png", link: "/treatments/weight-loss" },
-  { name: "Anti-Aging", img: "/products/peptides.png", link: "/treatments/unisex-anti-aging-rx" },
-  { name: "Skin Health", img: "/products/peptides.png", link: "/treatments/unisex-skin-health" },
-  { name: "Sexual Health", img: "/products/peptides.png", link: "/treatments/mens-health" },
-  { name: "Sports Medicine", img: "/products/peptides.png", link: "/treatments/unisex-sports-medicine" },
+  { name: "Weight Loss", img: "/products/tirzepatide.avif", link: "/treatments/weight-loss" },
+  { name: "Anti-Aging", img: "/products/nad-plus.avif", link: "/treatments/unisex-anti-aging-rx" },
+  { name: "Skin Health", img: "/products/luminance.avif", link: "/treatments/unisex-skin-health" },
+  { name: "Sexual Health", img: "/products/olympus-peak.avif", link: "/treatments/mens-health" },
+  { name: "Sports Medicine", img: "/products/ldn.avif", link: "/treatments/unisex-sports-medicine" },
 ];
 
-/* Peptide molecule list HIDDEN at client request (2026-06-20). "Supplements" is a
-   plain link for now; restore this array + the NavDropdown/MobileGroup to bring the
-   peptide menu back.
-const supplementItems = [
-  { name: "Semaglutide", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "Tirzepatide", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "Retatrutide (GLP-3)", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "BPC-157", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "NAD+", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "GHK-Cu", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "Thymosin Alpha 1", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "MOTS-C", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "IGF-1-LR3", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "Tesamorelin", img: "/luvirasupplement.avif", link: "/supplements" },
-  { name: "Glow Blend", img: "/luvirasupplement.avif", link: "/supplements" },
-];
-*/
+/* The peptide molecule menu listed the LUVIRA sub-lines (Semaglutide, BPC-157,
+   MOTS-C, …). That whole line was dropped from the catalog on 2026-08-05, so the
+   menu it fed is gone with it — "Supplements" stays a plain link. */
 
 /* --------------------------- desktop dropdown --------------------------- */
 function NavDropdown({ title, items, viewAllLink, openOnClick = false }) {
@@ -82,7 +68,7 @@ function NavDropdown({ title, items, viewAllLink, openOnClick = false }) {
             >
               <span className="flex items-center gap-3">
                 <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-xl bg-surface">
-                  <img src={items[0]?.img} className="h-full w-full scale-[1.15] object-contain mix-blend-multiply transition-transform group-hover:scale-[1.3]" alt="" />
+                  <img src={items[0]?.img} className="h-full w-full scale-[1.15] object-contain transition-transform group-hover:scale-[1.3]" alt="" />
                 </span>
                 View all {title.toLowerCase()}
               </span>
@@ -98,7 +84,7 @@ function NavDropdown({ title, items, viewAllLink, openOnClick = false }) {
                   >
                     <span className="flex items-center gap-3">
                       <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-lg">
-                        <img src={item.img} className="h-full w-full scale-[1.15] object-contain mix-blend-multiply transition-transform group-hover:scale-[1.3]" alt={item.name} />
+                        <img src={item.img} className="h-full w-full scale-[1.15] object-contain transition-transform group-hover:scale-[1.3]" alt={item.name} />
                       </span>
                       <span className="text-[15px] font-medium text-ink/80 transition-colors group-hover:text-ink">{item.name}</span>
                     </span>
@@ -134,7 +120,7 @@ function MobileGroup({ title, items, close, viewAllLink, defaultOpen = false }) 
               {items.map((item, i) => (
                 <Link key={i} to={item.link} onClick={close} className="flex items-center gap-3 text-[15px] text-muted transition-colors hover:text-ink">
                   <span className="grid h-8 w-8 place-items-center rounded bg-surface-2">
-                    <img src={item.img} alt={item.name} className="h-full w-full scale-[1.1] object-contain mix-blend-multiply" />
+                    <img src={item.img} alt={item.name} className="h-full w-full scale-[1.1] object-contain" />
                   </span>
                   {item.name}
                 </Link>
@@ -162,7 +148,7 @@ function KioskMenuGroup({ cat, close, open, onToggle }) {
               {treatments.map((t) => (
                 <Link key={t.id} to={productPath(t)} onClick={close} className="flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] text-muted transition-colors hover:bg-surface-2 hover:text-ink">
                   <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-2">
-                    <img src={t.img} alt={t.name} loading="lazy" className="h-full w-full scale-[1.1] object-contain mix-blend-multiply" />
+                    <img src={t.img} alt={t.name} loading="lazy" className="h-full w-full scale-[1.1] object-contain" />
                   </span>
                   <span className="min-w-0 flex-1 truncate">{t.name}</span>
                   <ArrowRight size={14} className="shrink-0 opacity-50" />
@@ -275,7 +261,9 @@ export default function Navbar() {
                 </button>
               </div>
               {isKiosk ? (
-                /* Kiosk burger — category sections + sub-menus, Log In / Support at the foot */
+                /* Kiosk burger — category sections, then Portal / Support as buttons
+                   directly under the last one (not pinned to the drawer foot, so
+                   they sit with the list rather than floating away from it). */
                 <div className="flex grow flex-col p-4">
                   {KIOSK_MENU.map((cat) => (
                     <KioskMenuGroup
@@ -286,11 +274,20 @@ export default function Navbar() {
                       close={() => setMobileOpen(false)}
                     />
                   ))}
-                  <div className="mt-auto flex flex-col gap-1 pb-2 pt-6">
-                    <Link to="/portal" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-left text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+                  <div className="mt-5 grid grid-cols-2 gap-2.5 pb-2">
+                    <Link
+                      to="/portal"
+                      onClick={() => setMobileOpen(false)}
+                      /* same accent mix as the marquee / Quick view / Choose your plan */
+                      className="flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[color-mix(in_oklab,var(--nv-accent)_72%,var(--nv-surface))] px-3 py-3.5 text-[14px] font-semibold text-ink nv-shadow transition-all hover:-translate-y-0.5 hover:bg-[color-mix(in_oklab,var(--nv-accent)_86%,var(--nv-surface))]"
+                    >
                       <LogIn size={16} /> Patient Portal
                     </Link>
-                    <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-3 text-[15px] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+                    <Link
+                      to="/contact"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-line-strong bg-surface px-3 py-3.5 text-[14px] font-semibold text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-2"
+                    >
                       <LifeBuoy size={16} /> Support
                     </Link>
                   </div>

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Stethoscope, Lock, FlaskConical, Loader2,
-  QrCode, X, UserRound, ChevronDown, MapPin,
+  QrCode, X, UserRound, ChevronDown, MapPin, Home,
 } from "lucide-react";
 import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
@@ -73,6 +73,11 @@ export default function ProductPage() {
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(product);
+  // `imgDetail` is a photo that carries its own backdrop, so it fills the panel
+  // edge-to-edge. Without one we fall back to the transparent cut-out, centred
+  // and multiplied onto white.
+  const detailImg = product.imgDetail || product.img;
+  const hasPhoto = !!product.imgDetail;
   const isSupplement = product.categorySlug === "supplements";
   const hasFda = isSupplement && !!fdaDisclaimer(product);
   const startVisit = async (patient) => {
@@ -162,9 +167,23 @@ export default function ProductPage() {
 
       {/* breadcrumb */}
       <div className="mx-auto max-w-[1180px] px-5 pt-6 md:px-10">
-        <Link to={backLink} className="inline-flex items-center gap-1.5 text-[0.9rem] font-medium text-muted transition-colors hover:text-ink">
-          <ArrowLeft size={15} /> Back to {categoryLabel}
-        </Link>
+        {/* Same pill treatment as the shared BackButton on every other page. These
+            stay plain Links rather than that component: back here means "up to the
+            category", not browser history. */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to={backLink}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2 text-[0.88rem] font-medium text-muted transition-all hover:-translate-x-0.5 hover:border-line-strong hover:text-ink"
+          >
+            <ArrowLeft size={16} /> Back to {categoryLabel}
+          </Link>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2 text-[0.88rem] font-medium text-muted transition-all hover:border-line-strong hover:text-ink"
+          >
+            <Home size={16} /> Home
+          </Link>
+        </div>
       </div>
 
       {/* ===== Hero ===== */}
@@ -175,28 +194,29 @@ export default function ProductPage() {
         <div className="grid gap-8 md:grid-cols-2 md:items-start lg:gap-14">
           {/* image */}
           <Reveal className="min-w-0">
-            <div className="group/img relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] border border-line bg-linear-to-br from-surface to-surface-2 p-7 nv-shadow md:min-h-[460px] md:p-12">
-              {/* champagne glow */}
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{ background: "radial-gradient(58% 52% at 50% 42%, color-mix(in oklab, var(--nv-accent) 28%, transparent), transparent 70%)" }}
-              />
-              {/* pedestal shadow */}
-              <div className="pointer-events-none absolute bottom-[16%] left-1/2 h-6 w-2/5 -translate-x-1/2 rounded-[50%] bg-ink/15 blur-xl" />
+            <div className={`group/img relative flex min-h-90 items-center justify-center overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] border border-line nv-shadow md:min-h-140 ${hasPhoto ? "" : "bg-white p-7 md:p-10"}`}>
+              {/* pedestal shadow — only grounds a cut-out; a photo has its own */}
+              {!hasPhoto && (
+                <div className="pointer-events-none absolute bottom-[16%] left-1/2 h-6 w-2/5 -translate-x-1/2 rounded-[50%] bg-ink/15 blur-xl" />
+              )}
 
               <span className="absolute left-6 top-6 z-10 rounded-full border border-line bg-surface/90 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-accent backdrop-blur-sm">
                 {categoryLabel}
               </span>
               {product.dosageForm && (
-                <span className="absolute bottom-6 left-6 z-10 rounded-full bg-ink px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-on-primary">
+                <span className="absolute bottom-6 left-6 z-10 rounded-full bg-ink px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-on-panel">
                   {product.dosageForm}
                 </span>
               )}
 
               <img
-                src={product.img}
+                src={detailImg}
                 alt={product.name}
-                className="relative max-h-[340px] w-auto object-contain mix-blend-multiply drop-shadow-2xl transition-transform duration-500 group-hover/img:scale-[1.03]"
+                className={
+                  hasPhoto
+                    ? "absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover/img:scale-[1.03]"
+                    : "relative max-h-100 w-auto max-w-full object-contain mix-blend-multiply drop-shadow-2xl transition-transform duration-500 group-hover/img:scale-[1.03] md:max-h-115"
+                }
               />
             </div>
           </Reveal>

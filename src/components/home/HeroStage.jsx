@@ -18,18 +18,18 @@ const EASE = [0.22, 0.61, 0.18, 1];
 const FEATURED = {
   eyebrow: "Most Requested",
   title: "Tirzepatide",
-  subtitle: "Metabolic and weight management",
+  subtitle: "Weight Management",
   to: "/treatments/weight-loss",
-  img: "/products/shelf/tirzepatide.png",
+  img: "/products/tirzepatide.avif",
 };
 
 const SHELF = [
-  { id: 17, label: "Antioxidant Support", short: "Glutathione", img: "/products/shelf/vial.png" },
-  { id: 16, label: "Cellular Energy", short: "NAD+", img: "/products/shelf/vial.png" },
-  { id: 222, label: "Metabolic Wellness", short: "Tesamorelin", img: "/products/shelf/vial.png" },
-  { id: 302, label: "Skin Rejuvenation", short: "Copper Tri-Peptide", img: "/products/shelf/copper.png" },
-  { id: 11, label: "Healthy Aging", short: "Sermorelin", img: "/products/shelf/nasal.png" },
-  { id: 37, label: "Sexual Wellness", short: "PT-141", img: "/products/shelf/vial.png" },
+  { id: 301, label: "Antioxidant Care", short: "Glutathione", img: "/products/shelf/tpl-glutathione-serum.webp" },
+  { id: 1, label: "Metabolic health support", short: "Semaglutide", img: "/products/shelf/semaglutide.png" },
+  { id: 32, label: "Performance Support", short: "Olympus Peak", img: "/products/olympus-peak.avif" },
+  { id: 302, label: "Skin Renewal", short: "Copper Tri-Peptide", img: "/products/shelf/copper.png" },
+  { id: 11, label: "Healthy Aging", short: "Sermorelin", img: "/products/shelf/sermorelin-nasal.png" },
+  { id: 37, label: "Sexual Wellness", short: "PT-141", img: "/products/shelf/pt-141.png" },
 ];
 
 // Legacy card-wall layouts — only used by the retired KioskHero below; kept
@@ -61,7 +61,7 @@ function cornerClass(index, cols, rows) {
 function CategoryIcon({ size = 60, className = "" }) {
   return (
     <img
-      src="/novapill.avif"
+      src="/site/novapill.avif"
       alt=""
       aria-hidden="true"
       loading="lazy"
@@ -275,7 +275,7 @@ function KioskPromoCard({ kiosk = false }) {
       className={`overflow-hidden rounded-3xl ${kiosk ? "mt-3" : "mt-4"}`}
     >
       <video
-        src="/feeling-your-best.mp4"
+        src="/video/feeling-your-best.mp4"
         autoPlay
         loop
         muted
@@ -300,7 +300,7 @@ function GoalRow({ tag, name, shortName = null, to, onClick, icon = null, delay 
         className={`group flex items-center justify-start border-b border-line transition-colors hover:border-primary/40 ${big ? "gap-5 py-5" : "gap-2 py-2.5 sm:gap-3.5 sm:py-3"}`}
       >
         <span className={`grid shrink-0 place-items-center rounded-full border border-line bg-surface nv-shadow transition-transform duration-300 group-hover:scale-105 ${big ? "h-18 w-18" : "h-8 w-8 sm:h-11 sm:w-11"}`}>
-          {icon || <img src="/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-10" : "h-4.5 sm:h-6"}`} />}
+          {icon || <img src="/site/novapill.avif" alt="" aria-hidden="true" loading="lazy" className={`w-auto object-contain ${big ? "h-10" : "h-4.5 sm:h-6"}`} />}
         </span>
         <span className="min-w-0 text-left">
           <span className={`block truncate font-mono uppercase tracking-widest text-accent sm:tracking-[0.16em] ${big ? "text-[0.78rem]" : "text-[0.46rem] sm:text-[0.6rem]"}`}>{tag}</span>
@@ -364,7 +364,7 @@ function ExploreTreatments({ large = false }) {
           }`}
           style={{
             background:
-              "linear-gradient(100deg, color-mix(in srgb, var(--nv-accent) 74%, var(--nv-bg)) 0%, color-mix(in srgb, var(--nv-accent) 88%, var(--nv-bg)) 48%, color-mix(in srgb, var(--nv-accent) 100%, var(--nv-bg)) 100%)",
+              "linear-gradient(100deg, color-mix(in oklab, var(--nv-accent) 60%, var(--nv-surface)) 0%, color-mix(in oklab, var(--nv-accent) 80%, var(--nv-surface)) 100%)",
           }}
         >
           <span className="relative z-10 min-w-0 flex-1 text-left">
@@ -389,8 +389,8 @@ function ExploreTreatments({ large = false }) {
               loading="lazy"
               className={`absolute left-1/2 w-auto max-w-none origin-bottom -translate-x-1/2 object-contain object-bottom transition-transform duration-500 ${
                 large
-                  ? "-bottom-16 h-[calc(100%+3.5rem)] translate-y-12 scale-[1.6] group-hover:scale-[1.68]"
-                  : "bottom-0 h-full translate-y-0 scale-100 group-hover:scale-105 lg:-bottom-14 lg:h-[calc(100%+3rem)] lg:translate-y-11 lg:scale-[1.6] lg:group-hover:scale-[1.68]"
+                  ? "-bottom-16 h-[calc(100%+3.5rem)] translate-y-13 scale-[1.68] group-hover:scale-[1.76]"
+                  : "bottom-0 h-full translate-y-0 scale-110 group-hover:scale-115 lg:-bottom-14 lg:h-[calc(100%+3rem)] lg:translate-y-12 lg:scale-[1.68] lg:group-hover:scale-[1.76]"
               }`}
             />
           </span>
@@ -491,7 +491,7 @@ function EditorialHero({ compact = false, forceWide = false }) {
       {!compact && (
         <div className={`pointer-events-none absolute inset-y-0 right-0 ${wide ? "block w-[80%]" : "hidden w-[65%] lg:block"}`}>
           <video
-            src={wide ? "/right-side-portrait.mp4" : "/right-vid.mp4"}
+            src={wide ? "/video/right-side-portrait.mp4" : "/video/right-vid.mp4"}
             autoPlay loop muted playsInline
             className="h-full w-full object-cover object-right"
           />
@@ -507,14 +507,14 @@ function EditorialHero({ compact = false, forceWide = false }) {
       )}
       {!compact && !wide && (
         <div className="pointer-events-none relative lg:hidden">
-          <video src="/right-vid.mp4" autoPlay loop muted playsInline className="block h-76 w-full object-cover sm:h-88" />
+          <video src="/video/right-vid.mp4" autoPlay loop muted playsInline className="block h-76 w-full object-cover sm:h-88" />
         </div>
       )}
 
       {/* Overlay layout — full-bleed portrait video with the headline on top */}
       {compact && (
         <div className="relative">
-          <video src="/right-side-portrait.mp4" autoPlay loop muted playsInline className="block h-120 w-full object-cover" />
+          <video src="/video/right-side-portrait.mp4" autoPlay loop muted playsInline className="block h-120 w-full object-cover" />
           {/* video stays clean — only a short blend at the very bottom into the page bg */}
           <span
             className="absolute inset-x-0 -bottom-0.5 h-28"
@@ -607,7 +607,7 @@ function KioskHero({ kiosk }) {
       {/* Ken-burns background photo + parallax */}
       <motion.div style={{ y: bgY }} className="absolute -inset-[8%] -z-30 will-change-transform">
         <img
-          src="/home-hero.avif"
+          src="/site/home-hero.avif"
           alt=""
           aria-hidden="true"
           className="nv-kenburns h-full w-full object-cover [object-position:62%_38%] [filter:grayscale(0.45)_saturate(0.85)_contrast(1.02)]"
