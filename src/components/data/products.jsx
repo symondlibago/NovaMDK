@@ -782,6 +782,7 @@ export const productsData = [
     img: "/products/nad-plus-sublingual.avif",
     imgDetail: "/products/detail/nad-plus-sublingual.avif",
     questionnaireId: "91480561-864e-4bda-8bad-694696ac2e1f",
+    caseOfferingId: "6a3b5e15-806a-4ea1-b1f6-b6567ca80066",
     highlights: [
       { text: "Needle-Free" },
       { text: "Once Daily" },
@@ -868,6 +869,7 @@ export const productsData = [
     img: "/products/ldn.avif",
     imgDetail: "/products/detail/ldn.avif",
     questionnaireId: "c5535eaa-f54c-4be1-a613-323122cd275f",
+    caseOfferingId: "c9ed972c-96e7-490f-be00-ebdc75535d66",
     highlights: [
       { text: "Bedtime Dosing" },
       { text: "14 Tablets" },
@@ -897,6 +899,7 @@ export const productsData = [
     img: "/products/ldn.avif",
     imgDetail: "/products/detail/ldn.avif",
     questionnaireId: "c5535eaa-f54c-4be1-a613-323122cd275f",
+    caseOfferingId: "45f6b3f2-5b83-4993-9d71-84d5d2da3d2a",
     highlights: [
       { text: "Bedtime Dosing" },
       { text: "14 Tablets" },
@@ -926,6 +929,7 @@ export const productsData = [
     img: "/products/ldn.avif",
     imgDetail: "/products/detail/ldn.avif",
     questionnaireId: "c5535eaa-f54c-4be1-a613-323122cd275f",
+    caseOfferingId: "03b413cb-6811-4c30-bb29-50bd924c3a53",
     highlights: [
       { text: "Bedtime Dosing" },
       { text: "90 Tablets" },
@@ -1045,6 +1049,7 @@ export const productsData = [
     img: "/products/olympus-peak.avif",
     imgDetail: "/products/detail/olympus-peak.avif",
     questionnaireId: "",
+    caseOfferingId: "413c5be8-ef97-4138-8311-8675a9702ca9",
     highlights: [
       { text: "On-Demand Dosing" },
       { text: "With Tadalafil 20 mg" },

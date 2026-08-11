@@ -90,6 +90,7 @@ export default function ProductPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           questionnaire_id: product.questionnaireId || DEFAULT_QUESTIONNAIRE_ID,
+          case_offering_id: product.caseOfferingId || undefined,
           patient: patient?.email ? patient : null,
           consent: patient?.consent || null,
         }),
@@ -99,17 +100,6 @@ export default function ProductPage() {
       // Contact-only submit + no MDI record found: the modal collects the
       // rest of the profile (steps 2–3) before we mint the voucher.
       if (voucher.need_profile) return { needProfile: true };
-
-      // The one and only CRM write, deliberately placed after the profile is
-      // complete. Syncing at the email gate meant every abandoned funnel — and
-      // every mistyped address — left a contact behind with nothing but an
-      // email, so the CRM filled with junk rows.
-      //
-      // Reaching this line means the profile exists: either MDI recognised a
-      // returning patient (who never sees steps 1–3), or a new patient finished
-      // step 3 and MDI created them. `patient_profile` is MDI's own record and
-      // is authoritative; fall back to the modal's data if MDI couldn't be
-      // read, so a completed profile is never lost.
       const profile = voucher.patient_profile || (patient?.first_name ? patient : null);
       if (profile?.email) {
         syncToGhl({

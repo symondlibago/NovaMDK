@@ -58,16 +58,13 @@ export default async function handler(req, res) {
             if (match) patientId = match.patient_id || match.id;
           }
         }
-        // No existing record, and only contact info so far? Tell the client
-        // to collect the medical profile (modal steps 2–3) — no voucher yet.
+
         const hasFullProfile = p.first_name && p.last_name && p.date_of_birth && p.gender &&
           p.address?.address && p.weight && p.height;
         if (!patientId && !hasFullProfile) {
           return res.status(200).json({ need_profile: true });
         }
 
-        // Creating (vs re-using) a patient requires the full record — MDI
-        // rejects creates without DOB, gender, address, weight, and height.
         if (!patientId && hasFullProfile) {
           const consentMeta = consent
             ? {
@@ -116,10 +113,6 @@ export default async function handler(req, res) {
         console.error('MDI patient prefill failed:', e.message);
       }
     }
-    // A returning patient only types an email — MDI recognises them and the
-    // modal skips every profile step, so the client has nothing more to pass
-    // on. Pull the record back from MDI instead, otherwise the CRM contact for
-    // a repeat visit is an email address with every other column blank.
     let patientProfile = null;
     if (patientId) {
       try {
@@ -154,12 +147,12 @@ export default async function handler(req, res) {
       console.info('NovaMDK consent:', JSON.stringify({ patient_id: patientId, ...consent }));
     }
 
-    // STEP 3: Generate Voucher (bound to the patient when we have one)
+    const offeringId = req.body.case_offering_id;
     const voucherResponse = await mdi('/vouchers', {
       hold_status: true,
       patient_id: patientId,
       questionnaire_id: req.body.questionnaire_id,
-      case_offerings: [],
+      case_offerings: offeringId ? [offeringId] : [],
       disease: []
     });
 

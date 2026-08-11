@@ -30,10 +30,10 @@ function originHost(req) {
 
 /* ------------------------------ rate limiting ----------------------------- */
 const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 30; // a genuine visit makes 2-3 calls
+const MAX_PER_WINDOW = 30; // a genuine visit to a marketing page makes 2-3 calls
 const hits = new Map();
 
-function rateLimited(req) {
+function rateLimited(req, max = MAX_PER_WINDOW) {
   const ip =
     (req.headers?.["x-forwarded-for"] || "").split(",")[0].trim() ||
     req.socket?.remoteAddress ||
@@ -51,12 +51,11 @@ function rateLimited(req) {
   }
 
   entry.count += 1;
-  return entry.count > MAX_PER_WINDOW;
+  return entry.count > max;
 }
 
 /* --------------------------------- guard ---------------------------------- */
-/** Returns true when the request was rejected (and the response already sent). */
-export function blocked(req, res) {
+export function blocked(req, res, { max } = {}) {
   if (DISABLED) return false;
 
   const host = originHost(req);
@@ -66,7 +65,7 @@ export function blocked(req, res) {
     return true;
   }
 
-  if (rateLimited(req)) {
+  if (rateLimited(req, max)) {
     console.warn("Rate limited /api call");
     res.status(429).json({ error: "Too many requests" });
     return true;
