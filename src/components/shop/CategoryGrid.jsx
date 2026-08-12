@@ -111,12 +111,6 @@ function PhotoCard({ it, onClick, hero = false }) {
   );
 }
 
-/* Goal card, per the 2026-08 treatments design: a light card with the subject
-   cut out on the right, bleeding past the top edge, and copy held to the left.
-   The art is a square master with the subject composed inside it, so anchoring
-   right at ~card height reproduces each image's intended weight — a full torso
-   fills the card, two small pills read small — without per-asset normalizing.
-   `cutoutClass` on the item overrides that when a photo needs nudging. */
 function CutoutCard({ it, onClick, hero = false }) {
   return (
     <Link
@@ -214,8 +208,6 @@ function LightCard({ it, art, onClick, hero = false }) {
 }
 
 export default function CategoryGrid({ items, art = "/site/pills-float.avif", dark = false, featured = false, onItemClick }) {
-  // Bento layout: the first tile leads as a wide hero spanning the top, the rest
-  // fall into a clean 2×2 (tablet) / 3-up (desktop) beneath — no orphan gaps.
   return (
     <div className="grid grid-cols-1 items-stretch gap-[clamp(0.8rem,1.6vw,1.1rem)] sm:grid-cols-2 lg:grid-cols-3">
       {items.map((it, i) => {

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { format, isToday, isYesterday } from "date-fns";
 import {
   AlertCircle, Loader2, Mic, Paperclip, Plus, SendHorizontal, Square, Stethoscope, Video, X,
@@ -325,7 +326,7 @@ export default function PortalMessages({ onUnauthorized }) {
           <Loader2 size={26} className="animate-spin text-primary" />
         </div>
       ) : (
-        <div ref={scrollRef} data-lenis-prevent className="min-h-0 flex-1 overflow-y-auto px-5 py-6">
+        <div ref={scrollRef} data-lenis-prevent className="nv-scroll min-h-0 flex-1 overflow-y-auto px-5 py-6">
           <div className="mx-auto flex max-w-3xl flex-col">
             {messages?.length === 0 && (
               <div className="mt-16 text-center">
@@ -456,7 +457,7 @@ export default function PortalMessages({ onUnauthorized }) {
                 }}
                 placeholder="Type a message to your care team…"
                 data-lenis-prevent
-                className="max-h-40 flex-1 resize-none bg-transparent px-1 py-2 text-[0.92rem] text-ink placeholder:text-muted/70 focus:outline-none"
+                className="nv-scroll max-h-40 flex-1 resize-none bg-transparent px-1 py-2 text-[0.92rem] text-ink placeholder:text-muted/70 focus:outline-none"
               />
 
               <button type="button" onClick={() => startRecording("video")}
@@ -479,7 +480,11 @@ export default function PortalMessages({ onUnauthorized }) {
           )}
 
           <p className="mt-2 text-center text-[0.74rem] text-muted">
-            For billing, shipping or account questions, contact support.
+            For billing, shipping or account questions,{" "}
+            <Link to="/contact" className="font-medium text-primary underline-offset-4 hover:underline">
+              contact support
+            </Link>
+            .
           </p>
         </form>
       </div>

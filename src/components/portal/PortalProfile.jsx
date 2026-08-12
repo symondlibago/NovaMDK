@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Check, HeartPulse, Loader2, UserRound } from "lucide-react";
 import { portalData } from "../../lib/portal";
 
@@ -18,6 +19,11 @@ const ftInToCm = (ft, inch) => {
 
 const cToF = (c) => (c == null ? "" : String(Math.round((c * 9) / 5 + 32)));
 const fToC = (f) => (f === "" ? null : Number((((Number(f) - 32) * 5) / 9).toFixed(1)));
+
+const SECTIONS = [
+  { key: "details", label: "Profile details", icon: UserRound },
+  { key: "medical", label: "Medical details", icon: HeartPulse },
+];
 
 const label = "mb-1.5 block text-[0.8rem] font-medium text-muted";
 const field =
@@ -66,13 +72,15 @@ function Card({ icon, title, note, children, onSave, saving, saved, error }) {
   );
 }
 
-export default function PortalProfile({ onUnauthorized, onName }) {
+export default function PortalProfile({ onUnauthorized }) {
   const [profile, setProfile] = useState(null);
   const [loadError, setLoadError] = useState(null);
   const [form, setForm] = useState(null);
   const [busy, setBusy] = useState(null); // 'details' | 'medical'
   const [saved, setSaved] = useState(null);
   const [error, setError] = useState({});
+  // One card at a time — the two stacked made for a very long scroll.
+  const [section, setSection] = useState("details");
 
   useEffect(() => {
     portalData({ resource: "profile" })
@@ -105,7 +113,6 @@ export default function PortalProfile({ onUnauthorized, onName }) {
       const { profile: next } = await portalData({ resource: "update_profile", profile: payload });
       setProfile(next);
       setSaved(section);
-      if (section === "details") onName?.(next.first_name);
     } catch (err) {
       if (err.status === 401) return onUnauthorized();
       setError({ [section]: err.message });
@@ -116,7 +123,7 @@ export default function PortalProfile({ onUnauthorized, onName }) {
 
   if (loadError) {
     return (
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-8" data-lenis-prevent>
+      <div className="nv-scroll min-h-0 flex-1 overflow-y-auto px-5 py-8" data-lenis-prevent>
         <p role="alert" className="mx-auto flex max-w-3xl items-center gap-2 text-[0.9rem] text-ink">
           <AlertCircle size={15} className="text-primary" /> {loadError}
         </p>
@@ -135,7 +142,7 @@ export default function PortalProfile({ onUnauthorized, onName }) {
   const isFemale = String(form.gender) === "2" || form.gender_label === "Female";
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-8" data-lenis-prevent>
+    <div className="nv-scroll min-h-0 flex-1 overflow-y-auto px-5 py-8" data-lenis-prevent>
       <div className="mx-auto max-w-3xl space-y-6">
         <div>
           <h1 className="text-[1.45rem] leading-tight text-ink">Your details</h1>
@@ -144,193 +151,240 @@ export default function PortalProfile({ onUnauthorized, onName }) {
           </p>
         </div>
 
-        <Card
-          icon={UserRound}
-          title="Profile details"
-          note="Where your medication ships and how we reach you"
-          saving={busy === "details"}
-          saved={saved === "details"}
-          error={error.details}
-          onSave={() =>
-            save("details", {
-              first_name: form.first_name,
-              last_name: form.last_name,
-              phone_number: form.phone_number,
-              date_of_birth: form.date_of_birth,
-              gender: form.gender === null || form.gender === "" ? undefined : Number(form.gender),
-              pregnancy: isFemale ? Boolean(form.pregnancy) : false,
-              is_sms_enabled: form.is_sms_enabled,
-              is_email_enabled: form.is_email_enabled,
-              address: form.address,
-            })
-          }
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className={label} htmlFor="p-first">First name</label>
-              <input id="p-first" className={field} value={form.first_name}
-                onChange={(e) => set({ first_name: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="p-last">Last name</label>
-              <input id="p-last" className={field} value={form.last_name}
-                onChange={(e) => set({ last_name: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="p-sex">Sex</label>
-              <select id="p-sex" className={field} value={form.gender ?? ""}
-                onChange={(e) => set({ gender: e.target.value })}>
-                <option value="">Prefer not to say</option>
-                <option value="1">Male</option>
-                <option value="2">Female</option>
-              </select>
-            </div>
-            <div>
-              <label className={label} htmlFor="p-dob">Date of birth</label>
-              <input id="p-dob" type="date" className={field} value={form.date_of_birth || ""}
-                onChange={(e) => set({ date_of_birth: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="p-email">Email</label>
-              <input id="p-email" className={field} value={form.email} disabled />
-              <p className="mt-1 text-[0.75rem] text-muted">
-                This is your sign-in address. Contact support to change it.
-              </p>
-            </div>
-            <div>
-              <label className={label} htmlFor="p-phone">Phone</label>
-              <input id="p-phone" type="tel" className={field} value={form.phone_number}
-                onChange={(e) => set({ phone_number: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="p-state">State</label>
-              <input id="p-state" className={field} value={form.address.state_name}
-                onChange={(e) => setAddr({ state_name: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="p-city">City</label>
-              <input id="p-city" className={field} value={form.address.city_name}
-                onChange={(e) => setAddr({ city_name: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="p-addr">Address</label>
-              <input id="p-addr" className={field} value={form.address.address}
-                onChange={(e) => setAddr({ address: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="p-zip">ZIP code</label>
-              <input id="p-zip" inputMode="numeric" className={field} value={form.address.zip_code}
-                onChange={(e) => setAddr({ zip_code: e.target.value })} />
-            </div>
-          </div>
-
-          <p className="mt-3 text-[0.78rem] leading-relaxed text-muted">
-            This is the physical address your medication ships to. PO boxes can't be used.
-          </p>
-
-          <div className="mt-5 space-y-3 border-t border-line pt-5">
-            {isFemale && (
-              <label className="flex items-start gap-2.5 text-[0.9rem] text-ink">
-                <input type="checkbox" checked={Boolean(form.pregnancy)}
-                  onChange={(e) => set({ pregnancy: e.target.checked })}
-                  className="mt-0.5 h-4 w-4 accent-primary" />
-                <span>
-                  I am pregnant
-                  <span className="block text-[0.78rem] text-muted">
-                    Some medications aren't recommended during pregnancy.
-                  </span>
+        <div className="inline-flex w-fit gap-1 rounded-full border border-line bg-surface p-1">
+          {SECTIONS.map(({ key, label, icon }) => {
+            // Assigned rather than destructured as `icon: Icon` — the repo's
+            // no-unused-vars only exempts capitalised variables, not params.
+            const Icon = icon;
+            const active = section === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSection(key)}
+                aria-pressed={active}
+                className={`relative flex items-center gap-2 rounded-full px-4 py-2 text-[0.85rem] font-semibold transition-colors ${
+                  active ? "text-on-primary" : "text-muted hover:text-ink"
+                }`}
+              >
+                {/* The filled pill is a single shared element that animates between
+                    options, rather than two backgrounds cross-fading. */}
+                {active && (
+                  <motion.span
+                    layoutId="portal-profile-pill"
+                    className="absolute inset-0 rounded-full bg-primary"
+                    transition={{ type: "spring", stiffness: 420, damping: 36 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
+                  <Icon size={15} className="shrink-0" /> {label}
                 </span>
-              </label>
+              </button>
+            );
+          })}
+        </div>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={section}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {section === "details" && (
+              <Card
+                icon={UserRound}
+                title="Profile details"
+                note="Where your medication ships and how we reach you"
+                saving={busy === "details"}
+                saved={saved === "details"}
+                error={error.details}
+                onSave={() =>
+                  save("details", {
+                    first_name: form.first_name,
+                    last_name: form.last_name,
+                    phone_number: form.phone_number,
+                    date_of_birth: form.date_of_birth,
+                    gender: form.gender === null || form.gender === "" ? undefined : Number(form.gender),
+                    pregnancy: isFemale ? Boolean(form.pregnancy) : false,
+                    is_sms_enabled: form.is_sms_enabled,
+                    is_email_enabled: form.is_email_enabled,
+                    address: form.address,
+                  })
+                }
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={label} htmlFor="p-first">First name</label>
+                    <input id="p-first" className={field} value={form.first_name}
+                      onChange={(e) => set({ first_name: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-last">Last name</label>
+                    <input id="p-last" className={field} value={form.last_name}
+                      onChange={(e) => set({ last_name: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-sex">Sex</label>
+                    <select id="p-sex" className={field} value={form.gender ?? ""}
+                      onChange={(e) => set({ gender: e.target.value })}>
+                      <option value="">Prefer not to say</option>
+                      <option value="1">Male</option>
+                      <option value="2">Female</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-dob">Date of birth</label>
+                    <input id="p-dob" type="date" className={field} value={form.date_of_birth || ""}
+                      onChange={(e) => set({ date_of_birth: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-email">Email</label>
+                    <input id="p-email" className={field} value={form.email} disabled />
+                    <p className="mt-1 text-[0.75rem] text-muted">
+                      This is your sign-in address. Contact support to change it.
+                    </p>
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-phone">Phone</label>
+                    <input id="p-phone" type="tel" className={field} value={form.phone_number}
+                      onChange={(e) => set({ phone_number: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-state">State</label>
+                    <input id="p-state" className={field} value={form.address.state_name}
+                      onChange={(e) => setAddr({ state_name: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-city">City</label>
+                    <input id="p-city" className={field} value={form.address.city_name}
+                      onChange={(e) => setAddr({ city_name: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-addr">Address</label>
+                    <input id="p-addr" className={field} value={form.address.address}
+                      onChange={(e) => setAddr({ address: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="p-zip">ZIP code</label>
+                    <input id="p-zip" inputMode="numeric" className={field} value={form.address.zip_code}
+                      onChange={(e) => setAddr({ zip_code: e.target.value })} />
+                  </div>
+                </div>
+
+                <p className="mt-3 text-[0.78rem] leading-relaxed text-muted">
+                  This is the physical address your medication ships to. PO boxes can't be used.
+                </p>
+
+                <div className="mt-5 space-y-3 border-t border-line pt-5">
+                  {isFemale && (
+                    <label className="flex items-start gap-2.5 text-[0.9rem] text-ink">
+                      <input type="checkbox" checked={Boolean(form.pregnancy)}
+                        onChange={(e) => set({ pregnancy: e.target.checked })}
+                        className="mt-0.5 h-4 w-4 accent-primary" />
+                      <span>
+                        I am pregnant
+                        <span className="block text-[0.78rem] text-muted">
+                          Some medications aren't recommended during pregnancy.
+                        </span>
+                      </span>
+                    </label>
+                  )}
+                  <label className="flex items-center gap-2.5 text-[0.9rem] text-ink">
+                    <input type="checkbox" checked={form.is_sms_enabled}
+                      onChange={(e) => set({ is_sms_enabled: e.target.checked })}
+                      className="h-4 w-4 accent-primary" />
+                    Receive SMS for medical notifications
+                  </label>
+                  <label className="flex items-center gap-2.5 text-[0.9rem] text-ink">
+                    <input type="checkbox" checked={form.is_email_enabled}
+                      onChange={(e) => set({ is_email_enabled: e.target.checked })}
+                      className="h-4 w-4 accent-primary" />
+                    Receive emails for medical notifications
+                  </label>
+                </div>
+              </Card>
             )}
-            <label className="flex items-center gap-2.5 text-[0.9rem] text-ink">
-              <input type="checkbox" checked={form.is_sms_enabled}
-                onChange={(e) => set({ is_sms_enabled: e.target.checked })}
-                className="h-4 w-4 accent-primary" />
-              Receive SMS for medical notifications
-            </label>
-            <label className="flex items-center gap-2.5 text-[0.9rem] text-ink">
-              <input type="checkbox" checked={form.is_email_enabled}
-                onChange={(e) => set({ is_email_enabled: e.target.checked })}
-                className="h-4 w-4 accent-primary" />
-              Receive emails for medical notifications
-            </label>
-          </div>
-        </Card>
 
-        <Card
-          icon={HeartPulse}
-          title="Medical details"
-          note="Shared with your clinician when they review your case"
-          saving={busy === "medical"}
-          saved={saved === "medical"}
-          error={error.medical}
-          onSave={() =>
-            save("medical", {
-              weight: lbToKg(form.weight_lb),
-              height: ftInToCm(form.height_ft, form.height_in),
-              blood_pressure: form.blood_pressure,
-              body_temperature: fToC(form.body_temperature_f),
-              oxygen_saturation: form.oxygen_saturation === "" || form.oxygen_saturation === null
-                ? null : Number(form.oxygen_saturation),
-              current_medications: form.current_medications,
-              allergies: form.allergies,
-              medical_conditions: form.medical_conditions,
-            })
-          }
-        >
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label className={label} htmlFor="m-weight">Weight (lb)</label>
-              <input id="m-weight" inputMode="numeric" className={field} value={form.weight_lb}
-                onChange={(e) => set({ weight_lb: e.target.value })} />
-            </div>
-            <div>
-              <span className={label}>Height</span>
-              <div className="flex gap-2">
-                <input aria-label="Feet" inputMode="numeric" placeholder="ft" className={field}
-                  value={form.height_ft} onChange={(e) => set({ height_ft: e.target.value })} />
-                <input aria-label="Inches" inputMode="numeric" placeholder="in" className={field}
-                  value={form.height_in} onChange={(e) => set({ height_in: e.target.value })} />
-              </div>
-            </div>
-            <div>
-              <label className={label} htmlFor="m-bp">Blood pressure</label>
-              <input id="m-bp" placeholder="120/80" className={field} value={form.blood_pressure}
-                onChange={(e) => set({ blood_pressure: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="m-temp">Body temp. (°F)</label>
-              <input id="m-temp" inputMode="decimal" placeholder="98" className={field}
-                value={form.body_temperature_f} onChange={(e) => set({ body_temperature_f: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="m-o2">Oxygen sat. (%)</label>
-              <input id="m-o2" inputMode="numeric" placeholder="99" className={field}
-                value={form.oxygen_saturation ?? ""} onChange={(e) => set({ oxygen_saturation: e.target.value })} />
-            </div>
-          </div>
+            {section === "medical" && (
+              <Card
+                icon={HeartPulse}
+                title="Medical details"
+                note="Shared with your clinician when they review your case"
+                saving={busy === "medical"}
+                saved={saved === "medical"}
+                error={error.medical}
+                onSave={() =>
+                  save("medical", {
+                    weight: lbToKg(form.weight_lb),
+                    height: ftInToCm(form.height_ft, form.height_in),
+                    blood_pressure: form.blood_pressure,
+                    body_temperature: fToC(form.body_temperature_f),
+                    oxygen_saturation: form.oxygen_saturation === "" || form.oxygen_saturation === null
+                      ? null : Number(form.oxygen_saturation),
+                    current_medications: form.current_medications,
+                    allergies: form.allergies,
+                    medical_conditions: form.medical_conditions,
+                  })
+                }
+              >
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div>
+                    <label className={label} htmlFor="m-weight">Weight (lb)</label>
+                    <input id="m-weight" inputMode="numeric" className={field} value={form.weight_lb}
+                      onChange={(e) => set({ weight_lb: e.target.value })} />
+                  </div>
+                  <div>
+                    <span className={label}>Height</span>
+                    <div className="flex gap-2">
+                      <input aria-label="Feet" inputMode="numeric" placeholder="ft" className={field}
+                        value={form.height_ft} onChange={(e) => set({ height_ft: e.target.value })} />
+                      <input aria-label="Inches" inputMode="numeric" placeholder="in" className={field}
+                        value={form.height_in} onChange={(e) => set({ height_in: e.target.value })} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="m-bp">Blood pressure</label>
+                    <input id="m-bp" placeholder="120/80" className={field} value={form.blood_pressure}
+                      onChange={(e) => set({ blood_pressure: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="m-temp">Body temp. (°F)</label>
+                    <input id="m-temp" inputMode="decimal" placeholder="98" className={field}
+                      value={form.body_temperature_f} onChange={(e) => set({ body_temperature_f: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="m-o2">Oxygen sat. (%)</label>
+                    <input id="m-o2" inputMode="numeric" placeholder="99" className={field}
+                      value={form.oxygen_saturation ?? ""} onChange={(e) => set({ oxygen_saturation: e.target.value })} />
+                  </div>
+                </div>
 
-          <div className="mt-4 space-y-4">
-            <div>
-              <label className={label} htmlFor="m-meds">Current medications</label>
-              <textarea id="m-meds" rows={2} data-lenis-prevent className={`${field} resize-y`}
-                placeholder="None" value={form.current_medications}
-                onChange={(e) => set({ current_medications: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="m-allergies">Allergies</label>
-              <textarea id="m-allergies" rows={2} data-lenis-prevent className={`${field} resize-y`}
-                placeholder="No known drug allergies" value={form.allergies}
-                onChange={(e) => set({ allergies: e.target.value })} />
-            </div>
-            <div>
-              <label className={label} htmlFor="m-conditions">Medical conditions</label>
-              <textarea id="m-conditions" rows={2} data-lenis-prevent className={`${field} resize-y`}
-                placeholder="No known medical conditions" value={form.medical_conditions}
-                onChange={(e) => set({ medical_conditions: e.target.value })} />
-            </div>
-          </div>
-        </Card>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <label className={label} htmlFor="m-meds">Current medications</label>
+                    <textarea id="m-meds" rows={2} data-lenis-prevent className={`${field} resize-y`}
+                      placeholder="None" value={form.current_medications}
+                      onChange={(e) => set({ current_medications: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="m-allergies">Allergies</label>
+                    <textarea id="m-allergies" rows={2} data-lenis-prevent className={`${field} resize-y`}
+                      placeholder="No known drug allergies" value={form.allergies}
+                      onChange={(e) => set({ allergies: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="m-conditions">Medical conditions</label>
+                    <textarea id="m-conditions" rows={2} data-lenis-prevent className={`${field} resize-y`}
+                      placeholder="No known medical conditions" value={form.medical_conditions}
+                      onChange={(e) => set({ medical_conditions: e.target.value })} />
+                  </div>
+                </div>
+              </Card>
+            )}
+          </motion.div>
+        </AnimatePresence>
 
         <p className="pb-4 text-center text-[0.78rem] text-muted">
           Signed in as {profile?.email}

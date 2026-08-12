@@ -70,6 +70,133 @@ const shapeProfile = (p) => ({
     : null,
 });
 
+/* The last thing MDI knows is `fulfilled` — the pharmacy shipped it and
+   attached a tracking number. There is no delivered status and no delivery
+   webhook; that knowledge stays with the carrier. So the final step is
+   "Shipped", not "Delivered", which would never fill in. */
+const STEPS = [
+  { key: 'received', label: 'Received' },
+  { key: 'in_review', label: 'In Review' },
+  { key: 'rx_approved', label: 'Rx Approved' },
+  { key: 'fulfillment', label: 'In Fulfillment' },
+  { key: 'shipped', label: 'Shipped' },
+];
+
+/* Case statuses only carry the clinical half. The last two steps come from the
+   pharmacy order, which is a separate vocabulary entirely
+   (new / ready / received / fulfilled / failed). */
+const STATUS_STEP = {
+  created: 'received', pending: 'received', new: 'received',
+  assigned: 'in_review', processing: 'in_review', in_review: 'in_review',
+  prescribed: 'rx_approved', approved: 'rx_approved',
+  completed: 'rx_approved', closed: 'rx_approved',
+};
+
+/* Only statuses worth telling a patient about. Anything unlisted produces no
+   notification rather than leaking an internal workflow name. */
+const VISIT_HEADLINE = {
+  created: 'Your visit was submitted',
+  pending: 'Your visit was submitted',
+  new: 'Your visit was submitted',
+  assigned: 'A clinician is reviewing your visit',
+  processing: 'Your visit is in review',
+  prescribed: 'Your treatment has been prescribed',
+  approved: 'Your treatment has been approved',
+  completed: 'Your visit is complete',
+  closed: 'Your visit is complete',
+  cancelled: 'Your visit was cancelled',
+  canceled: 'Your visit was cancelled',
+};
+
+/** Flattens /cases/:id/orders, which nests orders under pharmacy sequences. */
+const flattenOrders = (payload) =>
+  listOf(payload).flatMap((row) => (Array.isArray(row?.orders) ? row.orders : row ? [row] : []));
+
+function summariseOrders(orders) {
+  if (!orders.length) return { exists: false, shipped: false, tracking: null, issue: null };
+
+  const status = (o) => String(o.status || '').toLowerCase();
+  const shippedOrder = orders.find((o) => status(o) === 'fulfilled');
+  const failed = orders.find((o) => status(o) === 'failed');
+
+  // Tracking arrives either as a structured object or embedded in the details
+  // string — the webhook sends it as "Tracking Number: 101010".
+  let tracking = null;
+  for (const o of orders) {
+    if (o.tracking?.number) {
+      tracking = { number: o.tracking.number, link: o.tracking.link || null, company: o.tracking.company || null };
+      break;
+    }
+    const match = String(o.details || o.status_details || '').match(/tracking number[:\s]+([A-Za-z0-9-]+)/i);
+    if (match) { tracking = { number: match[1], link: null, company: null }; break; }
+  }
+
+  return {
+    exists: true,
+    shipped: Boolean(shippedOrder),
+    at: shippedOrder?.updated_at || shippedOrder?.date || null,
+    started_at: orders[0]?.created_at || orders[0]?.date || null,
+    tracking,
+    // A pharmacy rejection ("Invalid Address Zip") is the patient's to fix, and
+    // without it the stepper would just sit at In Fulfillment forever.
+    issue: failed ? String(failed.status_details || failed.details || 'The pharmacy could not process this order.') : null,
+  };
+}
+
+/** Earliest timestamp per stage, plus how far the case has actually got. */
+function buildTimeline(statuses, orderState) {
+  const reachedAt = {};
+  let furthest = -1;
+  let cancelled = null;
+
+  for (const s of statuses) {
+    const name = String(s.name || '').toLowerCase();
+    if (name === 'cancelled' || name === 'canceled') {
+      cancelled = s.created_at || null;
+      continue;
+    }
+    const step = STATUS_STEP[name];
+    if (!step) continue;
+    const index = STEPS.findIndex((x) => x.key === step);
+    if (!reachedAt[step]) reachedAt[step] = s.created_at || null;
+    if (index > furthest) furthest = index;
+  }
+
+  if (orderState.exists) {
+    reachedAt.fulfillment = orderState.started_at;
+    furthest = Math.max(furthest, STEPS.findIndex((x) => x.key === 'fulfillment'));
+  }
+  if (orderState.shipped) {
+    reachedAt.shipped = orderState.at;
+    furthest = STEPS.length - 1;
+  }
+
+  return {
+    cancelled_at: cancelled,
+    tracking: orderState.tracking,
+    issue: orderState.issue,
+    steps: STEPS.map((s, i) => ({
+      key: s.key,
+      label: s.label,
+      at: reachedAt[s.key] || null,
+      done: i < furthest,
+      current: i === furthest,
+    })),
+  };
+}
+
+/* bio_details is HTML. It's stripped to text here rather than rendered as
+   markup — nothing from an upstream API should reach the DOM as HTML. */
+const stripHtml = (html) =>
+  String(html || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+
 const shapeCase = (c) => {
   const clinician = c.case_assignment?.clinician;
   return {
@@ -155,6 +282,107 @@ export default async function handler(req, res) {
         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
       // Numbered oldest-first so "Visit #1" stays #1 as new ones arrive.
       return res.status(200).json({ cases: cases.map((c, i) => ({ ...c, number: i + 1 })) });
+    }
+
+    if (resource === 'notifications') {
+      /* MDI's patient notification list is only on its internal patient-app API
+         and 404s for a partner credential, so this is derived from data we can
+         reach: unread replies, and visits whose status changed recently. The
+         upside is it can't go stale — an item disappears when the underlying
+         condition clears, instead of needing to be dismissed. */
+      const [msgs, cases] = await Promise.all([
+        mdi(`/patients/${id}/messages?channel=patient&per_page=${MESSAGE_PAGE}`),
+        mdi(`/patients/${id}/cases`),
+      ]);
+
+      const items = [];
+
+      for (const m of listOf(msgs.data)) {
+        if (isPatient(m.user_type) || m.read_at) continue;
+        items.push({
+          id: `message:${m.id}`,
+          kind: 'message',
+          tab: 'messages',
+          title: `New message from ${m.user_name || 'your care team'}`,
+          preview: String(m.text || '').trim().slice(0, 120) || 'Sent you an attachment',
+          at: m.created_at,
+        });
+      }
+
+      // Numbered oldest-first so "Visit #1" matches the Visits tab.
+      const ordered = listOf(cases.data)
+        .slice()
+        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+      ordered.forEach((c, i) => {
+        const status = String(c.case_status?.name || '').toLowerCase();
+        const at = c.case_status?.created_at;
+        const title = VISIT_HEADLINE[status];
+        if (!title || !at) return;
+        // Older than a month isn't news; it's just history.
+        if (Date.now() - new Date(at).getTime() > 30 * 24 * 60 * 60_000) return;
+        items.push({
+          id: `visit:${c.case_id || c.id}:${status}`,
+          kind: 'visit',
+          tab: 'visits',
+          title,
+          preview: `Visit #${i + 1}`,
+          at,
+        });
+      });
+
+      items.sort((a, b) => new Date(b.at) - new Date(a.at));
+      return res.status(200).json({ items: items.slice(0, 20) });
+    }
+
+    if (resource === 'case_detail') {
+      const caseId = String(req.body?.case_id || '');
+      if (!caseId) return res.status(400).json({ error: 'case_id is required' });
+
+      const detail = await mdi(`/cases/${encodeURIComponent(caseId)}`);
+      if (!detail.ok) {
+        console.error('Portal case detail failed:', detail.status);
+        return res.status(502).json({ error: 'Could not load that visit' });
+      }
+      const body = detail.data?.data || detail.data;
+
+      /* case_id arrives from the browser, so ownership is re-checked against
+         the session rather than trusted. Without this, editing the id in a
+         request would read a stranger's chart. */
+      const owner = body?.patient?.patient_id || body?.patient?.id || body?.patient_id;
+      if (owner !== patientId) {
+        console.warn('Portal case detail: ownership mismatch');
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      const [history, orders] = await Promise.all([
+        mdi(`/cases/${encodeURIComponent(caseId)}/statuses`),
+        mdi(`/cases/${encodeURIComponent(caseId)}/orders`),
+      ]);
+      const timeline = buildTimeline(
+        listOf(history.data),
+        summariseOrders(flattenOrders(orders.data))
+      );
+
+      // The clinician id comes from the case MDI just returned, never from the
+      // request, so this can't be pointed at an arbitrary record.
+      let clinician = null;
+      const clinicianId = body?.case_assignment?.clinician?.clinician_id;
+      if (clinicianId) {
+        const c = await mdi(`/clinicians/${encodeURIComponent(clinicianId)}`);
+        const d = c.data?.data || c.data;
+        if (c.ok && d) {
+          clinician = {
+            name: [d.first_name, d.last_name].filter(Boolean).join(' '),
+            suffix: d.suffix || null,
+            specialty: d.specialty || null,
+            photo: d.url_thumbnail || null,
+            bio: stripHtml(d.bio_details).slice(0, 600) || null,
+          };
+        }
+      }
+
+      return res.status(200).json({ timeline, clinician });
     }
 
     if (resource === 'messages') {

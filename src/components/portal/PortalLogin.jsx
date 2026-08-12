@@ -60,7 +60,7 @@ export default function PortalLogin({ onAuthenticated }) {
     "flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-[0.95rem] font-semibold text-on-primary transition-colors hover:bg-primary-deep disabled:opacity-60";
 
   return (
-    <div data-lenis-prevent className="grid min-h-0 flex-1 place-items-center overflow-y-auto px-5 py-12">
+    <div data-lenis-prevent className="nv-scroll grid min-h-0 flex-1 place-items-center overflow-y-auto px-5 py-12">
       <div className="w-full max-w-[26rem]">
         <div className="mb-7 text-center">
           <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-surface-2 text-primary">
