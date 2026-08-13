@@ -60,7 +60,7 @@ export default async function handler(req, res) {
         }
 
         const hasFullProfile = p.first_name && p.last_name && p.date_of_birth && p.gender &&
-          p.address?.address && p.weight && p.height;
+          p.address?.address;
         if (!patientId && !hasFullProfile) {
           return res.status(200).json({ need_profile: true });
         }
@@ -89,8 +89,10 @@ export default async function handler(req, res) {
             phone_type: 2,
             date_of_birth: p.date_of_birth,
             gender: p.gender,
-            weight: p.weight,   // kg (converted client-side from lbs)
-            height: p.height,   // cm (converted client-side from ft/in)
+            // Only sent if a caller supplies them — the intake modal doesn't,
+            // since the questionnaire asks. The portal profile can set them later.
+            ...(p.weight ? { weight: p.weight } : {}),
+            ...(p.height ? { height: p.height } : {}),
             address: {
               address: p.address.address,
               address2: p.address.address2 || null,
