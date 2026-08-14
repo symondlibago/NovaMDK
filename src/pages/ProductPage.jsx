@@ -59,15 +59,15 @@ export default function ProductPage() {
   // Pulled from the catalogue: bounce to the category rather than leaving a
   // buyable page reachable by old links, QR codes or a stale search result.
   if (isHidden(product)) {
-    return <Navigate to={isOtc(product) ? "/supplements" : `/treatments/${product.categorySlug}`} replace />;
+    return <Navigate to={isOtc(product) || product.categorySlug === "supplements" ? "/treatments" : `/treatments/${product.categorySlug}`} replace />;
   }
   if (id !== productSlug(product)) return <Navigate to={productPath(product)} replace />;
 
   const categoryLabel = product.categoryName;
-  // Retail items live on /supplements; the mock supplement catalog has no
-  // /treatments/supplements listing to go back to.
+  // The retail shelf was retired with the supplement line (2026-08-15), so a
+  // non-Rx item has no category listing of its own to go back to.
   const otc = isOtc(product);
-  const backLink = otc ? "/supplements" : `/treatments/${product.categorySlug}`;
+  const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
   const related = visibleProducts
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && isOtc(p) === otc)
     .slice(0, 3);

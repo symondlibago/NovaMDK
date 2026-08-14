@@ -11,7 +11,7 @@ const legalDocuments = {
     lastUpdated: 'July 16, 2026',
     intro: [
       'THIS IS NOT AN EMERGENCY MEDICAL SERVICE. IF YOU ARE HAVING A MEDICAL OR PSYCHOLOGICAL EMERGENCY, PLEASE DIAL 911 OR GO TO YOUR NEAREST EMERGENCY ROOM.',
-      'PLEASE READ THESE TERMS OF SERVICE CAREFULLY. These Terms of Service (the "Terms") constitute a legally binding agreement between you ("you," "your," or "User") and NovaMDK, LLC ("NovaMDK," "we," "us," or "our") governing your access to and use of the NovaMDK website, kiosks, mobile applications, and related services (collectively, the "Platform" or "Services").',
+      'PLEASE READ THESE TERMS OF SERVICE CAREFULLY. These Terms of Service (the "Terms") constitute a legally binding agreement between you ("you," "your," or "User") and Nova MDK, LLC ("NovaMDK," "we," "us," or "our") governing your access to and use of the NovaMDK website, kiosks, mobile applications, and related services (collectively, the "Platform" or "Services").',
       'By accessing or using the Platform, creating an account, completing a medical intake, requesting a consultation, or purchasing any product or service through NovaMDK, you acknowledge that you have read, understood, and agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, you may not access or use the Platform.',
       'ARBITRATION NOTICE: These Terms contain a binding arbitration agreement and a class action waiver. By agreeing to these Terms, you agree to resolve disputes with NovaMDK through individual arbitration and waive your right to participate in class actions. Please review Section 18 (Dispute Resolution) carefully.',
     ],
@@ -394,43 +394,10 @@ const legalDocuments = {
     closing: 'By using the Services, you acknowledge that you have read this Privacy Policy and understand how NovaMDK collects, uses, shares, and protects your information.',
   },
 
-  'sitemap': {
-    title: 'Sitemap',
-    lastUpdated: 'Current',
-    content: [
-      {
-        heading: 'Treatments',
-        links: [
-          { label: 'All Treatments', url: '/category/all-treatments' },
-          { label: 'Anti-Aging Rx', url: '/category/unisex-anti-aging-rx' },
-          { label: 'Sports Medicine', url: '/category/unisex-sports-medicine' },
-          { label: "Sexual Health", url: '/category/mens-health' },
-          { label: 'Skin Health', url: '/category/unisex-skin-health' },
-          { label: 'Supplements', url: '/category/supplements' }
-        ]
-      },
-      {
-        heading: 'Company',
-        links: [
-          { label: 'Home', url: '/' },
-          { label: 'About Us', url: '/' },
-          { label: 'Contact Us', url: '/contact' },
-          { label: 'Help Center & FAQ', url: '/#faq' },
-          { label: 'Patient Portal', url: '#' }
-        ]
-      },
-      {
-        heading: 'Legal',
-        links: [
-          { label: 'Terms & Conditions', url: '/legal/terms-and-conditions' },
-          { label: 'Privacy Policy', url: '/legal/privacy-policy' },
-          { label: 'Platform Providers Notice of Privacy Practices', url: '/legal/hipaa-notice-of-privacy-practices' },
-          { label: 'Telehealth Consent & Open Payments', url: '/legal/telehealth-consent' },
-          { label: 'Consumer Health Data Privacy Notice', url: '/legal/consumer-health-data' }
-        ]
-      }
-    ]
-  },
+  /* The sitemap used to live here as a hand-maintained link list. It had drifted
+     onto `/category/*` URLs the router never served, so every treatment link
+     dead-ended. It is now a real page at /sitemap, generated from the catalog —
+     see pages/SitemapPage.jsx. `/legal/sitemap` redirects there. */
 
   'telehealth-consent': {
     title: 'Telehealth Informed Consent',
@@ -442,7 +409,7 @@ const legalDocuments = {
     content: [
       {
         heading: '1. Purpose of This Consent',
-        text: 'The purpose of this Telehealth Informed Consent ("Consent") is to provide you with information about telehealth and to obtain your informed consent to receive healthcare services delivered by telehealth from a network of independent physicians contracted with NovaMDK LLC ("PG," "Platform Providers," "Provider," or "Providers"), through the technology platform operated by NovaMDK (the "Platform" or "Service").\n\nIn this Consent, the words "you" and "yours" refer to the person receiving care through the Service. The word "Provider" means a physician holding an active Doctor of Medicine (M.D.) license in good standing in the state in which you are located at the time of consultation. PG does not utilize Doctors of Osteopathic Medicine (D.O.), physician assistants, nurse practitioners, or other non-M.D. clinicians.\n\nBy electronically signing this Consent or by clicking "I agree" where presented, you acknowledge that you have read, understood, and voluntarily consent to receive healthcare services through telehealth as described below.',
+        text: 'The purpose of this Telehealth Informed Consent ("Consent") is to provide you with information about telehealth and to obtain your informed consent to receive healthcare services delivered by telehealth from a network of independent physicians contracted with Nova MDK, LLC ("PG," "Platform Providers," "Provider," or "Providers"), through the technology platform operated by NovaMDK (the "Platform" or "Service").\n\nIn this Consent, the words "you" and "yours" refer to the person receiving care through the Service. The word "Provider" means a physician holding an active Doctor of Medicine (M.D.) license in good standing in the state in which you are located at the time of consultation. PG does not utilize Doctors of Osteopathic Medicine (D.O.), physician assistants, nurse practitioners, or other non-M.D. clinicians.\n\nBy electronically signing this Consent or by clicking "I agree" where presented, you acknowledge that you have read, understood, and voluntarily consent to receive healthcare services through telehealth as described below.',
       },
       {
         heading: '2. Nature of Telehealth',

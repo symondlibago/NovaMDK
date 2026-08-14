@@ -201,8 +201,8 @@ export default function TreatmentsPage() {
                 <Link to="/start" className="text-[0.92rem] font-semibold text-primary transition-colors hover:text-accent">
                   Not sure? Take the 2-min quiz →
                 </Link>
-                <Link to="/supplements" className="text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
-                  Looking for supplements? →
+                <Link to="/weight-loss-calculator" className="text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
+                  Check your BMI with our free calculator →
                 </Link>
               </div>
             </div>

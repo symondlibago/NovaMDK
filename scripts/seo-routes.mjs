@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { slugify, productSlug } from "../src/lib/slug.js";
 import { CATEGORY_META } from "../src/lib/categoryMeta.js";
+import { LEGAL_PAGES, CONTENT_PAGES } from "../src/lib/siteLinks.js";
 
 export const SITE_URL = "https://www.novamdk.com";
 const SITE_NAME = "NovaMDK";
@@ -18,9 +19,6 @@ function extractProducts() {
   }
   const field = (block, name) => block.match(new RegExp(`${name}:\\s*"([^"]*)"`))?.[1] ?? "";
   const flag = (block, name) => new RegExp(`${name}:\\s*true`).test(block);
-  // Stop the last product's block at the array's closing bracket. Left to run
-  // to end-of-file it swallows the helpers and comments below, so merely
-  // mentioning `hidden: true` in prose down there would delist a real product.
   const lastIndex = idMatches[idMatches.length - 1].index;
   const arrayEnd = src.indexOf("\n];", lastIndex);
   const limit = arrayEnd === -1 ? src.length : arrayEnd;
@@ -37,6 +35,7 @@ function extractProducts() {
         categorySlug: field(block, "categorySlug"),
         img: field(block, "img"),
         brandName: field(block, "brandName"),
+        price: field(block, "price"),
         hidden: flag(block, "hidden"),
       };
     })
@@ -63,7 +62,7 @@ export function buildRoutes() {
       path: "/",
       title: DEFAULT_TITLE,
       description:
-        "NovaMDK — personalized supplements and treatments, prescribed online. Dedicated online care, a physician's protocol, delivered fast to your door.",
+        "Personalized prescription treatments, reviewed by licensed physicians and delivered to your door.",
       priority: "1.0",
     },
     {
@@ -71,13 +70,6 @@ export function buildRoutes() {
       title: `Treatments — Physician-Prescribed Telehealth Care | ${SITE_NAME}`,
       description:
         "Explore NovaMDK treatments for weight loss, longevity, skin health, sexual wellness and recovery — prescribed online by licensed physicians and shipped to your door.",
-      priority: "0.9",
-    },
-    {
-      path: "/supplements",
-      title: `Supplements — Clinical-Grade Formulas | ${SITE_NAME}`,
-      description:
-        "Compounded peptides and daily-foundation supplements from NovaMDK, prepared by FDA-regulated pharmacies and matched to your protocol.",
       priority: "0.9",
     },
     {
@@ -106,6 +98,17 @@ export function buildRoutes() {
   }
 
   for (const p of products) {
+    const priceNum = String(p.price || "").replace(/[^0-9.]/g, "");
+    const offers =
+      Number(priceNum) > 0
+        ? {
+            "@type": "Offer",
+            price: priceNum,
+            priceCurrency: "USD",
+            availability: "https://schema.org/InStock",
+            url: `${SITE_URL}/product/${productSlug(p)}`,
+          }
+        : undefined;
     routes.push({
       path: `/product/${productSlug(p)}`,
       title: `${p.name} — ${p.categoryName} | ${SITE_NAME}`,
@@ -120,18 +123,17 @@ export function buildRoutes() {
         image: p.img ? `${SITE_URL}${p.img}` : undefined,
         category: p.categoryName,
         brand: { "@type": "Brand", name: p.brandName || SITE_NAME },
+        offers,
       },
     });
   }
 
-  const legal = [
-    ["terms-and-conditions", "Terms of Service"],
-    ["privacy-policy", "Privacy Policy"],
-    ["telehealth-consent", "Telehealth Consent"],
-    ["hipaa-notice-of-privacy-practices", "HIPAA Notice of Privacy Practices"],
-    ["consumer-health-data", "Consumer Health Data Privacy Notice"],
-  ];
-  for (const [id, title] of legal) {
+  // Standalone marketing/tool pages (pricing, calculator, HTML sitemap).
+  for (const page of CONTENT_PAGES) {
+    routes.push({ ...page, title: `${page.title} | ${SITE_NAME}` });
+  }
+
+  for (const [id, title] of LEGAL_PAGES) {
     routes.push({
       path: `/legal/${id}`,
       title: `${title} | ${SITE_NAME}`,

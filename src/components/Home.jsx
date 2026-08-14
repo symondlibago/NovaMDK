@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, ShieldCheck, Truck, Clock, Ban,
+  ArrowRight, ShieldCheck, Truck, Clock, Ban, Calculator,
 } from "lucide-react";
 
 import Navbar from "./Nav/Navbar";
@@ -12,16 +12,9 @@ import Photo from "./ui/Photo";
 import { useTheme } from "../theme/ThemeContext";
 import useKioskMode from "../lib/useKioskMode";
 
-// Which hero the homepage shows on the portrait tablet / kiosk view.
-//   • `?kiosk=<id>` (the studio preview iframe) forces a specific layout.
-//   • Otherwise, on a real kiosk/portrait-tablet screen, the layout chosen in
-//     the Design Studio drives the LIVE view — so picking "Desktop Hero"
-//     changes the kiosk immediately, no preview needed. Persisted across reloads.
-//   • On any other screen (normal desktop), returns null → standard hero.
 function useKioskVariant() {
   const { kioskLayout } = useTheme();
-  // Shared detection (param-sticky + portrait MQ) — must match the navbar and
-  // the rest of the kiosk chrome, or the hero and nav disagree mid-session.
+
   const isKiosk = useKioskMode();
 
   const paramVariant = () => {
@@ -147,6 +140,32 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="mx-auto w-full max-w-[1240px] px-5 py-[clamp(2.4rem,5vw,4rem)] md:px-10">
+        <Reveal>
+          <div className="flex flex-col items-start gap-7 rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface p-[clamp(1.6rem,4vw,2.8rem)] md:flex-row md:items-center md:justify-between md:gap-10">
+            <div className="max-w-[46ch]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1.5 font-mono text-[0.66rem] uppercase tracking-[0.12em] text-primary">
+                <Calculator size={13} /> Free tool
+              </span>
+              <h2 className="mt-4 text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
+                Not sure if treatment is right for you?
+              </h2>
+              <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">
+                Check your BMI and see the range clinical studies report for someone starting at your
+                weight. Takes about 20 seconds, with no sign-up, and nothing you enter is stored.
+              </p>
+            </div>
+            <Link
+              to="/weight-loss-calculator"
+              className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.96rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 nv-shadow"
+            >
+              Try the calculator
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+
       {/* ===== FAQ ===== */}
       {/* Testimonials disabled per legal review until we have verified member
           feedback from actual clinician services. Re-enable <Testimonials />
@@ -156,7 +175,7 @@ export default function Home() {
       </Suspense>
 
       {/* ===== Closing CTA ===== */}
-      <section className="mx-auto mb-12 max-w-[1240px] px-5 md:px-10">
+      <section className="mx-auto mb-12 mt-[clamp(2.4rem,5vw,4rem)] max-w-[1240px] px-5 md:px-10">
         <Reveal>
           <div className="relative grid min-h-[clamp(300px,42vw,460px)] items-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))]">
             <div className="absolute inset-0 z-0">

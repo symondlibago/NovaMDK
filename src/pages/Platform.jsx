@@ -8,7 +8,7 @@ const Platform = () => {
     <div className="min-h-screen bg-white">
       <Seo
         path="/"
-        description="NovaMDK — personalized supplements and treatments, prescribed online. Dedicated online care, a physician's protocol, delivered fast to your door."
+        description="Personalized prescription treatments, reviewed by licensed physicians and delivered to your door."
       />
       <Home />
       <Toaster />

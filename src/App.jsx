@@ -18,6 +18,8 @@ const Consult = lazy(() => import("./pages/Consult"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
 const IntakePage = lazy(() => import("./pages/Intake"));
 const PatientPortalPage = lazy(() => import("./pages/PatientPortal"));
+const WeightLossCalculatorPage = lazy(() => import("./pages/WeightLossCalculator"));
+const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 const LegalPage = lazy(() => import("./components/LegalPage"));
 const DesignStudio = lazy(() => import("./components/studio/DesignStudio"));
 
@@ -44,6 +46,8 @@ function App() {
           <Route path="/" element={<Platform />} />
           <Route path="/treatments" element={<TreatmentsPage />} />
           <Route path="/treatments/:goal" element={<TreatmentsPage />} />
+          {/* Supplements hidden at client request (2026-08-15) — route still
+              live, just unlinked and noindexed. Same treatment as the kiosk. */}
           <Route path="/supplements" element={<SupplementsPage />} />
           <Route path="/kiosk" element={<KioskPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -52,6 +56,9 @@ function App() {
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/intake" element={<IntakePage />} />
           <Route path="/portal" element={<PatientPortalPage />} />
+          <Route path="/weight-loss-calculator" element={<WeightLossCalculatorPage />} />
+          <Route path="/sitemap" element={<SitemapPage />} />
+          <Route path="/legal/sitemap" element={<Navigate to="/sitemap" replace />} />
           <Route path="/legal/:policyId" element={<LegalPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

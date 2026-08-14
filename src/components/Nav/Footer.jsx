@@ -29,7 +29,7 @@ export default function Footer() {
                 light base it's just a floating box, so the mark sits direct. */}
             <img src="/logo.png" alt="NovaMDK" className="h-[42px] w-auto" />
             <p className="mt-5 max-w-[34ch] text-sm leading-relaxed text-muted">
-              Personalized supplements and treatments, formulated by licensed physicians and delivered to your door.
+              Personalized prescription treatments, reviewed by licensed physicians and delivered to your door.
             </p>
             <div className="mt-6 flex gap-3">
               <a href="https://www.facebook.com/novamdk" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={social}><Facebook size={18} strokeWidth={1.5} /></a>
@@ -56,7 +56,7 @@ export default function Footer() {
             <ul className="space-y-3 text-[14px] text-muted md:space-y-4">
               <li><Link to="/#how" className={link}>How it works</Link></li>
               {/* Smart Kiosk hidden at client request (2026-08-11) — route still live, just unlinked. */}
-              <li><Link to="/supplements" className={link}>Supplements</Link></li>
+              <li><Link to="/weight-loss-calculator" className={link}>Weight loss calculator</Link></li>
               <li><Link to="/#reviews" className={link}>Reviews</Link></li>
               <li><Link to="/#faq" className={link}>FAQ</Link></li>
               <li><Link to="/contact" className={link}>Contact Us</Link></li>
@@ -71,13 +71,13 @@ export default function Footer() {
               <li><Link to="/legal/terms-and-conditions" className={link}>Terms &amp; conditions</Link></li>
               <li><Link to="/legal/telehealth-consent" className={link}>Telehealth consent</Link></li>
               <li><Link to="/legal/consumer-health-data" className={link}>Consumer Health Data</Link></li>
-              <li><Link to="/legal/sitemap" className={link}>Sitemap</Link></li>
+              <li><Link to="/sitemap" className={link}>Sitemap</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="flex flex-col gap-4 border-t border-line-strong pt-8 text-[13px] text-muted md:flex-row md:items-center md:justify-between md:pt-10">
-          <p>©2026 NovaMDK Inc. All rights reserved.</p>
+          <p>©2026 Nova MDK, LLC. All rights reserved.</p>
           <a
             href="mailto:privacy@novamdk.com?subject=Do%20Not%20Sell%20or%20Share%20My%20Personal%20Information&body=I%20am%20requesting%20to%20opt%20out%20of%20the%20sale%20or%20sharing%20of%20my%20personal%20information.%20Please%20process%20this%20request%20for%20the%20email%20address%20on%20file."
             className="font-medium text-ink underline underline-offset-2 transition-colors hover:text-primary"

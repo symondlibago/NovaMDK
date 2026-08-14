@@ -31,10 +31,15 @@ const SUPPLEMENT_CATS = [
 export default function SupplementsPage() {
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
+      {/* Supplement line hidden at client request (2026-08-15). The page still
+          renders for anyone with the direct URL, but it is unlinked from the nav,
+          footer and HTML sitemap, dropped from sitemap.xml and the prerender, and
+          marked noindex so it stops showing up in search. */}
       <Seo
         title="Supplements — Clinical-Grade Formulas"
         description="Compounded peptides and daily-foundation supplements from NovaMDK, prepared by FDA-regulated pharmacies and matched to your protocol."
         path="/supplements"
+        noindex
       />
       <Navbar />
 

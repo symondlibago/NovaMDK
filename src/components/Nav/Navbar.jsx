@@ -198,7 +198,6 @@ export default function Navbar() {
           {!isKiosk && (
             <div className="hidden items-center gap-7 lg:flex">
               <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
-              <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
               {/* Kiosk hidden at client request (2026-08-11) — route still live, just unlinked.
               <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
               */}
@@ -211,7 +210,6 @@ export default function Navbar() {
             <div className="flex items-center gap-6">
               {/* touch screen: tap opens the dropdown instead of jumping to /treatments */}
               <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} openOnClick />
-              <Link to="/supplements" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Supplements</Link>
               {/* Kiosk hidden at client request (2026-08-11) — route still live, just unlinked.
               <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
               */}
@@ -299,9 +297,6 @@ export default function Navbar() {
               ) : (
                 <div className="flex grow flex-col p-4">
                   <MobileGroup title="Treatments" items={treatmentItems} close={() => setMobileOpen(false)} viewAllLink="/treatments" defaultOpen />
-                  <Link to="/supplements" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
-                    Supplements <ArrowRight size={16} className="text-muted" />
-                  </Link>
                   {/* Kiosk hidden at client request (2026-08-11) — route still live, just unlinked.
                   <Link to="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                     Kiosk <ArrowRight size={16} className="text-muted" />

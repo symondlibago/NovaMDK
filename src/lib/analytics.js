@@ -12,6 +12,7 @@ export const EVENTS = {
   QUIZ_STARTED: "quiz_started",           // began the guided assessment
   QUIZ_COMPLETED: "quiz_completed",       // finished the guided assessment
   CONTACT_SUBMITTED: "contact_submitted", // submitted the contact form
+  CALCULATOR_USED: "calculator_used",     // completed a BMI / goal-weight calculation
 };
 
 // Forward to your analytics provider. Uncomment the one you adopt.
