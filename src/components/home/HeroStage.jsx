@@ -458,11 +458,12 @@ function HeroHeadline({ compact = false, wide = false }) {
         <span className="h-px w-6 bg-accent" aria-hidden="true" /> Physician-formulated care
       </span>
 
+      {/* Typeface matches the section headings ("Care in three simple steps"):
+          the body sans at extrabold, not the Fraunces serif. */}
       <h1
-        className={`nv-weight-keep mt-4 max-w-[15ch] font-medium leading-[1.08] tracking-[-0.01em] text-ink ${mx} ${
+        className={`nv-weight-keep mt-4 max-w-[15ch] font-extrabold leading-[1.08] tracking-[-0.01em] text-ink ${mx} ${
           compact ? "text-[clamp(1.9rem,5vw,2.6rem)]" : "text-[clamp(1.9rem,3.4vw,2.8rem)]"
         }`}
-        style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
       >
         Modern healthcare, <em className="whitespace-nowrap italic text-accent">built around you</em>
       </h1>
@@ -638,12 +639,13 @@ function KioskHero({ kiosk }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: EASE }}
           >
+            {/* Same swap as the standard hero: body sans at extrabold, matching
+                the section headings rather than the Fraunces serif. */}
             <h1
-              className={`nv-weight-keep max-w-[16ch] font-medium leading-[1.02] tracking-[-0.01em] text-ink ${kiosk ? "mx-auto text-[clamp(1.40rem,4.4vw,2.2rem)]" : "text-[clamp(2.3rem,5.8vw,4.3rem)]"}`}
-              style={{ fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif" }}
+              className={`nv-weight-keep max-w-[16ch] font-extrabold leading-[1.02] tracking-[-0.01em] text-ink ${kiosk ? "mx-auto text-[clamp(1.40rem,4.4vw,2.2rem)]" : "text-[clamp(2.3rem,5.8vw,4.3rem)]"}`}
             >
               Modern healthcare,{" "}
-              <span className="nv-em font-medium">built around you</span>
+              <span className="nv-em font-extrabold">built around you</span>
             </h1>
             <p className={`max-w-[42ch] leading-relaxed text-muted ${kiosk ? "mx-auto mt-2 text-[clamp(0.82rem,1.1vw,0.95rem)]" : "mt-[18px] text-[clamp(1rem,1.3vw,1.1rem)]"}`}>
               Personalized treatment plans designed by licensed medical providers.

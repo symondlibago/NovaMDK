@@ -43,11 +43,14 @@ const TRUST = [
   { text: "No subscription lock-in", icon: Ban },
 ];
 
+/* "~2 min / Guided questionnaire" and "0 / Waiting rooms" were dropped at the
+   client's request (2026-08-15). Both replacements restate promises the site
+   already makes elsewhere, so nothing new is being claimed here. */
 const STATS = [
   { b: "100%", s: "Physician-reviewed" },
   { b: "Fast", s: "Doorstep delivery" },
-  { b: "~2 min", s: "Guided questionnaire" },
-  { b: "0", s: "Waiting rooms" },
+  { b: "1:1", s: "Provider messaging" },
+  { b: "HIPAA", s: "Private and secure" },
 ];
 
 // The three-step "How it works" cards (replaces the old bento + steps section).

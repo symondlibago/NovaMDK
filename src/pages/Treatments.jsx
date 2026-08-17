@@ -69,10 +69,11 @@ const STEPS = [
   { icon: PackageOpen, title: "Delivered to your door", desc: "Fast, discreet delivery — with ongoing care and easy adjustments anytime." },
 ];
 
+// Mirrors the homepage band — "Waiting rooms" was dropped at the client's request.
 const STATS = [
   { b: "100%", s: "Physician-reviewed" },
   { b: "Fast", s: "Doorstep delivery" },
-  { b: "0", s: "Waiting rooms" },
+  { b: "1:1", s: "Provider messaging" },
 ];
 
 /* ------------------------------- sections ------------------------------- */
