@@ -1,8 +1,9 @@
 import React, { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, ShieldCheck, Truck, Clock, Ban, Calculator,
+  ArrowRight, ShieldCheck, Truck, Clock, Ban, Calculator, ChevronDown,
 } from "lucide-react";
+import { scrollToId } from "../lib/smoothScroll";
 
 import Navbar from "./Nav/Navbar";
 import Footer from "./Nav/Footer";
@@ -32,6 +33,8 @@ function useKioskVariant() {
 // const Testimonials = lazy(() => import("./Testimonials"));
 const FAQ = lazy(() => import("./FAQ"));
 const TreatmentsCarousel = lazy(() => import("./TreatmentsCarousel"));
+// Lazy so the slider widget doesn't sit in the homepage's critical bundle.
+const BmiCalculator = lazy(() => import("./tools/BmiCalculator"));
 
 const TRUST = [
   { text: "US-licensed pharmacy", icon: ShieldCheck },
@@ -151,19 +154,41 @@ export default function Home() {
                 Not sure if treatment is right for you?
               </h2>
               <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">
-                Check your BMI and see the range clinical studies report for someone starting at your
-                weight. Takes about 20 seconds, with no sign-up, and nothing you enter is stored.
+                Drag the sliders to check your BMI and see the range clinical studies report for
+                someone starting at your weight. No sign-up, and nothing you enter is stored.
               </p>
             </div>
-            <Link
-              to="/weight-loss-calculator"
+            {/* Scrolls to the calculator below rather than navigating away, so the
+                patient stays on the landing page. Lenis handles the easing. */}
+            <button
+              type="button"
+              onClick={() => scrollToId("bmi-calculator")}
               className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.96rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 nv-shadow"
             >
               Try the calculator
-              <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-            </Link>
+              <ChevronDown size={18} className="transition-transform group-hover:translate-y-0.5" />
+            </button>
           </div>
         </Reveal>
+
+        {/* The live calculator, inline. Same component the standalone
+            /weight-loss-calculator page renders, so the two can't drift. */}
+        <div id="bmi-calculator" className="scroll-mt-24 pt-6 md:pt-8">
+          <Suspense fallback={<div className="grid h-[320px] place-items-center text-muted">Loading calculator…</div>}>
+            <Reveal>
+              <BmiCalculator />
+            </Reveal>
+          </Suspense>
+          <p className="mt-6 text-[0.8rem] leading-relaxed text-muted">
+            For general information only. This is not medical advice, does not create a
+            patient-provider relationship, and is not a determination that you will be prescribed
+            anything.{" "}
+            <Link to="/weight-loss-calculator" className="font-medium text-primary hover:underline">
+              See the full BMI reference
+            </Link>
+            .
+          </p>
+        </div>
       </section>
 
       {/* ===== FAQ ===== */}

@@ -15,10 +15,25 @@ export const EVENTS = {
   CALCULATOR_USED: "calculator_used",     // completed a BMI / goal-weight calculation
 };
 
-// Forward to your analytics provider. Uncomment the one you adopt.
+/**
+ * Forward to Google Analytics 4 (G-4X11DW5WNW, loaded in index.html), and keep
+ * the in-memory queue for local debugging.
+ *
+ * gtag is loaded async, so it may not exist yet on a fast first interaction.
+ * `window.gtag` is defined synchronously by the inline snippet though — it just
+ * buffers into dataLayer until the library arrives — so a guarded call is enough
+ * and nothing is lost.
+ *
+ * Nothing identifying goes out. Callers pass slugs, ids and category names; no
+ * email, name, date of birth or free text from an intake ever reaches here, and
+ * page views are sent as pathname only. That matters more than usual on a
+ * telehealth site: the page someone views is itself health-adjacent, and the
+ * Consumer Health Data Privacy Notice is what discloses that collection.
+ */
 function send(event, props) {
-  if (!isBrowser) return; 
+  if (!isBrowser) return;
   (window.nvAnalytics = window.nvAnalytics || []).push({ event, props, t: Date.now() });
+  if (typeof window.gtag === "function") window.gtag("event", event, props);
 }
 
 // Don't record anything inside the Design Studio's `?preview` iframe.
@@ -37,7 +52,29 @@ export function track(event, props = {}) {
   }
 }
 
-/** Convenience helper for route changes. */
+/**
+ * Convenience helper for route changes.
+ *
+ * `page_location` is pinned to origin + pathname rather than left to default.
+ * GA4 otherwise reads document.location, which on /intake includes the voucher
+ * token, and on the portal can include whatever state a redirect appended.
+ */
 export function trackPageView(path) {
-  track(EVENTS.PAGE_VIEW, { path });
+  if (isPreview()) return;
+  const clean = isBrowser ? `${window.location.origin}${path}` : path;
+  if (isBrowser && typeof window.gtag === "function") {
+    window.gtag("event", "page_view", {
+      page_path: path,
+      page_location: clean,
+      page_title: typeof document !== "undefined" ? document.title : undefined,
+    });
+  }
+  if (DEBUG) console.debug("[analytics]", EVENTS.PAGE_VIEW, { path });
+  try {
+    (window.nvAnalytics = window.nvAnalytics || []).push({
+      event: EVENTS.PAGE_VIEW, props: { path }, t: Date.now(),
+    });
+  } catch {
+    /* analytics must never break the app */
+  }
 }

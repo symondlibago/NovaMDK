@@ -199,6 +199,73 @@
     0%, 100% { transform: translateY(0); }
     50%      { transform: translateY(-8px); }
   }
+
+  /* ---- Drag slider (BMI calculator) ----
+     A native range input, restyled. Native keeps the keyboard, touch and
+     screen-reader behaviour for free; the track and thumb pseudo-elements have
+     to be declared per engine, hence the duplication. */
+  .nv-range {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 22px;
+    background: transparent;
+    cursor: grab;
+  }
+  .nv-range:active { cursor: grabbing; }
+
+  .nv-range::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--nv-surface-2);
+    border: 1px solid var(--nv-line);
+  }
+  .nv-range::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--nv-surface-2);
+    border: 1px solid var(--nv-line);
+  }
+  /* Firefox can fill the portion left of the thumb; WebKit cannot without JS. */
+  .nv-range::-moz-range-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--nv-primary);
+  }
+
+  .nv-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 22px;
+    width: 22px;
+    margin-top: -9px; /* centres the thumb on the 6px track */
+    border-radius: 999px;
+    background: var(--nv-primary);
+    border: 3px solid var(--nv-surface);
+    box-shadow: var(--nv-shadow);
+    transition: transform 0.15s ease;
+  }
+  .nv-range::-moz-range-thumb {
+    height: 22px;
+    width: 22px;
+    border-radius: 999px;
+    background: var(--nv-primary);
+    border: 3px solid var(--nv-surface);
+    box-shadow: var(--nv-shadow);
+    transition: transform 0.15s ease;
+  }
+  .nv-range:hover::-webkit-slider-thumb,
+  .nv-range:active::-webkit-slider-thumb { transform: scale(1.12); }
+  .nv-range:hover::-moz-range-thumb,
+  .nv-range:active::-moz-range-thumb { transform: scale(1.12); }
+
+  .nv-range:focus-visible { outline: none; }
+  .nv-range:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--nv-primary) 30%, transparent);
+  }
+  .nv-range:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--nv-primary) 30%, transparent);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

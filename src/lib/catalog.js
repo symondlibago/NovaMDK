@@ -10,6 +10,34 @@ const CATEGORY_LABEL = Object.fromEntries(
  * with any category the consult list doesn't cover appended after those.
  * @returns {{slug: string, label: string, href: string, products: object[]}[]}
  */
+/* ---------------------------- dose ladders ---------------------------- */
+
+const STAGE_RE = /\s*—\s*(Starter|Mid-Dose|Maintenance)\s*$/;
+const STAGE_ORDER = ["Starter", "Mid-Dose", "Maintenance"];
+
+/** "NAD+ Injection — Starter" -> "Starter". Empty for a standalone product. */
+export const stageOf = (product) => (String(product?.name || "").match(STAGE_RE) || [])[1] || "";
+
+/** "NAD+ Injection — Starter" -> "NAD+ Injection". */
+export const baseName = (product) => String(product?.name || "").replace(STAGE_RE, "").trim();
+
+/**
+ * The dose ladder a product belongs to, in Starter -> Maintenance order.
+ * Returns [] for anything that isn't a rung, so callers can skip the selector.
+ *
+ * Membership needs BOTH a matching base name and a stage suffix. "NAD+ Injection"
+ * (the once-weekly 10 mL protocol) shares a base name with the three-times-weekly
+ * ramp rungs but is a different protocol at a different price, so requiring the
+ * suffix is what keeps it out of their ladder.
+ */
+export function doseLadder(product) {
+  if (!product || !stageOf(product)) return [];
+  const base = baseName(product);
+  return visibleProducts
+    .filter((p) => stageOf(p) && baseName(p) === base && p.categorySlug === product.categorySlug)
+    .sort((a, b) => STAGE_ORDER.indexOf(stageOf(a)) - STAGE_ORDER.indexOf(stageOf(b)));
+}
+
 export function groupedCatalog() {
   const groups = new Map();
   for (const p of visibleProducts) {

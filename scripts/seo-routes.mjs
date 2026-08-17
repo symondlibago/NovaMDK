@@ -36,6 +36,7 @@ function extractProducts() {
         img: field(block, "img"),
         brandName: field(block, "brandName"),
         price: field(block, "price"),
+        slug: field(block, "slug"),
         hidden: flag(block, "hidden"),
       };
     })

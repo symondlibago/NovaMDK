@@ -16,6 +16,13 @@ import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } 
 import useKioskMode from "../lib/useKioskMode";
 import useLockBodyScroll from "../lib/useLockBodyScroll";
 import DatePicker from "../components/ui/DatePicker";
+import { doseLadder, baseName } from "../lib/catalog";
+import DoseSelector from "../components/product/DoseSelector";
+import ProductGallery from "../components/product/ProductGallery";
+import { categoryMedia } from "../lib/productMedia";
+import ProductFeature from "../components/product/ProductFeature";
+import ProductFaq from "../components/product/ProductFaq";
+import BmiCalculator from "../components/tools/BmiCalculator";
 
 const TRUST = [
   { icon: Stethoscope, label: "U.S. licensed providers" },
@@ -35,6 +42,14 @@ const TRUST_OTC = [
 // Fallback questionnaire used when a product has no questionnaireId yet.
 const DEFAULT_QUESTIONNAIRE_ID = "";
 
+// Same three steps, same wording, as the homepage and treatments page. A patient
+// who reads it here and then on /treatments should not get two different stories.
+const VISIT_STEPS = [
+  { title: "Take the 2-minute assessment", text: "Answer a few private questions about your goals and history. There are no wrong answers." },
+  { title: "A provider builds your plan", text: "A licensed U.S. clinician reviews your intake and prescribes what actually fits you." },
+  { title: "Delivered to your door", text: "Fast, discreet delivery in plain packaging, with ongoing care and easy adjustments anytime." },
+];
+
 export default function ProductPage() {
   const { id } = useParams();
   // URLs use keyword slugs (/product/semaglutide-…); legacy numeric ids still
@@ -43,6 +58,10 @@ export default function ProductPage() {
 
   const isKiosk = useKioskMode();
   const navigate = useNavigate();
+  // Which rung of the dose ladder is on screen. Starts on the routed product and
+  // moves with the selector; `active` is what the priced/dosed parts of the page
+  // read from, while `product` stays the canonical route for SEO.
+  const [activeId, setActiveId] = useState(null);
   const [showQR, setShowQR] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -64,6 +83,22 @@ export default function ProductPage() {
   if (id !== productSlug(product)) return <Navigate to={productPath(product)} replace />;
 
   const categoryLabel = product.categoryName;
+
+  // Dose ladder. `active` is the rung currently selected — the routed product
+  // until someone picks another. Price, specs, dosing, safety and the intake
+  // handoff all follow `active`; the URL, canonical and <Seo> follow `product`.
+  const ladder = doseLadder(product);
+  const active = ladder.find((p) => p.id === activeId) || product;
+  const selectRung = (rung) => {
+    setActiveId(rung.id);
+    // Rewrite the address bar without routing, so the URL stays shareable but
+    // ScrollToTop doesn't yank the patient back up the page mid-comparison.
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", productPath(rung));
+    }
+    track(EVENTS.PRODUCT_VIEWED, { id: rung.id, name: rung.name, category: rung.categorySlug });
+  };
+
   // The retail shelf was retired with the supplement line (2026-08-15), so a
   // non-Rx item has no category listing of its own to go back to.
   const otc = isOtc(product);
@@ -72,16 +107,19 @@ export default function ProductPage() {
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && isOtc(p) === otc)
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
-  const hasCompounded = isCompounded(product);
-  // `imgDetail` is a photo that carries its own backdrop, so it fills the panel
-  // edge-to-edge. Without one we fall back to the transparent cut-out, centred
-  // and multiplied onto white.
-  const detailImg = product.imgDetail || product.img;
-  const hasPhoto = !!product.imgDetail;
+  const hasCompounded = isCompounded(active);
+  // Role-keyed photography for the editorial sections: `product` illustrates the
+  // formulation, `visit` illustrates the consultation. Never interchangeable.
+  const media = categoryMedia(active);
+  // Image framing moved into ProductGallery, which tracks it per frame — a
+  // cut-out and a photo need opposite treatment and a product can now show both.
   const isSupplement = product.categorySlug === "supplements";
   const hasFda = isSupplement && !!fdaDisclaimer(product);
   const startVisit = async (patient) => {
-    track(EVENTS.START_VISIT, { id: product.id, name: product.name, category: product.categorySlug });
+    // Everything from here on uses the selected rung: starting a visit from the
+    // Maintenance tab has to hand MDI the Maintenance questionnaire, not the
+    // rung that happened to be in the URL.
+    track(EVENTS.START_VISIT, { id: active.id, name: active.name, category: active.categorySlug });
     setErr("");
     setLoading(true);
     try {
@@ -89,8 +127,8 @@ export default function ProductPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          questionnaire_id: product.questionnaireId || DEFAULT_QUESTIONNAIRE_ID,
-          case_offering_id: product.caseOfferingId || undefined,
+          questionnaire_id: active.questionnaireId || DEFAULT_QUESTIONNAIRE_ID,
+          case_offering_id: active.caseOfferingId || undefined,
           patient: patient?.email ? patient : null,
           consent: patient?.consent || null,
         }),
@@ -104,13 +142,13 @@ export default function ProductPage() {
       if (profile?.email) {
         syncToGhl({
           patient: profile,
-          treatment: treatmentLabel(product),
+          treatment: treatmentLabel(active),
           // Prices are display strings ("$249"), so strip to a number for the
           // opportunity's value — GHL rejects anything non-numeric.
-          value: Number(String(product.price).replace(/[^0-9.]/g, "")) || undefined,
+          value: Number(String(active.price).replace(/[^0-9.]/g, "")) || undefined,
           source: "NovaMDK website",
-          tags: ["website-lead", product.categorySlug, "intake-started"],
-          note: `Started ${treatmentLabel(product)}.` +
+          tags: ["website-lead", active.categorySlug, "intake-started"],
+          note: `Started ${treatmentLabel(active)}.` +
             (patient?.consent?.accepted_at
               ? ` Accepted telehealth consent and terms at ${patient.consent.accepted_at}.`
               : ""),
@@ -123,7 +161,7 @@ export default function ProductPage() {
         if (voucher.release_token) {
           try { sessionStorage.setItem("mdi_release_token", voucher.release_token); } catch { /* private mode */ }
         }
-        navigate(`/intake?token=${encodeURIComponent(token)}&product=${encodeURIComponent(product.name)}&pid=${product.id}`);
+        navigate(`/intake?token=${encodeURIComponent(token)}&product=${encodeURIComponent(active.name)}&pid=${active.id}`);
         return;
       }
       // No URL on the voucher yet — surface it so the handoff can be finalized.
@@ -182,33 +220,9 @@ export default function ProductPage() {
             "Semaglutide/Cyanocobalamin") must not widen the grid track past
             the viewport on phones */}
         <div className="grid gap-8 md:grid-cols-2 md:items-start lg:gap-14">
-          {/* image */}
+          {/* image gallery */}
           <Reveal className="min-w-0">
-            <div className={`group/img relative flex min-h-90 items-center justify-center overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] border border-line nv-shadow md:min-h-140 ${hasPhoto ? "" : "bg-white p-7 md:p-10"}`}>
-              {/* pedestal shadow — only grounds a cut-out; a photo has its own */}
-              {!hasPhoto && (
-                <div className="pointer-events-none absolute bottom-[16%] left-1/2 h-6 w-2/5 -translate-x-1/2 rounded-[50%] bg-ink/15 blur-xl" />
-              )}
-
-              <span className="absolute left-6 top-6 z-10 rounded-full border border-line bg-surface/90 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-accent backdrop-blur-sm">
-                {categoryLabel}
-              </span>
-              {product.dosageForm && (
-                <span className="absolute bottom-6 left-6 z-10 rounded-full bg-ink px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-on-panel">
-                  {product.dosageForm}
-                </span>
-              )}
-
-              <img
-                src={detailImg}
-                alt={product.name}
-                className={
-                  hasPhoto
-                    ? "absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover/img:scale-[1.03]"
-                    : "relative max-h-100 w-auto max-w-full object-contain mix-blend-multiply drop-shadow-2xl transition-transform duration-500 group-hover/img:scale-[1.03] md:max-h-115"
-                }
-              />
-            </div>
+            <ProductGallery product={active} categoryLabel={categoryLabel} />
           </Reveal>
 
           {/* info */}
@@ -218,30 +232,33 @@ export default function ProductPage() {
                 <span className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-accent">{categoryLabel}</span>
               </div>
 
-              <h1 className="mt-3 wrap-break-word font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight">{product.name}</h1>
-              <p className="mt-3 max-w-[46ch] text-[1.05rem] leading-relaxed text-muted">{product.subtitle}</p>
+              {/* The ladder shares one title across its rungs, so the heading
+                  drops the "— Starter" suffix once a selector is present. */}
+              <h1 className="mt-3 wrap-break-word font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight">
+                {ladder.length > 1 ? baseName(product) : product.name}
+              </h1>
+              <p className="mt-3 max-w-[46ch] text-[1.05rem] leading-relaxed text-muted">{active.subtitle}</p>
 
               {/* required regulatory labels */}
-              <ComplianceBadges compounded={isCompounded(product)} rx={!otc} className="mt-4" />
+              <ComplianceBadges compounded={isCompounded(active)} rx={!otc} className="mt-4" />
+
+              <DoseSelector ladder={ladder} activeId={active.id} onSelect={selectRung} />
 
               {/* price block */}
               <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-2 border-t border-line pt-5">
-                <span className="font-display text-[clamp(2.1rem,3vw,2.5rem)] font-extrabold leading-none tracking-tight">{product.price}</span>
+                <span className="font-display text-[clamp(2.1rem,3vw,2.5rem)] font-extrabold leading-none tracking-tight">{active.price}</span>
                 <span className="mb-0.5 flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1.5 text-[0.82rem] font-medium text-muted">
-                  <Truck size={14} className="text-accent" /> {product.shipping}
+                  <Truck size={14} className="text-accent" /> {active.shipping}
                 </span>
+                {active.size && (
+                  <span className="mb-0.5 flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1.5 text-[0.82rem] font-medium text-muted">
+                    <FlaskConical size={14} className="text-accent" /> {active.size}
+                  </span>
+                )}
               </div>
 
-              {product.highlights?.length > 0 && (
-                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {product.highlights.map((h) => (
-                    <li key={h.text} className="flex items-center gap-2.5 text-[0.94rem] font-medium">
-                      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent/20 text-accent"><Check size={12} strokeWidth={3} /></span>
-                      {h.text}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {/* Highlights moved down into the "What this supports" section, so
+                  the hero stays on one job: what it is, what it costs, start. */}
 
               {otc ? (
                 /* No prescription, so no intake — the care team handles retail orders. */
@@ -318,7 +335,37 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {/* ===== How it works ===== */}
+      {/* ===== Editorial sections =====
+          Alternating image / copy, the pattern the client pointed at. Content is
+          existing reviewed product data, not new claims: the highlights already
+          shipped on the card, and the visit steps mirror the wording used on the
+          homepage and treatments page so the story stays the same site-wide. */}
+      {active.highlights?.length > 0 && media.product && (
+        <ProductFeature
+          eyebrow="What it supports"
+          title={`Inside ${ladder.length > 1 ? baseName(active) : active.name}`}
+          body={active.subtitle}
+          items={active.highlights.map((h) => ({ text: h.text }))}
+          img={media.product}
+          alt={`${active.name} formulation`}
+        />
+      )}
+
+      {!otc && media.visit && (
+        <ProductFeature
+          reverse
+          tone="surface"
+          eyebrow="How it works"
+          title="From questionnaire to front door"
+          body="No clinics, no waiting rooms, no awkward pharmacy runs. A licensed U.S. provider reviews everything before anything is prescribed."
+          numbered
+          items={VISIT_STEPS}
+          img={media.visit}
+          alt="A patient completing an online visit from home"
+        />
+      )}
+
+      {/* ===== How it works (product-specific, when authored) ===== */}
       {product.howItWorks && (
         <section className="bg-surface-2 py-[clamp(2.5rem,5vw,5.5rem)]">
           <div className="mx-auto max-w-[1180px] px-5 md:px-10">
@@ -344,7 +391,7 @@ export default function ProductPage() {
       )}
 
       {/* ===== Specs ===== */}
-      {product.specs?.length > 0 && (
+      {active.specs?.length > 0 && (
         <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
           <div className={`grid gap-10 ${isKiosk ? "" : "md:grid-cols-[1fr_1.25fr] md:items-start"}`}>
             <Reveal className={isKiosk ? "text-center" : ""}>
@@ -361,7 +408,7 @@ export default function ProductPage() {
             </Reveal>
             <Reveal delay={0.08}>
               <dl className="divide-y divide-line overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow">
-                {product.specs.map((s) => (
+                {active.specs.map((s) => (
                   <div key={s.label} className="grid grid-cols-1 gap-1 px-6 py-4 transition-colors hover:bg-surface-2 sm:grid-cols-[170px_1fr] sm:gap-4">
                     <dt className="font-mono text-[0.66rem] uppercase tracking-[0.1em] text-muted">{s.label}</dt>
                     <dd className="text-[0.94rem] leading-relaxed text-ink">{s.value}</dd>
@@ -374,16 +421,53 @@ export default function ProductPage() {
       )}
 
       {/* ===== Safety ===== */}
-      {product.safety && (
+      {active.safety && (
         <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
           <div className="rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface-2 p-6 md:p-8">
             <h3 className="flex items-center gap-2 font-display text-[1.1rem] font-bold">
               <ShieldAlert size={18} className="text-primary" /> Important safety information
             </h3>
-            <p className="mt-3 text-[0.92rem] leading-relaxed text-muted">{product.safety}</p>
+            <p className="mt-3 text-[0.92rem] leading-relaxed text-muted">{active.safety}</p>
           </div>
         </section>
       )}
+
+      {/* ===== Am I a candidate? =====
+          Weight-loss pages get the calculator inline, the same way the landing
+          page does — "is this even for me" is the question standing between a
+          visitor and the questionnaire. */}
+      {active.categorySlug === "weight-loss" && !isKiosk && (
+        <section className="border-y border-line bg-surface-2 py-[clamp(2.5rem,5vw,4.5rem)]">
+          <div className="mx-auto max-w-[1180px] px-5 md:px-10">
+            <Reveal className="mx-auto mb-8 max-w-[60ch] text-center">
+              <span className="nv-eyebrow">Check your numbers</span>
+              <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">
+                Am I a candidate for this?
+              </h2>
+              <p className="mt-3 text-[1rem] leading-relaxed text-muted">
+                Drag the sliders for your BMI and the range clinical studies report at your starting
+                weight. Only a licensed provider can confirm whether treatment is appropriate.
+              </p>
+            </Reveal>
+            <Reveal>
+              <BmiCalculator />
+            </Reveal>
+          </div>
+        </section>
+      )}
+
+      {/* ===== Product FAQ ===== */}
+      <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,4.5rem)] md:px-10">
+        <Reveal className="mx-auto mb-8 max-w-[60ch] text-center">
+          <span className="nv-eyebrow">Questions</span>
+          <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">
+            About {ladder.length > 1 ? baseName(active) : active.name}
+          </h2>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <ProductFaq product={active} otc={otc} />
+        </Reveal>
+      </section>
 
       {/* ===== Closing CTA ===== */}
       <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">

@@ -54,15 +54,12 @@ export const doseStage = (product) => {
 };
 
 /**
- * The size/strength portion of a title, e.g. "2.5 mL vial (20 mg)".
- * Splits on the *last* " - " rather than the first, so hyphenated product names
- * ("Low-Dose Naltrexone (LDN) - 1.5 mg flex-dose") don't break on their own name.
+ * The size/strength of a fill, e.g. "2.5 mL vial (20 mg)".
+ * Held in its own `size` field since 2026-08-15, when the mL/mg portion was
+ * taken out of product titles at the client's request. The ladder still needs to
+ * show which vial each rung is, so it reads the field rather than the name.
  */
-export const doseSize = (product) => {
-  const withoutStage = String(product?.name || "").split("—")[0].trim();
-  const i = withoutStage.lastIndexOf(" - ");
-  return i === -1 ? "" : withoutStage.slice(i + 3).trim();
-};
+export const doseSize = (product) => product?.size || "";
 
 /**
  * When a step applies, in the patient's own terms — the parenthetical of the
