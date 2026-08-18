@@ -455,7 +455,7 @@ function HeroHeadline({ compact = false, wide = false }) {
     <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
       {/* eyebrow */}
       <span className={`flex items-center gap-3 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-accent ${justify}`}>
-        <span className="h-px w-6 bg-accent" aria-hidden="true" /> Physician-formulated care
+        <span className="h-px w-6 bg-accent" aria-hidden="true" /> Clinician-guided care
       </span>
 
       {/* Typeface matches the section headings ("Care in three simple steps"):
@@ -469,7 +469,7 @@ function HeroHeadline({ compact = false, wide = false }) {
       </h1>
 
       <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${mx} ${minimal ? "hidden lg:block" : ""} ${compact ? "text-[0.95rem]" : "text-[clamp(0.95rem,1.1vw,1.02rem)]"}`}>
-        Personalized treatment plans designed by licensed medical providers.
+        Care plans tailored to you by licensed medical providers.
       </p>
 
       {/* CTAs */}
@@ -648,7 +648,7 @@ function KioskHero({ kiosk }) {
               <span className="nv-em font-extrabold">built around you</span>
             </h1>
             <p className={`max-w-[42ch] leading-relaxed text-muted ${kiosk ? "mx-auto mt-2 text-[clamp(0.82rem,1.1vw,0.95rem)]" : "mt-[18px] text-[clamp(1rem,1.3vw,1.1rem)]"}`}>
-              Personalized treatment plans designed by licensed medical providers.
+              Care plans tailored to you by licensed medical providers.
             </p>
           </motion.div>
           {!kiosk && (

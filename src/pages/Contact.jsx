@@ -26,8 +26,8 @@ export default function ContactPage() {
       <PageHero
         showBack
         eyebrow="Contact"
-        title="We're here to help."
-        subtitle="Questions about your protocol, an order, or getting started? Message our care team — a real person replies, usually within one business day."
+        title="How can we help?"
+        subtitle="Questions about your care, order, or account? Our team is here to help."
         chips={["Reply within 1 business day", "HIPAA-compliant", "U.S.-licensed providers"]}
       />
 

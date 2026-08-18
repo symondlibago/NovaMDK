@@ -86,7 +86,7 @@ export default function TreatmentShop({ category, showBack = false }) {
             {name}
           </h2>
           <p className="mx-auto mt-1.5 max-w-[44ch] text-[0.78rem] text-muted sm:mt-2 sm:text-[1.02rem]">
-            Pick a treatment to start your visit — a licensed provider confirms the right fit before anything ships.
+            Explore prescription options for {name.toLowerCase()} and learn how each treatment works.
           </p>
         </div>
 

@@ -45,9 +45,9 @@ const DEFAULT_QUESTIONNAIRE_ID = "";
 // Same three steps, same wording, as the homepage and treatments page. A patient
 // who reads it here and then on /treatments should not get two different stories.
 const VISIT_STEPS = [
-  { title: "Take the 2-minute assessment", text: "Answer a few private questions about your goals and history. There are no wrong answers." },
-  { title: "A provider builds your plan", text: "A licensed U.S. clinician reviews your intake and prescribes what actually fits you." },
-  { title: "Delivered to your door", text: "Fast, discreet delivery in plain packaging, with ongoing care and easy adjustments anytime." },
+  { title: "Complete your assessment", text: "Answer a few questions about your health, goals, and medical history." },
+  { title: "Your provider reviews your care", text: "A licensed provider reviews your information and determines the treatment that fits your needs." },
+  { title: "Delivered to your door", text: "Your prescribed treatment is shipped discreetly, with ongoing support from your care team." },
 ];
 
 export default function ProductPage() {
@@ -356,8 +356,8 @@ export default function ProductPage() {
           reverse
           tone="surface"
           eyebrow="How it works"
-          title="From questionnaire to front door"
-          body="No clinics, no waiting rooms, no awkward pharmacy runs. A licensed U.S. provider reviews everything before anything is prescribed."
+          title="From assessment to front door"
+          body="Simple online care, without the waiting room or pharmacy run. A licensed provider reviews your information before any prescription is issued."
           numbered
           items={VISIT_STEPS}
           img={media.visit}

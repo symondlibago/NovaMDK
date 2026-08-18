@@ -56,20 +56,20 @@ const STATS = [
 // The three-step "How it works" cards (replaces the old bento + steps section).
 const HOW_STEPS = [
   {
-    n: "01", eyebrow: "Step one", title: "Pick a treatment",
-    desc: "Browse doctor-formulated options built around your goal.",
+    n: "01", eyebrow: "Step one", title: "Explore your options",
+    desc: "Browse treatment options for your health goals.",
     img: "/site/visit-phone.avif", alt: "Choosing a treatment on a tablet",
     cta: "Browse treatments", to: "/treatments",
   },
   {
-    n: "02", eyebrow: "Step two", title: "Talk to a doctor",
-    desc: "Answer a few questions and a licensed provider reviews your plan and prescribes what fits.",
+    n: "02", eyebrow: "Step two", title: "Complete your assessment",
+    desc: "Answer a few questions and a licensed provider reviews your information to determine the right next step.",
     img: "/site/doctor-consult.avif", alt: "A licensed doctor on a telehealth consultation",
     cta: "Start your assessment", to: "/start",
   },
   {
     n: "03", eyebrow: "Step three", title: "Delivered discreetly",
-    desc: "Approved treatment ships free in plain, unmarked packaging, right to your door.",
+    desc: "Your prescribed treatment ships in discreet packaging, right to your door.",
     img: "/site/courier-delivery.avif", alt: "A courier delivering a discreet package",
     cta: "See treatments", to: "/treatments",
   },
@@ -154,12 +154,16 @@ export default function Home() {
                 <Calculator size={13} /> Free tool
               </span>
               <h2 className="mt-4 text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
-                Not sure if treatment is right for you?
+                See where you stand
               </h2>
               <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">
-                Drag the sliders to check your BMI and see the range clinical studies report for
-                someone starting at your weight. No sign-up, and nothing you enter is stored.
+                Use the sliders to estimate your BMI and explore what weight-loss results reported in
+                clinical studies could look like at your starting weight.
               </p>
+              <p className="mt-3 text-[0.9rem] leading-relaxed text-muted">
+                Results vary, and this tool does not predict individual outcomes.
+              </p>
+              <p className="mt-3 text-[0.9rem] font-semibold text-ink">No sign-up required.</p>
             </div>
             {/* Scrolls to the calculator below rather than navigating away, so the
                 patient stays on the landing page. Lenis handles the easing. */}
