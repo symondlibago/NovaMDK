@@ -400,5 +400,83 @@
         "text": "Disclaimer: This content is for educational purposes only and is not a substitute for personalized medical advice, diagnosis, or treatment. Talk with a qualified healthcare professional before making significant changes to your diet, exercise routine, medications, or weight-management treatment."
       }
     ]
+  },
+  {
+    "slug": "new-blog-post",
+    "title": "New Blog Post",
+    "excerpt": "Test",
+    "description": "Test",
+    "date": "2026-08-17",
+    "author": {
+      "name": "Symond"
+    },
+    "image": "https://assets.cdn.filesafe.space/xjAx1KVj6ZWqRPcY4q7e/media/6a7663d09994d35aa073544f.jpg",
+    "imageAlt": "Test",
+    "tags": [
+      "Weight Management"
+    ],
+    "ghlId": "6a84b469bdf493d8c2c9d6c6",
+    "body": [
+      {
+        "type": "h2",
+        "text": "Simple Weight Loss Tips: A Beginner’s Guide"
+      },
+      {
+        "type": "p",
+        "text": "Losing weight doesn’t have to mean following an extreme diet or spending hours at the gym. Small, consistent changes can make a meaningful difference over time."
+      },
+      {
+        "type": "h2",
+        "text": "1. Focus on Balanced Meals"
+      },
+      {
+        "type": "p",
+        "text": "Build meals around vegetables, fruits, lean proteins, whole grains, and healthy fats. Choosing filling, nutrient-rich foods can make it easier to manage portions and reduce unnecessary snacking."
+      },
+      {
+        "type": "h2",
+        "text": "2. Stay Active"
+      },
+      {
+        "type": "p",
+        "text": "You don’t need an intense workout routine to get started. Walking, cycling, swimming, or simple home exercises can help increase daily activity. Aim for consistency rather than perfection."
+      },
+      {
+        "type": "h2",
+        "text": "3. Drink More Water"
+      },
+      {
+        "type": "p",
+        "text": "Water is an easy way to support healthy habits. Keeping a water bottle nearby can also help you avoid confusing thirst with hunger."
+      },
+      {
+        "type": "h2",
+        "text": "4. Get Enough Sleep"
+      },
+      {
+        "type": "p",
+        "text": "Good sleep is an important part of overall health. Try to maintain a regular sleep schedule and create a relaxing bedtime routine."
+      },
+      {
+        "type": "h2",
+        "text": "5. Be Patient"
+      },
+      {
+        "type": "p",
+        "text": "Healthy weight loss usually happens gradually. Instead of looking for quick fixes, focus on habits you can realistically maintain for the long term."
+      },
+      {
+        "type": "h3",
+        "text": "Final Thought"
+      },
+      {
+        "type": "p",
+        "text": "Weight loss is a personal journey, and what works best can vary from person to person. Start with one or two simple changes, stick with them, and build from there."
+      },
+      {
+        "type": "p",
+        "text": "This article is for general educational purposes and is not a substitute for personalized medical advice."
+      }
+    ]
   }
 ]
