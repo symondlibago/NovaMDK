@@ -16,6 +16,8 @@ import { CATEGORY_META } from "../lib/categoryMeta";
 import { track, EVENTS } from "../lib/analytics";
 
 const FAQ = lazy(() => import("../components/FAQ"));
+// Weight-loss only: the tool qualifies you for these treatments specifically.
+const BmiCalculator = lazy(() => import("../components/tools/BmiCalculator"));
 
 /* Cut-out art per goal (2026-08 design). Each is a square master anchored to the
    card's right edge — see CutoutCard. The right-nudges are measured, not eyeballed:
@@ -180,7 +182,39 @@ export default function TreatmentsPage() {
 
       {validGoal ? (
         /* Came from a consultation → only that category's products (their own header) */
-        <TreatmentShop category={validGoal} showBack />
+        <>
+          <TreatmentShop category={validGoal} showBack />
+          {validGoal === "weight-loss" && (
+            <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(1rem,3vw,2rem)] md:px-10">
+              <Reveal className="mb-8 max-w-[52ch]">
+                <span className="nv-eyebrow">Free tool</span>
+                <h2 className="mt-2 text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
+                  See where you stand
+                </h2>
+                <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">
+                  Use the sliders to estimate your BMI and explore what weight-loss results reported
+                  in clinical studies could look like at your starting weight.
+                </p>
+                <p className="mt-3 text-[0.9rem] leading-relaxed text-muted">
+                  Results vary, and this tool does not predict individual outcomes.
+                </p>
+                <p className="mt-3 text-[0.9rem] font-semibold text-ink">No sign-up required.</p>
+              </Reveal>
+              <Suspense fallback={<div className="grid h-[320px] place-items-center text-muted">Loading calculator…</div>}>
+                <Reveal><BmiCalculator /></Reveal>
+              </Suspense>
+              <p className="mt-6 text-[0.8rem] leading-relaxed text-muted">
+                For general information only. This is not medical advice, does not create a
+                patient-provider relationship, and is not a determination that you will be prescribed
+                anything.{" "}
+                <Link to="/weight-loss-calculator" className="font-medium text-primary hover:underline">
+                  See the full BMI reference
+                </Link>
+                .
+              </p>
+            </section>
+          )}
+        </>
       ) : (
         /* Manual visit → page hero + explore by goal (each tile starts a consultation) */
         <>

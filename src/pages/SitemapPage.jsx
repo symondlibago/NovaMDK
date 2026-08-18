@@ -9,6 +9,7 @@ import { visibleProducts } from "../components/data/products";
 import { productPath } from "../lib/slug";
 import { LEGAL_PAGES } from "../lib/siteLinks";
 import { groupedCatalog } from "../lib/catalog";
+import { getPosts } from "../lib/blog";
 
 const linkClass =
   "text-[0.92rem] leading-relaxed text-muted transition-colors hover:text-primary";
@@ -32,11 +33,13 @@ function LinkColumn({ heading, links }) {
 
 export default function SitemapPage() {
   const groups = groupedCatalog();
+  const blogPosts = getPosts();
 
   const categoryLinks = groups.map((g) => ({ to: g.href, label: g.label }));
   const companyLinks = [
     { to: "/", label: "Home" },
     { to: "/treatments", label: "All Treatments" },
+    { to: "/blog", label: "Blog" },
     { to: "/weight-loss-calculator", label: "Weight Loss Calculator" },
     { to: "/start", label: "Free Online Assessment" },
     { to: "/contact", label: "Contact Us" },
@@ -93,6 +96,28 @@ export default function SitemapPage() {
             </Reveal>
           ))}
         </div>
+
+        {blogPosts.length > 0 && (
+          <Reveal>
+            <div className="mt-[clamp(2rem,4vw,3rem)] rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface px-6 py-7 md:px-10">
+              <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3 border-b border-line pb-4">
+                <h2 className="font-display text-[1.15rem] font-bold leading-tight">
+                  <Link to="/blog" className="transition-colors hover:text-primary">Blog</Link>
+                </h2>
+                <span className="font-mono text-[0.66rem] uppercase tracking-[0.12em] text-muted">
+                  {blogPosts.length} {blogPosts.length === 1 ? "article" : "articles"}
+                </span>
+              </div>
+              <ul className="grid grid-cols-1 gap-x-8 gap-y-2.5 sm:grid-cols-2">
+                {blogPosts.map((p) => (
+                  <li key={p.slug}>
+                    <Link to={`/blog/${p.slug}`} className={linkClass}>{p.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+        )}
 
         <p className="mt-8 text-[0.82rem] leading-relaxed text-muted">
           Looking for the machine-readable version? It lives at{" "}

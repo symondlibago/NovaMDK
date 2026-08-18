@@ -3,60 +3,147 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Info } from "lucide-react";
 import { track, EVENTS } from "../../lib/analytics";
 
-/* Interactive BMI + goal-weight calculator, shared by the landing page (inline,
-   scrolled to from the hero band) and the standalone /weight-loss-calculator
-   page. Inputs are drag sliders so the result recomputes live as you move them,
-   which is the whole point of putting it on the landing page.
+/* Interactive BMI + goal-weight calculator.
 
-   Everything below is framed as published trial averages, never as a promise:
-   the projection is a range, the eligibility note says "may be an option", and
-   the medical-advice disclaimer sits with the result rather than in the footer. */
+   Combines the two references the client sent: the BMI dial and band list from
+   hims, and the "weight you could lose" readout from MEDVi, in one panel driven
+   by drag sliders so everything recomputes live.
+
+   Framing stays conservative throughout. The projection is a range, the
+   eligibility note says "may be", and the band copy defers to a provider. The
+   projection only appears once BMI reaches the overweight band, because showing
+   someone at a healthy weight how much they "could lose" would be selling a
+   medication to a person who does not need one. */
 
 // Mean total body-weight reduction at trial endpoint, from the registrational
 // GLP-1 studies. Used only to bound the projected range shown to the user.
-//   STEP 1     — semaglutide 2.4 mg, 68 weeks, ~14.9% mean reduction
-//   SURMOUNT-1 — tirzepatide 15 mg, 72 weeks, ~20.9% mean reduction
+//   STEP 1     - semaglutide 2.4 mg, 68 weeks, ~14.9% mean reduction
+//   SURMOUNT-1 - tirzepatide 15 mg, 72 weeks, ~20.9% mean reduction
 const TRIAL_LOW = 0.149;
 const TRIAL_HIGH = 0.209;
 
-const BMI_BANDS = [
-  { max: 18.5, label: "Underweight", tone: "text-muted" },
-  { max: 25, label: "Healthy weight", tone: "text-accent" },
-  { max: 30, label: "Overweight", tone: "text-primary" },
-  { max: Infinity, label: "Obesity", tone: "text-primary" },
+// Dial spans 16 to 40: past the readable extremes of the four bands without
+// squashing the healthy range into a sliver.
+const DIAL_MIN = 16;
+const DIAL_MAX = 40;
+
+const BANDS = [
+  {
+    key: "under", label: "Underweight", range: "< 18.5", max: 18.5, color: "var(--nv-muted)",
+    note: "Your BMI is below the healthy range, so prescription weight treatment is not appropriate. A licensed provider can talk through other options with you.",
+  },
+  {
+    key: "healthy", label: "Healthy weight", range: "18.5 - 24.9", max: 25, color: "var(--nv-accent)",
+    note: "Your BMI sits within the healthy range, so weight-loss medication generally is not indicated. A licensed provider can still discuss your goals with you.",
+  },
+  {
+    key: "over", label: "Overweight", range: "25 - 29.9", max: 30, color: "var(--nv-primary)",
+    note: "GLP-1 treatment is generally considered from a BMI of 27 alongside a weight-related condition such as high blood pressure or type 2 diabetes. Only a licensed provider can determine whether it is appropriate for you.",
+  },
+  {
+    key: "obese", label: "Obesity", range: "30 and above", max: Infinity, color: "var(--nv-primary)",
+    note: "GLP-1 treatment is generally considered at a BMI of 30 or above. Only a licensed provider can determine whether it is appropriate for you.",
+  },
 ];
 
-const bandFor = (bmi) => BMI_BANDS.find((b) => bmi < b.max);
+const bandFor = (bmi) => BANDS.find((b) => bmi < b.max);
 
-// Slider bounds, held in the unit the slider actually operates on. Height is
-// driven in whole inches / whole cm so the thumb lands on a real value.
 const RANGE = {
   heightIn: { min: 48, max: 84 },
-  heightCm: { min: 122, max: 214 },
   weightLb: { min: 80, max: 500 },
-  weightKg: { min: 36, max: 227 },
 };
 
 const IN_TO_CM = 2.54;
 const LB_TO_KG = 0.45359237;
 
-// Canonical state is metric; the imperial view is derived. Holding one source of
-// truth is what keeps the ft/lb and cm/kg views from drifting apart as you
-// toggle back and forth mid-drag.
+/* Feet/pounds only. The cm/kg toggle was dropped at the client's request
+   (2026-08-19); the audience is US patients. State is still held in cm/kg
+   because that is what the BMI formula needs, and the imperial figures the
+   sliders show are derived from it. */
 const DEFAULT_CM = 175;
 const DEFAULT_KG = 84;
 
 const clamp = (n, { min, max }) => Math.min(max, Math.max(min, n));
-
 const feetInches = (totalIn) => `${Math.floor(totalIn / 12)}' ${totalIn % 12}"`;
 
-/** Labelled range slider with a live value readout. */
+/* ------------------------------- the dial ------------------------------- */
+
+const DIAL = { cx: 150, cy: 148, r: 108, labelR: 130 };
+const ARC_LEN = Math.PI * DIAL.r;
+
+// BMI -> point on the semicircle. 180deg is the left end, 0deg the right.
+function pointAt(value, radius) {
+  const t = (clamp(value, { min: DIAL_MIN, max: DIAL_MAX }) - DIAL_MIN) / (DIAL_MAX - DIAL_MIN);
+  const rad = ((180 - t * 180) * Math.PI) / 180;
+  return { x: DIAL.cx + radius * Math.cos(rad), y: DIAL.cy - radius * Math.sin(rad) };
+}
+
+function Dial({ bmi, color }) {
+  const t = (clamp(bmi, { min: DIAL_MIN, max: DIAL_MAX }) - DIAL_MIN) / (DIAL_MAX - DIAL_MIN);
+  const knob = pointAt(bmi, DIAL.r);
+  const arc = `M ${DIAL.cx - DIAL.r} ${DIAL.cy} A ${DIAL.r} ${DIAL.r} 0 0 1 ${DIAL.cx + DIAL.r} ${DIAL.cy}`;
+
+  return (
+    <svg viewBox="0 0 300 172" className="w-full" role="img" aria-label={`BMI ${bmi}`}>
+      <defs>
+        {/* The filled arc runs from a washed tint of the band colour into the
+            colour itself, so the sweep has some depth instead of reading as a
+            flat band of paint. */}
+        <linearGradient id="nv-bmi-sweep" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0%" stopColor={`color-mix(in oklab, ${color} 45%, var(--nv-surface))`} />
+          <stop offset="100%" stopColor={color} />
+        </linearGradient>
+      </defs>
+
+      <path d={arc} fill="none" stroke="var(--nv-line)" strokeWidth="15" strokeLinecap="round" />
+      <path
+        d={arc}
+        fill="none"
+        stroke="url(#nv-bmi-sweep)"
+        strokeWidth="15"
+        strokeLinecap="round"
+        strokeDasharray={`${t * ARC_LEN} ${ARC_LEN}`}
+        style={{ transition: "stroke-dasharray 0.35s ease" }}
+      />
+      {/* White collar under the knob keeps it legible where it overlaps the track. */}
+      <circle
+        cx={knob.x}
+        cy={knob.y}
+        r="10"
+        fill={color}
+        stroke="var(--nv-surface)"
+        strokeWidth="5"
+        style={{ transition: "cx 0.35s ease, cy 0.35s ease, fill 0.35s ease" }}
+      />
+      {[DIAL_MIN, 18.5, 25, 30, DIAL_MAX].map((v) => {
+        const p = pointAt(v, DIAL.labelR);
+        return (
+          <text
+            key={v}
+            x={p.x}
+            y={p.y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="var(--nv-muted)"
+            className="font-mono"
+            fontSize="10.5"
+          >
+            {v}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
+/* ------------------------------- sliders -------------------------------- */
+
 function SliderField({ id, label, value, display, min, max, onChange, minLabel, maxLabel }) {
   return (
     <div>
       <div className="mb-2 flex items-baseline justify-between gap-3">
         <label htmlFor={id} className="text-[0.8rem] font-semibold text-ink">{label}</label>
-        <span className="font-display text-[1.05rem] font-extrabold tracking-tight text-ink">{display}</span>
+        <span className="font-display text-[1.15rem] font-extrabold tracking-tight text-ink">{display}</span>
       </div>
       <input
         id={id}
@@ -76,8 +163,9 @@ function SliderField({ id, label, value, display, min, max, onChange, minLabel, 
   );
 }
 
+/* ------------------------------ component ------------------------------- */
+
 export default function BmiCalculator({ className = "" }) {
-  const [metric, setMetric] = useState(false);
   const [cm, setCm] = useState(DEFAULT_CM);
   const [kg, setKg] = useState(DEFAULT_KG);
 
@@ -86,28 +174,25 @@ export default function BmiCalculator({ className = "" }) {
     const bmi = kg / (heightM * heightM);
     if (!Number.isFinite(bmi)) return null;
 
-    // Report the projection in whatever unit the patient is currently viewing.
-    const displayWeight = metric ? kg : kg / LB_TO_KG;
-    const unit = metric ? "kg" : "lb";
+    const displayWeight = kg / LB_TO_KG;
     const round = Math.round;
 
     return {
       bmi: round(bmi * 10) / 10,
       band: bandFor(bmi),
-      unit,
+      unit: "lb",
       lossLow: round(displayWeight * TRIAL_LOW),
       lossHigh: round(displayWeight * TRIAL_HIGH),
       goalLow: round(displayWeight * (1 - TRIAL_HIGH)),
       goalHigh: round(displayWeight * (1 - TRIAL_LOW)),
-      // Standard prescribing thresholds: BMI >= 30, or >= 27 with a
-      // weight-related condition. Phrased as "may be" — the provider decides.
+      // Projection is withheld below the overweight band on purpose.
+      showProjection: bmi >= 25,
       mayQualify: bmi >= 27,
-      needsComorbidity: bmi >= 27 && bmi < 30,
     };
-  }, [metric, cm, kg]);
+  }, [cm, kg]);
 
-  // One event per click through to the questionnaire, carrying the band only.
-  // The raw height and weight a patient dragged to never leaves the browser.
+  // One event per click through, carrying the band only. The height and weight a
+  // patient dragged to never leaves the browser.
   const onSeeOptions = () => {
     track(EVENTS.CALCULATOR_USED, { band: result?.band?.label, tool: "weight-loss" });
   };
@@ -115,161 +200,132 @@ export default function BmiCalculator({ className = "" }) {
   const heightIn = Math.round(cm / IN_TO_CM);
   const weightLb = Math.round(kg / LB_TO_KG);
 
-  // The slider bounds make a non-finite BMI unreachable, but this widget now
-  // renders on the landing page — bailing out beats taking the homepage down if
-  // that assumption ever stops holding.
   if (!result) return null;
 
   return (
-    <div className={`grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] ${className}`}>
+    <div className={`grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] ${className}`}>
       {/* ---------------- inputs ---------------- */}
-      <div className="rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-6 md:p-8">
-        <div className="mb-7 flex items-center justify-between gap-4">
-          <h3 className="font-display text-[1.15rem] font-bold leading-tight">Your details</h3>
-          <div className="flex rounded-full border border-line bg-bg p-1" role="group" aria-label="Units">
-            {[
-              { id: "imperial", label: "ft / lb", on: !metric },
-              { id: "metric", label: "cm / kg", on: metric },
-            ].map((u) => (
-              <button
-                key={u.id}
-                type="button"
-                aria-pressed={u.on}
-                onClick={() => setMetric(u.id === "metric")}
-                className={`rounded-full px-3.5 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.1em] transition-colors ${
-                  u.on ? "bg-primary text-on-primary" : "text-muted hover:text-ink"
-                }`}
-              >
-                {u.label}
-              </button>
-            ))}
-          </div>
-        </div>
+      <div className="rounded-[calc(24px*var(--nv-r-scale,1))] border border-line bg-surface p-6 md:p-8">
+        <h3 className="mb-7 font-display text-[1.15rem] font-bold leading-tight">Your details</h3>
 
         <div className="space-y-7">
-          {metric ? (
-            <>
-              <SliderField
-                id="bmi-height-cm"
-                label="Height"
-                value={clamp(Math.round(cm), RANGE.heightCm)}
-                display={`${Math.round(cm)} cm`}
-                min={RANGE.heightCm.min}
-                max={RANGE.heightCm.max}
-                minLabel={`${RANGE.heightCm.min} cm`}
-                maxLabel={`${RANGE.heightCm.max} cm`}
-                onChange={setCm}
-              />
-              <SliderField
-                id="bmi-weight-kg"
-                label="Weight"
-                value={clamp(Math.round(kg), RANGE.weightKg)}
-                display={`${Math.round(kg)} kg`}
-                min={RANGE.weightKg.min}
-                max={RANGE.weightKg.max}
-                minLabel={`${RANGE.weightKg.min} kg`}
-                maxLabel={`${RANGE.weightKg.max} kg`}
-                onChange={setKg}
-              />
-            </>
-          ) : (
-            <>
-              <SliderField
-                id="bmi-height-in"
-                label="Height"
-                value={clamp(heightIn, RANGE.heightIn)}
-                display={feetInches(clamp(heightIn, RANGE.heightIn))}
-                min={RANGE.heightIn.min}
-                max={RANGE.heightIn.max}
-                minLabel={feetInches(RANGE.heightIn.min)}
-                maxLabel={feetInches(RANGE.heightIn.max)}
-                onChange={(v) => setCm(v * IN_TO_CM)}
-              />
-              <SliderField
-                id="bmi-weight-lb"
-                label="Weight"
-                value={clamp(weightLb, RANGE.weightLb)}
-                display={`${clamp(weightLb, RANGE.weightLb)} lb`}
-                min={RANGE.weightLb.min}
-                max={RANGE.weightLb.max}
-                minLabel={`${RANGE.weightLb.min} lb`}
-                maxLabel={`${RANGE.weightLb.max} lb`}
-                onChange={(v) => setKg(v * LB_TO_KG)}
-              />
-            </>
-          )}
+          <SliderField
+            id="bmi-height-in" label="Height"
+            value={clamp(heightIn, RANGE.heightIn)} display={feetInches(clamp(heightIn, RANGE.heightIn))}
+            min={RANGE.heightIn.min} max={RANGE.heightIn.max}
+            minLabel={feetInches(RANGE.heightIn.min)} maxLabel={feetInches(RANGE.heightIn.max)}
+            onChange={(v) => setCm(v * IN_TO_CM)}
+          />
+          <SliderField
+            id="bmi-weight-lb" label="Current weight"
+            value={clamp(weightLb, RANGE.weightLb)} display={`${clamp(weightLb, RANGE.weightLb)} lb`}
+            min={RANGE.weightLb.min} max={RANGE.weightLb.max}
+            minLabel={`${RANGE.weightLb.min} lb`} maxLabel={`${RANGE.weightLb.max} lb`}
+            onChange={(v) => setKg(v * LB_TO_KG)}
+          />
         </div>
 
-        <p className="mt-7 flex items-start gap-2 text-[0.78rem] leading-relaxed text-muted">
+        {/* The MEDVi readout: the number that makes the tool worth using. */}
+        {result.showProjection && (
+          <div className="mt-8 flex items-end justify-between gap-4 border-t border-line pt-6">
+            <span className="max-w-[20ch]">
+              <span className="block text-[0.86rem] font-semibold leading-snug text-ink">
+                Weight loss reported in clinical studies
+              </span>
+              <span className="mt-1 block text-[0.76rem] leading-snug text-muted">
+                At your starting weight, over 68 to 72 weeks
+              </span>
+            </span>
+            <span className="whitespace-nowrap text-right">
+              <b className="font-display text-[clamp(1.9rem,5vw,2.6rem)] font-extrabold leading-none tracking-tight text-primary">
+                {result.lossLow} to {result.lossHigh}
+              </b>
+              <span className="ml-1.5 text-[0.9rem] font-semibold text-muted">{result.unit}</span>
+            </span>
+          </div>
+        )}
+
+        <p className="mt-6 flex items-start gap-2 text-[0.78rem] leading-relaxed text-muted">
           <Info size={14} className="mt-0.5 shrink-0 text-primary/70" />
           Drag the sliders to your height and weight. Nothing you enter is sent anywhere or saved,
           the calculation runs entirely in your browser.
         </p>
       </div>
 
-      {/* ---------------- results ---------------- */}
+      {/* ---------------- results panel ---------------- */}
       <div
-        className="h-full rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-6 md:p-8"
+        className="relative flex h-full flex-col overflow-hidden rounded-[calc(24px*var(--nv-r-scale,1))] border border-line bg-surface p-6 md:p-8 nv-shadow"
         aria-live="polite"
       >
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
-          <div>
-            <span className="nv-eyebrow">Your BMI</span>
-            <p className="mt-2 font-display text-[clamp(2.4rem,6vw,3.4rem)] font-extrabold leading-none tracking-tight">
+        {/* Warm wash behind the dial so the panel has some depth without needing
+            a dark ground. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[320px]"
+          style={{
+            background:
+              "radial-gradient(70% 100% at 50% 0%, color-mix(in oklab, var(--nv-primary) 12%, transparent), transparent 70%)",
+          }}
+        />
+
+        <div className="relative mx-auto w-full max-w-[340px]">
+          <Dial bmi={result.bmi} color={result.band.color} />
+          {/* The reading sits inside the dial's own arc. */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-1 text-center">
+            <span className="block font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted">
+              Your BMI
+            </span>
+            <span className="block font-display text-[clamp(2.6rem,7vw,3.4rem)] font-extrabold leading-none tracking-tight text-ink">
               {result.bmi}
-            </p>
+            </span>
           </div>
-          <span className={`font-mono text-[0.72rem] uppercase tracking-[0.12em] ${result.band.tone}`}>
-            {result.band.label}
-          </span>
         </div>
 
-        <div className="mt-6">
-          <span className="nv-eyebrow">Projected range</span>
-          <p className="mt-3 text-[1rem] leading-relaxed text-ink">
-            In clinical studies, people starting at your weight lost an average of{" "}
-            <b className="font-extrabold text-primary">
-              {result.lossLow} to {result.lossHigh} {result.unit}
-            </b>{" "}
-            over roughly 68 to 72 weeks, putting them around{" "}
-            <b className="font-extrabold">
-              {result.goalLow} to {result.goalHigh} {result.unit}
-            </b>.
-          </p>
-          <p className="mt-3 text-[0.78rem] leading-relaxed text-muted">
-            Based on mean total body-weight reduction reported in the STEP 1 (semaglutide 2.4 mg) and
-            SURMOUNT-1 (tirzepatide 15 mg) trials. These are study averages, not a prediction for
-            you. Individual results vary widely, and trial participants also followed a
-            reduced-calorie diet and increased physical activity.
+        {/* Band list, active one expanded. */}
+        <ul className="relative mt-7 space-y-1">
+          {BANDS.map((b) => {
+            const on = b.key === result.band.key;
+            return (
+              <li key={b.key}>
+                <div
+                  className={`rounded-[calc(14px*var(--nv-r-scale,1))] px-4 py-3 transition-colors duration-300 ${
+                    on ? "border border-line bg-surface-2" : ""
+                  }`}
+                >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className={`flex items-center gap-2 text-[0.92rem] ${on ? "font-bold text-ink" : "text-muted"}`}>
+                      {on && (
+                        <span
+                          className="h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ background: b.color }}
+                        />
+                      )}
+                      {b.label}
+                    </span>
+                    <span className={`font-mono text-[0.72rem] ${on ? "font-bold text-ink" : "text-muted/70"}`}>
+                      {b.range}
+                    </span>
+                  </div>
+                  {on && <p className="mt-2 text-[0.84rem] leading-relaxed text-muted">{b.note}</p>}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="relative mt-auto pt-7">
+          <Link
+            to="/start/weight-loss"
+            onClick={onSeeOptions}
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.98rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 nv-shadow"
+          >
+            {result.mayQualify ? "See my treatment options" : "Talk to a provider"}
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+          </Link>
+          <p className="mt-3 text-center text-[0.78rem] text-muted">
+            Takes 2 minutes. You only pay if you are prescribed.
           </p>
         </div>
-
-        <div className="mt-6 rounded-[calc(14px*var(--nv-r-scale,1))] bg-surface-2 p-5">
-          <p className="text-[0.9rem] font-semibold leading-snug text-ink">
-            {result.mayQualify
-              ? "Treatment may be an option for you."
-              : "Prescription weight treatment likely isn't the right fit."}
-          </p>
-          <p className="mt-1.5 text-[0.82rem] leading-relaxed text-muted">
-            {result.mayQualify
-              ? result.needsComorbidity
-                ? "GLP-1 treatment is generally considered at a BMI of 30 or above, or 27 and above alongside a weight-related condition such as high blood pressure or type 2 diabetes. Only a licensed provider can determine whether it's appropriate for you."
-                : "GLP-1 treatment is generally considered at a BMI of 30 or above. Only a licensed provider can determine whether it's appropriate for you."
-              : "These medications are generally prescribed at a BMI of 27 or above. A provider can still talk through other options with you."}
-          </p>
-        </div>
-
-        <Link
-          to="/start/weight-loss"
-          onClick={onSeeOptions}
-          className="group mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.98rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 nv-shadow"
-        >
-          See my treatment options
-          <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-        </Link>
-        <p className="mt-3 text-center text-[0.78rem] text-muted">
-          Takes 2 minutes. You only pay if you're prescribed.
-        </p>
       </div>
     </div>
   );

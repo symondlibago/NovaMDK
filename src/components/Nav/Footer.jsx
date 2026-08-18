@@ -56,6 +56,7 @@ export default function Footer() {
             <ul className="space-y-3 text-[14px] text-muted md:space-y-4">
               <li><Link to="/#how" className={link}>How it works</Link></li>
               {/* Smart Kiosk hidden at client request (2026-08-11) — route still live, just unlinked. */}
+              <li><Link to="/blog" className={link}>Blog</Link></li>
               <li><Link to="/weight-loss-calculator" className={link}>Weight loss calculator</Link></li>
               <li><Link to="/#reviews" className={link}>Reviews</Link></li>
               <li><Link to="/#faq" className={link}>FAQ</Link></li>

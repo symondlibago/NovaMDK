@@ -1,0 +1,70 @@
+[
+  {
+    "slug": "what-to-expect-first-month-glp-1",
+    "title": "What to expect in your first month on a GLP-1",
+    "excerpt": "The first four weeks are about letting your body adjust, not chasing the scale. Here is what the ramp actually looks like and why providers start low.",
+    "description": "A practical look at the first month of GLP-1 treatment: why the starting dose is low, what side effects are common early on, and what to raise with your provider.",
+    "date": "2026-08-14",
+    "author": { "name": "NovaMDK Care Team", "role": "Reviewed by a licensed provider" },
+    "image": "/products/gallery/clinical.jpg",
+    "imageAlt": "A compounded medication vial on a clinical work surface",
+    "tags": ["Weight loss", "Getting started"],
+    "ghlId": null,
+    "body": [
+      { "type": "p", "text": "Most people start a GLP-1 expecting the first month to be about weight. In practice it is mostly about tolerance. Your provider is watching how your body handles the medication before moving the dose anywhere, and the first four weeks are built around that." },
+      { "type": "h2", "text": "Why the starting dose is deliberately low" },
+      { "type": "p", "text": "GLP-1 medications act on pathways involved in appetite, fullness and blood sugar. Those same pathways affect how quickly your stomach empties, which is where most early side effects come from. Starting at a low dose and stepping up gradually gives your digestive system time to adjust." },
+      { "type": "p", "text": "This is why the dose you begin on is not the dose you stay on. In the clinical trials that established these medications, participants titrated upward over several months rather than starting at the full amount." },
+      { "type": "h2", "text": "What tends to come up in weeks one to four" },
+      { "type": "ul", "items": [
+        "Reduced appetite, often noticeable within the first week or two",
+        "Nausea, most common in the days after a dose increase",
+        "Feeling full sooner than you expect during meals",
+        "Changes in digestion, including constipation or looser stools",
+        "Fatigue, particularly if you are eating considerably less than before"
+      ] },
+      { "type": "p", "text": "Most of these ease as your body adapts. What matters is telling your provider what you are experiencing rather than pushing through it, because the response is often a slower titration rather than stopping altogether." },
+      { "type": "quote", "text": "The goal in month one is not a number on the scale. It is finding the dose your body tolerates well enough to stay on." },
+      { "type": "h2", "text": "Eating patterns that make the ramp easier" },
+      { "type": "p", "text": "Smaller portions eaten more slowly tend to sit better than three full meals. Protein first helps you feel satisfied on less food, and steady hydration matters more than usual because you are simply consuming less of everything, water included." },
+      { "type": "p", "text": "Alcohol is worth approaching carefully in the early weeks. It tends to hit harder when you are eating less, and it can compound nausea after a dose step." },
+      { "type": "h2", "text": "When to contact your provider" },
+      { "type": "p", "text": "Reach out if nausea or vomiting is persistent enough that you cannot keep fluids down, if you have severe abdominal pain, or if anything feels clearly outside the ordinary. These medications are well studied, but your provider needs to know what is actually happening to adjust your plan properly." },
+      { "type": "p", "text": "If you are still deciding whether treatment is a fit, our BMI tool shows where you currently sit and what the clinical studies reported at your starting weight." },
+      { "type": "cta", "text": "Check where you stand", "to": "/weight-loss-calculator" }
+    ]
+  },
+  {
+    "slug": "bmi-is-a-starting-point-not-a-verdict",
+    "title": "BMI is a starting point, not a verdict",
+    "excerpt": "It is one number built from two measurements, and it cannot tell muscle from fat. Useful as a screen, misleading on its own.",
+    "description": "What BMI actually measures, where it misreads people, and how providers use it alongside your history rather than as a standalone number.",
+    "date": "2026-08-07",
+    "author": { "name": "NovaMDK Care Team", "role": "Reviewed by a licensed provider" },
+    "image": "/products/gallery/nutrition.jpg",
+    "imageAlt": "Fresh whole foods arranged on a light surface",
+    "tags": ["Weight loss", "Health basics"],
+    "ghlId": null,
+    "body": [
+      { "type": "p", "text": "Body Mass Index takes your weight and divides it by the square of your height. That is the whole calculation. It was designed in the nineteenth century to describe populations, not to diagnose individuals, and it is still doing a version of that job today." },
+      { "type": "h2", "text": "What the number is good for" },
+      { "type": "p", "text": "As a screening tool, BMI is quick, free and reasonably predictive across large groups. It is why clinical guidelines reference it, and why prescribing thresholds for weight medications are written around it. It gives a provider somewhere to start." },
+      { "type": "h2", "text": "Where it gets people wrong" },
+      { "type": "p", "text": "BMI cannot distinguish muscle from fat, and it says nothing about where weight sits on your body. That produces predictable blind spots." },
+      { "type": "ul", "items": [
+        "Muscular people can register as overweight or obese while carrying little excess fat",
+        "Older adults may lose muscle while keeping the same BMI, masking a real change",
+        "It does not account for differences across ethnic backgrounds, where health risk can begin at different thresholds",
+        "It is not appropriate for children, or during pregnancy and breastfeeding"
+      ] },
+      { "type": "quote", "text": "One number built from two measurements cannot describe a whole person. It was never meant to." },
+      { "type": "h2", "text": "How providers actually use it" },
+      { "type": "p", "text": "In a real evaluation, BMI sits alongside your blood pressure, your blood sugar, your medical history, what you have already tried, and what you are trying to achieve. Prescribing guidelines generally reference a BMI of 30 and above, or 27 and above alongside a weight-related condition, but the threshold is an entry point to a conversation rather than the conclusion of one." },
+      { "type": "p", "text": "That is worth remembering if your number lands near a cutoff. Being just under does not mean nothing can help you, and being over does not automatically mean medication is the right answer for you." },
+      { "type": "image", "src": "/products/gallery/telehealth.jpg", "alt": "A patient completing an online visit from home" },
+      { "type": "h2", "text": "Working out your own number" },
+      { "type": "p", "text": "Our calculator shows your BMI, which band it falls in, and what the registrational GLP-1 trials reported for people starting around your weight. It runs entirely in your browser and nothing you enter is stored." },
+      { "type": "cta", "text": "Try the BMI calculator", "to": "/weight-loss-calculator" }
+    ]
+  }
+]

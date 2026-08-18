@@ -1,9 +1,8 @@
 import React, { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, ShieldCheck, Truck, Clock, Ban, Calculator, ChevronDown,
+  ArrowRight, ShieldCheck, Truck, Clock, Ban,
 } from "lucide-react";
-import { scrollToId } from "../lib/smoothScroll";
 
 import Navbar from "./Nav/Navbar";
 import Footer from "./Nav/Footer";
@@ -33,8 +32,9 @@ function useKioskVariant() {
 // const Testimonials = lazy(() => import("./Testimonials"));
 const FAQ = lazy(() => import("./FAQ"));
 const TreatmentsCarousel = lazy(() => import("./TreatmentsCarousel"));
-// Lazy so the slider widget doesn't sit in the homepage's critical bundle.
-const BmiCalculator = lazy(() => import("./tools/BmiCalculator"));
+/* The BMI calculator moved to the weight-loss treatments page (2026-08-19). It
+   belongs next to the treatments it qualifies you for, not on the landing page.
+   Still reachable from the footer via /weight-loss-calculator. */
 
 const TRUST = [
   { text: "US-licensed pharmacy", icon: ShieldCheck },
@@ -143,58 +143,6 @@ export default function Home() {
               <span className="mt-1.5 block font-mono text-[0.72rem] uppercase tracking-[0.13em] text-muted">{s.s}</span>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-[1240px] px-5 py-[clamp(2.4rem,5vw,4rem)] md:px-10">
-        <Reveal>
-          <div className="flex flex-col items-start gap-7 rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface p-[clamp(1.6rem,4vw,2.8rem)] md:flex-row md:items-center md:justify-between md:gap-10">
-            <div className="max-w-[46ch]">
-              <span className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1.5 font-mono text-[0.66rem] uppercase tracking-[0.12em] text-primary">
-                <Calculator size={13} /> Free tool
-              </span>
-              <h2 className="mt-4 text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
-                See where you stand
-              </h2>
-              <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">
-                Use the sliders to estimate your BMI and explore what weight-loss results reported in
-                clinical studies could look like at your starting weight.
-              </p>
-              <p className="mt-3 text-[0.9rem] leading-relaxed text-muted">
-                Results vary, and this tool does not predict individual outcomes.
-              </p>
-              <p className="mt-3 text-[0.9rem] font-semibold text-ink">No sign-up required.</p>
-            </div>
-            {/* Scrolls to the calculator below rather than navigating away, so the
-                patient stays on the landing page. Lenis handles the easing. */}
-            <button
-              type="button"
-              onClick={() => scrollToId("bmi-calculator")}
-              className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.96rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 nv-shadow"
-            >
-              Try the calculator
-              <ChevronDown size={18} className="transition-transform group-hover:translate-y-0.5" />
-            </button>
-          </div>
-        </Reveal>
-
-        {/* The live calculator, inline. Same component the standalone
-            /weight-loss-calculator page renders, so the two can't drift. */}
-        <div id="bmi-calculator" className="scroll-mt-24 pt-6 md:pt-8">
-          <Suspense fallback={<div className="grid h-[320px] place-items-center text-muted">Loading calculator…</div>}>
-            <Reveal>
-              <BmiCalculator />
-            </Reveal>
-          </Suspense>
-          <p className="mt-6 text-[0.8rem] leading-relaxed text-muted">
-            For general information only. This is not medical advice, does not create a
-            patient-provider relationship, and is not a determination that you will be prescribed
-            anything.{" "}
-            <Link to="/weight-loss-calculator" className="font-medium text-primary hover:underline">
-              See the full BMI reference
-            </Link>
-            .
-          </p>
         </div>
       </section>
 

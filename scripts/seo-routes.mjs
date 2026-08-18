@@ -129,9 +129,46 @@ export function buildRoutes() {
     });
   }
 
-  // Standalone marketing/tool pages (pricing, calculator, HTML sitemap).
+  // Standalone marketing/tool pages (calculator, HTML sitemap).
   for (const page of CONTENT_PAGES) {
     routes.push({ ...page, title: `${page.title} | ${SITE_NAME}` });
+  }
+
+  // Blog. Posts are authored in GoHighLevel and land in this JSON via the sync
+  // step; parsing the same file the app imports is what keeps the prerendered
+  // <head> and sitemap.xml in step with what actually renders.
+  const posts = JSON.parse(readFileSync(join(root, "src/content/blog/posts.json"), "utf8"));
+  routes.push({
+    path: "/blog",
+    title: `Blog: Guides on Weight Loss, Longevity and Skin | ${SITE_NAME}`,
+    description:
+      "Clinician-reviewed guides from NovaMDK on GLP-1 weight loss, longevity, skin health and sexual wellness. Written to answer the questions patients actually ask.",
+    priority: "0.9",
+  });
+  for (const p of posts) {
+    routes.push({
+      path: `/blog/${p.slug}`,
+      title: `${p.title} | ${SITE_NAME}`,
+      description: p.description || p.excerpt,
+      image: p.image ? `${SITE_URL}${p.image}` : undefined,
+      priority: "0.7",
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: p.title,
+        description: p.description || p.excerpt,
+        image: p.image ? `${SITE_URL}${p.image}` : undefined,
+        datePublished: p.date,
+        dateModified: p.date,
+        author: { "@type": "Organization", name: p.author?.name || SITE_NAME },
+        publisher: {
+          "@type": "Organization",
+          name: SITE_NAME,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+        },
+        mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/blog/${p.slug}` },
+      },
+    });
   }
 
   for (const [id, title] of LEGAL_PAGES) {

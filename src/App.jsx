@@ -20,6 +20,8 @@ const IntakePage = lazy(() => import("./pages/Intake"));
 const PatientPortalPage = lazy(() => import("./pages/PatientPortal"));
 const WeightLossCalculatorPage = lazy(() => import("./pages/WeightLossCalculator"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
+const BlogPage = lazy(() => import("./pages/Blog"));
+const BlogPostPage = lazy(() => import("./pages/BlogPost"));
 const LegalPage = lazy(() => import("./components/LegalPage"));
 const DesignStudio = lazy(() => import("./components/studio/DesignStudio"));
 
@@ -58,6 +60,8 @@ function App() {
           <Route path="/portal" element={<PatientPortalPage />} />
           <Route path="/weight-loss-calculator" element={<WeightLossCalculatorPage />} />
           <Route path="/sitemap" element={<SitemapPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/legal/sitemap" element={<Navigate to="/sitemap" replace />} />
           <Route path="/legal/:policyId" element={<LegalPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
