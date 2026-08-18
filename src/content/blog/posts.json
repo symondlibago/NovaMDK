@@ -1,70 +1,404 @@
 [
   {
-    "slug": "what-to-expect-first-month-glp-1",
-    "title": "What to expect in your first month on a GLP-1",
-    "excerpt": "The first four weeks are about letting your body adjust, not chasing the scale. Here is what the ramp actually looks like and why providers start low.",
-    "description": "A practical look at the first month of GLP-1 treatment: why the starting dose is low, what side effects are common early on, and what to raise with your provider.",
-    "date": "2026-08-14",
-    "author": { "name": "NovaMDK Care Team", "role": "Reviewed by a licensed provider" },
-    "image": "/products/gallery/clinical.jpg",
-    "imageAlt": "A compounded medication vial on a clinical work surface",
-    "tags": ["Weight loss", "Getting started"],
-    "ghlId": null,
+    "slug": "blogwhy-am-i-not-losing-weight",
+    "title": "Why Am I Not Losing Weight? 8 Reasons Your Progress May Have Stalled",
+    "excerpt": "Weight loss can slow for many reasons, from changing calorie needs and sleep to stress and medications. Learn 8 common causes and what to do next.",
+    "description": "Weight loss can slow for many reasons, from changing calorie needs and sleep to stress and medications. Learn 8 common causes and what to do next.",
+    "date": "2026-08-18",
+    "author": {
+      "name": "John"
+    },
+    "image": "https://assets.cdn.filesafe.space/xjAx1KVj6ZWqRPcY4q7e/media/6a76627c9a9c7792eaec10a4.jpg",
+    "imageAlt": "Why Am I Not Losing Weight? 8 Reasons Progress Stalls",
+    "tags": [
+      "Weight Management"
+    ],
+    "ghlId": "6a849eb561d2545e2f22b0f8",
     "body": [
-      { "type": "p", "text": "Most people start a GLP-1 expecting the first month to be about weight. In practice it is mostly about tolerance. Your provider is watching how your body handles the medication before moving the dose anywhere, and the first four weeks are built around that." },
-      { "type": "h2", "text": "Why the starting dose is deliberately low" },
-      { "type": "p", "text": "GLP-1 medications act on pathways involved in appetite, fullness and blood sugar. Those same pathways affect how quickly your stomach empties, which is where most early side effects come from. Starting at a low dose and stepping up gradually gives your digestive system time to adjust." },
-      { "type": "p", "text": "This is why the dose you begin on is not the dose you stay on. In the clinical trials that established these medications, participants titrated upward over several months rather than starting at the full amount." },
-      { "type": "h2", "text": "What tends to come up in weeks one to four" },
-      { "type": "ul", "items": [
-        "Reduced appetite, often noticeable within the first week or two",
-        "Nausea, most common in the days after a dose increase",
-        "Feeling full sooner than you expect during meals",
-        "Changes in digestion, including constipation or looser stools",
-        "Fatigue, particularly if you are eating considerably less than before"
-      ] },
-      { "type": "p", "text": "Most of these ease as your body adapts. What matters is telling your provider what you are experiencing rather than pushing through it, because the response is often a slower titration rather than stopping altogether." },
-      { "type": "quote", "text": "The goal in month one is not a number on the scale. It is finding the dose your body tolerates well enough to stay on." },
-      { "type": "h2", "text": "Eating patterns that make the ramp easier" },
-      { "type": "p", "text": "Smaller portions eaten more slowly tend to sit better than three full meals. Protein first helps you feel satisfied on less food, and steady hydration matters more than usual because you are simply consuming less of everything, water included." },
-      { "type": "p", "text": "Alcohol is worth approaching carefully in the early weeks. It tends to hit harder when you are eating less, and it can compound nausea after a dose step." },
-      { "type": "h2", "text": "When to contact your provider" },
-      { "type": "p", "text": "Reach out if nausea or vomiting is persistent enough that you cannot keep fluids down, if you have severe abdominal pain, or if anything feels clearly outside the ordinary. These medications are well studied, but your provider needs to know what is actually happening to adjust your plan properly." },
-      { "type": "p", "text": "If you are still deciding whether treatment is a fit, our BMI tool shows where you currently sit and what the clinical studies reported at your starting weight." },
-      { "type": "cta", "text": "Check where you stand", "to": "/weight-loss-calculator" }
-    ]
-  },
-  {
-    "slug": "bmi-is-a-starting-point-not-a-verdict",
-    "title": "BMI is a starting point, not a verdict",
-    "excerpt": "It is one number built from two measurements, and it cannot tell muscle from fat. Useful as a screen, misleading on its own.",
-    "description": "What BMI actually measures, where it misreads people, and how providers use it alongside your history rather than as a standalone number.",
-    "date": "2026-08-07",
-    "author": { "name": "NovaMDK Care Team", "role": "Reviewed by a licensed provider" },
-    "image": "/products/gallery/nutrition.jpg",
-    "imageAlt": "Fresh whole foods arranged on a light surface",
-    "tags": ["Weight loss", "Health basics"],
-    "ghlId": null,
-    "body": [
-      { "type": "p", "text": "Body Mass Index takes your weight and divides it by the square of your height. That is the whole calculation. It was designed in the nineteenth century to describe populations, not to diagnose individuals, and it is still doing a version of that job today." },
-      { "type": "h2", "text": "What the number is good for" },
-      { "type": "p", "text": "As a screening tool, BMI is quick, free and reasonably predictive across large groups. It is why clinical guidelines reference it, and why prescribing thresholds for weight medications are written around it. It gives a provider somewhere to start." },
-      { "type": "h2", "text": "Where it gets people wrong" },
-      { "type": "p", "text": "BMI cannot distinguish muscle from fat, and it says nothing about where weight sits on your body. That produces predictable blind spots." },
-      { "type": "ul", "items": [
-        "Muscular people can register as overweight or obese while carrying little excess fat",
-        "Older adults may lose muscle while keeping the same BMI, masking a real change",
-        "It does not account for differences across ethnic backgrounds, where health risk can begin at different thresholds",
-        "It is not appropriate for children, or during pregnancy and breastfeeding"
-      ] },
-      { "type": "quote", "text": "One number built from two measurements cannot describe a whole person. It was never meant to." },
-      { "type": "h2", "text": "How providers actually use it" },
-      { "type": "p", "text": "In a real evaluation, BMI sits alongside your blood pressure, your blood sugar, your medical history, what you have already tried, and what you are trying to achieve. Prescribing guidelines generally reference a BMI of 30 and above, or 27 and above alongside a weight-related condition, but the threshold is an entry point to a conversation rather than the conclusion of one." },
-      { "type": "p", "text": "That is worth remembering if your number lands near a cutoff. Being just under does not mean nothing can help you, and being over does not automatically mean medication is the right answer for you." },
-      { "type": "image", "src": "/products/gallery/telehealth.jpg", "alt": "A patient completing an online visit from home" },
-      { "type": "h2", "text": "Working out your own number" },
-      { "type": "p", "text": "Our calculator shows your BMI, which band it falls in, and what the registrational GLP-1 trials reported for people starting around your weight. It runs entirely in your browser and nothing you enter is stored." },
-      { "type": "cta", "text": "Try the BMI calculator", "to": "/weight-loss-calculator" }
+      {
+        "type": "p",
+        "text": "You’ve been eating better, moving more, and putting in the effort, but suddenly, the scale isn’t moving."
+      },
+      {
+        "type": "p",
+        "text": "Sound familiar?"
+      },
+      {
+        "type": "p",
+        "text": "Weight loss rarely happens in a perfectly straight line. It’s common to see progress at first, followed by periods when things slow down or seem to stop altogether. This is often called a weight loss plateau."
+      },
+      {
+        "type": "p",
+        "text": "And while it can be frustrating, a plateau doesn’t necessarily mean you’re doing something wrong."
+      },
+      {
+        "type": "p",
+        "text": "Your body, appetite, activity level, sleep, medications, stress, and other health factors can all influence your progress. Research also suggests that as weight decreases, the body can adapt in ways that make continued weight loss more challenging."
+      },
+      {
+        "type": "p",
+        "text": "If you’ve been wondering, “Why am I not losing weight anymore?”, here are eight common reasons worth considering."
+      },
+      {
+        "type": "h2",
+        "text": "1. Your Body May Need Fewer Calories Than Before"
+      },
+      {
+        "type": "p",
+        "text": "As you lose weight, your body generally requires less energy to maintain its new weight."
+      },
+      {
+        "type": "p",
+        "text": "That means the eating and activity routine that helped create a calorie deficit when you first started may eventually become closer to what your body needs for maintenance. In simple terms, what worked at the beginning may need to be adjusted as your body changes."
+      },
+      {
+        "type": "p",
+        "text": "That doesn’t mean drastically cutting your food intake. It may simply be time to reassess portions, activity, and your current needs rather than continuing the exact same plan indefinitely."
+      },
+      {
+        "type": "h2",
+        "text": "2. Small Extras Can Add Up"
+      },
+      {
+        "type": "p",
+        "text": "Sometimes the issue isn’t your main meals. It’s everything around them."
+      },
+      {
+        "type": "p",
+        "text": "A few examples include:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Coffee drinks",
+          "Alcohol",
+          "Sauces and dressings",
+          "Larger portions",
+          "Snacks while cooking",
+          "Weekend meals",
+          "Restaurant portions",
+          "A few bites here and there"
+        ]
+      },
+      {
+        "type": "p",
+        "text": "None of these things are automatically “bad.” They’re simply easy to overlook."
+      },
+      {
+        "type": "p",
+        "text": "If your weight has stalled, tracking what you normally eat and drink for a few days can sometimes reveal patterns you weren’t noticing."
+      },
+      {
+        "type": "p",
+        "text": "The goal isn’t to obsess over every calorie. Think of it as gathering information about your current routine."
+      },
+      {
+        "type": "h2",
+        "text": "3. Your Appetite Can Change as You Lose Weight"
+      },
+      {
+        "type": "p",
+        "text": "One reason weight loss can become harder over time is that your body doesn’t stay completely neutral while you lose weight. Research on weight-loss plateaus suggests that appetite can increase as weight decreases, which may make it harder to maintain the same eating pattern that felt manageable at the beginning."
+      },
+      {
+        "type": "p",
+        "text": "You may notice that you’re:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Hungrier between meals",
+          "Thinking about food more often",
+          "Less satisfied with the portions you used to eat",
+          "Finding your original plan harder to maintain"
+        ]
+      },
+      {
+        "type": "p",
+        "text": "That’s one reason extreme restriction often isn’t a great long-term strategy. A sustainable approach should be something you can realistically continue, not something you have to fight against every day."
+      },
+      {
+        "type": "h2",
+        "text": "4. You May Not Be Getting Enough Sleep"
+      },
+      {
+        "type": "p",
+        "text": "Sleep probably isn’t the first thing that comes to mind when you think about weight management, but it matters."
+      },
+      {
+        "type": "p",
+        "text": "The National Institute of Diabetes and Digestive and Kidney Diseases notes that not getting enough sleep may increase hunger, calorie intake, and the likelihood of making less nutritious food choices."
+      },
+      {
+        "type": "p",
+        "text": "Research has also found that restricting sleep can increase calorie intake and contribute to weight gain."
+      },
+      {
+        "type": "p",
+        "text": "If five or six hours of sleep has become your normal, improving your sleep routine may be just as important as adding another workout."
+      },
+      {
+        "type": "p",
+        "text": "Aim for consistency and pay attention to whether you regularly wake up feeling rested.5. Stress May Be Affecting Your Routine Stress doesn’t automatically cause weight gain, but it can make healthy routines harder to maintain."
+      },
+      {
+        "type": "p",
+        "text": "Think about what happens during a stressful week."
+      },
+      {
+        "type": "p",
+        "text": "You may sleep less, exercise less, order takeout more often, snack while distracted, or have less time to plan meals."
+      },
+      {
+        "type": "p",
+        "text": "Over time, those small changes can make a difference."
+      },
+      {
+        "type": "p",
+        "text": "Long-term stress is one of several factors the NIDDK identifies as potentially affecting weight and overall health."
+      },
+      {
+        "type": "p",
+        "text": "Instead of trying to eliminate stress completely, which probably isn’t realistic, look at what tends to change when you’re stressed. That may show you where a small adjustment could help."
+      },
+      {
+        "type": "h2",
+        "text": "6. You’re Exercising, but Moving Less During the Rest of the Day"
+      },
+      {
+        "type": "p",
+        "text": "Going to the gym is great, but your workout is only one part of your daily activity."
+      },
+      {
+        "type": "p",
+        "text": "Walking around the office, taking the stairs, cleaning the house, shopping, standing, playing with your kids, and simply moving throughout the day all count."
+      },
+      {
+        "type": "p",
+        "text": "Sometimes people maintain their workouts but unknowingly become more sedentary during the rest of the day."
+      },
+      {
+        "type": "p",
+        "text": "So instead of looking only at workouts, consider your overall movement."
+      },
+      {
+        "type": "p",
+        "text": "A daily walk, taking movement breaks during work, using the stairs, or simply spending less time sitting can help increase your activity without adding another intense workout."
+      },
+      {
+        "type": "h2",
+        "text": "7. A Medication or Health Condition Could Be Playing a Role"
+      },
+      {
+        "type": "p",
+        "text": "Weight isn’t determined by lifestyle alone. Certain medications may contribute to weight gain or make weight management more difficult."
+      },
+      {
+        "type": "p",
+        "text": "These can include some medications used for depression, diabetes, seizures, allergies, high blood pressure, and other conditions."
+      },
+      {
+        "type": "p",
+        "text": "Some health conditions, including hypothyroidism, polycystic ovary syndrome (PCOS), and Cushing syndrome, can also affect weight."
+      },
+      {
+        "type": "p",
+        "text": "That doesn’t mean a plateau automatically means you have a medical condition."
+      },
+      {
+        "type": "p",
+        "text": "But if your weight changed unexpectedly, you started a new medication, or you’re experiencing other symptoms, it’s worth mentioning to a healthcare provider."
+      },
+      {
+        "type": "p",
+        "text": "Never stop or change a prescription medication without speaking with the clinician who manages it."
+      },
+      {
+        "type": "h2",
+        "text": "8. The Scale May Not Be Telling the Whole Story"
+      },
+      {
+        "type": "p",
+        "text": "The number on the scale is only one way to measure progress."
+      },
+      {
+        "type": "p",
+        "text": "Your weight can change from day to day, and short-term changes don’t necessarily represent changes in body fat."
+      },
+      {
+        "type": "p",
+        "text": "That’s why it can be more useful to look at your overall trend instead of reacting to a single weigh-in."
+      },
+      {
+        "type": "p",
+        "text": "You can also pay attention to other signs of progress:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "How your clothes fit",
+          "Waist measurements",
+          "Strength and endurance",
+          "Energy levels",
+          "Exercise performance"
+        ]
+      },
+      {
+        "type": "p",
+        "text": "Blood pressure or other health markersIf you recently started exercising or strength training, you may be improving your fitness even if the scale isn’t changing as quickly as you expected."
+      },
+      {
+        "type": "p",
+        "text": "So, What Should You Do When Weight Loss Stalls?"
+      },
+      {
+        "type": "p",
+        "text": "First, don’t assume the answer is to immediately eat dramatically less or exercise dramatically more."
+      },
+      {
+        "type": "p",
+        "text": "Instead, take a look at the bigger picture."
+      },
+      {
+        "type": "p",
+        "text": "Ask yourself:"
+      },
+      {
+        "type": "p",
+        "text": "Have my portions changed?"
+      },
+      {
+        "type": "p",
+        "text": "Am I eating differently on weekends?"
+      },
+      {
+        "type": "p",
+        "text": "Am I sleeping enough?"
+      },
+      {
+        "type": "p",
+        "text": "Has my daily movement decreased?"
+      },
+      {
+        "type": "p",
+        "text": "Am I more stressed than usual?"
+      },
+      {
+        "type": "p",
+        "text": "Did I recently start a new medication?"
+      },
+      {
+        "type": "p",
+        "text": "Am I much hungrier than I used to be?"
+      },
+      {
+        "type": "p",
+        "text": "Is my current plan realistic enough to maintain?"
+      },
+      {
+        "type": "p",
+        "text": "Sometimes a few small adjustments are enough to get things moving again."
+      },
+      {
+        "type": "p",
+        "text": "Other times, it may be helpful to work with a healthcare professional who can look at your health history, medications, lifestyle, previous weight-loss attempts, and goals."
+      },
+      {
+        "type": "p",
+        "text": "For some eligible patients, medical weight-management options may also be appropriate alongside nutrition, activity, and other lifestyle changes. Prescription weight-management medications should be selected and monitored by a qualified healthcare professional. When Should You Talk to a Healthcare Provider?"
+      },
+      {
+        "type": "p",
+        "text": "Consider reaching out to a healthcare provider if you’ve been consistent for a while without seeing expected progress, your weight has changed unexpectedly, you’re experiencing other symptoms, or you’re concerned that a medication or health condition may be affecting your weight."
+      },
+      {
+        "type": "p",
+        "text": "It can also be helpful to seek professional guidance if you’re unsure what a healthy or realistic weight-management plan should look like for you."
+      },
+      {
+        "type": "p",
+        "text": "Weight management is personal. What works well for one person may not be the right approach for someone else."
+      },
+      {
+        "type": "p",
+        "text": "The Bottom Line A stalled scale doesn’t automatically mean you’ve failed or that you need to push yourself harder."
+      },
+      {
+        "type": "p",
+        "text": "Weight is influenced by much more than one meal or one workout. Sleep, appetite, activity, medications, health conditions, daily habits, and your body’s natural adaptations can all play a role."
+      },
+      {
+        "type": "p",
+        "text": "Instead of asking only, “Why am I not losing weight?”, it may be more helpful to ask:"
+      },
+      {
+        "type": "p",
+        "text": "“What has changed, and what does my body need now?”"
+      },
+      {
+        "type": "p",
+        "text": "Understanding the reason behind a plateau can help you choose a healthier and more sustainable next step."
+      },
+      {
+        "type": "p",
+        "text": "Need Help With Your Weight Management Goals?"
+      },
+      {
+        "type": "p",
+        "text": "If you’ve been putting in the effort but aren’t seeing the progress you expected, you don’t have to keep guessing. A healthcare provider can help look at your overall health, goals, lifestyle, medications, and other factors that may be influencing your progress and discuss weight-management options that may be appropriate for you."
+      },
+      {
+        "type": "p",
+        "text": "[Explore Weight Management] Frequently Asked Questions Is it normal for weight loss to slow down?"
+      },
+      {
+        "type": "p",
+        "text": "Yes. Weight-loss plateaus are common. As your weight changes, your energy needs, appetite, and other biological factors can change too."
+      },
+      {
+        "type": "p",
+        "text": "Can lack of sleep make weight loss harder?"
+      },
+      {
+        "type": "p",
+        "text": "It can. Insufficient sleep has been associated with increased hunger and calorie intake, and controlled studies have found that sleep restriction can contribute to weight gain."
+      },
+      {
+        "type": "p",
+        "text": "Could my medication be affecting my weight?"
+      },
+      {
+        "type": "p",
+        "text": "Possibly. Certain prescription medications can influence appetite, energy balance, or body weight. Talk to your healthcare provider if you have concerns, and never stop a prescribed medication on your own."
+      },
+      {
+        "type": "p",
+        "text": "When should I consider medical weight management?"
+      },
+      {
+        "type": "p",
+        "text": "If lifestyle changes alone haven’t produced the results you’re looking for, a healthcare provider can evaluate your overall health and determine whether additional treatment options may be appropriate. Prescription weight-management medications are available for certain eligible patients."
+      },
+      {
+        "type": "p",
+        "text": "Sources & Further Reading National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK), National Institutes of Health Factors Affecting Weight & HealthInformation on lifestyle, sleep, medications, health conditions, genetics, and other factors that can influence body weight."
+      },
+      {
+        "type": "p",
+        "text": "Hall KD. Obesity, 2024 Physiology of the Weight-Loss Plateau in Response to Diet Restriction, GLP-1 Receptor Agonism, and Bariatric Surgery Research examining appetite feedback and the physiological factors involved in weight-loss plateaus."
+      },
+      {
+        "type": "p",
+        "text": "Covassin N, et al. Journal of the American College of Cardiology, 2022 Effects of Experimental Sleep Restriction on Energy Intake, Energy Expenditure, and Visceral Obesity weight."
+      },
+      {
+        "type": "p",
+        "text": "Controlled research examining the effects of insufficient sleep on calorie intake and body National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK), National Institutes of Health Prescription Medications to Treat Overweight & Obesity Patient information on medically supervised prescription weight-management options."
+      },
+      {
+        "type": "p",
+        "text": "Disclaimer: This content is for educational purposes only and is not a substitute for personalized medical advice, diagnosis, or treatment. Talk with a qualified healthcare professional before making significant changes to your diet, exercise routine, medications, or weight-management treatment."
+      }
     ]
   }
 ]

@@ -8,8 +8,7 @@ import Reveal from "../components/ui/Reveal";
 import PostBody from "../components/blog/PostBody";
 import PostCard from "../components/blog/PostCard";
 import { getPost, relatedPosts, formatDate, readTime } from "../lib/blog";
-
-const SITE_URL = "https://www.novamdk.com";
+import { SITE_URL, absoluteUrl } from "../lib/absoluteUrl";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -28,12 +27,13 @@ export default function BlogPostPage() {
         description={post.description || post.excerpt}
         path={`/blog/${post.slug}`}
         image={post.image}
+        noindex={Boolean(post.draft)}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "BlogPosting",
           headline: post.title,
           description: post.description || post.excerpt,
-          image: post.image ? `${SITE_URL}${post.image}` : undefined,
+          image: absoluteUrl(post.image),
           datePublished: post.date,
           dateModified: post.date,
           author: { "@type": "Organization", name: post.author?.name || "NovaMDK" },
@@ -56,6 +56,15 @@ export default function BlogPostPage() {
           >
             <ArrowLeft size={15} /> Blog
           </Link>
+
+          {/* Still a draft in GoHighLevel. Search engines never see it (noindex,
+              and the sync keeps drafts out of sitemap.xml), but anyone reviewing
+              the article should know it is not live copy. */}
+          {post.draft && (
+            <p className="mt-6 rounded-[calc(14px*var(--nv-r-scale,1))] border border-line bg-surface-2 px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-muted">
+              Draft preview: not published in GoHighLevel yet
+            </p>
+          )}
 
           <div className="mx-auto mt-8 max-w-[68ch]">
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.66rem] uppercase tracking-[0.12em] text-muted">

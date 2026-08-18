@@ -4,8 +4,9 @@ import { dirname, join } from "node:path";
 import { slugify, productSlug } from "../src/lib/slug.js";
 import { CATEGORY_META } from "../src/lib/categoryMeta.js";
 import { LEGAL_PAGES, CONTENT_PAGES } from "../src/lib/siteLinks.js";
+import { SITE_URL, absoluteUrl } from "../src/lib/absoluteUrl.js";
 
-export const SITE_URL = "https://www.novamdk.com";
+export { SITE_URL };
 const SITE_NAME = "NovaMDK";
 export const DEFAULT_TITLE = "NovaMDK | Premium Telehealth & Longevity";
 
@@ -134,10 +135,14 @@ export function buildRoutes() {
     routes.push({ ...page, title: `${page.title} | ${SITE_NAME}` });
   }
 
-  // Blog. Posts are authored in GoHighLevel and land in this JSON via the sync
-  // step; parsing the same file the app imports is what keeps the prerendered
-  // <head> and sitemap.xml in step with what actually renders.
-  const posts = JSON.parse(readFileSync(join(root, "src/content/blog/posts.json"), "utf8"));
+  // Blog. Posts are authored in GoHighLevel and land in this JSON via
+  // scripts/ghl-blog-sync.mjs; parsing the same file the app imports is what
+  // keeps the prerendered <head> and sitemap.xml in step with what renders.
+  // `draft: true` posts stay reachable in the browser for review but get no
+  // static page and no sitemap entry, so Google never indexes unfinished copy.
+  const posts = JSON.parse(
+    readFileSync(join(root, "src/content/blog/posts.json"), "utf8")
+  ).filter((p) => !p.draft);
   routes.push({
     path: "/blog",
     title: `Blog: Guides on Weight Loss, Longevity and Skin | ${SITE_NAME}`,
@@ -150,14 +155,14 @@ export function buildRoutes() {
       path: `/blog/${p.slug}`,
       title: `${p.title} | ${SITE_NAME}`,
       description: p.description || p.excerpt,
-      image: p.image ? `${SITE_URL}${p.image}` : undefined,
+      image: absoluteUrl(p.image),
       priority: "0.7",
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         headline: p.title,
         description: p.description || p.excerpt,
-        image: p.image ? `${SITE_URL}${p.image}` : undefined,
+        image: absoluteUrl(p.image),
         datePublished: p.date,
         dateModified: p.date,
         author: { "@type": "Organization", name: p.author?.name || SITE_NAME },

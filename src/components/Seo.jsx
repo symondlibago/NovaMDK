@@ -1,6 +1,6 @@
 import { useEffect } from "react";
+import { SITE_URL, absoluteUrl } from "../lib/absoluteUrl";
 
-const SITE_URL = "https://www.novamdk.com";
 const SITE_NAME = "NovaMDK";
 const DEFAULT_TITLE = "NovaMDK | Premium Telehealth & Longevity";
 const DEFAULT_IMAGE = `${SITE_URL}/logo.png`;
@@ -27,7 +27,7 @@ export default function Seo({ title, description, path, image, noindex = false, 
     setMeta("property", "og:site_name", SITE_NAME);
     setMeta("property", "og:type", "website");
     setMeta("property", "og:url", url);
-    setMeta("property", "og:image", image ? `${SITE_URL}${image}` : DEFAULT_IMAGE);
+    setMeta("property", "og:image", absoluteUrl(image) || DEFAULT_IMAGE);
     setMeta("name", "twitter:card", "summary_large_image");
     setMeta("name", "robots", noindex ? "noindex, nofollow" : "index, follow");
     if (description) {

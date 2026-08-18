@@ -3,15 +3,18 @@ import posts from "../content/blog/posts.json";
 /* The blog's data layer, and the ONLY file that knows where posts come from.
    Pages and components import from here and never touch the source.
 
-   Posts are authored in GoHighLevel. Today this reads a checked-in JSON file of
-   samples; the plan is a build-time sync step that pulls from GHL and writes that
-   same JSON, so the contract below does not change when the real content lands.
-   scripts/seo-routes.mjs parses the identical file under Node, which is why the
-   source is JSON rather than a .js module: one shape, two consumers, no scraping.
+   Posts are authored in GoHighLevel and pulled into the JSON below by
+   scripts/ghl-blog-sync.mjs. scripts/seo-routes.mjs parses the identical file
+   under Node, which is why the source is JSON rather than a .js module: one
+   shape, two consumers, no scraping.
 
    Post shape:
      slug, title, excerpt, description, date (YYYY-MM-DD), image, imageAlt,
-     tags[], author { name, role }, ghlId, body[]
+     tags[], author { name, role }, ghlId, body[], draft?
+
+   `draft: true` marks a post still unpublished in GHL. It renders for anyone with
+   the URL so copy can be reviewed in place, but carries noindex and is left out
+   of sitemap.xml, prerendering and the /sitemap page.
 
    Body blocks: { type: "p" | "h2" | "h3" | "quote" | "ul" | "image" | "cta" }
    Blocks rather than raw HTML on purpose. GHL's editor output would need

@@ -33,7 +33,8 @@ function LinkColumn({ heading, links }) {
 
 export default function SitemapPage() {
   const groups = groupedCatalog();
-  const blogPosts = getPosts();
+  // Drafts are previewable at their own URL but never advertised here.
+  const blogPosts = getPosts().filter((p) => !p.draft);
 
   const categoryLinks = groups.map((g) => ({ to: g.href, label: g.label }));
   const companyLinks = [
