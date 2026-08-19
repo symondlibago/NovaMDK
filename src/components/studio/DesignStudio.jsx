@@ -440,7 +440,8 @@ export default function DesignStudio() {
         transition={{ type: "spring", stiffness: 260, damping: 18 }}
         onClick={() => setStudioOpen(true)}
         aria-label="Open Design Studio"
-        className="fixed bottom-6 right-6 z-[140] grid h-14 w-14 place-items-center rounded-full text-white nv-shadow-lg"
+        /* Bottom-left: the GHL chat widget owns the bottom-right corner. */
+        className="fixed bottom-6 left-6 z-[140] grid h-14 w-14 place-items-center rounded-full text-white nv-shadow-lg"
         style={{ background: "linear-gradient(155deg, var(--nv-primary), var(--nv-primary-deep))" }}
       >
         <Palette size={22} />

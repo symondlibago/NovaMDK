@@ -457,15 +457,12 @@ function HeroHeadline({ compact = false, wide = false }) {
       <span className={`flex items-center gap-3 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-accent ${justify}`}>
         <span className="h-px w-6 bg-accent" aria-hidden="true" /> Clinician-guided care
       </span>
-
-      {/* Typeface matches the section headings ("Care in three simple steps"):
-          the body sans at extrabold, not the Fraunces serif. */}
       <h1
-        className={`nv-weight-keep mt-4 max-w-[15ch] font-extrabold leading-[1.08] tracking-[-0.01em] text-ink ${mx} ${
+        className={`nv-weight-keep mt-4 max-w-[20ch] font-extrabold leading-[1.08] tracking-[-0.01em] text-ink ${mx} ${
           compact ? "text-[clamp(1.9rem,5vw,2.6rem)]" : "text-[clamp(1.9rem,3.4vw,2.8rem)]"
         }`}
       >
-        Modern healthcare, <em className="whitespace-nowrap italic text-accent">built around you</em>
+        Modern Healthcare, <em className="whitespace-nowrap italic text-accent">Built Around You</em>
       </h1>
 
       <p className={`mt-4 max-w-[42ch] leading-relaxed text-muted ${mx} ${minimal ? "hidden lg:block" : ""} ${compact ? "text-[0.95rem]" : "text-[clamp(0.95rem,1.1vw,1.02rem)]"}`}>

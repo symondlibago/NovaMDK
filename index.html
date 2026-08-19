@@ -65,5 +65,16 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- GoHighLevel chat widget. Renders its own fixed launcher in the
+         bottom-right, which is why the Design Studio button moved to the
+         bottom-left. Loaded here rather than from a component so it mounts once
+         for the whole SPA instead of re-injecting on every route change. -->
+    <script
+      src="https://widgets.leadconnectorhq.com/loader.js"
+      data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
+      data-widget-id="6a85ea9fecd7aeb8c7c44d32"
+      data-source="WEB_USER"
+    ></script>
   </body>
 </html>

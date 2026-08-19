@@ -111,61 +111,194 @@ function PhotoCard({ it, onClick, hero = false }) {
   );
 }
 
+/* Growth arrow for the Weight Management reveal. There is no arrow asset in the
+   repo, so it's an inline SVG: a chunky marker stroke that spans the whole card
+   on the diagonal — tail in the bottom-left corner, head in the top-right — and
+   draws itself tail→head on hover rather than fading in.
+
+   `pathLength="1"` normalises the shaft so the dash trick needs no JS length
+   measurement, and `slice` keeps the round caps circular at every card width
+   instead of squashing them to ovals. The viewBox matches the card's own aspect
+   so nothing meaningful gets cropped. See .nv-goal__arrow in index.css for the
+   draw timing, which the reveal wedge is locked to. */
+function GrowthArrow({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 320 320"
+      preserveAspectRatio="xMidYMid slice"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {/* The viewBox has to track the card's aspect. `slice` scales to cover and
+          crops the overflow, so a landscape viewBox on a portrait card throws
+          away the left and right thirds — which is exactly how the tail and the
+          arrowhead went missing. A square viewBox on a ~315×320 card crops about
+          2px a side and nothing else.
+
+          The tail sits below the floor (y 332 > 320) so the stroke runs off the
+          card's bottom edge rather than stopping short of it, and the quadratic
+          starts shallow and steepens for the rising-trend-line shape. */}
+      <path
+        className="nv-goal__arrow-shaft"
+        pathLength="1"
+        d="M60 326Q128 262 208 158"
+        stroke="currentColor"
+        strokeWidth="15"
+        strokeLinecap="round"
+      />
+      {/* Head sits on the shaft's end tangent and unfurls forward from it once
+          the stroke lands, so the two read as one gesture. Base midpoint is the
+          shaft's end point (208,158) — keep them together if either moves. */}
+      <path className="nv-goal__arrow-head" d="M226 134L222 169L194 147Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+/* The card's motion layer (z 3) — everything that moves on hover, always behind
+   the cut-out figure so it reads as happening *around* the subject. */
+function GoalMotion({ motion }) {
+  if (motion === "arrow") {
+    return (
+      <>
+        <span className="nv-goal__layer nv-goal__band" />
+        <GrowthArrow className="nv-goal__arrow" />
+      </>
+    );
+  }
+  if (motion === "glow") {
+    return <span className="nv-goal__layer nv-goal__glow" />;
+  }
+  if (motion === "spark") {
+    return (
+      <img
+        src="/site/goals/sportsmed.png"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="nv-goal__spark pointer-events-none"
+      />
+    );
+  }
+  if (motion === "orbs") {
+    return (
+      <>
+        {/* longetivityhover.png is an orbs-only cut-out — no figure baked in —
+            so it flies as its own drifting layer behind the hand. */}
+        <img
+          src="/site/goals/longetivityhover.png"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="nv-goal__orbs pointer-events-none object-contain"
+        />
+        <span className="nv-goal__orb nv-goal__orb--a" />
+        <span className="nv-goal__orb nv-goal__orb--b" />
+        <span className="nv-goal__orb nv-goal__orb--c" />
+      </>
+    );
+  }
+  return null;
+}
+
 function CutoutCard({ it, onClick, hero = false }) {
   return (
     <Link
       to={it.link}
       onClick={onClick}
-      className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-[calc(20px*var(--nv-r-scale,1))] border bg-surface transition-all duration-300 hover:-translate-y-1.5 hover:nv-shadow-lg ${
-        hero
-          ? "border-accent/45 min-h-[clamp(206px,26vw,252px)] p-6 sm:p-8"
-          : "border-line min-h-[clamp(184px,22vw,216px)] p-6 hover:border-accent/40"
+      /* .nv-goal owns the layer stack, the tan rest background, the elevation
+         and every hover transition — see index.css. */
+      className={`nv-goal group flex h-full flex-col justify-between rounded-[calc(20px*var(--nv-r-scale,1))] ${it.bg || ""} ${
+        hero ? "min-h-[clamp(268px,35vw,356px)] p-6 sm:p-8" : "min-h-[clamp(240px,31vw,320px)] p-6"
       }`}
     >
-      {/* warm wash so the cutout sits on tone rather than floating on flat white */}
-      <span
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(72% 108% at 100% 42%, color-mix(in srgb, var(--nv-accent) 11%, transparent), transparent 72%)" }}
-      />
+      <span className="nv-goal__layer nv-goal__fade nv-goal__cream" />
+      <span className="nv-goal__layer nv-goal__fade nv-goal__bloom" />
+
+      <GoalMotion motion={it.motion} />
 
       <img
         src={it.cutout}
         alt=""
         aria-hidden="true"
         loading="lazy"
-        className={`pointer-events-none absolute right-0 aspect-square w-auto max-w-none object-contain transition-transform duration-700 group-hover:scale-[1.04] ${
-          it.cutoutClass || (hero ? "-top-[6%] h-[112%]" : "-top-[7%] h-[114%]")
-        }`}
+        /* No horizontal anchor here on purpose — cutoutClass owns it. Two
+           competing `right` utilities on one element resolve by Tailwind's own
+           sort order, not by the order they appear in this string, so a card
+           that wants to anchor left has to be the only one setting it. */
+        className={`nv-goal__figure pointer-events-none absolute aspect-square w-auto max-w-none object-contain ${
+          it.figureMotion ? `nv-goal__figure--${it.figureMotion}` : ""
+        } ${it.cutoutClass || (hero ? "-top-[6%] right-0 h-[112%]" : "-top-[7%] right-0 h-[114%]")}`}
       />
 
-      {/* 56% is the budget the cutout offsets are measured against — widening it
-          walks the copy back under the art. */}
-      <div className="relative z-[2] max-w-[56%]">
-        <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-primary">{it.tag}</span>
+      {/* Per the comp the card splits in two: label and heading hold the top-left
+          corner, blurb and button sit centred on the bottom edge. Copy is cream
+          over the tan and flips to ink on hover, when the card goes light —
+          without that flip the cream text lands on a cream card. 62% keeps the
+          heading clear of the art; the centred bottom block deliberately isn't. */}
+      <div className="nv-goal__content max-w-[62%]">
+        <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[#ffe8b1]/85 transition-colors duration-300 group-hover:text-ink/70">
+          {it.tag}
+        </span>
         <h3
-          className={`mt-2 font-display font-bold leading-[1.12] tracking-tight text-ink ${
-            hero ? "text-[clamp(1.5rem,3.1vw,2rem)]" : "text-[clamp(1.1rem,1.9vw,1.3rem)]"
+          className={`mt-2 font-display font-bold leading-[1.12] tracking-tight text-[#ffe8b1] transition-colors duration-300 group-hover:text-ink ${
+            hero ? "text-[clamp(1.5rem,3.1vw,2rem)]" : "text-[clamp(1.15rem,2vw,1.4rem)]"
           }`}
         >
           {it.name}
         </h3>
+      </div>
+
+      <div className="nv-goal__content flex flex-col items-center text-center">
         {it.blurb && (
-          <p className={`mt-2 leading-snug text-muted ${hero ? "max-w-[30ch] text-[0.92rem]" : "max-w-[24ch] text-[0.82rem]"}`}>
+          <p
+            className={`font-semibold leading-snug text-[#ffe8b1]/90 transition-colors duration-300 group-hover:text-ink/75 ${
+              hero ? "max-w-[42ch] text-[0.9rem]" : "max-w-[34ch] text-[0.8rem]"
+            }`}
+          >
             {it.blurb}
           </p>
         )}
-      </div>
-
-      <span
-        className={`relative z-[2] mt-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/35 py-1.5 pl-1.5 font-semibold text-primary transition-colors duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-on-primary ${
-          hero ? "pr-5 text-[0.86rem]" : "pr-4 text-[0.8rem]"
-        }`}
-      >
-        <span className="grid h-6 w-6 place-items-center rounded-full border border-primary/35 transition-colors duration-300 group-hover:border-on-primary/45">
-          <ArrowRight size={12} strokeWidth={2.4} />
+        {/* Plain pill, no arrow disc — the comp's button is text only. */}
+        <span
+          className={`mt-4 inline-flex items-center rounded-full bg-surface font-semibold text-ink transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary ${
+            hero ? "px-6 py-2.5 text-[0.86rem]" : "px-5 py-2 text-[0.8rem]"
+          }`}
+        >
+          {it.cta || "Browse treatments"}
         </span>
-        {it.cta || "Browse treatments"}
-      </span>
+      </div>
+    </Link>
+  );
+}
+
+/* Sixth cell of the goal grid: no product art, no eyebrow — the quiet exit for
+   anyone who doesn't recognise their goal in the other five. */
+function GoalCtaCard({ it, onClick }) {
+  return (
+    <Link
+      to={it.link}
+      onClick={onClick}
+      className={`nv-goal group flex h-full flex-col justify-center rounded-[calc(20px*var(--nv-r-scale,1))] min-h-[clamp(240px,31vw,320px)] p-6 ${it.bg || ""}`}
+    >
+      <span className="nv-goal__layer nv-goal__fade nv-goal__cream" />
+      <span className="nv-goal__layer nv-goal__fade nv-goal__bloom" />
+      {/* No art on this cell, so the bloom is the whole hover — it gets the same
+          centre glow the image cards use. */}
+      <span className="nv-goal__layer nv-goal__glow" />
+
+      <div className="nv-goal__content">
+        {/* Gradient fill rather than a flat colour: clipped to the glyphs, so the
+            text needs a transparent colour for the background to show through. */}
+        <h3 className="max-w-[14ch] bg-linear-to-br from-[#d3b46a] via-[#b08b34] to-[#6b511e] bg-clip-text font-display text-[clamp(1.1rem,1.9vw,1.3rem)] font-bold leading-[1.12] tracking-tight text-transparent">
+          {it.name}
+        </h3>
+        <span className="mt-4 inline-flex items-center gap-2 text-[0.8rem] font-semibold text-ink">
+          {it.cta}
+          <ArrowRight className="nv-goal__nudge" size={14} strokeWidth={2.4} />
+        </span>
+      </div>
     </Link>
   );
 }
@@ -213,7 +346,7 @@ export default function CategoryGrid({ items, art = "/site/pills-float.avif", da
       {items.map((it, i) => {
         const onClick = onItemClick ? () => onItemClick(it) : undefined;
         const hero = featured && i === 0;
-        const Card = it.cutout ? CutoutCard : it.photo ? PhotoCard : dark ? DarkCard : LightCard;
+        const Card = it.kind === "goal-cta" ? GoalCtaCard : it.cutout ? CutoutCard : it.photo ? PhotoCard : dark ? DarkCard : LightCard;
         return (
           <Reveal as="div" key={it.name} delay={(i % 3) * 0.06} className={`h-full ${hero ? "sm:col-span-2" : ""}`}>
             <Card it={it} art={art} onClick={onClick} hero={hero} />

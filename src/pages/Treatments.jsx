@@ -1,12 +1,11 @@
 import React, { Suspense, lazy } from "react";
 import { Link, useParams, useSearchParams, Navigate } from "react-router-dom";
 import {
-  Stethoscope, Truck, Lock, FlaskConical, ShieldCheck, ClipboardCheck, PackageOpen,
+  Stethoscope, Truck, Lock, FlaskConical, ShieldCheck, ClipboardCheck, PackageOpen, ArrowRight,
 } from "lucide-react";
 import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
-import PageHero from "../components/shop/PageHero";
 import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
 import Reveal from "../components/ui/Reveal";
@@ -21,34 +20,84 @@ const BmiCalculator = lazy(() => import("../components/tools/BmiCalculator"));
 
 /* Cut-out art per goal (2026-08 design). Each is a square master anchored to the
    card's right edge — see CutoutCard. The right-nudges are measured, not eyeballed:
-   the subject sits at a different left edge inside each square (weight 20%, recover
-   30%, longevity 43%, skin 48%, the pill pair 31%), and a square tall enough to fill
+   the subject sits at a different left edge inside each square (weight 28%, recover
+   0%, longevity 17%, skin 8%, the pill pair 31%), and a square tall enough to fill
    the card is wider than the space left of the copy. Shifting right by the shortfall
-   keeps every subject clear of the text block at the 3-up desktop width. */
+   keeps every subject clear of the text block at the 3-up desktop width.
+
+   `motion` picks the card's hover layer and `figureMotion` the figure's own
+   restraint-level polish — both are plain CSS classes, see .nv-goal in index.css. */
 const CAT_ART = {
-  "weight-loss": { cutout: "/site/goals/weight-management.avif" },
+  // Every square is now just over the card height, so none of them leave a band
+  // of bare tan at the top or bottom. The right offsets are derived, not picked:
+  // resizing a right-anchored square drags its subject sideways, so each one is
+  // the number that holds that subject where it was.
+  // `bg` is the client's exact per-card colour, so these are literal hex rather
+  // than palette tokens — they step lighter down the grid and that ramp is the
+  // design, not something derivable from --nv-accent. It overrides the .nv-goal
+  // fallback because Tailwind's utilities layer sorts after components.
+  "weight-loss": {
+    // Nudged ~2% further right than centre, per the comp.
+    cutout: "/site/goals/weightlossnobg.png",
+    cutoutClass: "-top-[2%] h-[104%] right-[-4%]",
+    bg: "bg-[#a2845d]",
+    motion: "arrow",
+  },
   "mens-health": {
     cutout: "/site/goals/sexual-wellness.avif",
-    cutoutClass: "-top-[7%] h-[114%] right-[-8%]",
+    cutoutClass: "-top-[6%] h-[112%] right-[-7%]",
+    bg: "bg-[#c1a27a]",
+    motion: "glow",
+    figureMotion: "float",
   },
   "unisex-sports-medicine": {
-    cutout: "/site/goals/recover-soothe.avif",
-    cutoutClass: "-top-[4%] h-[112%] right-[-10%]",
+    // His figure fills only the left ~59% of the square, so seating the square's
+    // left edge at the card's is what puts him in the left corner. Anchored with
+    // left-0, not a right-% — the square is sized off the card's *height* while a
+    // right-% resolves against its *width*, so one percentage cannot seat him left
+    // at both the 3-up card (315×320) and the 1-up phone card (~335×240).
+    cutout: "/site/goals/sportsmedperson.png",
+    cutoutClass: "-top-[1%] h-[102%] left-0",
+    bg: "bg-[#d1b995]",
+    motion: "spark",
   },
-  "unisex-anti-aging-rx": { cutout: "/site/goals/longevity.avif" },
-  "unisex-skin-health": { cutout: "/site/goals/skin-health.avif" },
+  "unisex-anti-aging-rx": {
+    cutout: "/site/goals/longetivity.png", // note the spelling — not longevity.avif
+    cutoutClass: "-top-[4%] h-[108%] right-[-8%]",
+    bg: "bg-[#d1c0a0]",
+    motion: "orbs",
+  },
+  "unisex-skin-health": {
+    cutout: "/site/goals/glowing.png",
+    cutoutClass: "-top-[3%] h-[106%] right-[-4%]",
+    bg: "bg-[#ddd1b7]",
+    motion: "glow",
+    figureMotion: "zoom",
+  },
 };
 
 // Mirror the homepage funnels — each tile browses that goal's shoppable catalog.
-const TREATMENT_CATS = CONSULT_ORDER.map((k) => ({
-  name: CONSULTS[k].name,
-  tag: CONSULTS[k].tag,
-  blurb: CONSULTS[k].blurb,
-  cta: "Browse treatments",
-  goal: CONSULTS[k].goalSlug,
-  link: `/treatments/${CONSULTS[k].goalSlug}`,
-  ...(CAT_ART[CONSULTS[k].goalSlug] || {}),
-}));
+// The sixth cell closes the 2×3 grid and is the catch-all for anyone who doesn't
+// see their goal: it replaces the quiz / BMI links that used to sit in the header.
+const TREATMENT_CATS = [
+  ...CONSULT_ORDER.map((k) => ({
+    name: CONSULTS[k].name,
+    tag: CONSULTS[k].tag,
+    blurb: CONSULTS[k].blurb,
+    cta: "Browse treatments",
+    goal: CONSULTS[k].goalSlug,
+    link: `/treatments/${CONSULTS[k].goalSlug}`,
+    ...(CAT_ART[CONSULTS[k].goalSlug] || {}),
+  })),
+  {
+    kind: "goal-cta",
+    name: "Not Sure Where To Start?",
+    cta: "Take Quick Assessment",
+    goal: "quick-assessment",
+    link: "/start",
+    bg: "bg-linear-to-br from-[#f4eddd] to-[#fceed2]",
+  },
+];
 
 // Valid product categories a quiz can land on (everything but pure supplements).
 // Driven by visibility: a category with nothing shoppable is commented out of the
@@ -171,7 +220,15 @@ export default function TreatmentsPage() {
   return (
     <main
       className="min-h-screen w-full text-ink"
-      style={{ background: "color-mix(in oklab, var(--nv-accent) 30%, var(--nv-surface))" }}
+      /* Cream at the top, settling into the warm tint by the time the goal grid
+         starts. The stop is a pixel length, not a percentage — main runs the whole
+         page, so a percentage would smear the fade across every section below.
+         A gradient holds its last colour past the final stop, so everything from
+         900px down stays flat. */
+      style={{
+        background:
+          "linear-gradient(180deg, var(--nv-surface) 0px, color-mix(in oklab, var(--nv-accent) 14%, var(--nv-surface)) 900px)",
+      }}
     >
       <Seo
         title={catMeta ? catMeta.title : "Treatments — Physician-Prescribed Telehealth Care"}
@@ -216,34 +273,50 @@ export default function TreatmentsPage() {
           )}
         </>
       ) : (
-        /* Manual visit → page hero + explore by goal (each tile starts a consultation) */
+        /* Manual visit → explore by goal (each tile starts a consultation). No
+           PageHero here: the comp opens straight on the goal grid, with its own
+           left-aligned heading rather than the centered page header the other
+           shop pages use. */
         <>
-          <PageHero
-            showBack
-            eyebrow="Treatments"
-            title="Find the treatment that fits you"
-            subtitle="Prescription protocols formulated by licensed U.S. physicians, shipped to your door"
-            chips={["US-licensed pharmacy", "Dedicated online care", "Fast delivery", "No lock-in"]}
-          />
-          <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.6rem,5vw,4rem)] md:px-10">
-            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          {/* Narrower than the 1180px the rest of the page runs at: the goal cards
+              read better a little taller than wide, and squeezing the track is what
+              buys that without touching the 3-up grid. The header narrows with it so
+              the copy stays flush with the first card's left edge. */}
+          <section className="mx-auto max-w-[1060px] px-5 pb-[clamp(2.6rem,5vw,4rem)] pt-[clamp(3.2rem,7vw,5.5rem)] md:px-10">
+            <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <span className="nv-eyebrow">Browse by goal</span>
-                <h2 className="mt-2 text-[clamp(1.5rem,3vw,2.1rem)] font-extrabold leading-tight">What can we help you treat?</h2>
-                <p className="mt-2 max-w-[44ch] text-[1rem] text-muted">Choose what you're focused on and browse the treatments matched to it.</p>
+                <h1 className="max-w-[19ch] text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-[1.1] text-primary">
+                  Explore treatments for your goals
+                </h1>
+                <p className="mt-4 max-w-[56ch] text-[1rem] leading-relaxed text-muted">
+                  Explore prescription treatment options for a range of health and wellness goals.
+                  Learn what each treatment is, how it works, and what to expect before starting
+                  your assessment
+                </p>
               </div>
-              <div className="flex shrink-0 flex-col gap-1.5 sm:items-end">
-                <Link to="/start" className="text-[0.92rem] font-semibold text-primary transition-colors hover:text-accent">
-                  Not sure? Take the 2-min quiz →
-                </Link>
-                <Link to="/weight-loss-calculator" className="text-[0.92rem] font-semibold text-muted transition-colors hover:text-accent">
-                  Check your BMI with our free calculator →
-                </Link>
-              </div>
+              {/* Same destination as the sixth grid cell — /start is the existing
+                  consultation quiz, which opens on its category picker when no
+                  goal is chosen. */}
+              <Link
+                to="/start"
+                onClick={() => track(EVENTS.QUIZ_STARTED, { source: "treatments-header" })}
+                className="group shrink-0 sm:pt-3"
+              >
+                <span className="block text-[0.98rem] font-bold text-ink">Not sure where to start?</span>
+                <span className="mt-1.5 inline-flex items-center gap-2.5 text-[0.94rem] text-muted transition-colors duration-300 group-hover:text-primary">
+                  Take a quick assessment
+                  <ArrowRight
+                    size={16}
+                    strokeWidth={2}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
+                </span>
+              </Link>
             </div>
+            {/* No `featured` here: the sixth cell squares the grid off at 2×3, and a
+                double-width first tile would break that back into three ragged rows. */}
             <CategoryGrid
               items={TREATMENT_CATS}
-              featured
               onItemClick={(it) => track(EVENTS.CATEGORY_SELECTED, { category: it.goal, source: "treatments" })}
             />
           </section>  
