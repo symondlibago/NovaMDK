@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Stethoscope, Lock, FlaskConical, Loader2,
@@ -57,6 +57,7 @@ export default function ProductPage() {
   const product = productsData.find((p) => String(p.id) === String(id) || productSlug(p) === id);
 
   const isKiosk = useKioskMode();
+  const [search] = useSearchParams();
   const navigate = useNavigate();
   // Which rung of the dose ladder is on screen. Starts on the routed product and
   // moves with the selector; `active` is what the priced/dosed parts of the page
@@ -66,6 +67,17 @@ export default function ProductPage() {
   const [showInfo, setShowInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+
+  /* ?start=1 deep-links straight into the consultation modal. The treatment
+     cards use it so "Get Started" lands the patient in intake instead of on this
+     page — same flow as the button further down, just reached in one click.
+     Declared up here with the other hooks, above the redirect guards below: a
+     hook after an early return changes call order between renders. Skipped for
+     OTC (no intake exists) and on kiosk (that path hands off by QR instead). */
+  useEffect(() => {
+    if (!product || isKiosk) return;
+    if (search.get("start") === "1" && !isOtc(product)) setShowInfo(true);
+  }, [search, product, isKiosk]);
 
   // Record a product view (high-signal: which treatments get attention).
   useEffect(() => {

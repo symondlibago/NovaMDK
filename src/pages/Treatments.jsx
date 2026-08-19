@@ -132,7 +132,7 @@ function TrustBand() {
   return (
     /* A contained card rather than a full-bleed band, so it reads as the closing
        row of the goal grid above it. */
-    <section className="mx-auto max-w-[1180px] px-5 md:px-10">
+    <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(2.5rem,5vw,4.5rem)] md:px-10">
       <div className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-[calc(18px*var(--nv-r-scale,1))] border border-line bg-surface px-6 py-5 sm:grid-cols-2 lg:grid-cols-4">
         {TRUST.map((t) => (
           <div key={t.label} className="flex items-start gap-3">
@@ -324,8 +324,15 @@ export default function TreatmentsPage() {
       )}
 
       <TrustBand />
-      <HowItWorks />
-      <SocialProof />
+      {/* Weight-loss carries its own membership/pillars/CTA block from
+          WeightLossSections, which already covers this ground — the three-step
+          explainer and the stats band just repeat it there. */}
+      {validGoal !== "weight-loss" && (
+        <>
+          <HowItWorks />
+          <SocialProof />
+        </>
+      )}
 
       {/* FAQ (reused, re-themed). Testimonials live on the homepage only. */}
       <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>

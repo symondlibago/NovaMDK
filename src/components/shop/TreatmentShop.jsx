@@ -2,11 +2,70 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { productsData, visibleProducts } from "../data/products";
-import { programsFor, programProductIds } from "../data/subscriptions";
+import { programsFor, programProductIds, refillCadence } from "../data/subscriptions";
+import { productPath } from "../../lib/slug";
 import { CompoundedDisclaimer } from "../Compliance";
-import { ProductCard, QuickViewModal } from "./ProductCard";
-import SubscriptionShelf from "./SubscriptionShelf";
+import { QuickViewModal } from "./ProductCard";
+import TreatmentCard from "./TreatmentCard";
+import WeightLossSections from "./WeightLossSections";
 import BackButton from "../ui/BackButton";
+
+/* "every week" -> "Once-Weekly", "every 8 weeks" -> "Every 8 Weeks". Reads off
+   the catalogue's Days Supply rather than assuming a monthly rhythm — these
+   vials run 28 or 56 days and calling that "monthly" on an Rx page is a claim. */
+const cadenceLabel = (raw) => {
+  if (!raw) return "";
+  if (raw === "every week") return "Once-Weekly";
+  return raw.replace(/^every /, "Every ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+/* Programs collapse to a single card at their starting dose — no Starter /
+   Mid-Dose / Maintenance ladder. `Get Started` deep-links to that dose's intake
+   via ?start=1, which ProductPage picks up and opens the consultation modal on. */
+const programItem = (program) => {
+  const cheapest =
+    program.blends.find((b) => b.fromPrice === program.fromPrice) || program.blends[0];
+  const starter = cheapest.products[0];
+  return {
+    key: `program-${program.slug}`,
+    ribbon: "Subscription",
+    title: program.name,
+    chips: [
+      program.fromPrice ? `From $${program.fromPrice}` : "",
+      cadenceLabel(cheapest.cadence),
+    ],
+    img: program.image || starter.img,
+    blurb: program.blurb,
+    // The product View Details quick-looks. For a program that's its starting
+    // dose — the same one Get Started takes into intake.
+    product: starter,
+    startTo: `${productPath(starter)}?start=1`,
+  };
+};
+
+const productItem = (p) => ({
+  key: `product-${p.id}`,
+  ribbon: "",
+  title: p.name,
+  chips: [p.price, cadenceLabel(refillCadence(p)) || p.dosageForm || ""],
+  img: p.img,
+  blurb: p.blurb || p.description || "",
+  product: p,
+  startTo: `${productPath(p)}?start=1`,
+});
+
+/* Column count follows the card count instead of being pinned at 4. A fixed
+   lg:grid-cols-4 gave weight-loss — which is two program cards — a quarter of the
+   row each and two empty columns, which is what made the cards read as thin. The
+   max-width caps how far a short row is allowed to stretch, so two cards land
+   near their natural size rather than half a page wide each. Static strings, not
+   interpolation: Tailwind scans source text and never sees a built class name. */
+const GRID = {
+  1: "lg:grid-cols-1 max-w-[420px]",
+  2: "sm:grid-cols-2 lg:grid-cols-2 max-w-[760px]",
+  3: "sm:grid-cols-2 lg:grid-cols-3 max-w-[1120px]",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+};
 
 // Product ids pinned to the front of a category's listing (marketing priority).
 // Empty since the final-offerings catalog swap — repopulate with new ids as needed.
@@ -32,12 +91,16 @@ export default function TreatmentShop({ category, showBack = false }) {
     productsData.find((p) => p.categorySlug === category)?.categoryName ||
     "";
 
-  // Dose-ladder programs are shown as subscriptions; their individual vials are
-  // pulled out of the grid below so the same product isn't sold twice on one page.
-  // Categories with no programs get an empty list and render exactly as before.
+  /* One flat grid now. A program contributes a single card at its starting dose,
+     and every vial that program covers drops out of the listing so the same
+     treatment isn't sold twice on one page. Categories with no programs are
+     simply all one-offs. */
   const programs = programsFor(category);
   const inProgram = programProductIds(category);
-  const oneOff = products.filter((p) => !inProgram.has(p.id));
+  const cards = [
+    ...programs.map(programItem),
+    ...products.filter((p) => !inProgram.has(p.id)).map(productItem),
+  ];
 
   // Safety net only. Categories with nothing shoppable are commented out of the
   // nav, footer, carousel and categoryMeta, and Treatments.jsx redirects their
@@ -46,7 +109,7 @@ export default function TreatmentShop({ category, showBack = false }) {
   if (!products.length) {
     return (
       <section id="shop" className="scroll-mt-24 bg-surface-2 pb-[clamp(2.5rem,5.5vw,5rem)] pt-2">
-        <div className="mx-auto max-w-[1180px] px-5 md:px-10">
+        <div className="mx-auto max-w-[1320px] px-4 md:px-6">
           {showBack && (
             <div className="mb-2 text-left">
               <BackButton />
@@ -71,51 +134,56 @@ export default function TreatmentShop({ category, showBack = false }) {
   }
 
   return (
-    <section id="shop" className="scroll-mt-24 bg-surface-2 pb-[clamp(2.5rem,5.5vw,5rem)] pt-2">
-      <div className="mx-auto max-w-[1180px] px-5 md:px-10">
+    <section
+      id="shop"
+      className="scroll-mt-24 pb-[clamp(2.5rem,5.5vw,5rem)] pt-2"
+      /* Same shape of gradient the goal grid uses — cream at the top settling
+         into the warm tint, on a pixel stop so it doesn't smear over the whole
+         section as a percentage would. */
+      style={{
+        background:
+          "linear-gradient(180deg, var(--nv-surface) 0px, color-mix(in oklab, var(--nv-accent) 14%, var(--nv-surface)) 620px)",
+      }}
+    >
+      <div className="mx-auto max-w-[1320px] px-4 md:px-6">
         {/* Back sits inline-left of the centered header from sm up — no stacked
             row above the title, so the header starts at the section's top edge */}
-        <div className="relative mb-5 text-center sm:mb-6">
+        <div className="relative mb-8 pt-[clamp(1.5rem,4vw,3rem)] text-center sm:mb-10">
           {showBack && (
-            <div className="mb-2 text-left sm:absolute sm:left-0 sm:top-0 sm:mb-0">
+            <div className="mb-2 text-left sm:absolute sm:left-0 sm:top-[clamp(1.5rem,4vw,3rem)] sm:mb-0">
               <BackButton />
             </div>
           )}
-          <span className="nv-eyebrow">Prescription treatments</span>
-          <h2 className="mt-1.5 text-[1.4rem] font-extrabold leading-tight sm:mt-2 sm:text-[clamp(1.8rem,4vw,2.6rem)]">
+          {/* Gradient fill clipped to the glyphs, using the exact stops the comp
+              specifies (radial from the top-left, #d9c797 → #6b511e). The text
+              colour has to be transparent for the background to show through. */}
+          <h2
+            className="bg-clip-text text-[clamp(1.9rem,4.4vw,3.1rem)] font-extrabold leading-[1.1] tracking-tight text-transparent"
+            style={{ backgroundImage: "radial-gradient(circle at 0% 0%, #d9c797, #6b511e)" }}
+          >
             {name}
           </h2>
-          <p className="mx-auto mt-1.5 max-w-[44ch] text-[0.78rem] text-muted sm:mt-2 sm:text-[1.02rem]">
+          <p className="mx-auto mt-3 max-w-[46ch] text-[0.95rem] leading-relaxed text-muted sm:text-[1.02rem]">
             Explore prescription options for {name.toLowerCase()} and learn how each treatment works.
           </p>
         </div>
 
-        <SubscriptionShelf programs={programs} />
-
-        {oneOff.length > 0 && (
-          <>
-            {programs.length > 0 && (
-              <div className="mb-4 mt-9 sm:mb-5 sm:mt-12">
-                <span className="nv-eyebrow">One-time · No commitment</span>
-                <div className="mt-1.5 flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-                  <h2 className="font-display text-[1.4rem] font-extrabold leading-tight tracking-tight sm:text-[clamp(1.6rem,3vw,2.1rem)]">
-                    Individual treatments
-                  </h2>
-                  <p className="max-w-[42ch] text-[0.8rem] leading-relaxed text-muted sm:text-right sm:text-[0.92rem]">
-                    Single vials to complement your program — buy once, no subscription required.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* 2-up on phones, 3-up from tablet/kiosk width, keeps the list scannable */}
-            <div className="grid grid-cols-2 gap-[clamp(0.9rem,1.6vw,1.25rem)] md:grid-cols-3">
-              {oneOff.map((p, i) => (
-                <ProductCard key={p.id} p={p} delay={(i % 3) * 0.05} floatDelay={-(i % 4) * 0.9} onQuickView={setQuickView} />
-              ))}
-            </div>
-          </>
-        )}
+        {/* Up to 4-up per the comp, stepping down to 1-up on phones. */}
+        <div
+          className={`mx-auto grid grid-cols-1 gap-[clamp(0.9rem,1.6vw,1.35rem)] ${
+            GRID[Math.min(cards.length, 4)] || GRID[4]
+          }`}
+        >
+          {cards.map((c, i) => (
+            <TreatmentCard
+              key={c.key}
+              item={c}
+              delay={(i % 4) * 0.05}
+              floatDelay={-(i % 4) * 0.9}
+              onViewDetails={setQuickView}
+            />
+          ))}
+        </div>
 
         <div className="mt-10 text-center">
           <Link
@@ -129,6 +197,11 @@ export default function TreatmentShop({ category, showBack = false }) {
         {/* required compounded-drug + GLP-1 marketing disclaimers */}
         <CompoundedDisclaimer className="mx-auto mt-10 max-w-[680px] border-t border-line pt-6 text-center" />
       </div>
+
+      {/* Weight-loss only — the copy is GLP-1 specific. `startTo` points at the
+          same intake the cards' Get Started uses, so every CTA on the page lands
+          in the same place. */}
+      {category === "weight-loss" && cards[0] && <WeightLossSections startTo={cards[0].startTo} />}
 
       <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />
     </section>

@@ -223,6 +223,19 @@
     50%      { transform: translateY(-8px); }
   }
 
+  /* Continuous right-to-left drift for the membership-banner status cards.
+     The track holds the set twice; -50% lands the second copy exactly where the
+     first began, so the loop has no seam. Each half must therefore be the same
+     width — that's why the halves carry a trailing gutter instead of the track
+     carrying a `gap`, which would leave one half short by half a gap.
+     Position and centre the track from a wrapper, never here: this rule owns the
+     element's transform outright and would overwrite it on the first frame. */
+  .nv-marquee { animation: nv-marquee 38s linear infinite; will-change: transform; }
+  @keyframes nv-marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+  }
+
   /* ---- Treatments · "What can we help you treat?" goal cards ----
      Every card in that grid is the same fixed layer stack:
 
@@ -495,7 +508,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nv-kenburns, .nv-bob, .nv-float { animation: none !important; }
+  .nv-kenburns, .nv-bob, .nv-float, .nv-marquee { animation: none !important; }
   .nv-goal:hover { transform: none !important; }
   .nv-goal__glow,
   .nv-goal__spark,
