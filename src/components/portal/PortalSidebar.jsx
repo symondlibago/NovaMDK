@@ -45,8 +45,8 @@ export default function PortalSidebar({
         {/* The drawer is always full width on mobile, so `collapsed` is applied
             through md: variants rather than by conditional rendering. */}
         <div className={`flex h-15 shrink-0 items-center gap-2 border-b border-line px-3 ${collapsed ? "md:justify-center md:px-0" : ""}`}>
-          <Link to="/" aria-label="NovaMDK home" className={`min-w-0 px-1 ${collapsed ? "md:hidden" : ""}`}>
-            <img src="/logo.png" alt="NovaMDK" className="h-9 w-auto" />
+          <Link to="/" aria-label="Nova MDK home" className={`min-w-0 px-1 ${collapsed ? "md:hidden" : ""}`}>
+            <img src="/logo.png" alt="Nova MDK" className="h-9 w-auto" />
           </Link>
 
           <button

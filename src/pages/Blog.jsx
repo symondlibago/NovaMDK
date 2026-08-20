@@ -17,12 +17,12 @@ export default function BlogPage() {
     <main className="min-h-screen w-full bg-bg text-ink">
       <Seo
         title="Blog: Guides on Weight Loss, Longevity and Skin"
-        description="Clinician-reviewed guides from NovaMDK on GLP-1 weight loss, longevity, skin health and sexual wellness. Written to answer the questions patients actually ask."
+        description="Clinician-reviewed guides from Nova MDK on GLP-1 weight loss, longevity, skin health and sexual wellness. Written to answer the questions patients actually ask."
         path="/blog"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Blog",
-          name: "NovaMDK Blog",
+          name: "Nova MDK Blog",
           url: `${SITE_URL}/blog`,
           blogPost: posts.map((p) => ({
             "@type": "BlogPosting",

@@ -53,7 +53,7 @@ export default function SitemapPage() {
     <main className="min-h-screen w-full bg-bg text-ink">
       <Seo
         title="Sitemap: All Treatments & Pages"
-        description={`Browse every page on NovaMDK: all ${productCount} treatments, treatment categories, tools and policies, in one place.`}
+        description={`Browse every page on Nova MDK: all ${productCount} treatments, treatment categories, tools and policies, in one place.`}
         path="/sitemap"
       />
       <Navbar />
@@ -61,7 +61,7 @@ export default function SitemapPage() {
       <PageHero
         showBack
         eyebrow="Sitemap"
-        title="Every page on NovaMDK"
+        title="Every page on Nova MDK"
         subtitle="A complete index of our treatments, tools and policies."
       />
 

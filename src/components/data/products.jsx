@@ -176,7 +176,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
-    safety: "GLP-1 receptor agonist; the added cyanocobalamin (B12) helps reduce nausea and vomiting. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
+    safety: "This compounded formulation contains semaglutide and cyanocobalamin (vitamin B12). Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
   },
   {
     id: 2,
@@ -206,7 +206,7 @@ export const productsData = [
       { label: "Formulation", value: "Injection" },
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
-    safety: "GLP-1 receptor agonist; the added cyanocobalamin (B12) helps reduce nausea and vomiting. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 2.5 mg per week.",
+    safety: "This compounded formulation contains semaglutide and cyanocobalamin (vitamin B12). Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 2.5 mg per week.",
   },
   {
     id: 3,
@@ -609,13 +609,13 @@ export const productsData = [
     safety: "GLP-1 receptor agonist; sublingual delivery in the SubMagna® vehicle bypasses the GI tract and first-pass metabolism. Common: nausea, vomiting, diarrhea, constipation. Serious but rare: pancreatitis and gallbladder problems. Contraindicated in personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Because it slows gastric emptying, tell your provider before any anesthesia or surgery. Store refrigerated.",
   },
   /* ============================================================ */
-  /* UNISEX ANTI-AGING RX (Longevity / Wellness)                  */
+  /* Anti-Aging Rx (Longevity / Wellness)                  */
   /* ============================================================ */
 
   {
     id: 16,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     name: "NAD+ Injection",
     size: "10 mL vial (1000 mg)",
     qrImg: "/qr/NAD+ Injection.avif",
@@ -646,7 +646,7 @@ export const productsData = [
   {
     id: 17,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     hidden: true,
     name: "Glutathione Injection",
     size: "30 mL vial (6000 mg)",
@@ -676,7 +676,7 @@ export const productsData = [
   {
     id: 18,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     name: "NAD+ Injection — Starter",
     size: "6 mL vial (1200 mg)",
     qrImg: "/qr/NAD+ Injection.avif",
@@ -706,7 +706,7 @@ export const productsData = [
   {
     id: 19,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     name: "NAD+ Injection — Mid-Dose",
     size: "6 mL vial (1200 mg)",
     qrImg: "/qr/NAD+ Injection.avif",
@@ -736,7 +736,7 @@ export const productsData = [
   {
     id: 20,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     name: "NAD+ Injection — Maintenance",
     size: "10 mL vial (2000 mg)",
     qrImg: "/qr/NAD+ Injection.avif",
@@ -766,7 +766,7 @@ export const productsData = [
   // {
   //   id: 21,
   //   categorySlug: "unisex-anti-aging-rx",
-  //   categoryName: "Unisex Anti-Aging Rx",
+  //   categoryName: "Anti-Aging Rx",
   //   name: "NAD+ IV Infusion (250 mg) — Aging Protocol",
   //   subtitle: "Two-hour supervised IV infusion of 250 mg NAD+ for potential aging benefits.",
   //   price: "$0",
@@ -793,7 +793,7 @@ export const productsData = [
   // {
   //   id: 22,
   //   categorySlug: "unisex-anti-aging-rx",
-  //   categoryName: "Unisex Anti-Aging Rx",
+  //   categoryName: "Anti-Aging Rx",
   //   name: "NAD+ IV Infusion (500 mg) — Cognitive Wellness Protocol",
   //   subtitle: "Four-hour supervised IV infusion of 500 mg NAD+ for potential cognitive wellness benefits.",
   //   price: "$0",
@@ -820,11 +820,11 @@ export const productsData = [
   {
     id: 23,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     name: "NAD+ Sublingual Tablet",
     size: "200 mg flex-dose",
     qrImg: "/qr/NAD _ Niacin Troche (NeuroRestore).avif",
-    subtitle: "A needle-free flex-dose tablet that dissolves under the tongue, delivering NAD+, the coenzyme behind cellular energy production and DNA repair.",
+    subtitle: "A needle-free flex-dose tablet that dissolves under the tongue. NAD+ is a naturally occurring coenzyme involved in cellular metabolic processes.",
     price: "$29",
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Tablet",
@@ -849,7 +849,7 @@ export const productsData = [
   {
     id: 24,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     hidden: true,
     name: "Sermorelin Injection",
     size: "3 mL or 9 mL vial",
@@ -878,7 +878,7 @@ export const productsData = [
   {
     id: 25,
     categorySlug: "unisex-anti-aging-rx",
-    categoryName: "Unisex Anti-Aging Rx",
+    categoryName: "Anti-Aging Rx",
     hidden: true,
     name: "Sermorelin Mini Troche",
     size: "600 mcg",
@@ -1451,7 +1451,7 @@ export const productsData = [
       { label: "Dosing Schedule", value: "Take one capsule by mouth daily on empty stomach, or as directed by prescriber" },
       { label: "Course Length", value: "Typical course 4-8 weeks" },
       { label: "Quantity", value: "30 capsules — 30 days supply" },
-      { label: "Pharmacy", value: "NovaMDK Pharmacy, Westminster, CA" },
+      { label: "Pharmacy", value: "Nova MDK Pharmacy, Westminster, CA" },
       { label: "Storage", value: "Room temperature, protect from light and moisture" },
     ],
     safety: "Tripeptide fragment of alpha-MSH with anti-inflammatory properties. Used for inflammatory bowel disease support, skin inflammation, and autoimmune conditions. Generally well-tolerated. Limited long-term human safety data. Often paired with BPC-157 for gut protocols.",
@@ -1489,7 +1489,7 @@ export const productsData = [
       { label: "Dosing Schedule", value: "Take one capsule by mouth daily, preferably in the morning" },
       { label: "Course Length", value: "Typical course 4-8 weeks per prescriber direction" },
       { label: "Quantity", value: "30 capsules — 30 days supply" },
-      { label: "Pharmacy", value: "NovaMDK Pharmacy, Westminster, CA" },
+      { label: "Pharmacy", value: "Nova MDK Pharmacy, Westminster, CA" },
       { label: "Storage", value: "Room temperature, protect from light and moisture" },
     ],
     safety: "INVESTIGATIONAL — Hepatocyte growth factor mimetic and angiotensin IV analog. Reported potent synaptogenic effects in preclinical models. Very limited human safety data. Theoretical concerns regarding angiogenesis and oncogenic potential. Use only under careful prescriber supervision with informed consent.",
@@ -1527,7 +1527,7 @@ export const productsData = [
       { label: "Dosing Schedule", value: "Administer 2-3 sprays per nostril 1-3 times daily" },
       { label: "Course Length", value: "Typical course 10-14 days" },
       { label: "Quantity", value: "5 mL bottle — 30 days supply" },
-      { label: "Pharmacy", value: "NovaMDK Pharmacy, Westminster, CA" },
+      { label: "Pharmacy", value: "Nova MDK Pharmacy, Westminster, CA" },
       { label: "Storage", value: "Refrigerate; protect from light" },
     ],
     safety: "Synthetic analog of human tuftsin with anxiolytic and nootropic effects. Russian-origin peptide with limited Western clinical data. Generally well-tolerated; mild nasal irritation reported. Non-sedating and non-addictive (unlike benzodiazepines).",
@@ -1565,7 +1565,7 @@ export const productsData = [
       { label: "Dosing Schedule", value: "Administer 2-3 sprays per nostril 1-3 times daily" },
       { label: "Course Length", value: "Typical course 10-14 days" },
       { label: "Quantity", value: "5 mL bottle — 30 days supply" },
-      { label: "Pharmacy", value: "NovaMDK Pharmacy, Westminster, CA" },
+      { label: "Pharmacy", value: "Nova MDK Pharmacy, Westminster, CA" },
       { label: "Storage", value: "Refrigerate; protect from light" },
     ],
     safety: "Synthetic analog of ACTH (4-10) with nootropic and neuroprotective effects. Russian-origin peptide with limited Western clinical data. Generally well-tolerated; mild nasal irritation reported. Often used short-term for cognitive demand or post-stroke recovery.",
@@ -1603,7 +1603,7 @@ export const productsData = [
       { label: "Dosing Schedule", value: "Administer 2-3 sprays per nostril 1-3 times daily" },
       { label: "Course Length", value: "Typical course 10-14 days" },
       { label: "Quantity", value: "5 mL bottle — 30 days supply" },
-      { label: "Pharmacy", value: "NovaMDK Pharmacy, Westminster, CA" },
+      { label: "Pharmacy", value: "Nova MDK Pharmacy, Westminster, CA" },
       { label: "Storage", value: "Refrigerate; protect from light" },
     ],
     safety: "Combination of Semax (nootropic) and Selank (anxiolytic) for patients seeking both cognitive support and anxiety reduction in a single spray. Limited Western clinical data. Generally well-tolerated; mild nasal irritation reported.",
@@ -1668,7 +1668,7 @@ export const categoryContent = {
       { icon: ShieldCheck, text: "Clinically Proven", color: "text-[#D4AF37]" }
     ]
   },
-  "Unisex Anti-Aging Rx": {
+  "Anti-Aging Rx": {
     title: "Turn back time,",
     highlight: "from the inside out",
     desc: "Aging is a choice. Our advanced NAD+ therapies and cellular rejuvenation protocols restore energy, enhance cognition, and keep you feeling youthful.",

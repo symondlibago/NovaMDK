@@ -22,8 +22,8 @@ export default function WeightLossCalculatorPage() {
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
       <Seo
-        title="Weight Loss Calculator: BMI & GLP-1 Goal Projection"
-        description="Free weight loss calculator: check your BMI, see the weight range clinical GLP-1 studies associate with your starting weight, and find out whether treatment may be an option for you."
+        title="Weight Loss Calculator: Check Your BMI"
+        description="Free weight loss calculator: check your BMI, see which category it falls into, and find out whether treatment may be an option to discuss with a licensed provider."
         path="/weight-loss-calculator"
       />
       <Navbar />
@@ -32,7 +32,7 @@ export default function WeightLossCalculatorPage() {
         showBack
         eyebrow="Free tool"
         title="Weight loss calculator"
-        subtitle="Drag the sliders to see your BMI and the range clinical GLP-1 studies report for someone starting at your weight."
+        subtitle="Drag the sliders to see your BMI and which category it falls into."
         chips={["No sign-up", "Updates as you drag", "Nothing stored"]}
       />
 

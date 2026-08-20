@@ -110,7 +110,7 @@ const VALID_GOALS = new Set(
 const TRUST = [
   { icon: ShieldCheck, label: "Doctor-guided care", sub: "Always backed by medical experts." },
   { icon: Lock, label: "Discreet & confidential", sub: "Private care, delivered discreetly." },
-  { icon: FlaskConical, label: "Evidence-based treatments", sub: "Science-backed. Results-focused." },
+  { icon: FlaskConical, label: "Provider-reviewed treatment options", sub: "Treatment decisions based on each patient's clinical evaluation." },
   { icon: Truck, label: "Delivered to your door", sub: "Fast, discreet, and convenient." },
 ];
 
@@ -232,7 +232,7 @@ export default function TreatmentsPage() {
     >
       <Seo
         title={catMeta ? catMeta.title : "Treatments — Physician-Prescribed Telehealth Care"}
-        description={catMeta ? catMeta.description : "Explore NovaMDK treatments for weight loss, longevity, skin health, sexual wellness and recovery — prescribed online by licensed physicians and shipped to your door."}
+        description={catMeta ? catMeta.description : "Explore Nova MDK treatments for weight loss, longevity, skin health, sexual wellness and recovery — prescribed online by licensed physicians and shipped to your door."}
         path={validGoal ? `/treatments/${validGoal}` : "/treatments"}
       />
       <Navbar />
@@ -242,25 +242,27 @@ export default function TreatmentsPage() {
         <>
           <TreatmentShop category={validGoal} showBack />
           {validGoal === "weight-loss" && (
-            <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(1rem,3vw,2rem)] md:px-10">
+            /* Wider than the 1180 the rest of the page runs at, with a thinner
+               gutter: the calculator is a two-column instrument and the extra
+               width is what keeps the dial and the scale from squashing. */
+            <section className="mx-auto max-w-[1440px] px-4 pb-[clamp(1rem,3vw,2rem)] md:px-6">
               <Reveal className="mb-8 max-w-[52ch]">
                 <span className="nv-eyebrow">Free tool</span>
                 <h2 className="mt-2 text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
                   See where you stand
                 </h2>
                 <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">
-                  Use the sliders to estimate your BMI and explore what weight-loss results reported
-                  in clinical studies could look like at your starting weight.
+                  Use the sliders to estimate your BMI and see which category it falls into.
                 </p>
                 <p className="mt-3 text-[0.9rem] leading-relaxed text-muted">
-                  Results vary, and this tool does not predict individual outcomes.
+                  This tool is a screening aid only, and does not predict individual outcomes.
                 </p>
                 <p className="mt-3 text-[0.9rem] font-semibold text-ink">No sign-up required.</p>
               </Reveal>
               <Suspense fallback={<div className="grid h-[320px] place-items-center text-muted">Loading calculator…</div>}>
                 <Reveal><BmiCalculator /></Reveal>
               </Suspense>
-              <p className="mt-6 text-[0.8rem] leading-relaxed text-muted">
+              <p className="mt-6 max-w-[90ch] text-[0.8rem] leading-relaxed text-muted">
                 For general information only. This is not medical advice, does not create a
                 patient-provider relationship, and is not a determination that you will be prescribed
                 anything.{" "}

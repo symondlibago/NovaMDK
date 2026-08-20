@@ -18,7 +18,7 @@ const STATS = [
 ];
 
 const STEPS = [
-  { icon: LayoutGrid, title: "Browse treatments", desc: "Scroll the full NovaMDK catalog on the big touchscreen, just like you would on your phone." },
+  { icon: LayoutGrid, title: "Browse treatments", desc: "Scroll the full Nova MDK catalog on the big touchscreen, just like you would on your phone." },
   { icon: ClipboardCheck, title: "Take the questionnaire", desc: "Answer a few quick, guided questions to start your visit. It only takes a couple of minutes." },
   { icon: Stethoscope, title: "Provider review", desc: "A licensed U.S. clinician reviews your answers and prescribes the option that actually fits you." },
   { icon: PackageOpen, title: "Delivered to your door", desc: "Approved treatments ship free and discreetly. There's nothing to carry home." },
@@ -41,7 +41,7 @@ export default function KioskPage() {
     <main className="min-h-screen w-full bg-bg text-ink">
       <Seo
         title="Smart Kiosk — Telehealth in Gyms, Med Spas & Clubs"
-        description="NovaMDK Smart Kiosks bring physician-guided telehealth consultations to flagship centers, premium gyms, luxury med spas and member clubs."
+        description="Nova MDK Smart Kiosks bring physician-guided telehealth consultations to flagship centers, premium gyms, luxury med spas and member clubs."
         path="/kiosk"
       />
       <Navbar />
@@ -65,7 +65,7 @@ export default function KioskPage() {
                 {/* copy */}
                 <div>
                   <span className="font-mono text-[0.74rem] font-medium uppercase tracking-[0.2em] text-primary">
-                    NovaMDK Smart Kiosk
+                    Nova MDK Smart Kiosk
                   </span>
                   <h1 className="mt-4 max-w-[14ch] font-display text-[clamp(2rem,4.6vw,3.4rem)] font-extrabold leading-[1.04] tracking-tight text-ink">
                     Your clinic, in a single square metre.
@@ -99,12 +99,12 @@ export default function KioskPage() {
                 <div className="relative h-[clamp(340px,44vw,520px)]">
                   <img
                     src="/site/kiosk-2.avif"
-                    alt="The NovaMDK website running on a portrait touchscreen kiosk"
+                    alt="The Nova MDK website running on a portrait touchscreen kiosk"
                     className="absolute bottom-[-12%] left-[2%] h-[104%] w-auto md:bottom-[-15%] md:h-[122%]"
                   />
                   <img
                     src="/site/kiosk-1.avif"
-                    alt="A NovaMDK kiosk showing a patient check-in and queue screen"
+                    alt="A Nova MDK kiosk showing a patient check-in and queue screen"
                     className="absolute left-[54%] top-[22%] h-[76%] w-auto md:left-[60%] md:h-[94%]"
                   />
                 </div>
@@ -137,7 +137,7 @@ export default function KioskPage() {
             </h2>
             <p className="mt-4 max-w-[46ch] text-[1.04rem] leading-relaxed text-muted">
               No waiting rooms. No front desk. No app to install. You walk up, tap the screen, and use
-              NovaMDK exactly like you would on your phone: browse treatments, take your questionnaire,
+              Nova MDK exactly like you would on your phone: browse treatments, take your questionnaire,
               and start your visit.
             </p>
             <ul className="mt-6 flex flex-col gap-3.5">
@@ -162,7 +162,7 @@ export default function KioskPage() {
                 <div className="relative w-full max-w-xl">
                   <img
                     src="/site/kioskmonitor.avif"
-                    alt="Close-up of the NovaMDK Smart Kiosk touchscreen"
+                    alt="Close-up of the Nova MDK Smart Kiosk touchscreen"
                     loading="lazy"
                     className="h-auto w-full object-contain drop-shadow-2xl"
                   />
@@ -224,7 +224,7 @@ export default function KioskPage() {
               <div className="relative">
                 <span className="grid h-12 w-12 place-items-center rounded-2xl bg-bg text-primary"><Monitor size={22} /></span>
                 <h3 className="mt-5 font-display text-[clamp(1.4rem,2.6vw,1.9rem)] font-extrabold leading-tight">
-                  The whole NovaMDK experience, on one big screen.
+                  The whole Nova MDK experience, on one big screen.
                 </h3>
                 <p className="mt-3 max-w-[48ch] text-[1rem] leading-relaxed text-muted">
                   Everything you'd do on your phone, now on a large, easy display. Browse treatments, take
@@ -297,7 +297,7 @@ export default function KioskPage() {
             <div className="relative">
               <span className="nv-eyebrow text-primary">For partners</span>
               <h2 className="mx-auto mt-3 max-w-[24ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
-                Host a NovaMDK Smart Kiosk
+                Host a Nova MDK Smart Kiosk
               </h2>
               <p className="mx-auto mt-3 max-w-[48ch] text-[1rem] text-muted">
                 Own a gym, spa, or wellness space? Give your members provider-guided care on site. We handle the technology, the clinicians, and the fulfillment, so you don't have to.

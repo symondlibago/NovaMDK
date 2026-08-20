@@ -18,7 +18,7 @@ export default function BrandLoader() {
         animate={{ scale: [1, 1.06, 1], opacity: [0.85, 1, 0.85] }}
         transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
       >
-        <img src="/logo.png" alt="NovaMDK" className="h-[58px] w-auto" />
+        <img src="/logo.png" alt="Nova MDK" className="h-[58px] w-auto" />
       </motion.div>
       <div className="h-[3px] w-44 overflow-hidden rounded-full bg-line">
         <motion.div

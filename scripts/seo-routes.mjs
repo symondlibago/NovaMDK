@@ -7,8 +7,8 @@ import { LEGAL_PAGES, CONTENT_PAGES } from "../src/lib/siteLinks.js";
 import { SITE_URL, absoluteUrl } from "../src/lib/absoluteUrl.js";
 
 export { SITE_URL };
-const SITE_NAME = "NovaMDK";
-export const DEFAULT_TITLE = "NovaMDK | Premium Telehealth & Longevity";
+const SITE_NAME = "Nova MDK";
+export const DEFAULT_TITLE = "Nova MDK | Premium Telehealth & Longevity";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -71,21 +71,21 @@ export function buildRoutes() {
       path: "/treatments",
       title: `Treatments — Physician-Prescribed Telehealth Care | ${SITE_NAME}`,
       description:
-        "Explore NovaMDK treatments for weight loss, longevity, skin health, sexual wellness and recovery — prescribed online by licensed physicians and shipped to your door.",
+        "Explore Nova MDK treatments for weight loss, longevity, skin health, sexual wellness and recovery — prescribed online by licensed physicians and shipped to your door.",
       priority: "0.9",
     },
     {
       path: "/kiosk",
       title: `Smart Kiosk — Telehealth in Gyms, Med Spas & Clubs | ${SITE_NAME}`,
       description:
-        "NovaMDK Smart Kiosks bring physician-guided telehealth consultations to flagship centers, premium gyms, luxury med spas and member clubs.",
+        "Nova MDK Smart Kiosks bring physician-guided telehealth consultations to flagship centers, premium gyms, luxury med spas and member clubs.",
       priority: "0.7",
     },
     {
       path: "/contact",
       title: `Contact Us | ${SITE_NAME}`,
       description:
-        "Get in touch with the NovaMDK care team — questions about treatments, orders, kiosk partnerships or anything else.",
+        "Get in touch with the Nova MDK care team — questions about treatments, orders, kiosk partnerships or anything else.",
       priority: "0.6",
     },
   ];
@@ -114,7 +114,7 @@ export function buildRoutes() {
     routes.push({
       path: `/product/${productSlug(p)}`,
       title: `${p.name} — ${p.categoryName} | ${SITE_NAME}`,
-      description: p.subtitle || `${p.name} from NovaMDK — physician-guided telehealth treatment, delivered to your door.`,
+      description: p.subtitle || `${p.name} from Nova MDK — physician-guided telehealth treatment, delivered to your door.`,
       image: p.img ? `${SITE_URL}${p.img}` : undefined,
       priority: "0.8",
       jsonLd: {
@@ -147,7 +147,7 @@ export function buildRoutes() {
     path: "/blog",
     title: `Blog: Guides on Weight Loss, Longevity and Skin | ${SITE_NAME}`,
     description:
-      "Clinician-reviewed guides from NovaMDK on GLP-1 weight loss, longevity, skin health and sexual wellness. Written to answer the questions patients actually ask.",
+      "Clinician-reviewed guides from Nova MDK on GLP-1 weight loss, longevity, skin health and sexual wellness. Written to answer the questions patients actually ask.",
     priority: "0.9",
   });
   for (const p of posts) {
@@ -180,7 +180,7 @@ export function buildRoutes() {
     routes.push({
       path: `/legal/${id}`,
       title: `${title} | ${SITE_NAME}`,
-      description: `${title} for NovaMDK telehealth services.`,
+      description: `${title} for Nova MDK telehealth services.`,
       priority: "0.3",
     });
   }

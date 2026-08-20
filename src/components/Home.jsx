@@ -164,8 +164,8 @@ export default function Home() {
             <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(100deg, color-mix(in oklab, var(--nv-ink-panel) 86%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 55%, transparent) 52%, color-mix(in oklab, var(--nv-ink-panel) 18%, transparent) 100%)" }} />
             <div className="relative z-10 max-w-[34rem] p-[clamp(1.8rem,5vw,3rem)] text-white">
               <span className="nv-eyebrow text-accent">Begin</span>
-              <h2 className="mt-3 text-[clamp(1.9rem,4.5vw,3rem)] font-extrabold leading-[1.06] text-white">A quick visit to a protocol that's yours</h2>
-              <p className="mb-7 mt-3 max-w-[42ch] text-[1.06rem] text-white/85">Answer a few questions and let a doctor do the rest. Nothing to pay until you see your formulation</p>
+              <h2 className="mt-3 text-[clamp(1.9rem,4.5vw,3rem)] font-extrabold leading-[1.06] text-white">Care designed around your needs</h2>
+              <p className="mb-7 mt-3 max-w-[42ch] text-[1.06rem] text-white/85">Answer a few questions and let a doctor do the rest. You pay only if a provider determines that a prescription is appropriate.</p>
               <Link to="/treatments" className="group inline-flex items-center gap-2 rounded-full bg-bg px-7 py-3.5 text-[0.96rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg">
                 Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </Link>

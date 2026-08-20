@@ -36,10 +36,10 @@ export default function BlogPostPage() {
           image: absoluteUrl(post.image),
           datePublished: post.date,
           dateModified: post.date,
-          author: { "@type": "Organization", name: post.author?.name || "NovaMDK" },
+          author: { "@type": "Organization", name: post.author?.name || "Nova MDK" },
           publisher: {
             "@type": "Organization",
-            name: "NovaMDK",
+            name: "Nova MDK",
             logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/blog/${post.slug}` },

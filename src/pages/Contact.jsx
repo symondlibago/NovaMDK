@@ -16,7 +16,7 @@ export default function ContactPage() {
     <main className="min-h-screen w-full bg-bg text-ink">
       <Seo
         title="Contact Us"
-        description="Get in touch with the NovaMDK care team — questions about treatments, orders, kiosk partnerships or anything else."
+        description="Get in touch with the Nova MDK care team — questions about treatments, orders, kiosk partnerships or anything else."
         path="/contact"
       />
       <Navbar />
@@ -33,7 +33,7 @@ export default function ContactPage() {
 
       <section className="mx-auto max-w-[1140px] px-5 pb-[clamp(2.8rem,6vw,4.5rem)] pt-[clamp(1rem,2.5vw,2rem)] md:px-10">
         <Reveal>
-          <GhlEmbed id={GHL_SURVEY_ID} src={GHL_SURVEY_SRC} title="NovaMDK contact form" minH={900} />
+          <GhlEmbed id={GHL_SURVEY_ID} src={GHL_SURVEY_SRC} title="Nova MDK contact form" minH={900} />
         </Reveal>
       </section>
 

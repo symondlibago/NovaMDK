@@ -18,7 +18,7 @@ export const PROGRAMS = [
     category: "weight-loss",
     name: "Tirzepatide",
     tagline: "Dual GIP/GLP-1",
-    blurb: "A dual-receptor peptide that works on appetite and metabolic signalling together, titrated up as you settle in.",
+    blurb: "Tirzepatide acts on GIP and GLP-1 receptors. Your provider will determine whether it is appropriate.",
     blends: [
       { slug: "niacinamide", name: "With Niacinamide", note: "Supports metabolic function", ids: [5, 6, 7] },
       { slug: "glycine", name: "With Glycine", note: "Helps support muscle retention", ids: [8, 9, 10] },
@@ -29,9 +29,9 @@ export const PROGRAMS = [
     category: "weight-loss",
     name: "Semaglutide",
     tagline: "GLP-1 receptor agonist",
-    blurb: "The most established GLP-1 protocol, available as a weekly injection or a needle-free sublingual drop.",
+    blurb: "A GLP-1 treatment option available in the formulations shown below.",
     blends: [
-      { slug: "b12", name: "With B12", note: "Helps reduce nausea", ids: [1, 2] },
+      { slug: "b12", name: "With B12", note: "Contains vitamin B12", ids: [1, 2] },
       { slug: "glycine", name: "With Glycine", note: "Helps support muscle retention", ids: [3, 4] },
       { slug: "sublingual", name: "Sublingual Drops", note: "No needles required", ids: [13, 14, 15] },
     ],

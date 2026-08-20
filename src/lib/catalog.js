@@ -22,6 +22,18 @@ export const stageOf = (product) => (String(product?.name || "").match(STAGE_RE)
 export const baseName = (product) => String(product?.name || "").replace(STAGE_RE, "").trim();
 
 /**
+ * The patient-facing title: "Tirzepatide/Niacinamide — Starter" ->
+ * "Tirzepatide + Niacinamide".
+ *
+ * Display only, and deliberately not a data change — productSlug, the GHL
+ * treatment label, the QR codes and every /product/… URL already in the wild are
+ * derived from the stored catalogue name, so the "/" and the stage suffix stay
+ * where they are. Callers that list rungs side by side (the category grid) need
+ * the suffix to tell them apart and use `product.name` instead.
+ */
+export const displayTitle = (product) => baseName(product).replace(/\s*\/\s*/g, " + ");
+
+/**
  * The dose ladder a product belongs to, in Starter -> Maintenance order.
  * Returns [] for anything that isn't a rung, so callers can skip the selector.
  *

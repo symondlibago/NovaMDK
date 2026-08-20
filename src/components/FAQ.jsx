@@ -60,8 +60,8 @@ export default function FAQ() {
                         <span className="h-px w-8 bg-accent/60" />
                     </div>
                     <h2 className="font-display text-[clamp(2.2rem,4.6vw,3.2rem)] font-extrabold leading-[1.08] tracking-tight text-ink">
-                        Your questions, <br />
-                        <span className="nv-em font-medium text-muted">answered beautifully</span>
+                        Answers to <br />
+                        <span className="nv-em font-medium text-muted">Common Questions</span>
                     </h2>
                 </div>
             </Reveal>

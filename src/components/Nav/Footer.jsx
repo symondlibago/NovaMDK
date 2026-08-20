@@ -27,7 +27,7 @@ export default function Footer() {
           <div className="col-span-2 lg:col-span-1 md:pr-8">
             {/* The white pill existed to lift a dark logo off a dark panel — on a
                 light base it's just a floating box, so the mark sits direct. */}
-            <img src="/logo.png" alt="NovaMDK" className="h-[42px] w-auto" />
+            <img src="/logo.png" alt="Nova MDK" className="h-[42px] w-auto" />
             <p className="mt-5 max-w-[34ch] text-sm leading-relaxed text-muted">
               Personalized prescription treatments, reviewed by licensed physicians and delivered to your door.
             </p>
@@ -90,7 +90,7 @@ export default function Footer() {
         <div className="mt-8 max-w-6xl space-y-2 text-left text-[10px] leading-relaxed text-muted md:text-[11px]">
           <p>
             Compounded drug products are not approved or evaluated for safety, effectiveness, or quality
-            by the FDA. Prescription required. NovaMDK does not manufacture drug products.
+            by the FDA. Prescription required. Nova MDK does not manufacture drug products.
           </p>
           <p>
             The medication you receive may differ in appearance from the website images. Results not
@@ -99,12 +99,12 @@ export default function Footer() {
           <p>
             Prescription products require an online evaluation by a licensed medical professional.
             Medications are prescribed by licensed physicians as part of our programs. For prescription
-            items, NovaMDK will arrange a consultation with a qualified healthcare provider.
+            items, Nova MDK will arrange a consultation with a qualified healthcare provider.
           </p>
           <p>
             Most online visits are quick, but appointment length may vary based on
             the patient's medical needs and the treating clinician's independent professional judgment.
-            The provider — not NovaMDK or its management services organization — determines how long each
+            The provider — not Nova MDK or its management services organization — determines how long each
             clinical evaluation takes.
           </p>
         </div>

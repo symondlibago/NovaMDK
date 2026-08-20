@@ -63,7 +63,7 @@ export function CompoundedDisclaimer({ className = "", tone = "muted" }) {
     <div className={`space-y-2 text-[0.78rem] leading-relaxed ${color} ${className}`}>
       <p>
         Compounded drug products are not approved or evaluated for safety, effectiveness, or quality by
-        the FDA. Prescription required. NovaMDK does not manufacture drug products.
+        the FDA. Prescription required. Nova MDK does not manufacture drug products.
       </p>
       <p>
         The medication you receive may differ in appearance from the website images. Results not

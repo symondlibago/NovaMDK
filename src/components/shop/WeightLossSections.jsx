@@ -230,7 +230,7 @@ function Includes() {
         <span className="relative mx-auto block aspect-804/1020 w-full max-w-112.5 overflow-hidden">
           <img
             src="/site/weight-loss/support-chat.png"
-            alt="A patient messaging the NovaMDK care team about her goals"
+            alt="A patient messaging the Nova MDK care team about her goals"
             loading="lazy"
             decoding="async"
             className="absolute left-1/2 top-1/2 w-[134.5%] max-w-none -translate-x-1/2 -translate-y-1/2"

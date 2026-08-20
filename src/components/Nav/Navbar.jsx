@@ -191,7 +191,7 @@ export default function Navbar() {
 
       <header className="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-xl">
         <nav className="mx-auto flex min-h-[68px] max-w-[1340px] items-center justify-between px-5 md:px-10">
-          <Link to="/" aria-label="NovaMDK home"><img src="/logo.png" alt="NovaMDK" className="h-[46px] w-auto md:h-[52px]" /></Link>
+          <Link to="/" aria-label="Nova MDK home"><img src="/logo.png" alt="Nova MDK" className="h-[46px] w-auto md:h-[52px]" /></Link>
 
           {/* Desktop links stay off in kiosk mode at ANY width — the physical
               kiosk is 1080px wide (≥ lg), which otherwise doubles the menu */}
@@ -257,7 +257,7 @@ export default function Navbar() {
               className="fixed right-0 top-0 z-[101] flex h-full w-[86%] max-w-sm flex-col overflow-y-auto bg-surface lg:hidden nv-scroll"
             >
               <div className="flex items-center justify-between border-b border-line p-4">
-                <img src="/logo.png" alt="NovaMDK" className="h-9 w-auto" />
+                <img src="/logo.png" alt="Nova MDK" className="h-9 w-auto" />
                 <button aria-label="Close" onClick={() => setMobileOpen(false)} className="grid h-10 w-10 place-items-center rounded-full bg-surface-2 text-muted hover:text-ink">
                   <X size={20} />
                 </button>

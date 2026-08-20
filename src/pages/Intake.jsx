@@ -82,8 +82,8 @@ export default function IntakePage() {
       <Seo title="Medical Intake" noindex />
       {/* slim header — logo home, context label, exit back to the product */}
       <header className="flex h-[60px] shrink-0 items-center justify-between border-b border-line bg-surface px-4 md:px-6">
-        <Link to="/" aria-label="NovaMDK home">
-          <img src="/logo.png" alt="NovaMDK" className="h-9 w-auto" />
+        <Link to="/" aria-label="Nova MDK home">
+          <img src="/logo.png" alt="Nova MDK" className="h-9 w-auto" />
         </Link>
         <span className="hidden items-center gap-2 text-[0.85rem] font-medium text-muted sm:flex">
           <Lock size={13} className="text-primary" />

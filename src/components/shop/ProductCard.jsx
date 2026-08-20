@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ShieldAlert, X, Check } from "lucide-react";
 import { isCompounded } from "../data/products";
+import { displayTitle } from "../../lib/catalog";
 import { productPath } from "../../lib/slug";
 import { ComplianceBadges } from "../Compliance";
 import { getLenis } from "../../lib/smoothScroll";
@@ -139,7 +140,10 @@ export function QuickViewModal({ product, onClose }) {
               {/* info */}
               <div className="flex flex-col p-6 md:p-8">
                 <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-accent">{product.categoryName}</span>
-                <h3 className="mt-2 font-display text-[1.4rem] font-extrabold leading-tight tracking-tight">{product.name}</h3>
+                {/* The modal shows one product at a time, so it can drop the
+                    "— Starter" rung suffix the grid needs to keep its cards
+                    distinguishable, and set the combination with a plus. */}
+                <h3 className="mt-2 font-display text-[1.4rem] font-extrabold leading-tight tracking-tight">{displayTitle(product)}</h3>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <span className="font-display text-[1.6rem] font-extrabold leading-none">{product.price}</span>

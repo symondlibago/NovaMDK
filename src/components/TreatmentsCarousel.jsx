@@ -182,7 +182,7 @@ export default function Treatments() {
             <span className="h-px w-8 bg-accent/60" />
           </div>
           <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-ink md:text-[52px]">
-            Don't just live longer, <br /> <span className="nv-em text-primary">live healthier</span>
+            Personalized care for <br /> <span className="nv-em text-primary">your health goals</span>
           </h2>
         </motion.div>
 

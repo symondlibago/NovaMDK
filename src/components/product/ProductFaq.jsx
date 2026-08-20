@@ -3,11 +3,16 @@ import { ChevronDown } from "lucide-react";
 
 /* Per-product FAQ accordion.
 
-   Every answer is assembled from data already on the product (specs, safety
-   text, shipping) rather than written fresh per item, so nothing here can drift
-   from the product page above it or state something clinical that isn't already
-   reviewed copy. A product can override or extend the list with its own `faqs`
-   array of { q, a } if it needs something specific. */
+   Short on purpose. This used to run to eight or nine entries built from every
+   spec on the product, including the whole safety paragraph, which already has
+   its own section further up the page. What is left is the handful of things a
+   patient actually asks before starting, in plain language.
+
+   The clinical answers are still read off the reviewed catalogue rather than
+   written per product, so they cannot drift from the specs above them. The two
+   service answers (packaging, care team) are authored, and state only what the
+   site already commits to elsewhere. A product can add its own `faqs` array of
+   { q, a } for anything specific to it. */
 
 const spec = (product, label) =>
   product?.specs?.find((s) => s.label === label)?.value || "";
@@ -15,56 +20,39 @@ const spec = (product, label) =>
 function buildFaqs(product, { otc }) {
   const items = [];
 
+  // First, because it is the thing people want to know before anything else.
+  items.push({
+    q: "Do I need a prescription?",
+    a: otc
+      ? "No. You can order this one without a visit, and there is no provider review to wait on."
+      : "Yes. A licensed U.S. provider reviews your intake and decides whether this is right for you. You only pay if they prescribe it.",
+  });
+
   const dosing = spec(product, "Dosing Schedule");
-  if (dosing) items.push({ q: "How do I take it?", a: dosing });
+  const admin = spec(product, "Administration");
+  if (dosing || admin) {
+    items.push({ q: "How do I take it?", a: [dosing, admin].filter(Boolean).join(" ") });
+  }
 
   const supply = spec(product, "Days Supply");
   if (supply) {
     items.push({
-      q: "How long does one fill last?",
-      a: `${supply}. Your provider confirms the schedule that applies to you, and refills are managed from your patient portal.`,
-    });
-  }
-
-  const admin = spec(product, "Administration");
-  if (admin) items.push({ q: "Where do I administer it?", a: admin });
-
-  // Storage guidance only when the reviewed safety copy actually states it.
-  const safety = product?.safety || "";
-  const storage = safety.match(/(Store[^.]*\.)/i)?.[1] || (/refrigerat/i.test(safety) ? "Keep refrigerated." : "");
-  if (storage) {
-    items.push({
-      q: "How should I store it?",
-      a: `${storage} Full storage and handling instructions ship with your order.`,
-    });
-  }
-
-  if (safety) items.push({ q: "What should I know before starting?", a: safety });
-
-  const active = spec(product, "Active Compound");
-  if (active) items.push({ q: "What's the active ingredient?", a: active });
-
-  const pharmacy = spec(product, "Pharmacy");
-  if (pharmacy) {
-    items.push({
-      q: "Who prepares it?",
-      a: `Dispensed by ${pharmacy}. Every batch is prepared by a licensed U.S. compounding pharmacy.`,
+      q: "How long does one order last?",
+      a: `${supply}. Your provider confirms the schedule that fits you, and refills are handled from your patient portal.`,
     });
   }
 
   items.push({
-    q: otc ? "Do I need a prescription?" : "Do I need a prescription?",
-    a: otc
-      ? "No. This is a non-prescription product, so no online visit or provider review is required."
-      : "Yes. A licensed U.S. provider reviews your intake and decides whether this is appropriate for you. You are not charged unless you are prescribed.",
+    q: "How does it arrive?",
+    a: "It comes in plain packaging with nothing on the outside that says what is inside, sent to the address you give us.",
   });
 
-  if (product?.shipping) {
-    items.push({
-      q: "How does it ship?",
-      a: `${product.shipping}. Orders go out in plain, unmarked packaging with nothing on the outside identifying the contents.`,
-    });
-  }
+  items.push({
+    q: "What if I have questions later?",
+    a: otc
+      ? "Message our care team any time and someone will come back to you."
+      : "Message your care team from your patient portal any time, before or after you start.",
+  });
 
   // Product-specific extras win the last word.
   if (Array.isArray(product?.faqs)) items.push(...product.faqs);

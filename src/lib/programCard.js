@@ -1,4 +1,5 @@
 import { refillCadence } from "../components/data/subscriptions";
+import { displayTitle } from "./catalog";
 import { productPath } from "./slug";
 
 /* Shared shape for the treatment card used by both the category listing and the
@@ -41,7 +42,10 @@ export const programItem = (program) => {
 export const productItem = (p) => ({
   key: `product-${p.id}`,
   ribbon: "",
-  title: p.name,
+  // displayTitle, not p.name: a listing shows one card per treatment, so the
+  // card should read "NAD+ Injection", not "NAD+ Injection — Starter". It also
+  // sets combination names with a plus rather than a slash.
+  title: displayTitle(p),
   chips: [p.price, cadenceLabel(refillCadence(p)) || p.dosageForm || ""],
   img: p.img,
   blurb: p.blurb || p.description || "",

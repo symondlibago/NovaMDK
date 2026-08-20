@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { productsData, visibleProducts } from "../data/products";
 import { programsFor, programProductIds } from "../data/subscriptions";
 import { programItem, productItem } from "../../lib/programCard";
+import { stageOf, baseName } from "../../lib/catalog";
 import { CompoundedDisclaimer } from "../Compliance";
 import { QuickViewModal } from "./ProductCard";
 import TreatmentCard from "./TreatmentCard";
@@ -50,12 +51,27 @@ export default function TreatmentShop({ category, showBack = false }) {
   /* One flat grid now. A program contributes a single card at its starting dose,
      and every vial that program covers drops out of the listing so the same
      treatment isn't sold twice on one page. Categories with no programs are
-     simply all one-offs. */
+     simply all one-offs.
+
+     A dose ladder outside a program (NAD+ Injection, LDN) collapses the same
+     way: only the Starter rung gets a card. Listing all three read as three
+     different treatments when it is one treatment titrated up, and the rung a
+     patient starts on is the provider's call, not a shelf choice.
+
+     A ladder whose base name is already on the shelf as a standalone product
+     drops out completely rather than collapsing. Anti-Aging carries both a
+     once-weekly NAD+ Injection and a separate three-times-weekly ramp that
+     shares the name, so collapsing would print "NAD+ Injection" twice at two
+     prices. The ramp stays live at its own URL; it just isn't a second card. */
   const programs = programsFor(category);
   const inProgram = programProductIds(category);
+  const standalone = new Set(products.filter((p) => !stageOf(p)).map((p) => baseName(p)));
   const cards = [
     ...programs.map(programItem),
-    ...products.filter((p) => !inProgram.has(p.id)).map(productItem),
+    ...products
+      .filter((p) => !inProgram.has(p.id))
+      .filter((p) => !stageOf(p) || (stageOf(p) === "Starter" && !standalone.has(baseName(p))))
+      .map(productItem),
   ];
 
   // Safety net only. Categories with nothing shoppable are commented out of the

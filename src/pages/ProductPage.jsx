@@ -16,7 +16,7 @@ import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } 
 import useKioskMode from "../lib/useKioskMode";
 import useLockBodyScroll from "../lib/useLockBodyScroll";
 import DatePicker from "../components/ui/DatePicker";
-import { doseLadder, baseName } from "../lib/catalog";
+import { baseName, stageOf, displayTitle } from "../lib/catalog";
 import ProductGallery from "../components/product/ProductGallery";
 import ProductMechanism from "../components/product/ProductMechanism";
 import ProductFaq from "../components/product/ProductFaq";
@@ -37,20 +37,24 @@ const HERO_ASSURANCES_OTC = [
   { icon: Lock, l1: "Discreet", l2: "Packaging" },
 ];
 
-/* The comp sets combination names with a plus: "Tirzepatide+Niacinamide". This is
-   display-only and deliberately not a data change — productSlug, the GHL treatment
-   label, the QR codes and every /product/… URL already in the wild are all derived
-   from the catalogue name, so the stored "/" has to stay. */
-const displayName = (s) => s.replace(/\s*\/\s*/g, "+");
+/* The page leads on the drug, not the blend: "Tirzepatide/Niacinamide" sets the
+   h1 as "Tirzepatide" with the full formulation named on the line beneath it.
+   Display-only and deliberately not a data change — productSlug, the GHL
+   treatment label, the QR codes and every /product/… URL already in the wild are
+   all derived from the catalogue name, so the stored "/" has to stay. */
+const ingredients = (p) => baseName(p).split("/").map((s) => s.trim()).filter(Boolean);
+const primaryName = (p) => ingredients(p)[0] || baseName(p);
 
-/* "Tirzepatide/Niacinamide" → "Compounded with Niacinamide", the sub-line the comp
-   sets under the product name. Derived from the reviewed product name rather than
-   authored per product, so it can't drift from what the vial actually is; a
-   single-ingredient or non-compounded product simply gets no line. */
+/* "Tirzepatide/Niacinamide" → "Compounded Tirzepatide with Niacinamide". Derived
+   from the reviewed product name rather than authored per product, so it can't
+   drift from what the vial actually is; a single-ingredient or non-compounded
+   product simply gets no line. */
 const comboTagline = (p) => {
   if (!isCompounded(p)) return "";
-  const parts = baseName(p).split("/").map((s) => s.trim()).filter(Boolean);
-  return parts.length > 1 ? `Compounded with ${parts.slice(1).join(" and ")}` : "";
+  const parts = ingredients(p);
+  return parts.length > 1
+    ? `Compounded ${parts[0]} with ${parts.slice(1).join(" and ")}`
+    : "";
 };
 
 /* The comp prints "/mo" beside the price. Most of this catalogue is not monthly —
@@ -112,20 +116,32 @@ export default function ProductPage() {
   const categoryLabel = product.categoryName;
 
   /* The Starter / Mid-Dose / Maintenance selector is gone from the hero per the
-     comp — the page now shows one dose, the one that was routed to, matching the
-     single-dose treatment cards. `ladder` stays because the rungs still share one
-     display name and the headings below strip the "— Starter" suffix from it;
-     `active` stays as the routed product so the priced, dosed, safety and intake
-     code below keeps reading from one place. */
-  const ladder = doseLadder(product);
+     comp — the page shows one dose, the one that was routed to, matching the
+     single-dose treatment cards. `active` stays as the routed product so the
+     priced, dosed, safety and intake code below keeps reading from one place. */
   const active = product;
 
   // The retail shelf was retired with the supplement line (2026-08-15), so a
   // non-Rx item has no category listing of its own to go back to.
   const otc = isOtc(product);
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
+  /* One card per treatment, same rule as the category listing: the other rungs
+     of this product's own ladder are the same treatment at a different dose, and
+     any other ladder collapses to its Starter. Without both filters the strip
+     repeats a title three times, since the cards drop the "— Mid-Dose" suffix.
+     The final dedupe catches a ladder that shares its base name with a
+     standalone product (the two NAD+ Injection protocols). */
+  const seenTitle = new Set();
   const related = visibleProducts
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && isOtc(p) === otc)
+    .filter((p) => baseName(p) !== baseName(product))
+    .filter((p) => !stageOf(p) || stageOf(p) === "Starter")
+    .filter((p) => {
+      const t = displayTitle(p);
+      if (seenTitle.has(t)) return false;
+      seenTitle.add(t);
+      return true;
+    })
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(active);
@@ -196,7 +212,7 @@ export default function ProductPage() {
     <main className="min-h-screen w-full bg-bg text-ink">
       <Seo
         title={`${product.name} — ${product.categoryName}`}
-        description={product.subtitle || `${product.name} from NovaMDK — physician-guided telehealth treatment, delivered to your door.`}
+        description={product.subtitle || `${product.name} from Nova MDK — physician-guided telehealth treatment, delivered to your door.`}
         path={productPath(product)}
         image={product.img}
         jsonLd={{
@@ -206,7 +222,7 @@ export default function ProductPage() {
           description: product.subtitle || undefined,
           image: `https://www.novamdk.com${product.img}`,
           category: product.categoryName,
-          brand: { "@type": "Brand", name: product.brandName || "NovaMDK" },
+          brand: { "@type": "Brand", name: product.brandName || "Nova MDK" },
         }}
       />
       <Navbar />
@@ -248,13 +264,15 @@ export default function ProductPage() {
             <div>
               {/* Category now rides on the gallery frame, as in the comp, so the
                   column opens on the name rather than repeating the label. */}
-              {/* The ladder shares one title across its rungs, so the heading
-                  drops the "— Starter" suffix once a selector is present. */}
+              {/* The drug alone. The blend, the dose rung and the vial size are
+                  all named below it rather than crowded into the heading. */}
               <h1 className="wrap-break-word font-display text-[clamp(2rem,4.4vw,3.05rem)] font-extrabold leading-[1.04] tracking-tight text-[#725826]">
-                {displayName(ladder.length > 1 ? baseName(product) : product.name)}
+                {primaryName(product)}
               </h1>
               {comboTagline(active) && (
-                <p className="mt-2.5 text-[0.95rem] font-semibold text-ink">{comboTagline(active)}</p>
+                <p className="mt-2.5 text-[clamp(1.05rem,1.9vw,1.35rem)] font-semibold leading-snug text-ink">
+                  {comboTagline(active)}
+                </p>
               )}
               <p className="mt-4 max-w-[58ch] text-[0.92rem] leading-relaxed text-muted">{active.subtitle}</p>
 
@@ -405,9 +423,6 @@ export default function ProductPage() {
                   ? "A non-prescription formula you can add to your routine — our care team can tell you how it fits alongside your protocol."
                   : "Compounded by a licensed U.S. pharmacy and dispensed only after a provider's review of your intake."}
               </p>
-              <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-[0.85rem] font-medium text-ink">
-                <ShieldCheck size={15} className="text-accent" /> Quality-tested every batch
-              </div>
             </Reveal>
             <Reveal delay={0.08}>
               <dl className="divide-y divide-line overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow">
@@ -445,7 +460,7 @@ export default function ProductPage() {
         <Reveal className="mx-auto mb-8 max-w-[60ch] text-center">
           <span className="nv-eyebrow">Questions</span>
           <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">
-            About {displayName(ladder.length > 1 ? baseName(active) : active.name)}
+            About {primaryName(active)}
           </h2>
         </Reveal>
         <Reveal delay={0.06}>
@@ -470,7 +485,7 @@ export default function ProductPage() {
               <p className="mx-auto mt-3 max-w-[46ch] text-[1rem] text-muted">
                 {otc
                   ? "No prescription or intake required. Message the care team and we'll get it on its way — and tell you how it pairs with your protocol."
-                  : "A licensed provider reviews your intake and confirms the right fit. Nothing to pay until you're prescribed."}
+                  : "A licensed provider reviews your intake and confirms the right fit. You pay only if a provider determines that a prescription is appropriate."}
               </p>
               {otc ? (
                 <Link
@@ -520,7 +535,7 @@ export default function ProductPage() {
                   <img src={r.img} alt={r.name} loading="lazy" className="h-[88%] object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105" />
                 </div>
                 <div className="mt-3 flex items-start justify-between gap-3">
-                  <h3 className="text-[0.98rem] font-bold leading-snug">{r.name}</h3>
+                  <h3 className="text-[0.98rem] font-bold leading-snug">{displayTitle(r)}</h3>
                   <span className="shrink-0 text-[0.9rem] font-bold text-primary">{r.price}</span>
                 </div>
                 <span className="mt-2 inline-flex items-center gap-1 text-[0.82rem] font-semibold text-muted transition-colors group-hover:text-accent">
@@ -804,7 +819,7 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
                   <ConsentLink href="/legal/terms-and-conditions">Terms &amp; Conditions</ConsentLink>{" "}
                   and{" "}
                   <ConsentLink href="/legal/hipaa-notice-of-privacy-practices">Notice of Privacy Practices</ConsentLink>,
-                  and authorize NovaMDK to process my health information to provide care.
+                  and authorize Nova MDK to process my health information to provide care.
                 </ConsentCheck>
               </div>
             </>

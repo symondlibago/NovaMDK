@@ -37,7 +37,7 @@ export default function SupplementsPage() {
           marked noindex so it stops showing up in search. */}
       <Seo
         title="Supplements — Clinical-Grade Formulas"
-        description="Compounded peptides and daily-foundation supplements from NovaMDK, prepared by FDA-regulated pharmacies and matched to your protocol."
+        description="Compounded peptides and daily-foundation supplements from Nova MDK, prepared by state licensed U.S. pharmacies and matched to your protocol."
         path="/supplements"
         noindex
       />
@@ -47,7 +47,7 @@ export default function SupplementsPage() {
         showBack
         eyebrow="Supplements"
         title="Clinical-grade formulas, tailored to your labs"
-        subtitle="Compounded peptides and daily-foundation supplements, prepared by FDA-regulated pharmacies and matched to your protocol."
+        subtitle="Compounded peptides and daily-foundation supplements, prepared by state licensed U.S. pharmacies and matched to your protocol."
         chips={["Physician-reviewed", "Purity tested"]}
       />
 

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { track, EVENTS } from "../../lib/analytics";
 import { productPath } from "../../lib/slug";
 import { programsFor } from "../data/subscriptions";
@@ -46,11 +46,14 @@ const STEPS = [
 
 const SLIDES = STEPS.filter((s) => s.img);
 
+// How long each step holds before the strip advances on its own.
+const AUTOPLAY_MS = 2000;
+
 /* A neighbouring step: shorter than the active frame, dropped below its top edge,
    tucked a little behind it, and veiled toward the outer edge. Inert and hidden
    from assistive tech — it is a preview of where an arrow leads, and the live
    region under the carousel announces the step actually selected. */
-function SideFrame({ src, side }) {
+function SideFrame({ index, side }) {
   // The veil deepens toward the ACTIVE frame, not toward the outer edge: each
   // neighbour is brightest where it enters the row and dissolves as it runs
   // under the selected step.
@@ -62,12 +65,20 @@ function SideFrame({ src, side }) {
         side === "left" ? "-mr-2" : "-ml-2"
       }`}
     >
-      <img
-        src={src}
-        alt=""
-        loading="lazy"
-        className="h-full w-full rounded-[calc(14px*var(--nv-r-scale,1))] object-cover"
-      />
+      {/* Every slide stacked, only one at full opacity. Swapping a single src
+          could only fade the incoming photo up from the page background, which
+          is the blink that made the change read as a cut rather than a fade. */}
+      {SLIDES.map((s, k) => (
+        <img
+          key={s.img}
+          src={s.img}
+          alt=""
+          loading="lazy"
+          className={`absolute inset-0 h-full w-full rounded-[calc(14px*var(--nv-r-scale,1))] object-cover transition-opacity duration-700 ease-out ${
+            k === index ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
       <span
         className="absolute inset-0 rounded-[calc(14px*var(--nv-r-scale,1))]"
         style={{
@@ -86,6 +97,31 @@ export default function ProductJourney({ product }) {
   // one and the arrows never dead-end.
   const at = (k) => SLIDES[(k + n) % n];
   const step = at(i);
+
+  /* Autoplay. Held while the pointer is over the strip or focus is inside it,
+     so a step can't slide out from under someone reading its caption or
+     reaching for an arrow. */
+  const [paused, setPaused] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduceMotion(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  const autoplaying = !paused && !reduceMotion && n > 1;
+
+  /* A timeout re-armed on every change rather than one long-lived interval:
+     clicking an arrow then gets a full hold on the step it landed on, instead
+     of inheriting whatever was left of the current tick. */
+  useEffect(() => {
+    if (!autoplaying) return;
+    const t = setTimeout(() => setI((v) => (v + 1) % n), AUTOPLAY_MS);
+    return () => clearTimeout(t);
+  }, [autoplaying, i, n]);
 
   const programs = programsFor(product.categorySlug).map(programItem);
 
@@ -119,18 +155,18 @@ export default function ProductJourney({ product }) {
           than three equal thumbnails. The scrim is mixed from --nv-bg rather
           than a literal white, so it stays the page's own colour if the palette
           is changed in the Design Studio. */}
-      <div className="relative mt-[clamp(2rem,4vw,3.25rem)]">
-        <button
-          type="button"
-          onClick={() => setI((v) => (v - 1 + n) % n)}
-          aria-label="Previous step"
-          className="absolute left-0 top-1/2 z-20 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-[#e6dcc6] text-[#725826] transition-all hover:bg-[#d9c9a8]"
-        >
-          <ChevronLeft size={18} />
-        </button>
-
+      <div
+        className="relative mt-[clamp(2rem,4vw,3.25rem)]"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocusCapture={() => setPaused(true)}
+        onBlurCapture={() => setPaused(false)}
+      >
+        {/* The arrows are gone, but their gutter stays: it is what holds the
+            three frames at the width the comp sets. Navigation moved to the
+            dots under the caption. */}
         <div className="flex items-start justify-center px-12 sm:px-16">
-          <SideFrame src={at(i - 1).img} side="left" />
+          <SideFrame index={(i - 1 + n) % n} side="left" />
 
           {/* 32 + 36 + 32 fills the row exactly, and the side frames pull 8px
               under the active one — so the three sit tight against each other
@@ -143,35 +179,69 @@ export default function ProductJourney({ product }) {
             {/* Border sits directly on the photo — no padding, no mount. The
                 images are cropped to their photo bounds so it lands flush; the
                 originals carried 20% of dead canvas top and bottom, which is
-                what used to hold the rule off the picture. */}
-            <img
-              key={step.img}
-              src={step.img}
-              alt={step.title}
-              loading="lazy"
-              className="nv-fade-in h-49 w-full rounded-[calc(14px*var(--nv-r-scale,1))] border-2 border-[#b47f2f] object-cover sm:h-55"
-            />
+                what used to hold the rule off the picture.
+
+                Same stack-and-dissolve as the neighbours: the box keeps the
+                frame's height so nothing reflows, and the outgoing photo holds
+                underneath while the incoming one comes up over it. */}
+            <div className="relative h-49 sm:h-55">
+              {SLIDES.map((s, k) => (
+                <img
+                  key={s.img}
+                  src={s.img}
+                  alt={k === i ? s.title : ""}
+                  aria-hidden={k !== i}
+                  loading="lazy"
+                  className={`absolute inset-0 h-full w-full rounded-[calc(14px*var(--nv-r-scale,1))] border-2 border-[#b47f2f] object-cover transition-opacity duration-700 ease-out ${
+                    k === i ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
-          <SideFrame src={at(i + 1).img} side="right" />
+          <SideFrame index={(i + 1) % n} side="right" />
         </div>
-
-        <button
-          type="button"
-          onClick={() => setI((v) => (v + 1) % n)}
-          aria-label="Next step"
-          className="absolute right-0 top-1/2 z-20 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-[#e6dcc6] text-[#725826] transition-all hover:bg-[#d9c9a8]"
-        >
-          <ChevronRight size={18} />
-        </button>
       </div>
 
-      <div className="mx-auto mt-7 max-w-[42ch] text-center" aria-live="polite">
-        <span className="mx-auto block h-px w-14 bg-line-strong" />
+      {/* Announced only while the patient is the one advancing it. A region that
+          changes on its own every two seconds would have a screen reader talking
+          over everything else on the page; autoplay pauses the moment focus
+          lands inside the strip, and the live region comes back with it. */}
+      <div
+        className="mx-auto mt-7 max-w-[42ch] text-center"
+        aria-live={autoplaying ? "off" : "polite"}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocusCapture={() => setPaused(true)}
+        onBlurCapture={() => setPaused(false)}
+      >
+        {/* Was a hairline rule. Now that the arrows are gone these dots are the
+            strip's only control, so they are real buttons rather than a passive
+            readout: auto-advancing content needs some way to be steered and
+            stopped, and hovering or focusing them holds the rotation. */}
+        <div className="flex items-center justify-center gap-2.5">
+          {SLIDES.map((s, k) => (
+            <button
+              key={s.img}
+              type="button"
+              onClick={() => setI(k)}
+              aria-label={`Show step ${k + 1}, ${s.title}`}
+              aria-current={k === i ? "true" : undefined}
+              className={`h-2.5 w-2.5 rounded-full transition-all duration-500 ${
+                k === i ? "scale-125 bg-[#8a6a33]" : "bg-[#d9c9a8] hover:bg-[#c0aa80]"
+              }`}
+            />
+          ))}
+        </div>
         {/* Same brown as the section heading above it — the black in the text
             spec sheet was placeholder styling, not the colour. */}
-        <h3 className="mt-6 font-display text-[1.35rem] font-extrabold text-[#725826]">{step.title}</h3>
-        <p className="mx-auto mt-2.5 max-w-[34ch] text-[0.86rem] leading-relaxed text-muted">{step.text}</p>
+        <h3 key={`t${i}`} className="nv-fade-slow mt-6 font-display text-[1.35rem] font-extrabold text-[#725826]">
+          {step.title}
+        </h3>
+        <p key={`d${i}`} className="nv-fade-slow mx-auto mt-2.5 max-w-[34ch] text-[0.86rem] leading-relaxed text-muted">
+          {step.text}
+        </p>
       </div>
       </div>
 

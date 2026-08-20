@@ -231,6 +231,14 @@
     to   { opacity: 1; transform: none; }
   }
 
+  /* Slower sibling, for copy that changes alongside a cross-dissolving image:
+     the 380ms above lands well before a 700ms crossfade and reads as a snap. */
+  .nv-fade-slow { animation: nv-fade-slow 620ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @keyframes nv-fade-slow {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
   /* Relay-run timeline bars (ProductMechanism). Each bar fills left to right and
      hands off to the next — the per-item animation-delay is set inline as
      index × fill duration, so bar 2 starts on the frame bar 1 lands.
@@ -489,10 +497,17 @@
   }
   .nv-range:active { cursor: grabbing; }
 
+  /* --nv-fill is set inline by the component. WebKit has no progress
+     pseudo-element, so the filled portion is painted as a hard-stop gradient
+     instead; Firefox ignores this and uses ::-moz-range-progress below. */
   .nv-range::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;
-    background: var(--nv-surface-2);
+    background: linear-gradient(
+      to right,
+      var(--nv-primary) 0 var(--nv-fill, 0%),
+      var(--nv-surface-2) var(--nv-fill, 0%) 100%
+    );
     border: 1px solid var(--nv-line);
   }
   .nv-range::-moz-range-track {
@@ -545,6 +560,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .nv-kenburns, .nv-bob, .nv-float, .nv-marquee { animation: none !important; }
+  /* Swapped content arrives in place rather than fading up. */
+  .nv-fade-in, .nv-fade-slow { animation: none !important; }
   /* The bars and labels arrive already in place rather than relay-running. */
   .nv-seq .nv-seq__bar, .nv-seq .nv-seq__label { animation: none !important; }
   .nv-seq .nv-seq__bar { transform: none !important; }

@@ -2,9 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Truck, Clock, Stethoscope, Flag, FlaskConical } from "lucide-react";
 const MARQUEE_ITEMS = [
-  { text: "USA MDs ONLY", icon: Stethoscope },
+  { text: "U.S.-LICENSED M.D & DO", icon: Stethoscope },
   { text: "U.S. LICENSED PHYSICIANS", icon: Flag },
-  { text: "FDA-REGULATED PHARMACIES", icon: ShieldCheck },
+  { text: "STATE LICENSED U.S. PHARMACIES", icon: ShieldCheck },
   { text: "USA MADE & SOURCED", icon: FlaskConical },
   { text: "FAST DELIVERY", icon: Truck },
   { text: "DEDICATED ONLINE CARE", icon: Clock },

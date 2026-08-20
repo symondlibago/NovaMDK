@@ -456,7 +456,7 @@ function mapPost(post, { authors, categories }, notes) {
     // provider" is a medical claim, so it is never invented here — set it as the
     // author's title in GHL and it will carry through.
     author: {
-      name: oneLine(author?.name) || "NovaMDK Care Team",
+      name: oneLine(author?.name) || "Nova MDK Care Team",
       ...(oneLine(author?.role) && oneLine(author.role) !== oneLine(author?.name)
         ? { role: oneLine(author.role) }
         : {}),
