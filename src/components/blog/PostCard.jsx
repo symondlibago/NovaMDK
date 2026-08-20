@@ -1,14 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { formatDate, readTime } from "../../lib/blog";
+import { formatDate } from "../../lib/blog";
 
 /** Post teaser used on the blog index and in the related strip on an article. */
 export default function PostCard({ post, featured = false }) {
   return (
     <Link
       to={`/blog/${post.slug}`}
-      className={`group flex flex-col overflow-hidden rounded-[calc(24px*var(--nv-r-scale,1))] border border-line bg-surface transition-all duration-300 hover:-translate-y-1 hover:nv-shadow-lg ${
+      /* h-full so a card fills its grid track: without it every card is only as
+         tall as its own copy and a one-line excerpt leaves a short card sitting
+         beside a tall one. */
+      className={`group flex h-full flex-col overflow-hidden rounded-[calc(24px*var(--nv-r-scale,1))] border border-line bg-surface transition-all duration-300 hover:-translate-y-1 hover:nv-shadow-lg ${
         featured ? "md:flex-row" : ""
       }`}
     >
@@ -28,8 +31,6 @@ export default function PostCard({ post, featured = false }) {
           {post.tags?.[0] && <span className="text-primary">{post.tags[0]}</span>}
           {post.tags?.[0] && <span aria-hidden="true">·</span>}
           <span>{formatDate(post.date)}</span>
-          <span aria-hidden="true">·</span>
-          <span>{readTime(post)} min read</span>
         </div>
 
         <h3
@@ -40,11 +41,21 @@ export default function PostCard({ post, featured = false }) {
           {post.title}
         </h3>
 
-        <p className={`mt-3 leading-relaxed text-muted ${featured ? "text-[1.02rem]" : "text-[0.94rem]"}`}>
+        {/* Clamped rather than truncated in JS: the ellipsis lands on whatever
+            actually overflows at the rendered width, so it stays correct across
+            breakpoints and never cuts a short excerpt that would have fit.
+            The featured card runs wide, so it gets room for more lines. */}
+        <p
+          className={`mt-3 leading-relaxed text-muted ${
+            featured ? "line-clamp-4 text-[1.02rem]" : "line-clamp-3 text-[0.94rem]"
+          }`}
+        >
           {post.excerpt}
         </p>
 
-        <span className="mt-5 inline-flex items-center gap-2 text-[0.92rem] font-semibold text-primary">
+        {/* mt-auto pins the CTA to the card's floor, so it lines up across a row
+            whatever the excerpt length. */}
+        <span className="mt-auto inline-flex items-center gap-2 pt-5 text-[0.92rem] font-semibold text-primary">
           Read article
           <span className="grid h-7 w-7 place-items-center rounded-full border border-line transition-all group-hover:border-primary group-hover:bg-primary group-hover:text-on-primary">
             <ArrowRight size={13} />

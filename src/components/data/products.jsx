@@ -2,6 +2,29 @@ import React from 'react';
 import { 
   Dna, Infinity, Clock, Lightbulb, Activity, Scale, ShieldCheck, Zap, Sparkles, Leaf, Droplets, Heart, BrainCircuit, Shield, Flame, BatteryCharging, Pill, Droplet, Syringe, FlaskConical, TestTube, Snowflake, Moon, Sun
 } from 'lucide-react';
+/* Pharmacology panel for the brass product-page section (ProductMechanism).
+   Shared by the three tirzepatide rungs — one molecule at three doses, so the
+   mechanism and pharmacokinetics are identical and must not drift apart across
+   the ladder. Every string here is a clinical claim: change it only with the same
+   review the specs and safety copy get. */
+const TIRZEPATIDE_MECHANISM = {
+  title: "Dual-Pathway Support",
+  description:
+    "Tirzepatide works on both GIP and GLP-1 pathways involved in appetite and food intake",
+  pathways: [
+    { name: "GLP-1", text: "Helps regulate appetite and calorie intake" },
+    { name: "GIP", text: "May also contribute to the regulation of food intake" },
+    { name: "Tirzepatide", text: "Activates both GIP and GLP-1 receptor pathways" },
+  ],
+  timelineTitle: "How Tirzepatide Works Over Time",
+  timeline: [
+    { label: "8–72 hours", text: "Reaches peak concentration" },
+    { label: "5–6 days", text: "Long-lasting half-life" },
+    { label: "7 days", text: "Once-weekly routine" },
+    { label: "4 weeks", text: "Steady state reached" },
+  ],
+};
+
 export const productsData = [
 
   /* ============================================================ */
@@ -259,6 +282,7 @@ export const productsData = [
     icon: <Syringe size={16} />,
     img: "/products/tirzepatide.avif",
     imgDetail: "/products/detail/tirzepatide-niacinamide.avif",
+    imgGallery: ["/products/detail/tirzepatide-window.avif", "/products/detail/tirzepatide-studio.avif"],
     questionnaireId: "7ec64059-bbff-4448-a48a-39278f111bfa",
     highlights: [
       { text: "Dual GIP / GLP-1" },
@@ -274,6 +298,7 @@ export const productsData = [
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
     safety: "Dual GIP/GLP-1 receptor agonist; niacinamide supports metabolic function. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
+    mechanism: TIRZEPATIDE_MECHANISM,
   },
   {
     id: 6,
@@ -289,6 +314,7 @@ export const productsData = [
     icon: <Syringe size={16} />,
     img: "/products/tirzepatide.avif",
     imgDetail: "/products/detail/tirzepatide-niacinamide.avif",
+    imgGallery: ["/products/detail/tirzepatide-window.avif", "/products/detail/tirzepatide-studio.avif"],
     questionnaireId: "71ceae4f-b7b1-4788-9556-52e32ba02b7e",
     highlights: [
       { text: "Dual GIP / GLP-1" },
@@ -304,6 +330,7 @@ export const productsData = [
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
     safety: "Dual GIP/GLP-1 receptor agonist; niacinamide supports metabolic function. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
+    mechanism: TIRZEPATIDE_MECHANISM,
   },
   {
     id: 7,
@@ -319,6 +346,7 @@ export const productsData = [
     icon: <Syringe size={16} />,
     img: "/products/tirzepatide.avif",
     imgDetail: "/products/detail/tirzepatide-niacinamide.avif",
+    imgGallery: ["/products/detail/tirzepatide-window.avif", "/products/detail/tirzepatide-studio.avif"],
     questionnaireId: "71ceae4f-b7b1-4788-9556-52e32ba02b7e",
     highlights: [
       { text: "Dual GIP / GLP-1" },
@@ -334,6 +362,7 @@ export const productsData = [
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
     safety: "Dual GIP/GLP-1 receptor agonist; niacinamide supports metabolic function. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 15.3 mg per week.",
+    mechanism: TIRZEPATIDE_MECHANISM,
   },
   {
     id: 8,

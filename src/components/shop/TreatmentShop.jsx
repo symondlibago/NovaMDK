@@ -2,57 +2,13 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { productsData, visibleProducts } from "../data/products";
-import { programsFor, programProductIds, refillCadence } from "../data/subscriptions";
-import { productPath } from "../../lib/slug";
+import { programsFor, programProductIds } from "../data/subscriptions";
+import { programItem, productItem } from "../../lib/programCard";
 import { CompoundedDisclaimer } from "../Compliance";
 import { QuickViewModal } from "./ProductCard";
 import TreatmentCard from "./TreatmentCard";
 import WeightLossSections from "./WeightLossSections";
 import BackButton from "../ui/BackButton";
-
-/* "every week" -> "Once-Weekly", "every 8 weeks" -> "Every 8 Weeks". Reads off
-   the catalogue's Days Supply rather than assuming a monthly rhythm — these
-   vials run 28 or 56 days and calling that "monthly" on an Rx page is a claim. */
-const cadenceLabel = (raw) => {
-  if (!raw) return "";
-  if (raw === "every week") return "Once-Weekly";
-  return raw.replace(/^every /, "Every ").replace(/\b\w/g, (c) => c.toUpperCase());
-};
-
-/* Programs collapse to a single card at their starting dose — no Starter /
-   Mid-Dose / Maintenance ladder. `Get Started` deep-links to that dose's intake
-   via ?start=1, which ProductPage picks up and opens the consultation modal on. */
-const programItem = (program) => {
-  const cheapest =
-    program.blends.find((b) => b.fromPrice === program.fromPrice) || program.blends[0];
-  const starter = cheapest.products[0];
-  return {
-    key: `program-${program.slug}`,
-    ribbon: "Subscription",
-    title: program.name,
-    chips: [
-      program.fromPrice ? `From $${program.fromPrice}` : "",
-      cadenceLabel(cheapest.cadence),
-    ],
-    img: program.image || starter.img,
-    blurb: program.blurb,
-    // The product View Details quick-looks. For a program that's its starting
-    // dose — the same one Get Started takes into intake.
-    product: starter,
-    startTo: `${productPath(starter)}?start=1`,
-  };
-};
-
-const productItem = (p) => ({
-  key: `product-${p.id}`,
-  ribbon: "",
-  title: p.name,
-  chips: [p.price, cadenceLabel(refillCadence(p)) || p.dosageForm || ""],
-  img: p.img,
-  blurb: p.blurb || p.description || "",
-  product: p,
-  startTo: `${productPath(p)}?start=1`,
-});
 
 /* Column count follows the card count instead of being pinned at 4. A fixed
    lg:grid-cols-4 gave weight-loss — which is two program cards — a quarter of the

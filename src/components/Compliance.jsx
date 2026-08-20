@@ -1,15 +1,25 @@
 import React from "react";
 // `rx={false}` for the non-prescription retail line — labelling an OTC product
 // "Rx only" would be plainly wrong, so it gets the opposite badge instead.
-export function ComplianceBadges({ compounded = true, rx = true, className = "" }) {
+/* `size="lg"` is the product-hero treatment from the 2026-08 comp: bigger, and
+   both chips in the comp's brass rather than ink-on-white and grey. The default
+   stays the compact chip every card and listing already uses, so this is purely
+   additive — nothing outside the product hero moves. */
+const CHIP_LG = "gap-2 border-[#b47f2f]/45 px-3.5 py-1.5 text-[0.66rem] tracking-[0.1em] text-[#b47f2f]";
+const CHIP_SM =
+  "gap-1 border-line px-2 py-0.5 text-[0.5rem] tracking-[0.08em] sm:gap-1.5 sm:px-2.5 sm:py-1 sm:text-[0.58rem] sm:tracking-[0.1em]";
+
+export function ComplianceBadges({ compounded = true, rx = true, size = "sm", className = "" }) {
+  const lg = size === "lg";
+  const chip = lg ? CHIP_LG : CHIP_SM;
   return (
     <div className={`flex flex-wrap items-center gap-1 sm:gap-1.5 ${className}`}>
-      <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 font-mono text-[0.5rem] font-semibold uppercase tracking-[0.08em] text-ink sm:gap-1.5 sm:px-2.5 sm:py-1 sm:text-[0.58rem] sm:tracking-[0.1em]">
+      <span className={`inline-flex items-center rounded-full border bg-surface font-mono font-semibold uppercase ${lg ? "" : "text-ink"} ${chip}`}>
         <span className={`h-1.5 w-1.5 rounded-full ${rx ? "bg-primary" : "bg-accent"}`} />
         {rx ? "Rx only" : "No prescription"}
       </span>
       {compounded && (
-        <span className="inline-flex items-center rounded-full border border-line bg-surface-2 px-2 py-0.5 font-mono text-[0.5rem] font-semibold uppercase tracking-[0.08em] text-muted sm:px-2.5 sm:py-1 sm:text-[0.58rem] sm:tracking-[0.1em]">
+        <span className={`inline-flex items-center rounded-full border font-mono font-semibold uppercase ${lg ? "bg-surface" : "bg-surface-2 text-muted"} ${chip}`}>
           Compounded
         </span>
       )}

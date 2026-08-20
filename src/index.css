@@ -223,6 +223,42 @@
     50%      { transform: translateY(-8px); }
   }
 
+  /* Carousel frame swap — keyed on src, so React remounts the img and this
+     replays on every step change. */
+  .nv-fade-in { animation: nv-fade-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @keyframes nv-fade-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* Relay-run timeline bars (ProductMechanism). Each bar fills left to right and
+     hands off to the next — the per-item animation-delay is set inline as
+     index × fill duration, so bar 2 starts on the frame bar 1 lands.
+
+     `.is-in` is added once the list scrolls into view, because a CSS animation
+     would otherwise run at mount and be over long before anyone reaches this far
+     down the page. Until then the rules below hold the bars at zero width and the
+     labels hidden, and `both` keeps the final state after the run.
+
+     scaleX from a left origin rather than an animated width: width relayouts the
+     row every frame, transform composites. */
+  .nv-seq__bar { transform: scaleX(0); transform-origin: left; }
+  .nv-seq__label { opacity: 0; }
+  .nv-seq.is-in .nv-seq__bar {
+    animation: nv-seq-bar 750ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .nv-seq.is-in .nv-seq__label {
+    animation: nv-seq-label 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes nv-seq-bar {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes nv-seq-label {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: none; }
+  }
+
   /* Continuous right-to-left drift for the membership-banner status cards.
      The track holds the set twice; -50% lands the second copy exactly where the
      first began, so the loop has no seam. Each half must therefore be the same
@@ -509,6 +545,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .nv-kenburns, .nv-bob, .nv-float, .nv-marquee { animation: none !important; }
+  /* The bars and labels arrive already in place rather than relay-running. */
+  .nv-seq .nv-seq__bar, .nv-seq .nv-seq__label { animation: none !important; }
+  .nv-seq .nv-seq__bar { transform: none !important; }
+  .nv-seq .nv-seq__label { opacity: 1 !important; }
   .nv-goal:hover { transform: none !important; }
   .nv-goal__glow,
   .nv-goal__spark,

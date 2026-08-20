@@ -7,7 +7,7 @@ import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
 import PostBody from "../components/blog/PostBody";
 import PostCard from "../components/blog/PostCard";
-import { getPost, relatedPosts, formatDate, readTime } from "../lib/blog";
+import { getPost, relatedPosts, formatDate } from "../lib/blog";
 import { SITE_URL, absoluteUrl } from "../lib/absoluteUrl";
 
 export default function BlogPostPage() {
@@ -71,8 +71,6 @@ export default function BlogPostPage() {
               {post.tags?.[0] && <span className="text-primary">{post.tags[0]}</span>}
               {post.tags?.[0] && <span aria-hidden="true">·</span>}
               <span>{formatDate(post.date)}</span>
-              <span aria-hidden="true">·</span>
-              <span>{readTime(post)} min read</span>
             </div>
 
             <h1 className="mt-4 font-display text-[clamp(1.9rem,4.4vw,3rem)] font-extrabold leading-[1.08] tracking-tight">
@@ -137,7 +135,7 @@ export default function BlogPostPage() {
             <h2 className="mb-6 font-display text-[1.3rem] font-extrabold leading-tight">Keep reading</h2>
             <div className="grid gap-6 sm:grid-cols-2">
               {related.map((p, i) => (
-                <Reveal key={p.slug} delay={i * 0.07}>
+                <Reveal key={p.slug} delay={i * 0.07} className="h-full">
                   <PostCard post={p} />
                 </Reveal>
               ))}

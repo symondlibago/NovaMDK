@@ -17,38 +17,57 @@ import useKioskMode from "../lib/useKioskMode";
 import useLockBodyScroll from "../lib/useLockBodyScroll";
 import DatePicker from "../components/ui/DatePicker";
 import { doseLadder, baseName } from "../lib/catalog";
-import DoseSelector from "../components/product/DoseSelector";
 import ProductGallery from "../components/product/ProductGallery";
-import { categoryMedia } from "../lib/productMedia";
-import ProductFeature from "../components/product/ProductFeature";
+import ProductMechanism from "../components/product/ProductMechanism";
 import ProductFaq from "../components/product/ProductFaq";
-import BmiCalculator from "../components/tools/BmiCalculator";
+import ProductJourney from "../components/product/ProductJourney";
 
-const TRUST = [
-  { icon: Stethoscope, label: "U.S. licensed providers" },
-  { icon: Truck, label: "Fast delivery" },
-  { icon: Lock, label: "Discreet packaging" },
-  { icon: FlaskConical, label: "Compounded in the USA" },
+/* The three assurance tiles that sit under the hero CTA in the comp. These replace
+   the four-up trust band that used to run below the hero — same promises, minus
+   "Compounded in the USA", which the Compounded badge and the compounded-drug
+   notice on this page both already state. */
+const HERO_ASSURANCES = [
+  { icon: Stethoscope, l1: "US licensed", l2: "providers" },
+  { icon: Truck, l1: "Fast", l2: "Delivery" },
+  { icon: Lock, l1: "Discreet", l2: "Packaging" },
+];
+const HERO_ASSURANCES_OTC = [
+  { icon: ShieldCheck, l1: "No prescription", l2: "needed" },
+  { icon: Truck, l1: "Fast", l2: "Delivery" },
+  { icon: Lock, l1: "Discreet", l2: "Packaging" },
 ];
 
-// The retail (non-Rx) line isn't compounded and doesn't run through a provider.
-const TRUST_OTC = [
-  { icon: Truck, label: "Fast delivery" },
-  { icon: Lock, label: "Discreet packaging" },
-  { icon: FlaskConical, label: "Third-party lab tested" },
-  { icon: ShieldCheck, label: "No prescription needed" },
-];
+/* The comp sets combination names with a plus: "Tirzepatide+Niacinamide". This is
+   display-only and deliberately not a data change — productSlug, the GHL treatment
+   label, the QR codes and every /product/… URL already in the wild are all derived
+   from the catalogue name, so the stored "/" has to stay. */
+const displayName = (s) => s.replace(/\s*\/\s*/g, "+");
+
+/* "Tirzepatide/Niacinamide" → "Compounded with Niacinamide", the sub-line the comp
+   sets under the product name. Derived from the reviewed product name rather than
+   authored per product, so it can't drift from what the vial actually is; a
+   single-ingredient or non-compounded product simply gets no line. */
+const comboTagline = (p) => {
+  if (!isCompounded(p)) return "";
+  const parts = baseName(p).split("/").map((s) => s.trim()).filter(Boolean);
+  return parts.length > 1 ? `Compounded with ${parts.slice(1).join(" and ")}` : "";
+};
+
+/* The comp prints "/mo" beside the price. Most of this catalogue is not monthly —
+   these vials run 28 or 56 days — so the unit is read off the product's own Days
+   Supply spec instead of assumed. 28–31 days prints "/mo", anything else prints
+   its real span, and a product with no Days Supply prints no unit at all. */
+const priceUnit = (p) => {
+  const raw = p.specs?.find((s) => s.label === "Days Supply")?.value || "";
+  const days = Number(raw.match(/(\d+)\s*days?/i)?.[1]);
+  if (!days) return "";
+  if (days >= 28 && days <= 31) return "/mo";
+  if (days % 7 === 0) return `/${days / 7} weeks`;
+  return `/${days} days`;
+};
 
 // Fallback questionnaire used when a product has no questionnaireId yet.
 const DEFAULT_QUESTIONNAIRE_ID = "";
-
-// Same three steps, same wording, as the homepage and treatments page. A patient
-// who reads it here and then on /treatments should not get two different stories.
-const VISIT_STEPS = [
-  { title: "Complete your assessment", text: "Answer a few questions about your health, goals, and medical history." },
-  { title: "Your provider reviews your care", text: "A licensed provider reviews your information and determines the treatment that fits your needs." },
-  { title: "Delivered to your door", text: "Your prescribed treatment is shipped discreetly, with ongoing support from your care team." },
-];
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -59,10 +78,6 @@ export default function ProductPage() {
   const isKiosk = useKioskMode();
   const [search] = useSearchParams();
   const navigate = useNavigate();
-  // Which rung of the dose ladder is on screen. Starts on the routed product and
-  // moves with the selector; `active` is what the priced/dosed parts of the page
-  // read from, while `product` stays the canonical route for SEO.
-  const [activeId, setActiveId] = useState(null);
   const [showQR, setShowQR] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -96,20 +111,14 @@ export default function ProductPage() {
 
   const categoryLabel = product.categoryName;
 
-  // Dose ladder. `active` is the rung currently selected — the routed product
-  // until someone picks another. Price, specs, dosing, safety and the intake
-  // handoff all follow `active`; the URL, canonical and <Seo> follow `product`.
+  /* The Starter / Mid-Dose / Maintenance selector is gone from the hero per the
+     comp — the page now shows one dose, the one that was routed to, matching the
+     single-dose treatment cards. `ladder` stays because the rungs still share one
+     display name and the headings below strip the "— Starter" suffix from it;
+     `active` stays as the routed product so the priced, dosed, safety and intake
+     code below keeps reading from one place. */
   const ladder = doseLadder(product);
-  const active = ladder.find((p) => p.id === activeId) || product;
-  const selectRung = (rung) => {
-    setActiveId(rung.id);
-    // Rewrite the address bar without routing, so the URL stays shareable but
-    // ScrollToTop doesn't yank the patient back up the page mid-comparison.
-    if (typeof window !== "undefined") {
-      window.history.replaceState(null, "", productPath(rung));
-    }
-    track(EVENTS.PRODUCT_VIEWED, { id: rung.id, name: rung.name, category: rung.categorySlug });
-  };
+  const active = product;
 
   // The retail shelf was retired with the supplement line (2026-08-15), so a
   // non-Rx item has no category listing of its own to go back to.
@@ -120,9 +129,6 @@ export default function ProductPage() {
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(active);
-  // Role-keyed photography for the editorial sections: `product` illustrates the
-  // formulation, `visit` illustrates the consultation. Never interchangeable.
-  const media = categoryMedia(active);
   // Image framing moved into ProductGallery, which tracks it per frame — a
   // cut-out and a photo need opposite treatment and a product can now show both.
   const isSupplement = product.categorySlug === "supplements";
@@ -240,33 +246,28 @@ export default function ProductPage() {
           {/* info */}
           <Reveal delay={0.08} className="min-w-0">
             <div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <span className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-accent">{categoryLabel}</span>
-              </div>
-
+              {/* Category now rides on the gallery frame, as in the comp, so the
+                  column opens on the name rather than repeating the label. */}
               {/* The ladder shares one title across its rungs, so the heading
                   drops the "— Starter" suffix once a selector is present. */}
-              <h1 className="mt-3 wrap-break-word font-display text-[clamp(1.85rem,3.6vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight">
-                {ladder.length > 1 ? baseName(product) : product.name}
+              <h1 className="wrap-break-word font-display text-[clamp(2rem,4.4vw,3.05rem)] font-extrabold leading-[1.04] tracking-tight text-[#725826]">
+                {displayName(ladder.length > 1 ? baseName(product) : product.name)}
               </h1>
-              <p className="mt-3 max-w-[46ch] text-[1.05rem] leading-relaxed text-muted">{active.subtitle}</p>
+              {comboTagline(active) && (
+                <p className="mt-2.5 text-[0.95rem] font-semibold text-ink">{comboTagline(active)}</p>
+              )}
+              <p className="mt-4 max-w-[58ch] text-[0.92rem] leading-relaxed text-muted">{active.subtitle}</p>
 
               {/* required regulatory labels */}
-              <ComplianceBadges compounded={isCompounded(active)} rx={!otc} className="mt-4" />
-
-              <DoseSelector ladder={ladder} activeId={active.id} onSelect={selectRung} />
+              <ComplianceBadges compounded={isCompounded(active)} rx={!otc} size="lg" className="mt-5" />
 
               {/* price block */}
-              <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-2 border-t border-line pt-5">
-                <span className="font-display text-[clamp(2.1rem,3vw,2.5rem)] font-extrabold leading-none tracking-tight">{active.price}</span>
-                <span className="mb-0.5 flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1.5 text-[0.82rem] font-medium text-muted">
-                  <Truck size={14} className="text-accent" /> {active.shipping}
+              <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-line pt-6">
+                <span className="text-[1rem] uppercase tracking-[0.08em] text-ink">From</span>
+                <span className="font-display text-[clamp(2.2rem,4vw,2.9rem)] font-extrabold leading-none tracking-tight">
+                  {active.price}
+                  <span className="font-semibold">{priceUnit(active)}</span>
                 </span>
-                {active.size && (
-                  <span className="mb-0.5 flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1.5 text-[0.82rem] font-medium text-muted">
-                    <FlaskConical size={14} className="text-accent" /> {active.size}
-                  </span>
-                )}
               </div>
 
               {/* Highlights moved down into the "What this supports" section, so
@@ -276,32 +277,56 @@ export default function ProductPage() {
                 /* No prescription, so no intake — the care team handles retail orders. */
                 <Link
                   to="/contact"
-                  className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+                  className="group mt-6 flex w-full items-center justify-center gap-2 rounded-[calc(12px*var(--nv-r-scale,1))] bg-[#977e43] px-7 py-4 text-[1rem] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#836c39] nv-shadow"
                 >
                   Ask about this supplement <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                 </Link>
               ) : isKiosk ? (
                 <button
                   onClick={() => setShowQR(true)}
-                  className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+                  className="group mt-6 flex w-full items-center justify-center gap-2 rounded-[calc(12px*var(--nv-r-scale,1))] bg-[#977e43] px-7 py-4 text-[1rem] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#836c39] nv-shadow"
                 >
-                  Start consultation <QrCode size={17} className="transition-transform group-hover:scale-110" />
+                  Start Your Consultation <QrCode size={17} className="transition-transform group-hover:scale-110" />
                 </button>
               ) : (
                 <button
                   onClick={() => setShowInfo(true)}
                   disabled={loading}
-                  className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-[1rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
+                  className="group mt-6 flex w-full items-center justify-center gap-2 rounded-[calc(12px*var(--nv-r-scale,1))] bg-[#977e43] px-7 py-4 text-[1rem] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#836c39] nv-shadow disabled:opacity-70 disabled:hover:translate-y-0"
                 >
                   {loading ? (
                     <><Loader2 size={16} className="animate-spin" /> Starting consultation…</>
                   ) : (
-                    <>Start consultation <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                    <>Start Your Consultation <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" /></>
                   )}
                 </button>
               )}
               {err && !isKiosk && <p className="mt-2 text-center text-[0.84rem] font-medium text-primary">{err}</p>}
 
+              {/* Assurance tiles — the promises that used to sit in the standalone
+                  band below the hero, which the comp folds in here instead. */}
+              <div className="mt-6 grid grid-cols-3 gap-3">
+                {(otc ? HERO_ASSURANCES_OTC : HERO_ASSURANCES).map((a) => (
+                  <div key={a.l1} className="rounded-[calc(12px*var(--nv-r-scale,1))] bg-surface-2 px-3 py-4 text-center">
+                    <span className="mx-auto grid h-9 w-9 place-items-center rounded-full bg-surface text-accent">
+                      <a.icon size={16} strokeWidth={1.8} />
+                    </span>
+                    <span className="mt-2.5 block text-[0.78rem] leading-tight text-muted">
+                      {a.l1}
+                      <br />
+                      {a.l2}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Shipping and vial size lost their pills when the price row went to
+                  the comp's FROM / price pairing — kept here as a plain line so the
+                  facts don't disappear off the page. */}
+              <p className="mt-4 text-[0.84rem] leading-relaxed text-muted">
+                {active.shipping}
+                {active.size ? ` · ${active.size}` : ""}
+              </p>
             </div>
           </Reveal>
         </div>
@@ -335,48 +360,14 @@ export default function ProductPage() {
         )}
       </section>
 
-      {/* ===== Trust band ===== */}
-      <section className="border-y border-line bg-surface">
-        <div className="mx-auto grid max-w-[1180px] grid-cols-2 gap-x-6 gap-y-5 px-5 py-6 md:grid-cols-4 md:px-10">
-          {(otc ? TRUST_OTC : TRUST).map((t) => (
-            <div key={t.label} className="flex items-center gap-3">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-2 text-primary"><t.icon size={16} /></span>
-              <span className="text-[0.88rem] font-medium leading-tight">{t.label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* The standalone trust band that used to sit here is gone: the comp folds
+          those promises into the hero as assurance tiles under the CTA, and
+          running both put the same three claims twice within one screen. */}
 
-      {/* ===== Editorial sections =====
-          Alternating image / copy, the pattern the client pointed at. Content is
-          existing reviewed product data, not new claims: the highlights already
-          shipped on the card, and the visit steps mirror the wording used on the
-          homepage and treatments page so the story stays the same site-wide. */}
-      {active.highlights?.length > 0 && media.product && (
-        <ProductFeature
-          eyebrow="What it supports"
-          title={`Inside ${ladder.length > 1 ? baseName(active) : active.name}`}
-          body={active.subtitle}
-          items={active.highlights.map((h) => ({ text: h.text }))}
-          img={media.product}
-          alt={`${active.name} formulation`}
-        />
-      )}
-
-      {!otc && media.visit && (
-        <ProductFeature
-          reverse
-          tone="surface"
-          eyebrow="How it works"
-          title="From assessment to front door"
-          body="Simple online care, without the waiting room or pharmacy run. A licensed provider reviews your information before any prescription is issued."
-          numbered
-          items={VISIT_STEPS}
-          img={media.visit}
-          alt="A patient completing an online visit from home"
-        />
-      )}
-
+      {/* The two alternating image/copy editorial blocks that used to sit here —
+          "Inside <product>" and "From assessment to front door" — were replaced by
+          the mechanism section below, per the comp. */}
+      <ProductMechanism product={active} />
       {/* ===== How it works (product-specific, when authored) ===== */}
       {product.howItWorks && (
         <section className="bg-surface-2 py-[clamp(2.5rem,5vw,5.5rem)]">
@@ -444,36 +435,17 @@ export default function ProductPage() {
         </section>
       )}
 
-      {/* ===== Am I a candidate? =====
-          Weight-loss pages get the calculator inline, the same way the landing
-          page does — "is this even for me" is the question standing between a
-          visitor and the questionnaire. */}
-      {active.categorySlug === "weight-loss" && !isKiosk && (
-        <section className="border-y border-line bg-surface-2 py-[clamp(2.5rem,5vw,4.5rem)]">
-          <div className="mx-auto max-w-[1180px] px-5 md:px-10">
-            <Reveal className="mx-auto mb-8 max-w-[60ch] text-center">
-              <span className="nv-eyebrow">Check your numbers</span>
-              <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">
-                Am I a candidate for this?
-              </h2>
-              <p className="mt-3 text-[1rem] leading-relaxed text-muted">
-                Drag the sliders for your BMI and the range clinical studies report at your starting
-                weight. Only a licensed provider can confirm whether treatment is appropriate.
-              </p>
-            </Reveal>
-            <Reveal>
-              <BmiCalculator />
-            </Reveal>
-          </div>
-        </section>
-      )}
+      {/* ===== From assessment to ongoing care =====
+          Replaces the BMI calculator that used to sit here. Rx only: an OTC
+          product has no assessment or physician review to walk through. */}
+      {!otc && <ProductJourney product={active} />}
 
       {/* ===== Product FAQ ===== */}
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,4.5rem)] md:px-10">
         <Reveal className="mx-auto mb-8 max-w-[60ch] text-center">
           <span className="nv-eyebrow">Questions</span>
           <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">
-            About {ladder.length > 1 ? baseName(active) : active.name}
+            About {displayName(ladder.length > 1 ? baseName(active) : active.name)}
           </h2>
         </Reveal>
         <Reveal delay={0.06}>

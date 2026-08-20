@@ -56,7 +56,9 @@ export default function BlogPage() {
             {rest.length > 0 && (
               <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((p, i) => (
-                  <Reveal key={p.slug} delay={Math.min(i, 3) * 0.07}>
+                  /* h-full on the Reveal too — it is the grid item, so without it
+                     the card inside has no full-height box to stretch into. */
+                  <Reveal key={p.slug} delay={Math.min(i, 3) * 0.07} className="h-full">
                     <PostCard post={p} />
                   </Reveal>
                 ))}
