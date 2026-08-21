@@ -9,6 +9,7 @@ import { CompoundedDisclaimer } from "../Compliance";
 import { QuickViewModal } from "./ProductCard";
 import TreatmentCard from "./TreatmentCard";
 import WeightLossSections from "./WeightLossSections";
+import AntiAgingSections from "./AntiAgingSections";
 import BackButton from "../ui/BackButton";
 
 /* Column count follows the card count instead of being pinned at 4. A fixed
@@ -167,13 +168,18 @@ export default function TreatmentShop({ category, showBack = false }) {
         </div>
 
         {/* required compounded-drug + GLP-1 marketing disclaimers */}
-        <CompoundedDisclaimer className="mx-auto mt-10 max-w-[680px] border-t border-line pt-6 text-center" />
+        <CompoundedDisclaimer className="mx-auto mb-[clamp(2rem,4vw,3.5rem)] mt-10 max-w-[680px] border-t border-line pt-6 text-center" />
       </div>
 
       {/* Weight-loss only — the copy is GLP-1 specific. `startTo` points at the
           same intake the cards' Get Started uses, so every CTA on the page lands
           in the same place. */}
       {category === "weight-loss" && cards[0] && <WeightLossSections startTo={cards[0].startTo} />}
+
+      {/* Anti-aging only — the copy names NAD+. Same startTo contract. */}
+      {category === "unisex-anti-aging-rx" && cards[0] && (
+        <AntiAgingSections startTo={cards[0].startTo} />
+      )}
 
       <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />
     </section>

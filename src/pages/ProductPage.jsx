@@ -21,6 +21,7 @@ import ProductGallery from "../components/product/ProductGallery";
 import ProductMechanism from "../components/product/ProductMechanism";
 import ProductFaq from "../components/product/ProductFaq";
 import ProductJourney from "../components/product/ProductJourney";
+import ProductWhy from "../components/product/ProductWhy";
 
 /* The three assurance tiles that sit under the hero CTA in the comp. These replace
    the four-up trust band that used to run below the hero — same promises, minus
@@ -378,15 +379,7 @@ export default function ProductPage() {
         )}
       </section>
 
-      {/* The standalone trust band that used to sit here is gone: the comp folds
-          those promises into the hero as assurance tiles under the CTA, and
-          running both put the same three claims twice within one screen. */}
-
-      {/* The two alternating image/copy editorial blocks that used to sit here —
-          "Inside <product>" and "From assessment to front door" — were replaced by
-          the mechanism section below, per the comp. */}
       <ProductMechanism product={active} />
-      {/* ===== How it works (product-specific, when authored) ===== */}
       {product.howItWorks && (
         <section className="bg-surface-2 py-[clamp(2.5rem,5vw,5.5rem)]">
           <div className="mx-auto max-w-[1180px] px-5 md:px-10">
@@ -411,33 +404,23 @@ export default function ProductPage() {
         </section>
       )}
 
-      {/* ===== Specs ===== */}
-      {active.specs?.length > 0 && (
-        <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
-          <div className={`grid gap-10 ${isKiosk ? "" : "md:grid-cols-[1fr_1.25fr] md:items-start"}`}>
-            <Reveal className={isKiosk ? "text-center" : ""}>
-              <span className="nv-eyebrow">The details</span>
-              <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">What's inside &amp; how it's dosed.</h2>
-              <p className={`mt-3 max-w-[40ch] text-[1rem] text-muted ${isKiosk ? "mx-auto" : ""}`}>
-                {otc
-                  ? "A non-prescription formula you can add to your routine — our care team can tell you how it fits alongside your protocol."
-                  : "Compounded by a licensed U.S. pharmacy and dispensed only after a provider's review of your intake."}
-              </p>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <dl className="divide-y divide-line overflow-hidden rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow">
-                {active.specs.map((s) => (
-                  <div key={s.label} className="grid grid-cols-1 gap-1 px-6 py-4 transition-colors hover:bg-surface-2 sm:grid-cols-[170px_1fr] sm:gap-4">
-                    <dt className="font-mono text-[0.66rem] uppercase tracking-[0.1em] text-muted">{s.label}</dt>
-                    <dd className="text-[0.94rem] leading-relaxed text-ink">{s.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Reveal>
-          </div>
-        </section>
-      )}
+      {/* The "The details" spec table was removed here (2026-08-21). Dosing
+          schedule, days supply and formulation all read back in the Q&A further
+          down, and the vial size sits under the hero CTA. `specs` stays on the
+          catalogue, since that is where those answers are read from. */}
+      {/* Everything from the safety card down runs on #fbfaf7 rather than the
+          page's own --nv-bg, which reads noticeably warmer. Literal, not a token:
+          this is the comp's ground for the lower half of the page, and deriving
+          it from the palette would drift the moment the Design Studio is
+          touched. The safety card itself keeps bg-surface-2 and stays yellow.
 
+          pt on the wrapper rather than mt on the section below: a top margin on
+          a first child collapses out through a wrapper that has no padding, and
+          the band would start below where the colour is meant to. */}
+      <div
+        className="pb-[clamp(3rem,6vw,5rem)] pt-[clamp(2.5rem,5vw,4rem)]"
+        style={{ background: "#fbfaf7" }}
+      >
       {/* ===== Safety ===== */}
       {active.safety && (
         <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
@@ -455,27 +438,32 @@ export default function ProductPage() {
           product has no assessment or physician review to walk through. */}
       {!otc && <ProductJourney product={active} />}
 
-      {/* ===== Product FAQ ===== */}
-      <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,4.5rem)] md:px-10">
-        <Reveal className="mx-auto mb-8 max-w-[60ch] text-center">
-          <span className="nv-eyebrow">Questions</span>
-          <h2 className="mt-3 text-[clamp(1.6rem,3.4vw,2.2rem)] font-extrabold leading-tight">
-            About {primaryName(active)}
-          </h2>
-        </Reveal>
-        <Reveal delay={0.06}>
+      {/* ===== Why Nova MDK ===== */}
+      {!otc && <ProductWhy />}
+
+      {/* ===== Product FAQ =====
+          Wider than the 1180 the rest of the page runs at, with a thinner
+          gutter: the accordion and the card triptych sit side by side and both
+          need the room. */}
+      <section className="mx-auto max-w-[1440px] px-4 py-[clamp(2.5rem,5vw,4.5rem)] md:px-6">
+        {/* The heading moved inside ProductFaq: the comp sets it left-aligned at
+            the head of the accordion column, not centred over the whole block. */}
+        <Reveal>
           <ProductFaq product={active} otc={otc} />
         </Reveal>
       </section>
 
-      {/* ===== Closing CTA ===== */}
-      <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
+      {/* ===== Closing CTA =====
+          No mb: it is the last child of the #fbfaf7 wrapper, so a bottom margin
+          collapses straight out through it and renders in the page's own warmer
+          ground — which is the yellow band that showed under the card. The
+          wrapper carries the space as padding instead. */}
+      <section className="mx-auto max-w-[1180px] px-5 md:px-10">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface-2 px-6 py-[clamp(2.4rem,5vw,3.6rem)] text-center text-ink">
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{ background: "radial-gradient(50% 80% at 50% 0%, color-mix(in srgb, var(--nv-accent) 18%, transparent), transparent 70%)" }}
-            />
+          {/* Flat, and the same ground as the band it sits in. The accent radial
+              that used to wash down from the top edge read as a smudge, and
+              bg-surface-2 under it left a tan slab sitting on cream. */}
+          <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-[#fbfaf7] px-6 py-[clamp(2.4rem,5vw,3.6rem)] text-center text-ink">
             <div className="relative">
               <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
                 {otc ? "Add " : "Start consultation for "}
@@ -519,9 +507,14 @@ export default function ProductPage() {
           </div>
         </Reveal>
       </section>
+      </div>
 
-      {/* ===== Related ===== */}
-      {related.length > 0 && (
+      {/* ===== Related =====
+          OTC only. Every Rx page now carries the brass cross-sell at the foot of
+          ProductJourney, and this grid was a second, plainer run at the same job
+          directly beneath it. An OTC product has no journey section, so this is
+          still its only route to the rest of the category. */}
+      {otc && related.length > 0 && (
         <section className="mx-auto mb-[clamp(3.5rem,7vw,6rem)] max-w-[1180px] px-5 md:px-10">
           <h2 className="mb-6 text-[clamp(1.4rem,3vw,2rem)] font-extrabold">{relatedHeading}</h2>
           <div className="grid gap-5 sm:grid-cols-3">

@@ -32,6 +32,29 @@ const INCLUDES = [
   },
 ];
 
+/* The three chat pills that float over the Includes photo. The supplied exports
+   are the icon and wording only; the white capsule is markup, which is what lets
+   them arrive one after another and drift. Each sits back a little further than
+   the one above it. All three sit at full opacity: the comp's stagger is in
+   when they arrive, not in how solid they are. */
+const CHAT_PILLS = [
+  {
+    src: "/site/weight-loss/chat-weight.avif",
+    alt: "manage my weight",
+    pos: "left-[6%] top-[44%]",
+  },
+  {
+    src: "/site/weight-loss/chat-metabolism.avif",
+    alt: "support my metabolism",
+    pos: "left-[9%] top-[57%]",
+  },
+  {
+    src: "/site/weight-loss/chat-energy.avif",
+    alt: "improve my energy",
+    pos: "left-[6%] top-[70%]",
+  },
+];
+
 /* The supplied status cards, in the comp's left-to-right order. Illustrative
    sample data — none of it reads live patient state, hence "Example" in the alt
    text: a screen reader announcing a fabricated 180 lbs as the listener's own
@@ -57,7 +80,11 @@ const CHIP_H = "h-24 w-[13.7rem]";
 
 function Chip({ chip, decorative }) {
   return (
-    <span className={`relative block shrink-0 overflow-hidden ${CHIP_H}`}>
+    /* Rounded, not a square clip: the wrapper crops the blown-up export, so
+       without a radius here the card's own rounded corners get squared off. */
+    <span
+      className={`relative block shrink-0 overflow-hidden rounded-[calc(14px*var(--nv-r-scale,1))] ${CHIP_H}`}
+    >
       <img
         src={chip.src}
         alt={decorative ? "" : chip.alt}
@@ -83,16 +110,13 @@ function Chip({ chip, decorative }) {
    Vertical placement lives here on the wrapper, never on the track: the keyframes
    set `transform` outright, so a `-translate-y-1/2` on the same element would be
    overwritten on the first frame. */
-const CHIP_FADE = "linear-gradient(90deg, transparent 0%, #000 9%, #000 95%, transparent 100%)";
-
 function ChipTrack() {
   return (
-    <div
-      className="pointer-events-none relative z-2 overflow-hidden pb-8 lg:absolute lg:inset-x-0 lg:top-[55%] lg:-translate-y-1/2 lg:pb-0"
-      // Cards dissolve into the banner's edges rather than being guillotined by
-      // them, so the loop's entry and exit don't pop.
-      style={{ maskImage: CHIP_FADE, WebkitMaskImage: CHIP_FADE }}
-    >
+    /* The mask lives in .nv-chiptrack rather than inline: from lg the track runs
+       under the heading and the cards have to be gone by the time they reach it,
+       which is a much deeper left fade than the small edge feather the stacked
+       mobile layout wants. Two masks, one media query. */
+    <div className="nv-chiptrack pointer-events-none relative z-2 overflow-hidden pb-8 lg:absolute lg:inset-x-0 lg:top-[55%] lg:-translate-y-1/2 lg:pb-0">
       <div className="nv-marquee flex w-max">
         {[0, 1].map((copy) => (
           <div key={copy} className="flex shrink-0 items-center gap-7 pr-7">
@@ -177,7 +201,10 @@ function MembershipBanner({ to }) {
             alt=""
             aria-hidden="true"
             loading="lazy"
-            className="absolute -left-[25%] top-[13%] w-[73%]"
+            /* Tucked behind the man rather than standing clear of him: at
+               -left-[25%] the badge sat outside the art box entirely and read as
+               a second object beside him. */
+            className="absolute -left-[4%] top-[13%] w-[73%]"
           />
         </div>
 
@@ -220,21 +247,42 @@ function Includes() {
         </ul>
       </Reveal>
       <Reveal as="div" delay={0.08}>
-        {/* Same trap as the status cards: this export carries ~12.8% transparent
-            margin on each side, so a plain <img> lays out ~34% larger than the
-            photo you can actually see and pads the row with dead space. The
-            wrapper is the visible photo's size and aspect, and the image is
-            scaled to 134.5% (1 / 0.744, the art's share of the canvas width) so
-            its own bounds land on the wrapper's. Re-measure the pair together if
-            the asset is re-exported. */}
-        <span className="relative mx-auto block aspect-804/1020 w-full max-w-112.5 overflow-hidden">
+        {/* The replacement export is already trimmed to the photo's own bounds,
+            so there is no transparent margin to compensate for any more and the
+            image can simply fill its box. The three chat pills used to be baked
+            into the old PNG; they are markup now so they can arrive one after
+            another and drift while they sit. */}
+        <span className="relative mx-auto block w-full max-w-112.5">
           <img
-            src="/site/weight-loss/support-chat.png"
-            alt="A patient messaging the Nova MDK care team about her goals"
+            src="/site/weight-loss/includes-runner.avif"
+            alt="A patient out running, thinking through what she wants from treatment"
             loading="lazy"
             decoding="async"
-            className="absolute left-1/2 top-1/2 w-[134.5%] max-w-none -translate-x-1/2 -translate-y-1/2"
+            className="block w-full"
           />
+          {CHAT_PILLS.map((c, i) => (
+            <Reveal key={c.src} delay={0.3 + i * 0.45} className={`absolute ${c.pos}`}>
+              {/* nv-float on an inner span: Reveal animates transform on the
+                  element it owns, and the drift would overwrite its entry. */}
+              <span className="nv-float block" style={{ animationDelay: `${i * 0.8}s` }}>
+                {/* The capsule hugs its label. Giving the wrapper a width instead
+                    stretched the pill across the photo while the artwork stayed
+                    small inside it, which is why the wording came out tiny. The
+                    label is sized by width, not height: these exports are wide
+                    and short, so a height in rems leaves the text unreadable. */}
+                <span
+                  className="inline-flex items-center rounded-full bg-white px-4 py-2 nv-shadow"
+                >
+                  <img
+                    src={c.src}
+                    alt={c.alt}
+                    loading="lazy"
+                    className="block h-auto w-[clamp(7rem,13vw,10.5rem)]"
+                  />
+                </span>
+              </span>
+            </Reveal>
+          ))}
         </span>
       </Reveal>
     </div>

@@ -9,6 +9,7 @@ import {
    review the specs and safety copy get. */
 const TIRZEPATIDE_MECHANISM = {
   title: "Dual-Pathway Support",
+  cardTitle: "Dual-Hormone Pathway",
   description:
     "Tirzepatide works on both GIP and GLP-1 pathways involved in appetite and food intake",
   pathways: [
@@ -22,6 +23,33 @@ const TIRZEPATIDE_MECHANISM = {
     { label: "5–6 days", text: "Long-lasting half-life" },
     { label: "7 days", text: "Once-weekly routine" },
     { label: "4 weeks", text: "Steady state reached" },
+  ],
+};
+
+/* Semaglutide gets the callout layout: one receptor pathway rather than
+   tirzepatide's two, so the comp puts the vial in the middle of the diagram with
+   what the pathway touches labelled around it, and lays the explainer out as a
+   horizontal rail instead of stacked bars.
+
+   `IGLP-1` in the third stop of the supplied text is a typo for `GLP-1` and is
+   corrected here. Everything else is verbatim. */
+const SEMAGLUTIDE_MECHANISM = {
+  layout: "callouts",
+  title: "GLP-1 Support",
+  cardTitle: "GLP-1 Pathway",
+  description:
+    "Semaglutide is a GLP-1 receptor agonist that works with pathways involved in appetite, digestion, and blood sugar regulation",
+  callouts: [
+    { name: "Appetite Regulation" },
+    { name: "Slower Digestion" },
+    { name: "Blood Sugar Support" },
+  ],
+  timelineTitle: "How Semaglutide Works",
+  timeline: [
+    { label: "A natural metabolic pathway", text: "GLP-1 is a hormone your body naturally releases after eating" },
+    { label: "Semaglutide mimics that signal", text: "It activates the same GLP-1 receptors involved in the body's response to food" },
+    { label: "Supports fullness cues", text: "GLP-1 signaling helps the brain recognize feelings of satisfaction after eating" },
+    { label: "Works with your metabolism", text: "The pathway also helps coordinate the body's glucose and insulin response after meals" },
   ],
 };
 
@@ -177,6 +205,7 @@ export const productsData = [
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
     safety: "This compounded formulation contains semaglutide and cyanocobalamin (vitamin B12). Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
+    mechanism: SEMAGLUTIDE_MECHANISM,
   },
   {
     id: 2,
@@ -207,6 +236,7 @@ export const productsData = [
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
     safety: "This compounded formulation contains semaglutide and cyanocobalamin (vitamin B12). Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 2.5 mg per week.",
+    mechanism: SEMAGLUTIDE_MECHANISM,
   },
   {
     id: 3,
@@ -237,6 +267,7 @@ export const productsData = [
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
     safety: "GLP-1 receptor agonist; the added glycine helps support muscle retention. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose.",
+    mechanism: SEMAGLUTIDE_MECHANISM,
   },
   {
     id: 4,
@@ -267,6 +298,7 @@ export const productsData = [
       { label: "Pharmacy", value: "MediVera Compounding Pharmacy™, 5225 Crooks Rd, Troy, MI 48098" },
     ],
     safety: "GLP-1 receptor agonist; the added glycine helps support muscle retention. Contraindicated in anyone with a personal or family history of medullary thyroid carcinoma (MTC) or MEN 2. Rotate injection sites with each dose. Maximum 2.5 mg per week.",
+    mechanism: SEMAGLUTIDE_MECHANISM,
   },
   {
     id: 5,
@@ -829,7 +861,7 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Tablet",
     icon: <Pill size={16} />,
-    img: "/products/nad-plus-sublingual.avif",
+    img: "/products/nad-sublingual.avif",
     imgDetail: "/products/detail/nad-plus-sublingual.avif",
     questionnaireId: "91480561-864e-4bda-8bad-694696ac2e1f",
     caseOfferingId: "6a3b5e15-806a-4ea1-b1f6-b6567ca80066",

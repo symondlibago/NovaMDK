@@ -62,8 +62,12 @@ const CAT_ART = {
     motion: "spark",
   },
   "unisex-anti-aging-rx": {
-    cutout: "/site/goals/longetivity.png", // note the spelling — not longevity.avif
-    cutoutClass: "-top-[4%] h-[108%] right-[-8%]",
+    cutout: "/site/goals/longevity.avif",
+    /* Pulled in from right-[-8%]: the new export is a taller, narrower portrait
+       than the one it replaced, and object-contain inside the square box leaves
+       margin either side, so at the old offset she floated off toward the right
+       edge instead of sitting against the copy. */
+    cutoutClass: "-top-[4%] h-[108%] right-[18%]",
     bg: "bg-[#d1c0a0]",
     motion: "orbs",
   },
@@ -119,6 +123,11 @@ const STEPS = [
   { icon: Stethoscope, title: "A provider builds your plan", desc: "A licensed U.S. clinician reviews your intake and prescribes what actually fits you." },
   { icon: PackageOpen, title: "Delivered to your door", desc: "Fast, discreet delivery — with ongoing care and easy adjustments anytime." },
 ];
+
+/* Categories whose own block below the shelf already walks through how care
+   works, so the generic three-step explainer and the stats band are suppressed
+   for them. Add a slug here when a category grows its own editorial block. */
+const SELF_CONTAINED = new Set(["weight-loss", "unisex-anti-aging-rx"]);
 
 // Mirrors the homepage band — "Waiting rooms" was dropped at the client's request.
 const STATS = [
@@ -326,10 +335,11 @@ export default function TreatmentsPage() {
       )}
 
       <TrustBand />
-      {/* Weight-loss carries its own membership/pillars/CTA block from
-          WeightLossSections, which already covers this ground — the three-step
-          explainer and the stats band just repeat it there. */}
-      {validGoal !== "weight-loss" && (
+      {/* Weight-loss and anti-aging carry their own editorial blocks from
+          WeightLossSections / AntiAgingSections, which already cover this ground
+          — anti-aging even runs the same assessment-to-delivery journey — so the
+          three-step explainer and the stats band just repeat it there. */}
+      {!SELF_CONTAINED.has(validGoal) && (
         <>
           <HowItWorks />
           <SocialProof />

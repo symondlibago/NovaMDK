@@ -267,33 +267,95 @@
     to   { opacity: 1; transform: none; }
   }
 
-  /* Continuous right-to-left drift for the membership-banner status cards.
-     The track holds the set twice; -50% lands the second copy exactly where the
-     first began, so the loop has no seam. Each half must therefore be the same
-     width — that's why the halves carry a trailing gutter instead of the track
-     carrying a `gap`, which would leave one half short by half a gap.
-     Position and centre the track from a wrapper, never here: this rule owns the
-     element's transform outright and would overwrite it on the first frame. */
+  .nv-diagram .nv-wire { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .nv-diagram .nv-wire__label { opacity: 0; }
+  .nv-diagram.is-in .nv-wire {
+    animation: nv-wire-draw 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .nv-diagram.is-in .nv-wire__label {
+    animation: nv-wire-label 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes nv-wire-draw {
+    from { stroke-dashoffset: 1; }
+    to   { stroke-dashoffset: 0; }
+  }
+  @keyframes nv-wire-label {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .nv-rail__line { transform: scaleX(0); transform-origin: left; }
+  .nv-rail__dot,
+  .nv-rail__item { opacity: 0; }
+  .nv-rail.is-in .nv-rail__line {
+    animation: nv-rail-line 1600ms linear both;
+  }
+  .nv-rail.is-in .nv-rail__dot {
+    animation: nv-rail-dot 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .nv-rail.is-in .nv-rail__item {
+    animation: nv-rail-item 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes nv-rail-line {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes nv-rail-dot {
+    from { opacity: 0; transform: scale(0.3); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes nv-rail-item {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* Membership-banner card track. Stacked under the copy on small screens, so it
+     only needs a light feather at each edge to stop the loop popping in and out.
+     From lg the track runs the full width of the banner and passes under "Your
+     Membership Includes", so the cards have to have dissolved before they reach
+     it — hence the far deeper left ramp. */
+  .nv-chiptrack {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 95%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 95%, transparent 100%);
+  }
+  @media (min-width: 64rem) {
+    .nv-chiptrack {
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 22%, #000 44%, #000 96%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, transparent 22%, #000 44%, #000 96%, transparent 100%);
+    }
+  }
+
+  /* NAD+ sublingual banner claim track. Transparent across the left half so a
+     claim dissolves as it slides behind the bottle rather than reappearing on
+     the far side and running into the heading; light feather on the right so
+     the loop's entry doesn't pop. */
+  .nv-nadtrack {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 42%, #000 53%, #000 96%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, transparent 42%, #000 53%, #000 96%, transparent 100%);
+  }
+
+  /* Cut-out figures end on a hard horizontal crop wherever the original photo
+     was framed. Masking the foot dissolves that edge into whatever ground sits
+     behind it — which is why this is a mask rather than a gradient overlay: the
+     grounds here are gradients themselves, so a flat colour would never match. */
+  .nv-figfade {
+    -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
+  }
+
+  /* Same idea, longer ramp — the closing band's figure runs nearly the full
+     height of the band and the comp dissolves roughly his bottom third, so the
+     copy sitting over him stays readable through the fade. */
+  .nv-bandfade {
+    -webkit-mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0.55) 82%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0.55) 82%, transparent 100%);
+  }
+
   .nv-marquee { animation: nv-marquee 38s linear infinite; will-change: transform; }
   @keyframes nv-marquee {
     from { transform: translate3d(0, 0, 0); }
     to   { transform: translate3d(-50%, 0, 0); }
   }
 
-  /* ---- Treatments · "What can we help you treat?" goal cards ----
-     Every card in that grid is the same fixed layer stack:
-
-       0 tan rest background   (the .nv-goal element itself)
-       1 .nv-goal__cream       cream wash that replaces the tan on hover
-       2 .nv-goal__bloom       warm gradient blooming from the top-right corner
-       3 motion layer          wedge + arrow / spark / orbs — per card
-       4 .nv-goal__figure      the cut-out photo, so motion reads as *behind* it
-       5 .nv-goal__content     copy and CTA, always on top and always on ink
-
-     Only transform and opacity animate (the reveal wedge's clip-path aside), so
-     the grid stays on the compositor. Hover is gated on a real pointer — a touch
-     tap must not latch a card into its hover state — and every translation is
-     dropped for reduced motion, leaving just the colour change. */
   .nv-goal {
     position: relative;
     isolation: isolate;
@@ -321,17 +383,6 @@
   .nv-goal__figure { z-index: 4; }
   .nv-goal__content { position: relative; z-index: 6; }
 
-  /* The wedge's leading edge is the shaft's own quadratic, sampled at
-     t = 0.046 (where the curve crosses the card's bottom edge), 0.25, 0.5, 0.75
-     and 1, converted to percentages of the arrow's 320×320 viewBox; the sixth
-     point follows the end tangent out to the right edge. A straight edge
-     rode ~20px above the stroke at mid-span, which is what made the fill and the
-     arrow read as two unrelated shapes — sampling the curve welds them together.
-     Re-derive these whenever the shaft's `d` changes.
-
-     Wedge and arrow sit behind the figure (3 < 4) so the cut-out reads in front
-     of the gesture. What made the arrow vanish before was the viewBox aspect, not
-     this ordering — see GrowthArrow. */
   .nv-goal__band {
     z-index: 3;
     background: var(--nv-goal-reveal);
@@ -361,10 +412,6 @@
     transition: opacity 150ms ease-out, transform 190ms ease-out;
   }
 
-  /* --- A warm bloom swelling in behind the subject ---
-     Used by Sexual Wellness, Dermatology and the CTA cell. Sized and placed on
-     the subject rather than on the card, so it reads as its own shadow catching
-     the light. Sits at z 3, under the figure, so the art stays crisp on top. */
   .nv-goal__glow {
     z-index: 3;
     background: radial-gradient(46% 42% at 46% 44%,
@@ -379,11 +426,6 @@
       opacity var(--nv-goal-dur) var(--nv-goal-ease);
   }
 
-  /* --- Sports Medicine: the energy disc slides bottom-left → centre-right ---
-     34% of the card, not 58%: at the old size it read as a panel rather than the
-     small translucent token the comp shows. The travel is measured to land it
-     centred near (70%, 47%) — percentages on transform are of the element's own
-     box, so they have to be re-derived whenever the width changes. */
   .nv-goal__spark {
     position: absolute;
     z-index: 3;
@@ -566,6 +608,17 @@
   .nv-seq .nv-seq__bar, .nv-seq .nv-seq__label { animation: none !important; }
   .nv-seq .nv-seq__bar { transform: none !important; }
   .nv-seq .nv-seq__label { opacity: 1 !important; }
+  /* Same for the callout diagram and the horizontal rail: drawn, not drawing. */
+  .nv-diagram .nv-wire,
+  .nv-diagram .nv-wire__label,
+  .nv-rail .nv-rail__line,
+  .nv-rail .nv-rail__dot,
+  .nv-rail .nv-rail__item { animation: none !important; }
+  .nv-diagram .nv-wire { stroke-dashoffset: 0 !important; }
+  .nv-rail .nv-rail__line { transform: none !important; }
+  .nv-diagram .nv-wire__label,
+  .nv-rail .nv-rail__dot,
+  .nv-rail .nv-rail__item { opacity: 1 !important; }
   .nv-goal:hover { transform: none !important; }
   .nv-goal__glow,
   .nv-goal__spark,
