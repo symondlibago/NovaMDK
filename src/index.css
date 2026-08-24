@@ -238,18 +238,6 @@
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: none; }
   }
-
-  /* Relay-run timeline bars (ProductMechanism). Each bar fills left to right and
-     hands off to the next — the per-item animation-delay is set inline as
-     index × fill duration, so bar 2 starts on the frame bar 1 lands.
-
-     `.is-in` is added once the list scrolls into view, because a CSS animation
-     would otherwise run at mount and be over long before anyone reaches this far
-     down the page. Until then the rules below hold the bars at zero width and the
-     labels hidden, and `both` keeps the final state after the run.
-
-     scaleX from a left origin rather than an animated width: width relayouts the
-     row every frame, transform composites. */
   .nv-seq__bar { transform: scaleX(0); transform-origin: left; }
   .nv-seq__label { opacity: 0; }
   .nv-seq.is-in .nv-seq__bar {
@@ -307,12 +295,6 @@
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: none; }
   }
-
-  /* Membership-banner card track. Stacked under the copy on small screens, so it
-     only needs a light feather at each edge to stop the loop popping in and out.
-     From lg the track runs the full width of the banner and passes under "Your
-     Membership Includes", so the cards have to have dissolved before they reach
-     it — hence the far deeper left ramp. */
   .nv-chiptrack {
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 95%, transparent 100%);
     mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 95%, transparent 100%);
@@ -324,30 +306,56 @@
     }
   }
 
-  /* NAD+ sublingual banner claim track. Transparent across the left half so a
-     claim dissolves as it slides behind the bottle rather than reappearing on
-     the far side and running into the heading; light feather on the right so
-     the loop's entry doesn't pop. */
   .nv-nadtrack {
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 42%, #000 53%, #000 96%, transparent 100%);
     mask-image: linear-gradient(90deg, transparent 0%, transparent 42%, #000 53%, #000 96%, transparent 100%);
   }
 
-  /* Cut-out figures end on a hard horizontal crop wherever the original photo
-     was framed. Masking the foot dissolves that edge into whatever ground sits
-     behind it — which is why this is a mask rather than a gradient overlay: the
-     grounds here are gradients themselves, so a flat colour would never match. */
   .nv-figfade {
     -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
     mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
   }
-
-  /* Same idea, longer ramp — the closing band's figure runs nearly the full
-     height of the band and the comp dissolves roughly his bottom third, so the
-     copy sitting over him stays readable through the fade. */
   .nv-bandfade {
     -webkit-mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0.55) 82%, transparent 100%);
     mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0.55) 82%, transparent 100%);
+  }
+  .nv-plot .nv-plot__sweep {
+    transform-box: view-box;
+    transform-origin: 20% 50%;
+    transform: scaleX(0);
+  }
+  .nv-plot .nv-plot__fill,
+  .nv-plot .nv-plot__dot,
+  .nv-plot .nv-plot__label,
+  .nv-plot .nv-plot__caption { opacity: 0; }
+  .nv-plot .nv-plot__drop { opacity: 0; transform: scaleY(0); transform-origin: top; }
+
+  .nv-plot.is-in .nv-plot__sweep {
+    animation: nv-plot-draw 1400ms cubic-bezier(0.33, 0, 0.2, 1) both;
+  }
+  .nv-plot.is-in .nv-plot__fill {
+    animation: nv-plot-in 760ms ease-out both;
+  }
+  .nv-plot.is-in .nv-plot__drop {
+    animation: nv-plot-drop 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .nv-plot.is-in .nv-plot__dot {
+    animation: nv-plot-dot 460ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .nv-plot.is-in .nv-plot__label,
+  .nv-plot.is-in .nv-plot__caption {
+    animation: nv-plot-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes nv-plot-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes nv-plot-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes nv-plot-drop {
+    from { opacity: 0; transform: scaleY(0); }
+    to   { opacity: 1; transform: scaleY(1); }
+  }
+  @keyframes nv-plot-dot {
+    from { opacity: 0; transform: scale(0.2); }
+    to   { opacity: 1; transform: scale(1); }
   }
 
   .nv-marquee { animation: nv-marquee 38s linear infinite; will-change: transform; }
@@ -538,10 +546,6 @@
     cursor: grab;
   }
   .nv-range:active { cursor: grabbing; }
-
-  /* --nv-fill is set inline by the component. WebKit has no progress
-     pseudo-element, so the filled portion is painted as a hard-stop gradient
-     instead; Firefox ignores this and uses ::-moz-range-progress below. */
   .nv-range::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;

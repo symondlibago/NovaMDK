@@ -658,6 +658,8 @@ export const productsData = [
     icon: <Zap size={16} />,
     img: "/products/nad-plus.avif",
     imgDetail: "/products/detail/nad-plus.avif",
+    // Real NAD+ photography, so the gallery drops the stand-in stock frames.
+    imgGallery: ["/products/detail/nad-plus-2.avif", "/products/detail/nad-plus-3.avif"],
     questionnaireId: "1e74716c-356b-4680-a026-1245bdce42b6",
     highlights: [
       { text: "Cellular Energy" },

@@ -9,16 +9,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      /*
-        send_page_view is off on purpose — do NOT turn it back on.
-
-        Two reasons. This is a single-page app, so the automatic hit only ever
-        fires on the first load and every in-app route change would go unrecorded.
-        And the automatic hit reports the full URL: /intake carries a one-time
-        MDIntegrations voucher token in its query string, and that token would be
-        handed straight to Google. src/lib/analytics.js sends page views itself,
-        pathname only, on every route change.
-      */
       gtag('config', 'G-4X11DW5WNW', { send_page_view: false });
     </script>
 
@@ -65,11 +55,6 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-
-    <!-- GoHighLevel chat widget. Renders its own fixed launcher in the
-         bottom-right, which is why the Design Studio button moved to the
-         bottom-left. Loaded here rather than from a component so it mounts once
-         for the whole SPA instead of re-injecting on every route change. -->
     <script
       src="https://widgets.leadconnectorhq.com/loader.js"
       data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"

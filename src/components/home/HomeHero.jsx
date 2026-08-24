@@ -101,8 +101,8 @@ function CardCopy({ tag, name, blurb, cta, big = false }) {
 function VideoCard() {
   return (
     <Link
-      to="/start"
-      onClick={() => track(EVENTS.QUIZ_STARTED, { source: "hero-video" })}
+      to="/treatments"
+      onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero-video" })}
       className={`group relative block aspect-[1.5/1] overflow-hidden sm:aspect-[1.7/1] lg:aspect-[2.25/1] ${CARD_R} nv-shadow-lg transition-transform duration-500 hover:-translate-y-1`}
     >
       <video
@@ -308,11 +308,17 @@ export default function HomeHero() {
             {/* "care" lifts to the accent inside "Healthcare" — the comp's own
                 touch, and the reason this is one <h1> with a span rather than
                 two lines of markup. */}
+            {/* The ramp is on "Healthcare," alone — the rest of the line is the
+                gradient's own dark end, so the two read as one colour family. */}
             <h1
-              className="nv-weight-keep mt-3 max-w-[15ch] bg-clip-text text-[clamp(1.85rem,7.4vw,3.05rem)] font-extrabold leading-[1.1] tracking-[-0.015em] text-transparent lg:max-w-[16ch]"
-              style={{ backgroundImage: TITLE_FILL }}
+              className="nv-weight-keep mt-3 max-w-[15ch] text-[clamp(1.85rem,7.4vw,3.05rem)] font-extrabold leading-[1.1] tracking-[-0.015em] lg:max-w-[16ch]"
+              style={{ color: "#6b511e" }}
             >
-              Modern Healthcare, <span className="lg:block">Built Around You</span>
+              Modern{" "}
+              <span className="bg-clip-text text-transparent" style={{ backgroundImage: TITLE_FILL }}>
+                Healthcare
+              </span>
+              , <span className="lg:block">Built Around You</span>
             </h1>
           </div>
 

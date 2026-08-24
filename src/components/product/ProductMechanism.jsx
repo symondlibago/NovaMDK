@@ -1,34 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import Reveal from "../ui/Reveal";
+import useRunOnceInView from "../../lib/useRunOnceInView";
 
 const barWidth = (i, n) => `${34 + (i * 22) / Math.max(1, n - 1)}%`;
 const BAR_FILL = 0.75;
 const LABEL_LEAD = 0.55;
-function useRunOnceInView(margin = "-60px") {
-  const ref = useRef(null);
-  const [ran, setRan] = useState(false);
-  useEffect(() => {
-    if (ran) return undefined;
-    const el = ref.current;
-    if (!el) return undefined;
-    if (typeof IntersectionObserver === "undefined") {
-      setRan(true);
-      return undefined;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setRan(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: margin },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [ran, margin]);
-  return [ref, ran];
-}
 
 /* ---------------------------------------------------------------------------
    Callout layout (semaglutide comp): centred heading, the vial in the middle of

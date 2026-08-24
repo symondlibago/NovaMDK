@@ -22,11 +22,9 @@ import ProductMechanism from "../components/product/ProductMechanism";
 import ProductFaq from "../components/product/ProductFaq";
 import ProductJourney from "../components/product/ProductJourney";
 import ProductWhy from "../components/product/ProductWhy";
+import NadSupport from "../components/product/NadSupport";
+import NadDirected from "../components/product/NadDirected";
 
-/* The three assurance tiles that sit under the hero CTA in the comp. These replace
-   the four-up trust band that used to run below the hero — same promises, minus
-   "Compounded in the USA", which the Compounded badge and the compounded-drug
-   notice on this page both already state. */
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
   { icon: Truck, l1: "Fast", l2: "Delivery" },
@@ -37,19 +35,8 @@ const HERO_ASSURANCES_OTC = [
   { icon: Truck, l1: "Fast", l2: "Delivery" },
   { icon: Lock, l1: "Discreet", l2: "Packaging" },
 ];
-
-/* The page leads on the drug, not the blend: "Tirzepatide/Niacinamide" sets the
-   h1 as "Tirzepatide" with the full formulation named on the line beneath it.
-   Display-only and deliberately not a data change — productSlug, the GHL
-   treatment label, the QR codes and every /product/… URL already in the wild are
-   all derived from the catalogue name, so the stored "/" has to stay. */
 const ingredients = (p) => baseName(p).split("/").map((s) => s.trim()).filter(Boolean);
 const primaryName = (p) => ingredients(p)[0] || baseName(p);
-
-/* "Tirzepatide/Niacinamide" → "Compounded Tirzepatide with Niacinamide". Derived
-   from the reviewed product name rather than authored per product, so it can't
-   drift from what the vial actually is; a single-ingredient or non-compounded
-   product simply gets no line. */
 const comboTagline = (p) => {
   if (!isCompounded(p)) return "";
   const parts = ingredients(p);
@@ -57,11 +44,6 @@ const comboTagline = (p) => {
     ? `Compounded ${parts[0]} with ${parts.slice(1).join(" and ")}`
     : "";
 };
-
-/* The comp prints "/mo" beside the price. Most of this catalogue is not monthly —
-   these vials run 28 or 56 days — so the unit is read off the product's own Days
-   Supply spec instead of assumed. 28–31 days prints "/mo", anything else prints
-   its real span, and a product with no Days Supply prints no unit at all. */
 const priceUnit = (p) => {
   const raw = p.specs?.find((s) => s.label === "Days Supply")?.value || "";
   const days = Number(raw.match(/(\d+)\s*days?/i)?.[1]);
@@ -88,12 +70,6 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
-  /* ?start=1 deep-links straight into the consultation modal. The treatment
-     cards use it so "Get Started" lands the patient in intake instead of on this
-     page — same flow as the button further down, just reached in one click.
-     Declared up here with the other hooks, above the redirect guards below: a
-     hook after an early return changes call order between renders. Skipped for
-     OTC (no intake exists) and on kiosk (that path hands off by QR instead). */
   useEffect(() => {
     if (!product || isKiosk) return;
     if (search.get("start") === "1" && !isOtc(product)) setShowInfo(true);
@@ -107,31 +83,15 @@ export default function ProductPage() {
   }, [product?.id]);
 
   if (!product) return <Navigate to="/treatments" replace />;
-  // Pulled from the catalogue: bounce to the category rather than leaving a
-  // buyable page reachable by old links, QR codes or a stale search result.
   if (isHidden(product)) {
     return <Navigate to={isOtc(product) || product.categorySlug === "supplements" ? "/treatments" : `/treatments/${product.categorySlug}`} replace />;
   }
   if (id !== productSlug(product)) return <Navigate to={productPath(product)} replace />;
 
   const categoryLabel = product.categoryName;
-
-  /* The Starter / Mid-Dose / Maintenance selector is gone from the hero per the
-     comp — the page shows one dose, the one that was routed to, matching the
-     single-dose treatment cards. `active` stays as the routed product so the
-     priced, dosed, safety and intake code below keeps reading from one place. */
   const active = product;
-
-  // The retail shelf was retired with the supplement line (2026-08-15), so a
-  // non-Rx item has no category listing of its own to go back to.
   const otc = isOtc(product);
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
-  /* One card per treatment, same rule as the category listing: the other rungs
-     of this product's own ladder are the same treatment at a different dose, and
-     any other ladder collapses to its Starter. Without both filters the strip
-     repeats a title three times, since the cards drop the "— Mid-Dose" suffix.
-     The final dedupe catches a ladder that shares its base name with a
-     standalone product (the two NAD+ Injection protocols). */
   const seenTitle = new Set();
   const related = visibleProducts
     .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && isOtc(p) === otc)
@@ -146,19 +106,12 @@ export default function ProductPage() {
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(active);
-  // Image framing moved into ProductGallery, which tracks it per frame — a
-  // cut-out and a photo need opposite treatment and a product can now show both.
   const isSupplement = product.categorySlug === "supplements";
   const hasFda = isSupplement && !!fdaDisclaimer(product);
   const startVisit = async (patient) => {
-    // Everything from here on uses the selected rung: starting a visit from the
-    // Maintenance tab has to hand MDI the Maintenance questionnaire, not the
-    // rung that happened to be in the URL.
     track(EVENTS.START_VISIT, { id: active.id, name: active.name, category: active.categorySlug });
     setErr("");
     setLoading(true);
-    // Drop any id left by an earlier visit, so a failed sync here can't leave
-    // the previous treatment's opportunity to be marked Paid by this checkout.
     try { sessionStorage.removeItem("ghl_opportunity"); } catch { /* private mode */ }
     try {
       const res = await fetch("/api/mdi-auth", {
@@ -389,6 +342,11 @@ export default function ProductPage() {
         )}
       </section>
 
+      {/* NAD+ only — every line of copy names it. Matched on the product name so
+          the injection, its dose ladder and the sublingual tablet all carry it. */}
+      {/nad\+/i.test(product.name) && <NadSupport />}
+      {/nad\+/i.test(product.name) && <NadDirected />}
+
       <ProductMechanism product={active} />
       {product.howItWorks && (
         <section className="bg-surface-2 py-[clamp(2.5rem,5vw,5.5rem)]">
@@ -413,20 +371,6 @@ export default function ProductPage() {
           </div>
         </section>
       )}
-
-      {/* The "The details" spec table was removed here (2026-08-21). Dosing
-          schedule, days supply and formulation all read back in the Q&A further
-          down, and the vial size sits under the hero CTA. `specs` stays on the
-          catalogue, since that is where those answers are read from. */}
-      {/* Everything from the safety card down runs on #fbfaf7 rather than the
-          page's own --nv-bg, which reads noticeably warmer. Literal, not a token:
-          this is the comp's ground for the lower half of the page, and deriving
-          it from the palette would drift the moment the Design Studio is
-          touched. The safety card itself keeps bg-surface-2 and stays yellow.
-
-          pt on the wrapper rather than mt on the section below: a top margin on
-          a first child collapses out through a wrapper that has no padding, and
-          the band would start below where the colour is meant to. */}
       <div
         className="pb-[clamp(3rem,6vw,5rem)] pt-[clamp(2.5rem,5vw,4rem)]"
         style={{ background: "#fbfaf7" }}
@@ -442,37 +386,17 @@ export default function ProductPage() {
           </div>
         </section>
       )}
-
-      {/* ===== From assessment to ongoing care =====
-          Replaces the BMI calculator that used to sit here. Rx only: an OTC
-          product has no assessment or physician review to walk through. */}
       {!otc && <ProductJourney product={active} />}
 
       {/* ===== Why Nova MDK ===== */}
       {!otc && <ProductWhy />}
-
-      {/* ===== Product FAQ =====
-          Wider than the 1180 the rest of the page runs at, with a thinner
-          gutter: the accordion and the card triptych sit side by side and both
-          need the room. */}
       <section className="mx-auto max-w-[1440px] px-4 py-[clamp(2.5rem,5vw,4.5rem)] md:px-6">
-        {/* The heading moved inside ProductFaq: the comp sets it left-aligned at
-            the head of the accordion column, not centred over the whole block. */}
         <Reveal>
           <ProductFaq product={active} otc={otc} />
         </Reveal>
       </section>
-
-      {/* ===== Closing CTA =====
-          No mb: it is the last child of the #fbfaf7 wrapper, so a bottom margin
-          collapses straight out through it and renders in the page's own warmer
-          ground — which is the yellow band that showed under the card. The
-          wrapper carries the space as padding instead. */}
       <section className="mx-auto max-w-[1180px] px-5 md:px-10">
         <Reveal>
-          {/* Flat, and the same ground as the band it sits in. The accent radial
-              that used to wash down from the top edge read as a smudge, and
-              bg-surface-2 under it left a tan slab sitting on cream. */}
           <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-[#fbfaf7] px-6 py-[clamp(2.4rem,5vw,3.6rem)] text-center text-ink">
             <div className="relative">
               <h2 className="mx-auto max-w-[22ch] font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-extrabold leading-tight">
@@ -518,12 +442,6 @@ export default function ProductPage() {
         </Reveal>
       </section>
       </div>
-
-      {/* ===== Related =====
-          OTC only. Every Rx page now carries the brass cross-sell at the foot of
-          ProductJourney, and this grid was a second, plainer run at the same job
-          directly beneath it. An OTC product has no journey section, so this is
-          still its only route to the rest of the category. */}
       {otc && related.length > 0 && (
         <section className="mx-auto mb-[clamp(3.5rem,7vw,6rem)] max-w-[1180px] px-5 md:px-10">
           <h2 className="mb-6 text-[clamp(1.4rem,3vw,2rem)] font-extrabold">{relatedHeading}</h2>
