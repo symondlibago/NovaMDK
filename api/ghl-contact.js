@@ -15,9 +15,13 @@ export default async function handler(req, res) {
   try {
     const { patient, treatment, tags, source, note, value } = req.body || {};
     const contact = await upsertContact({ patient, treatment, tags, source });
+    // Returned to the client so the payment step can move this exact
+    // opportunity to Paid, rather than guessing at it by contact later.
+    let opportunityId = null;
     if (contact?.id && treatment) {
       try {
-        const { created } = await createVisitOpportunity({ contactId: contact.id, treatment, value, source });
+        const { opportunity, created } = await createVisitOpportunity({ contactId: contact.id, treatment, value, source });
+        opportunityId = opportunity?.id || null;
         if (!created) {
           console.warn(
             `GHL blocked a second opportunity for contact ${contact.id}, so the existing one was updated to "${treatment}" instead. Enable duplicate opportunities on the location to record each visit separately.`
@@ -36,7 +40,7 @@ export default async function handler(req, res) {
       }
     }
 
-    return res.status(200).json({ ok: true, contactId: contact?.id || null });
+    return res.status(200).json({ ok: true, contactId: contact?.id || null, opportunityId });
   } catch (e) {
     console.error("GHL contact sync failed:", e.message, e.details ?? "");
     return res.status(200).json({ ok: false, error: e.message });

@@ -157,6 +157,9 @@ export default function ProductPage() {
     track(EVENTS.START_VISIT, { id: active.id, name: active.name, category: active.categorySlug });
     setErr("");
     setLoading(true);
+    // Drop any id left by an earlier visit, so a failed sync here can't leave
+    // the previous treatment's opportunity to be marked Paid by this checkout.
+    try { sessionStorage.removeItem("ghl_opportunity"); } catch { /* private mode */ }
     try {
       const res = await fetch("/api/mdi-auth", {
         method: "POST",
@@ -175,6 +178,10 @@ export default function ProductPage() {
       if (voucher.need_profile) return { needProfile: true };
       const profile = voucher.patient_profile || (patient?.first_name ? patient : null);
       if (profile?.email) {
+        // Not awaited — the CRM write must never hold up the handoff to intake.
+        // The opportunity id is stashed for the payment step, which moves that
+        // same record to the Paid stage. It lands long before checkout, which is
+        // several screens into the questionnaire.
         syncToGhl({
           patient: profile,
           treatment: treatmentLabel(active),
@@ -187,6 +194,9 @@ export default function ProductPage() {
             (patient?.consent?.accepted_at
               ? ` Accepted telehealth consent and terms at ${patient.consent.accepted_at}.`
               : ""),
+        }).then((r) => {
+          if (!r?.opportunityId) return;
+          try { sessionStorage.setItem("ghl_opportunity", r.opportunityId); } catch { /* private mode */ }
         });
       }
 

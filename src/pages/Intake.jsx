@@ -52,6 +52,34 @@ export default function IntakePage() {
     return () => clearTimeout(t);
   }, [payDemo, loaded, paid]);
 
+  /* Move the CRM opportunity to Paid the moment checkout completes. This fires
+     on `paid` alone — the team wants to see the card move immediately — whereas
+     the MDI release below has to wait for the case id as well. */
+  const marked = useRef(false);
+  useEffect(() => {
+    if (!paid || marked.current) return;
+    marked.current = true;
+
+    let opportunityId = null;
+    let payToken = null;
+    try {
+      opportunityId = sessionStorage.getItem("ghl_opportunity");
+      payToken = sessionStorage.getItem("mdi_release_token");
+    } catch { /* private mode */ }
+    if (!opportunityId) return;
+
+    // Swallowed on failure: a CRM write must never surface to the patient as a
+    // checkout error. The server logs the reason.
+    fetch("/api/ghl-paid", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ opportunity_id: opportunityId, release_token: payToken }),
+    }).catch((e) => console.error("GHL Paid move failed:", e.message));
+  }, [paid]);
+
+  /* Releasing the held case needs two facts that no longer arrive together:
+     payment (taken at "identification") and the case id (only known once MDI
+     emits encounter_created at submit, several screens later). */
   const released = useRef(false);
   useEffect(() => {
     if (!paid || !caseId || released.current) return;

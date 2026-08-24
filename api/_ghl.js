@@ -138,14 +138,10 @@ export async function upsertContact({ patient = {}, treatment, tags = [], source
   return contact;
 }
 
-// Which pipeline a visit lands in. Optional — with nothing set we take the
-// location's first pipeline and its first stage, which is right for a location
-// that only has one.
 const PIPELINE_NAME = process.env.GHL_PIPELINE_NAME || null;
 const STAGE_NAME = process.env.GHL_STAGE_NAME || null;
+const PAID_STAGE_NAME = process.env.GHL_PAID_STAGE_NAME || "Paid";
 
-// Resolved once per warm function instance: pipeline ids never change between
-// requests, and this saves a round trip on every visit.
 let pipelineCache = null;
 
 async function resolvePipeline() {
@@ -162,8 +158,31 @@ async function resolvePipeline() {
     (STAGE_NAME && stages.find((s) => s.name?.toLowerCase() === STAGE_NAME.toLowerCase())) || stages[0];
   if (!stage) throw new Error(`GHL pipeline "${pipeline.name}" has no stages.`);
 
-  pipelineCache = { pipelineId: pipeline.id, stageId: stage.id, label: `${pipeline.name} / ${stage.name}` };
+  // `stages` is kept so later moves (e.g. to Paid) resolve without a second call.
+  pipelineCache = {
+    pipelineId: pipeline.id,
+    stageId: stage.id,
+    stages,
+    pipelineName: pipeline.name,
+    label: `${pipeline.name} / ${stage.name}`,
+  };
   return pipelineCache;
+}
+
+export async function markOpportunityPaid(opportunityId) {
+  if (!opportunityId) return null;
+
+  const { stages, pipelineName } = await resolvePipeline();
+  const paid = stages.find((s) => s.name?.toLowerCase() === PAID_STAGE_NAME.toLowerCase());
+  if (!paid) {
+    throw new Error(`GHL pipeline "${pipelineName}" has no "${PAID_STAGE_NAME}" stage.`);
+  }
+
+  const data = await ghlFetch(`/opportunities/${opportunityId}`, {
+    method: "PUT",
+    body: { pipelineStageId: paid.id },
+  });
+  return data?.opportunity || null;
 }
 
 /* One opportunity per visit, hanging off the single patient contact — this is
