@@ -12,73 +12,12 @@ import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
 import { visibleProducts } from "../components/data/products";
 import { CATEGORY_META } from "../lib/categoryMeta";
+import { GOAL_ART } from "../lib/goalArt";
 import { track, EVENTS } from "../lib/analytics";
 
 const FAQ = lazy(() => import("../components/FAQ"));
 // Weight-loss only: the tool qualifies you for these treatments specifically.
 const BmiCalculator = lazy(() => import("../components/tools/BmiCalculator"));
-
-/* Cut-out art per goal (2026-08 design). Each is a square master anchored to the
-   card's right edge — see CutoutCard. The right-nudges are measured, not eyeballed:
-   the subject sits at a different left edge inside each square (weight 28%, recover
-   0%, longevity 17%, skin 8%, the pill pair 31%), and a square tall enough to fill
-   the card is wider than the space left of the copy. Shifting right by the shortfall
-   keeps every subject clear of the text block at the 3-up desktop width.
-
-   `motion` picks the card's hover layer and `figureMotion` the figure's own
-   restraint-level polish — both are plain CSS classes, see .nv-goal in index.css. */
-const CAT_ART = {
-  // Every square is now just over the card height, so none of them leave a band
-  // of bare tan at the top or bottom. The right offsets are derived, not picked:
-  // resizing a right-anchored square drags its subject sideways, so each one is
-  // the number that holds that subject where it was.
-  // `bg` is the client's exact per-card colour, so these are literal hex rather
-  // than palette tokens — they step lighter down the grid and that ramp is the
-  // design, not something derivable from --nv-accent. It overrides the .nv-goal
-  // fallback because Tailwind's utilities layer sorts after components.
-  "weight-loss": {
-    // Nudged ~2% further right than centre, per the comp.
-    cutout: "/site/goals/weightlossnobg.png",
-    cutoutClass: "-top-[2%] h-[104%] right-[-4%]",
-    bg: "bg-[#a2845d]",
-    motion: "arrow",
-  },
-  "mens-health": {
-    cutout: "/site/goals/sexual-wellness.avif",
-    cutoutClass: "-top-[6%] h-[112%] right-[-7%]",
-    bg: "bg-[#c1a27a]",
-    motion: "glow",
-    figureMotion: "float",
-  },
-  "unisex-sports-medicine": {
-    // His figure fills only the left ~59% of the square, so seating the square's
-    // left edge at the card's is what puts him in the left corner. Anchored with
-    // left-0, not a right-% — the square is sized off the card's *height* while a
-    // right-% resolves against its *width*, so one percentage cannot seat him left
-    // at both the 3-up card (315×320) and the 1-up phone card (~335×240).
-    cutout: "/site/goals/sportsmedperson.png",
-    cutoutClass: "-top-[1%] h-[102%] left-0",
-    bg: "bg-[#d1b995]",
-    motion: "spark",
-  },
-  "unisex-anti-aging-rx": {
-    cutout: "/site/goals/longevity.avif",
-    /* Pulled in from right-[-8%]: the new export is a taller, narrower portrait
-       than the one it replaced, and object-contain inside the square box leaves
-       margin either side, so at the old offset she floated off toward the right
-       edge instead of sitting against the copy. */
-    cutoutClass: "-top-[4%] h-[108%] right-[18%]",
-    bg: "bg-[#d1c0a0]",
-    motion: "orbs",
-  },
-  "unisex-skin-health": {
-    cutout: "/site/goals/glowing.png",
-    cutoutClass: "-top-[3%] h-[106%] right-[-4%]",
-    bg: "bg-[#ddd1b7]",
-    motion: "glow",
-    figureMotion: "zoom",
-  },
-};
 
 // Mirror the homepage funnels — each tile browses that goal's shoppable catalog.
 // The sixth cell closes the 2×3 grid and is the catch-all for anyone who doesn't
@@ -91,7 +30,7 @@ const TREATMENT_CATS = [
     cta: "Browse treatments",
     goal: CONSULTS[k].goalSlug,
     link: `/treatments/${CONSULTS[k].goalSlug}`,
-    ...(CAT_ART[CONSULTS[k].goalSlug] || {}),
+    ...(GOAL_ART[CONSULTS[k].goalSlug] || {}),
   })),
   {
     kind: "goal-cta",

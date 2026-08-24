@@ -6,15 +6,10 @@ import { CONSULTS, CONSULT_ORDER } from "../data/consultations";
 import { productsData, isHidden } from "../data/products";
 import { productPath } from "../../lib/slug";
 import { track, EVENTS } from "../../lib/analytics";
+import HomeHero from "./HomeHero";
 
 const EASE = [0.22, 0.61, 0.18, 1];
 
-/* Shelf artwork lives in /products/shelf/ rather than reusing the catalogue
-   images directly. Those are cropped inconsistently — one vial sits at 23% of its
-   canvas width, another fills 100% — so identical CSS rendered them at wildly
-   different sizes. Each file here is the same canvas with the subject at 88% of
-   the height, bottom-anchored, so every tile carries equal visual weight.
-   Regenerate with scratchpad/normalize.mjs if a product photo changes. */
 const FEATURED = {
   eyebrow: "Most Requested",
   title: "Tirzepatide",
@@ -23,10 +18,6 @@ const FEATURED = {
   img: "/products/tirzepatide.avif",
 };
 
-/* Every id here must be a LIVE product — a hidden one bounces the visitor straight
-   back off the product page. Rebuilt 2026-08-11 when the catalog was cut to the
-   client's 20-product list, which retired the Glutaryl, Copper, Sermorelin and
-   PT-141 tiles. One per live category, plus a second weight-loss form. */
 const SHELF = [
   { id: 1, label: "Metabolic health support", short: "Semaglutide", img: "/products/shelf/semaglutide.png" },
   { id: 16, label: "Cellular Vitality", short: "NAD+", img: "/products/shelf/nad-plus.png" },
@@ -591,7 +582,10 @@ function EditorialHero({ compact = false, forceWide = false }) {
 
 export default function HeroStage({ kioskVariant = null }) {
   if (kioskVariant === "desktop") return <EditorialHero forceWide />;
-  return <EditorialHero compact={!!kioskVariant} />;
+  // Kiosk keeps the editorial hero — it is built for a portrait screen with no
+  // pointer. Everything else gets the 2026-08 home hero.
+  if (kioskVariant) return <EditorialHero compact />;
+  return <HomeHero />;
 }
 
 /* Kiosk hero — unchanged: photo backdrop + the client-selected card layout. */
