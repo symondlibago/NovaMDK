@@ -24,6 +24,7 @@ import ProductJourney from "../components/product/ProductJourney";
 import ProductWhy from "../components/product/ProductWhy";
 import NadSupport from "../components/product/NadSupport";
 import NadDirected from "../components/product/NadDirected";
+import NadSublingual from "../components/product/NadSublingual";
 
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
@@ -91,6 +92,8 @@ export default function ProductPage() {
   const categoryLabel = product.categoryName;
   const active = product;
   const otc = isOtc(product);
+  const isNad = /nad\+/i.test(product.name);
+  const isSublingual = /sublingual/i.test(product.name);
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
   const seenTitle = new Set();
   const related = visibleProducts
@@ -344,8 +347,12 @@ export default function ProductPage() {
 
       {/* NAD+ only — every line of copy names it. Matched on the product name so
           the injection, its dose ladder and the sublingual tablet all carry it. */}
-      {/nad\+/i.test(product.name) && <NadSupport />}
-      {/nad\+/i.test(product.name) && <NadDirected />}
+      {/* NAD+ editorial, split by format. The sublingual tablet gets its own
+          block; May Support and Provider-Directed are the injection's — their
+          copy and photography are about an injected treatment. */}
+      {isNad && isSublingual && <NadSublingual />}
+      {isNad && !isSublingual && <NadSupport />}
+      {isNad && !isSublingual && <NadDirected />}
 
       <ProductMechanism product={active} />
       {product.howItWorks && (

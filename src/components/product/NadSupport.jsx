@@ -1,60 +1,67 @@
 import React from "react";
+import { Check, Home } from "lucide-react";
 import Reveal from "../ui/Reveal";
 
-/**
- * "NAD+ May Support" — the four-card bento below the NAD+ product hero.
- *
- * Mobile-first: one column of stacked cards on a phone, and the comp's bento
- * only assembles from lg up, where there is room for a 3-column grid with the
- * tall card spanning both rows.
- *
- * Colours are the comp's literal brass ramp rather than --nv-* tokens, the same
- * call the other 2026-08 sections make: the sand card and its two-tone copy are
- * specified exactly and would drift the moment anyone touched the Design Studio.
- */
 
-const SAND = "#ece2d2";
-const INK = "#5c4a2a";
-const SOFT = "#b7a184";
-
-/* Each line is split rather than written as one string: the comp sets the first
-   clause in the dark brass and lets the rest fall away to the soft tan, which is
-   what gives the block its rhythm. `lead` is the dark half, `tail` the light. */
-const CARDS = {
-  energy: {
-    lead: "Supports your body's",
-    tail: " natural energy processes",
-    img: "/site/nad/may-support-energy.avif",
-  },
-  wellness: {
-    lead: "Supports overall wellness",
-    tail: " and feeling energized",
-    img: "/site/nad/may-support-wellness.avif",
-  },
-  cellular: {
-    lead: "Plays an important role in",
-    tail: " normal cellular function",
-    img: "/products/nad-plus.avif",
-  },
-  longterm: {
-    lead: "Supports the natural processes",
-    tail: " involved in long-term wellness",
-    img: "/site/nad/may-support-longterm.avif",
-  },
-};
+const GOLD = "#c2922f";
+const CREAM = "#f2e6d2";
+const CREAM_SOFT = "rgba(242,230,210,0.82)";
 
 const CARD_R = "rounded-[calc(20px*var(--nv-r-scale,1))]";
-const FRAME_R = "rounded-[calc(16px*var(--nv-r-scale,1))]";
 
-function Copy({ lead, tail, className = "" }) {
+/* The two assurances on the injection card. Facts the catalogue already states —
+   a provider directs the dose, and it is administered at home. */
+const ASSURANCES = [
+  { label: "Provider-guided", Icon: Check },
+  { label: "At-home use", Icon: Home },
+];
+
+/* Short gold rule above the label, as in the comp — it is what separates the
+   eyebrow from the photograph behind it. */
+function Eyebrow({ children }) {
   return (
-    <p
-      className={`font-display text-[clamp(1rem,2.4vw,1.15rem)] font-semibold leading-[1.45] ${className}`}
-      style={{ color: INK }}
+    <span className="block">
+      <span className="mb-2 block h-px w-7" style={{ background: GOLD }} aria-hidden="true" />
+      <span className="block font-mono text-[0.56rem] uppercase tracking-[0.18em] sm:text-[0.6rem]" style={{ color: GOLD }}>
+        {children}
+      </span>
+    </span>
+  );
+}
+
+function Title({ children, className = "" }) {
+  return (
+    <h3
+      className={`nv-weight-keep font-display text-[clamp(1.05rem,2.4vw,1.3rem)] font-extrabold leading-[1.2] drop-shadow-[0_2px_10px_rgba(30,18,6,0.75)] ${className}`}
+      style={{ color: CREAM }}
     >
-      {lead}
-      <span style={{ color: SOFT }}>{tail}</span>
+      {children}
+    </h3>
+  );
+}
+
+function Body({ children, className = "" }) {
+  return (
+    <p className={`text-[0.82rem] leading-relaxed drop-shadow-[0_1px_8px_rgba(30,18,6,0.7)] ${className}`} style={{ color: CREAM_SOFT }}>
+      {children}
     </p>
+  );
+}
+
+function PhotoCard({ img, objectClass = "object-center", children, className = "", delay = 0 }) {
+  return (
+    <Reveal as="div" delay={delay} className={`h-full ${className}`}>
+      <div className={`relative flex h-full flex-col overflow-hidden p-5 sm:p-6 ${CARD_R}`}>
+        <img
+          src={img}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className={`absolute inset-0 h-full w-full object-cover ${objectClass}`}
+        />
+        <div className="relative z-10 flex h-full flex-col">{children}</div>
+      </div>
+    </Reveal>
   );
 }
 
@@ -63,91 +70,106 @@ export default function NadSupport() {
     <section className="py-[clamp(2.5rem,5vw,4.5rem)]" style={{ background: "#faf8f4" }}>
       <div className="mx-auto max-w-[1180px] px-5 md:px-10">
         <Reveal>
-          <h2 className="text-center font-display text-[clamp(1.6rem,5vw,2.6rem)] font-extrabold leading-tight">
-            <span style={{ color: SOFT }}>NAD+</span>{" "}
-            <span style={{ color: INK }}>May Support</span>
-          </h2>
+          {/* The droplet sits beside the heading, not above it — one flex row so
+              the pair stays centred together at any width. */}
+          <div className="flex items-center justify-center gap-4 sm:gap-6">
+            <h2 className="font-display text-[clamp(1.6rem,5vw,2.6rem)] font-extrabold leading-tight">
+              <span style={{ color: "#b7a184" }}>NAD+</span>{" "}
+              <span style={{ color: "#5c4a2a" }}>May Support</span>
+            </h2>
+            <img
+              src="/site/anti-aging/ways-droplet.avif"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              className="nv-float h-[clamp(2.2rem,5vw,3.4rem)] w-auto object-contain"
+            />
+          </div>
         </Reveal>
 
         {/* One column on a phone; the bento only makes sense once there are three
-            columns to hang it on, so the tall card's row-span waits for lg. */}
-        <div className="mt-[clamp(1.75rem,4vw,3rem)] grid gap-4 lg:grid-cols-3 lg:gap-6">
-          {/* ---- tall: framed photo above the copy, two rows from lg ---- */}
-          <Reveal as="div" className="h-full lg:row-span-2">
-            <div className={`flex h-full flex-col gap-5 p-5 sm:p-6 ${CARD_R}`} style={{ background: SAND }}>
-              <span className={`relative block aspect-[0.87] w-full overflow-hidden ${FRAME_R}`}>
-                <img
-                  src={CARDS.energy.img}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </span>
-              <Copy lead={CARDS.energy.lead} tail={CARDS.energy.tail} className="mt-auto max-w-[22ch]" />
+            columns to hang it on, so the portrait's row-span waits for lg. The
+            column ratio is the comp's own 336:285:288. */}
+        <div className="mt-[clamp(1.75rem,4vw,3rem)] grid gap-3.5 lg:grid-cols-[1.17fr_1fr_1fr]">
+          {/* ---- portrait: two rows from lg, copy at the top ---- */}
+          <PhotoCard
+            img="/site/nad/support-portrait.avif"
+            objectClass="object-[60%_center]"
+            className="lg:row-span-2"
+          >
+            <div className="min-h-[15rem] sm:min-h-[19rem] lg:min-h-[26rem]">
+              <Title>Naturally Part of You</Title>
+              <span className="mt-2 block h-px w-7" style={{ background: GOLD }} aria-hidden="true" />
+              <Body className="mt-3 max-w-[24ch]">NAD+ is found in every cell in your body</Body>
             </div>
-          </Reveal>
+          </PhotoCard>
 
-          {/* ---- wellness: arm cut-out standing on the card, no photo frame ---- */}
-          <Reveal as="div" delay={0.06} className="h-full">
-            <div
-              className={`relative flex h-full min-h-[11rem] items-start overflow-hidden p-5 sm:p-6 ${CARD_R}`}
-              style={{ background: SAND }}
-            >
-              <Copy lead={CARDS.wellness.lead} tail={CARDS.wellness.tail} className="relative z-10 max-w-[15ch]" />
-              <img
-                src={CARDS.wellness.img}
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                className="pointer-events-none absolute bottom-0 right-0 h-[112%] w-auto max-w-none object-contain object-bottom"
-              />
+          {/* ---- cellular energy ---- */}
+          <PhotoCard img="/site/nad/support-cells.avif" delay={0.06}>
+            <div className="min-h-[11rem] sm:min-h-[13rem]">
+              <Eyebrow>Cellular energy</Eyebrow>
+              <Title className="mt-2 max-w-[14ch]">Energy starts inside the cell</Title>
+              <Body className="mt-3 max-w-[26ch]">
+                NAD+ is involved in processes your cells use to produce energy
+              </Body>
             </div>
-          </Reveal>
+          </PhotoCard>
 
-          {/* ---- cellular: the vial floats on the sand, same as the comp ---- */}
-          <Reveal as="div" delay={0.12} className="h-full">
-            <div
-              className={`relative flex h-full min-h-[11rem] items-start overflow-hidden p-5 sm:p-6 ${CARD_R}`}
-              style={{ background: SAND }}
-            >
-              <Copy lead={CARDS.cellular.lead} tail={CARDS.cellular.tail} className="relative z-10 max-w-[15ch]" />
-              {/* Tilted, as in the comp — the one product shot in the section, so
-                  the lean is what stops it reading like a catalogue cut-out. */}
-              <img
-                src={CARDS.cellular.img}
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                className="pointer-events-none absolute bottom-[8%] right-[4%] h-[84%] w-auto max-w-none rotate-[12deg] object-contain object-bottom"
-              />
-            </div>
-          </Reveal>
-
-          {/* ---- long-term: wide card, framed photo to the right ---- */}
-          <Reveal as="div" delay={0.18} className="h-full lg:col-span-2">
-            <div
-              className={`flex h-full flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:gap-7 ${CARD_R}`}
-              style={{ background: SAND }}
-            >
-              <Copy
-                lead={CARDS.longterm.lead}
-                tail={CARDS.longterm.tail}
-                className="max-w-[24ch] lg:flex-1"
-              />
+          {/* ---- the injection itself: the one card whose art is a product ---- */}
+          <PhotoCard img="/site/nad/support-ground.avif" delay={0.12}>
+            <div className="relative flex min-h-[11rem] flex-col sm:min-h-[13rem]">
+              <Title>NAD+ Injection</Title>
+              {/* The rule belongs to the title here, so the label below it is a
+                  bare one rather than another <Eyebrow> with a second rule. */}
+              <span className="mb-2 mt-2 block h-px w-7" style={{ background: GOLD }} aria-hidden="true" />
               <span
-                className={`relative block aspect-[1.56] w-full overflow-hidden lg:w-[48%] ${FRAME_R}`}
+                className="block font-mono text-[0.56rem] uppercase tracking-[0.18em] sm:text-[0.6rem]"
+                style={{ color: GOLD }}
               >
-                <img
-                  src={CARDS.longterm.img}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+                Prescription treatment
               </span>
+
+              <img
+                src="/products/nad-plus.avif"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="pointer-events-none absolute -right-[12%] -top-[2%] h-[118%] w-auto max-w-none rotate-[10deg] object-contain drop-shadow-[0_16px_26px_rgba(30,18,6,0.55)]"
+              />
+
+              <ul className="mt-auto flex flex-col gap-2 pt-6">
+                {ASSURANCES.map((a) => (
+                  <li key={a.label} className="flex items-center gap-2.5">
+                    <span
+                      className="grid h-4 w-4 shrink-0 place-items-center rounded-full border"
+                      style={{ borderColor: GOLD, color: GOLD }}
+                    >
+                      <a.Icon size={9} strokeWidth={3.2} />
+                    </span>
+                    <span className="text-[0.76rem]" style={{ color: CREAM_SOFT }}>
+                      {a.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </Reveal>
+          </PhotoCard>
+
+          {/* ---- beyond energy: wide, under the two above ---- */}
+          <PhotoCard
+            img="/site/nad/support-hands.avif"
+            objectClass="object-right"
+            delay={0.18}
+            className="lg:col-span-2"
+          >
+            <div className="min-h-[9rem] sm:min-h-[10.5rem]">
+              <Eyebrow>Beyond energy</Eyebrow>
+              <Title className="mt-2 max-w-[18ch]">Part of everyday cellular function</Title>
+              <Body className="mt-3 max-w-[38ch]">
+                plays a role in cellular signaling and processes associated with healthy aging
+              </Body>
+            </div>
+          </PhotoCard>
         </div>
       </div>
     </section>

@@ -26,7 +26,10 @@ export default function ProductWhy() {
         </h2>
       </Reveal>
 
-      <ul className="mt-[clamp(2rem,4vw,3.25rem)] grid gap-10 sm:grid-cols-3">
+      {/* Three across at every width, phones included — stacked they turned a
+          three-line trust row into most of a screen's scroll. The icon and the
+          label step down on small screens so the row still fits. */}
+      <ul className="mt-[clamp(1.5rem,4vw,3.25rem)] grid grid-cols-3 gap-3 sm:gap-10">
         {POINTS.map((p, i) => (
           <Reveal as="li" key={p.label} delay={0.06 * i} className="flex flex-col items-center text-center">
             <img
@@ -34,9 +37,11 @@ export default function ProductWhy() {
               alt=""
               aria-hidden="true"
               loading="lazy"
-              className="h-24 w-24 object-contain"
+              className="h-14 w-14 object-contain sm:h-20 sm:w-20 lg:h-24 lg:w-24"
             />
-            <span className="mt-5 text-[1rem] leading-snug text-[#6d6152]">{p.label}</span>
+            <span className="mt-3 text-[0.78rem] leading-snug text-[#6d6152] sm:mt-5 sm:text-[1rem]">
+              {p.label}
+            </span>
           </Reveal>
         ))}
       </ul>

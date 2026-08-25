@@ -10,14 +10,9 @@ import { QuickViewModal } from "./ProductCard";
 import TreatmentCard from "./TreatmentCard";
 import WeightLossSections from "./WeightLossSections";
 import AntiAgingSections from "./AntiAgingSections";
+import SexualHealthSections from "./SexualHealthSections";
 import BackButton from "../ui/BackButton";
 
-/* Column count follows the card count instead of being pinned at 4. A fixed
-   lg:grid-cols-4 gave weight-loss — which is two program cards — a quarter of the
-   row each and two empty columns, which is what made the cards read as thin. The
-   max-width caps how far a short row is allowed to stretch, so two cards land
-   near their natural size rather than half a page wide each. Static strings, not
-   interpolation: Tailwind scans source text and never sees a built class name. */
 const GRID = {
   1: "lg:grid-cols-1 max-w-[420px]",
   2: "sm:grid-cols-2 lg:grid-cols-2 max-w-[760px]",
@@ -49,21 +44,6 @@ export default function TreatmentShop({ category, showBack = false }) {
     productsData.find((p) => p.categorySlug === category)?.categoryName ||
     "";
 
-  /* One flat grid now. A program contributes a single card at its starting dose,
-     and every vial that program covers drops out of the listing so the same
-     treatment isn't sold twice on one page. Categories with no programs are
-     simply all one-offs.
-
-     A dose ladder outside a program (NAD+ Injection, LDN) collapses the same
-     way: only the Starter rung gets a card. Listing all three read as three
-     different treatments when it is one treatment titrated up, and the rung a
-     patient starts on is the provider's call, not a shelf choice.
-
-     A ladder whose base name is already on the shelf as a standalone product
-     drops out completely rather than collapsing. Anti-Aging carries both a
-     once-weekly NAD+ Injection and a separate three-times-weekly ramp that
-     shares the name, so collapsing would print "NAD+ Injection" twice at two
-     prices. The ramp stays live at its own URL; it just isn't a second card. */
   const programs = programsFor(category);
   const inProgram = programProductIds(category);
   const standalone = new Set(products.filter((p) => !stageOf(p)).map((p) => baseName(p)));
@@ -75,10 +55,6 @@ export default function TreatmentShop({ category, showBack = false }) {
       .map(productItem),
   ];
 
-  // Safety net only. Categories with nothing shoppable are commented out of the
-  // nav, footer, carousel and categoryMeta, and Treatments.jsx redirects their
-  // URLs — so this should never render. It exists so a stray link degrades to a
-  // sentence rather than a blank page.
   if (!products.length) {
     return (
       <section id="shop" className="scroll-mt-24 bg-surface-2 pb-[clamp(2.5rem,5.5vw,5rem)] pt-2">
@@ -179,6 +155,11 @@ export default function TreatmentShop({ category, showBack = false }) {
       {/* Anti-aging only — the copy names NAD+. Same startTo contract. */}
       {category === "unisex-anti-aging-rx" && cards[0] && (
         <AntiAgingSections startTo={cards[0].startTo} />
+      )}
+
+      {/* Men's health only — the copy is sexual-health specific. Same contract. */}
+      {category === "mens-health" && cards[0] && (
+        <SexualHealthSections startTo={cards[0].startTo} />
       )}
 
       <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />

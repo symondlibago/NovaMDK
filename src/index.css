@@ -358,10 +358,41 @@
     to   { opacity: 1; transform: scale(1); }
   }
 
+  .nv-cap .nv-cap__fill { width: 0; }
+  .nv-cap .nv-cap__pill { left: 0; opacity: 0; }
+  .nv-cap.is-in .nv-cap__fill {
+    animation: nv-cap-fill 1600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .nv-cap.is-in .nv-cap__pill {
+    animation: nv-cap-travel 1600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes nv-cap-fill { from { width: 0; } to { width: 72%; } }
+  @keyframes nv-cap-travel {
+    from { left: 0; opacity: 0; }
+    14%  { opacity: 1; }
+    to   { left: 72%; opacity: 1; }
+  }
+  .nv-arc .nv-arc__line { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .nv-arc.is-in .nv-arc__line {
+    animation: nv-arc-draw 1800ms cubic-bezier(0.33, 0, 0.2, 1) both;
+  }
+  @keyframes nv-arc-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
   .nv-marquee { animation: nv-marquee 38s linear infinite; will-change: transform; }
   @keyframes nv-marquee {
     from { transform: translate3d(0, 0, 0); }
     to   { transform: translate3d(-50%, 0, 0); }
+  }
+
+  /* Sexual-health chip rows. Same seam-free trick as .nv-marquee — the set is
+     rendered twice and the track shifted by half its width — but the two rows
+     run opposite ways, so the second needs its own keyframes rather than a
+     negative duration, which is not a thing. */
+  .nv-chiprow--rtl { animation: nv-marquee 42s linear infinite; will-change: transform; }
+  .nv-chiprow--ltr { animation: nv-marquee-rev 42s linear infinite; will-change: transform; }
+  @keyframes nv-marquee-rev {
+    from { transform: translate3d(-50%, 0, 0); }
+    to   { transform: translate3d(0, 0, 0); }
   }
 
   .nv-goal {
