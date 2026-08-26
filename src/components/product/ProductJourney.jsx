@@ -8,25 +8,16 @@ import { programItem } from "../../lib/programCard";
 import Reveal from "../ui/Reveal";
 import TreatmentCard from "../shop/TreatmentCard";
 
-/**
- * "From assessment to ongoing care" — the four-step journey carousel and the
- * brass cross-sell beneath it (2026-08 product comp).
- *
- * The steps are the same story the homepage and treatments page tell, worded to
- * the comp. Rx only: an OTC product has no assessment or physician review, so
- * ProductPage gates this rather than the component describing a flow that does
- * not apply.
- */
 const STEPS = [
   {
     title: "Your Care Starts Here",
     text: "Tell us about your health history, current medications, and treatment goals through a guided online assessment",
-    img: "/products/detail/journey-assessment.avif",
+    img: "/products/detail/journey-assessment.png",
   },
   {
     title: "Physician Review",
     text: "A licensed physician reviews your information and determines whether treatment is medically appropriate for you",
-    img: "/products/detail/journey-review.avif",
+    img: "/products/detail/journey-review.png",
   },
   {
     title: "Your Treatment Is Prepared",
@@ -36,27 +27,13 @@ const STEPS = [
   {
     title: "Ongoing Care",
     text: "Stay supported with follow-ups, treatment guidance, and refill management as your plan continues",
-    // No photography supplied for this step yet. Deliberately left null rather
-    // than borrowing a stock frame: the carousel wraps, so a stand-in does not
-    // sit quietly at the end — it lands in the slot beside the active step and
-    // reads as one of the real ones. Set the path and it joins the rotation.
-    img: null,
+    img: "/products/detail/journey-ongoing.png",
   },
 ];
 
 const SLIDES = STEPS.filter((s) => s.img);
-
-// How long each step holds before the strip advances on its own.
 const AUTOPLAY_MS = 2000;
-
-/* A neighbouring step: shorter than the active frame, dropped below its top edge,
-   tucked a little behind it, and veiled toward the outer edge. Inert and hidden
-   from assistive tech — it is a preview of where an arrow leads, and the live
-   region under the carousel announces the step actually selected. */
 function SideFrame({ index, side }) {
-  // The veil deepens toward the ACTIVE frame, not toward the outer edge: each
-  // neighbour is brightest where it enters the row and dissolves as it runs
-  // under the selected step.
   const toCentre = side === "left" ? "to right" : "to left";
   return (
     <span
@@ -113,10 +90,6 @@ export default function ProductJourney({ product }) {
   }, []);
 
   const autoplaying = !paused && !reduceMotion && n > 1;
-
-  /* A timeout re-armed on every change rather than one long-lived interval:
-     clicking an arrow then gets a full hold on the step it landed on, instead
-     of inheriting whatever was left of the current tick. */
   useEffect(() => {
     if (!autoplaying) return;
     const t = setTimeout(() => setI((v) => (v + 1) % n), AUTOPLAY_MS);
@@ -146,15 +119,6 @@ export default function ProductJourney({ product }) {
           </Link>
         </div>
       </Reveal>
-
-      {/* Carousel. The two side frames are previews of what the arrows lead to,
-          so they are inert and hidden from assistive tech — the live region below
-          announces the step that is actually selected. */}
-      {/* The side frames sit lower than the active one and carry a white scrim
-          that deepens toward the outer edge, so the row reads as depth rather
-          than three equal thumbnails. The scrim is mixed from --nv-bg rather
-          than a literal white, so it stays the page's own colour if the palette
-          is changed in the Design Studio. */}
       <div
         className="relative mt-[clamp(2rem,4vw,3.25rem)]"
         onMouseEnter={() => setPaused(true)}
@@ -162,28 +126,13 @@ export default function ProductJourney({ product }) {
         onFocusCapture={() => setPaused(true)}
         onBlurCapture={() => setPaused(false)}
       >
-        {/* The arrows are gone, but their gutter stays: it is what holds the
-            three frames at the width the comp sets. Navigation moved to the
-            dots under the caption. */}
         <div className="flex items-start justify-center px-12 sm:px-16">
           <SideFrame index={(i - 1 + n) % n} side="left" />
-
-          {/* 32 + 36 + 32 fills the row exactly, and the side frames pull 8px
-              under the active one — so the three sit tight against each other
-              instead of leaving slack between them. */}
           <div className="relative z-10 w-full sm:w-[36%]">
             {/* Step number, straddling the frame's left edge as in the comp. */}
             <span className="absolute -left-7 -top-6 z-10 grid h-14 w-14 place-items-center rounded-full bg-[#8a6a33] font-display text-[1.35rem] font-bold text-[#ffe8b1]">
               {i + 1}
             </span>
-            {/* Border sits directly on the photo — no padding, no mount. The
-                images are cropped to their photo bounds so it lands flush; the
-                originals carried 20% of dead canvas top and bottom, which is
-                what used to hold the rule off the picture.
-
-                Same stack-and-dissolve as the neighbours: the box keeps the
-                frame's height so nothing reflows, and the outgoing photo holds
-                underneath while the incoming one comes up over it. */}
             <div className="relative h-49 sm:h-55">
               {SLIDES.map((s, k) => (
                 <img
@@ -204,10 +153,6 @@ export default function ProductJourney({ product }) {
         </div>
       </div>
 
-      {/* Announced only while the patient is the one advancing it. A region that
-          changes on its own every two seconds would have a screen reader talking
-          over everything else on the page; autoplay pauses the moment focus
-          lands inside the strip, and the live region comes back with it. */}
       <div
         className="mx-auto mt-7 max-w-[42ch] text-center"
         aria-live={autoplaying ? "off" : "polite"}
@@ -216,10 +161,6 @@ export default function ProductJourney({ product }) {
         onFocusCapture={() => setPaused(true)}
         onBlurCapture={() => setPaused(false)}
       >
-        {/* Was a hairline rule. Now that the arrows are gone these dots are the
-            strip's only control, so they are real buttons rather than a passive
-            readout: auto-advancing content needs some way to be steered and
-            stopped, and hovering or focusing them holds the rotation. */}
         <div className="flex items-center justify-center gap-2.5">
           {SLIDES.map((s, k) => (
             <button

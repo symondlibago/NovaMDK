@@ -2,36 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Reveal from "../ui/Reveal";
-
-/**
- * The card used across every treatment category listing (2026-08 design).
- *
- * One card = one thing a patient can start. For a subscription program that's
- * the program itself, shown at its starting dose only — the Starter / Mid-Dose /
- * Maintenance ladder is no longer surfaced here, so the card never implies the
- * patient is choosing a rung. For everything else it's the individual product.
- *
- * Colours are the client's literal palette rather than --nv-* tokens: the comp
- * specifies this exact brass ramp, and deriving it from the runtime accent would
- * drift the moment anyone touches the Design Studio.
- */
-/* `compact` is the product-page cross-sell: same card, tightened so two of them
-   sit inside the brass panel without towering over it. The listing keeps the
-   default, so nothing on /treatments moves. */
 export default function TreatmentCard({ item, delay = 0, floatDelay = 0, onViewDetails, compact = false }) {
   return (
     <Reveal as="div" delay={delay} className="h-full">
       <div
-        /* overflow-hidden is load-bearing: it clips the Subscription tab to the
-           card's own top-left radius, which is what makes it read as a corner tab
-           rather than a pill sitting on top of the card. */
         className={`group relative flex h-full flex-col overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] border-2 border-[#b39355] transition-all duration-300 hover:-translate-y-1 hover:border-[#8f7136] nv-shadow hover:nv-shadow-lg ${compact ? "pt-9 pr-4 pb-4 pl-4" : "pt-11 pr-5 pb-5 pl-5"}`}
-        /* Left to right, per the comp — cream on the leading edge warming into
-           the tan on the trailing one. */
         style={{ background: "linear-gradient(90deg, #ffffff 0%, #e4d2b8 100%)" }}
       >
-        {/* Flush corner tab, not a floating pill. Only programs get one — it's
-            what tells an ongoing plan apart from a one-time vial. */}
         {item.ribbon && (
           <span
             className={`absolute left-0 top-0 rounded-br-[14px] font-semibold text-white ${compact ? "px-3 py-1 text-[0.62rem]" : "px-4 py-1.5 text-[0.74rem]"}`}

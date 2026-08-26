@@ -12,10 +12,10 @@ import { productPath } from "../../lib/slug";
 // the consultation quiz. Slugs mirror the treatment catalog + questionnaires.
 const KIOSK_MENU = [
   { label: "Anti Aging", goal: "unisex-anti-aging-rx", consult: "longevity" },
-  { label: "Sexual Health", goal: "mens-health", consult: "intimacy" },
+  { label: "Sexual Health", goal: "sexual-health", consult: "intimacy" },
   { label: "Weight Loss", goal: "weight-loss", consult: "weight-loss" },
   { label: "Skin Health", goal: "unisex-skin-health", consult: "skin" },
-  { label: "Sport Medicine", goal: "unisex-sports-medicine", consult: "recovery" },
+  { label: "Sport Medicine", goal: "sports-medicine", consult: "recovery" },
 ];
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -25,8 +25,8 @@ const treatmentItems = [
   { name: "Weight Loss", img: "/products/tirzepatide.avif", link: "/treatments/weight-loss" },
   { name: "Anti-Aging", img: "/products/nad-plus.avif", link: "/treatments/unisex-anti-aging-rx" },
   { name: "Skin Health", img: "/products/luminance.avif", link: "/treatments/unisex-skin-health" },
-  { name: "Sexual Health", img: "/products/olympus-peak.avif", link: "/treatments/mens-health" },
-  { name: "Sports Medicine", img: "/products/ldn.avif", link: "/treatments/unisex-sports-medicine" },
+  { name: "Sexual Health", img: "/products/olympus-peak.avif", link: "/treatments/sexual-health" },
+  { name: "Sports Medicine", img: "/products/ldn.avif", link: "/treatments/sports-medicine" },
 ];
 
 /* The peptide molecule menu listed the LUVIRA sub-lines (Semaglutide, BPC-157,

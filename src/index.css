@@ -306,10 +306,51 @@
     }
   }
 
+  /* The claims used to be guillotined at 42% — a hard edge standing in open
+     brass a little to the left of the bottle, which read as a clipping bug
+     rather than as one passing behind the glass. The occlusion is the bottle's
+     halo now (see SublingualBanner), so the ramp is placed to dissolve with it
+     rather than to cut on its own.
+
+     The claims travel right to left, so the bottle is the end of their run, not
+     something they pass through — nothing survives to its left. The ramp starts
+     inside the glass and finishes where the halo's own fade reaches, which is
+     what makes them go behind the bottle instead of under a line.
+
+     The padding is what carries the highlighted claim: this element is exactly
+     one chip tall, so a chip scaled past 1 had its top and bottom sheared off by
+     the overflow clip. It also has to clear the lit chip's glow, not just its
+     border. */
   .nv-nadtrack {
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 42%, #000 53%, #000 96%, transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0%, transparent 42%, #000 53%, #000 96%, transparent 100%);
+    padding-block: 1.75rem;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 46%, #000 66%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, transparent 46%, #000 66%, #000 92%, transparent 100%);
   }
+
+  /* Sports-medicine recovery row. The cards on either end are meant to be half
+     gone, and the comp dissolves them rather than cutting them — so the fade is
+     a mask on the scroller itself, symmetric, and tight enough that the three in
+     the middle stay at full strength. */
+  .nv-fanrow {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 17%, #000 83%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 17%, #000 83%, transparent 100%);
+  }
+
+  /* Sports-medicine tick fan. Each dash grows out of the arc rather than fading
+     in, so the fan reads as being struck outward from the heading. */
+  .nv-ticks .nv-ticks__tick { opacity: 0; transform: scale(0.7); transform-box: fill-box; transform-origin: 50% 100%; }
+  .nv-ticks.is-in .nv-ticks__tick {
+    animation: nv-tick-strike 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes nv-tick-strike {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* The claims row carries half again as many chips as it used to, so it needs
+     its own duration: .nv-marquee crosses half the track in a fixed time, which
+     means a wider set travels proportionally faster for free. */
+  .nv-marquee--claims { animation: nv-marquee 54s linear infinite; will-change: transform; }
 
   .nv-figfade {
     -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
@@ -382,6 +423,76 @@
   @keyframes nv-marquee {
     from { transform: translate3d(0, 0, 0); }
     to   { transform: translate3d(-50%, 0, 0); }
+  }
+
+  /* Slower sibling for the weight-loss closing band, where the pattern is a
+     backdrop rather than content: at 38s it reads as a passing train. */
+  .nv-marquee--slow { animation: nv-marquee 90s linear infinite; will-change: transform; }
+
+  /* The chip the sublingual marquee has carried to the middle of the band.
+     Which one that is can only be measured, so the class is toggled from JS;
+     everything about how it looks lives here. */
+  .nv-midchip {
+    transition:
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 420ms ease,
+      background-color 420ms ease,
+      box-shadow 420ms ease,
+      border-color 420ms ease;
+  }
+  /* Lit rather than zoomed: at 1.28 the capsule's own border grew with it and
+     read as a different, larger design element parked mid-row. */
+  .nv-midchip.is-mid {
+    transform: scale(1.12);
+    color: #fff6dd;
+    border-color: rgba(255, 240, 204, 0.9);
+    background: rgba(255, 232, 177, 0.1);
+    box-shadow: 0 0 26px rgba(255, 232, 177, 0.28);
+  }
+
+  /* Featured pillar's bar chart. transform-box: fill-box is what lets an SVG
+     rect take a percentage transform-origin off its own bounds rather than the
+     viewport's, so each bar grows from its own foot. */
+  .nv-bars .nv-bars__bar { transform: scaleY(0); transform-box: fill-box; transform-origin: 50% 100%; }
+  .nv-bars .nv-bars__trend { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .nv-bars.is-in .nv-bars__bar {
+    animation: nv-bars-rise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .nv-bars.is-in .nv-bars__trend {
+    animation: nv-bars-trend 900ms cubic-bezier(0.33, 0, 0.2, 1) both;
+  }
+  @keyframes nv-bars-rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes nv-bars-trend { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+  /* Sublingual 1–4 list. The steps run off the same gate as the trails between
+     them rather than off four separate Reveals: two in-view clocks on a list
+     this tall let a trail wipe down to a step that had not arrived yet. */
+  .nv-steps .nv-steps__item { opacity: 0; transform: translateY(18px); }
+  .nv-steps.is-in .nv-steps__item {
+    animation: nv-steps-item 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes nv-steps-item {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* The dots are a repeating background, so the trail is wiped in with the mask
+     rather than scaled — a scaleY would stretch every dot into a dash on the
+     way down. */
+  .nv-steps .nv-steps__trail {
+    -webkit-mask-image: linear-gradient(180deg, #000, #000);
+    mask-image: linear-gradient(180deg, #000, #000);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 0%;
+    mask-size: 100% 0%;
+  }
+  .nv-steps.is-in .nv-steps__trail {
+    animation: nv-steps-trail 520ms cubic-bezier(0.33, 0, 0.2, 1) both;
+  }
+  @keyframes nv-steps-trail {
+    from { -webkit-mask-size: 100% 0%; mask-size: 100% 0%; }
+    to   { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
   }
 
   /* Sexual-health chip rows. Same seam-free trick as .nv-marquee — the set is
@@ -636,7 +747,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nv-kenburns, .nv-bob, .nv-float, .nv-marquee { animation: none !important; }
+  .nv-kenburns, .nv-bob, .nv-float, .nv-marquee, .nv-marquee--slow, .nv-marquee--claims { animation: none !important; }
+  /* Drawn, not drawing. */
+  .nv-bars .nv-bars__bar, .nv-bars .nv-bars__trend { animation: none !important; }
+  .nv-bars .nv-bars__bar { transform: none !important; }
+  .nv-bars .nv-bars__trend { stroke-dashoffset: 0 !important; }
+  .nv-steps .nv-steps__trail { animation: none !important; -webkit-mask-image: none !important; mask-image: none !important; }
+  .nv-steps .nv-steps__item { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .nv-ticks .nv-ticks__tick { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .nv-midchip.is-mid { transform: none !important; }
   /* Swapped content arrives in place rather than fading up. */
   .nv-fade-in, .nv-fade-slow { animation: none !important; }
   /* The bars and labels arrive already in place rather than relay-running. */

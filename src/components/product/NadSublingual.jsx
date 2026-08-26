@@ -14,6 +14,11 @@ const STEPS = [
   { n: "4", title: "Continue Your Day", body: "No needles, syringes, or injection preparation" },
 ];
 
+/* Was 0.1 + i * 0.12, which relayed all four through in under half a second and
+   read as one block arriving rather than a sequence. */
+const STEP_LEAD = 0.15;
+const STEP_GAP = 0.55;
+
 const DOTTED_RULE = {
   backgroundImage: "radial-gradient(circle, rgba(244,227,193,0.85) 1.6px, transparent 1.7px)",
   backgroundSize: "4px 8px",
@@ -23,6 +28,7 @@ const DOTTED_RULE = {
 
 export default function NadSublingual({ startTo = "/start" }) {
   const [capRef, capIn] = useRunOnceInView("-80px");
+  const [stepsRef, stepsIn] = useRunOnceInView("-80px");
 
   return (
     <section className="py-[clamp(2rem,4vw,3.5rem)]" style={{ background: "#faf8f4" }}>
@@ -55,12 +61,16 @@ export default function NadSublingual({ startTo = "/start" }) {
               <div className="h-[clamp(2.6rem,6vw,3.4rem)] w-full overflow-hidden rounded-full border border-[#f4e3c1]/55 bg-[#f4e3c1]/35">
                 <span className="nv-cap__fill block h-full rounded-full bg-[#6f5622]" />
               </div>
-              <img
-                src="/products/nad-sublingual.avif"
-                alt=""
-                aria-hidden="true"
-                className="nv-cap__pill pointer-events-none absolute top-1/2 h-[clamp(5rem,12vw,7.5rem)] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 rotate-[14deg] object-contain drop-shadow-[0_10px_18px_rgba(70,50,20,0.4)]"
-              />
+              <span className="nv-cap__pill pointer-events-none absolute top-1/2 block -translate-x-1/2 -translate-y-1/2">
+                <span className="nv-float block">
+                  <img
+                    src="/products/nad-sublingual.avif"
+                    alt=""
+                    aria-hidden="true"
+                    className="block h-[clamp(5rem,12vw,7.5rem)] w-auto max-w-none rotate-[14deg] object-contain drop-shadow-[0_10px_18px_rgba(70,50,20,0.4)]"
+                  />
+                </span>
+              </span>
             </div>
 
             <div className="mt-3 flex items-center justify-between text-[0.82rem] font-semibold" style={{ color: CREAM }}>
@@ -102,7 +112,10 @@ export default function NadSublingual({ startTo = "/start" }) {
               >
                 NAD+ Without the Injection
               </h2>
-              <div className="relative mt-6 aspect-[442/340] w-full max-w-[13rem] overflow-hidden sm:mt-8 sm:max-w-[21rem]">
+              {/* The float goes on the frame, not the image inside it: the image
+                  is blown up to 249% and pulled back into place, so a transform
+                  on it would drift the art out from under the crop. */}
+              <div className="nv-float relative mt-6 aspect-[442/340] w-full max-w-[13rem] overflow-hidden sm:mt-8 sm:max-w-[21rem]">
                 <img
                   src="/site/goals/sexual-wellness.avif"
                   alt=""
@@ -112,13 +125,19 @@ export default function NadSublingual({ startTo = "/start" }) {
                 />
               </div>
             </Reveal>
-            <ol className="flex flex-col">
+            <ol ref={stepsRef} className={`nv-steps flex flex-col ${stepsIn ? "is-in" : ""}`}>
               {STEPS.map((s, i) => (
-                <Reveal as="li" key={s.n} delay={0.1 + i * 0.12} className="relative flex gap-5 pb-9 last:pb-0">
+                <li
+                  key={s.n}
+                  className="nv-steps__item relative flex gap-5 pb-9 last:pb-0"
+                  style={{ animationDelay: `${STEP_LEAD + i * STEP_GAP}s` }}
+                >
                   {i < STEPS.length - 1 && (
                     <span
-                      className="absolute bottom-0 left-5 top-12 w-1 -translate-x-1/2"
-                      style={DOTTED_RULE}
+                      /* Wipes down from this circle to the next, running ahead of
+                         the step it leads to. */
+                      className="nv-steps__trail absolute bottom-0 left-5 top-12 w-1 -translate-x-1/2"
+                      style={{ ...DOTTED_RULE, animationDelay: `${STEP_LEAD + i * STEP_GAP + 0.42}s` }}
                       aria-hidden="true"
                     />
                   )}
@@ -136,7 +155,7 @@ export default function NadSublingual({ startTo = "/start" }) {
                       {s.body}
                     </p>
                   </span>
-                </Reveal>
+                </li>
               ))}
             </ol>
           </div>
@@ -154,9 +173,9 @@ export default function NadSublingual({ startTo = "/start" }) {
         </div>
 
         {/* ------------------------ how it is taken ------------------------ */}
-        <div className="mt-[clamp(2.5rem,6vw,4rem)] grid items-center gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] lg:gap-14">
+        <div className="mt-[clamp(2.5rem,6vw,4rem)] grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <Reveal as="div">
-            <div className="relative aspect-[0.89] w-full max-w-[26rem] overflow-hidden rounded-[calc(20px*var(--nv-r-scale,1))]">
+            <div className="relative aspect-[0.89] w-full max-w-[34rem] overflow-hidden rounded-[calc(20px*var(--nv-r-scale,1))]">
               <img
                 src="/site/nad/sublingual-taken.avif"
                 alt=""
@@ -169,11 +188,9 @@ export default function NadSublingual({ startTo = "/start" }) {
           <Reveal as="div" delay={0.08}>
             {/* Two flat colours, no ramp: the comp sets the first clause in the
                 soft tan and lands the qualifier in the deeper brass. */}
-            <p className="nv-weight-keep max-w-[26ch] font-display text-[clamp(1.3rem,3.4vw,2rem)] font-extrabold leading-[1.22]">
-              <span style={{ color: "#c3a67a" }}>
-                Sublingual describes how the medication is taken,
-              </span>{" "}
-              <span style={{ color: "#7a5f36" }}>not just what form it comes in</span>
+            <p className="nv-weight-keep max-w-[24ch] font-display text-[clamp(1.35rem,3.6vw,2.15rem)] font-extrabold leading-[1.22]">
+              <span style={{ color: "#c3a67a" }}>A convenient treatment format</span>{" "}
+              <span style={{ color: "#7a5f36" }}>made for everyday use</span>
             </p>
           </Reveal>
         </div>

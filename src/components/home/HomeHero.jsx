@@ -62,10 +62,6 @@ const VIDEO_SCRIM =
 const SPOT_SCRIM =
   "linear-gradient(96deg, rgba(42,29,10,0.8) 0%, rgba(42,29,10,0.62) 34%, rgba(42,29,10,0.4) 60%, rgba(42,29,10,0.22) 82%, rgba(42,29,10,0.12) 100%)";
 
-/* The comp fills the headline with a radial ramp from the top-left rather than
-   colouring one word — dark brass at the origin out to light tan, which is why
-   "care" reads lighter than "Modern Health". Clipped to the glyphs, so the text
-   itself has to be transparent for it to show. */
 const TITLE_FILL = "radial-gradient(circle at 0% 0%, #6b511e, #d9c797)";
 
 const CARD_R = "rounded-[calc(20px*var(--nv-r-scale,1))]";
@@ -225,11 +221,6 @@ function Tile({ item, delay }) {
             {item.label}
           </span>
         </span>
-        {/* Sized off the comp, not eyeballed: there the bottle is ~30% of the
-            tile's width and about 1.9x its height, so it runs off the floor and
-            only its head and shoulder show. The shelf masters put the subject in
-            the bottom 88% of a 400x700 canvas, so reaching that bottle size
-            means a canvas ~215% of the tile height, lifted 12% above its top. */}
         <span className="relative w-24 shrink-0 self-stretch sm:w-28">
           <img
             src={item.img}
@@ -305,11 +296,6 @@ export default function HomeHero() {
             <span className="block font-mono text-[0.6rem] uppercase tracking-[0.22em] text-primary sm:text-[0.68rem]">
               Physician-guided care
             </span>
-            {/* "care" lifts to the accent inside "Healthcare" — the comp's own
-                touch, and the reason this is one <h1> with a span rather than
-                two lines of markup. */}
-            {/* The ramp is on "Healthcare," alone — the rest of the line is the
-                gradient's own dark end, so the two read as one colour family. */}
             <h1
               className="nv-weight-keep mt-3 max-w-[15ch] text-[clamp(1.85rem,7.4vw,3.05rem)] font-extrabold leading-[1.1] tracking-[-0.015em] lg:max-w-[16ch]"
               style={{ color: "#6b511e" }}

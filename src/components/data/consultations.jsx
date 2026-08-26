@@ -68,7 +68,7 @@ export const CONSULTS = {
     blurb: "Discreet, doctor-backed treatment delivered to your door.",
     Icon: Heart,
     img: "/site/menpill.avif",
-    goalSlug: "mens-health",
+    goalSlug: "sexual-health",
     steps: [
       { t: "intro", eyebrow: "Sexual Health", title: "Let’s talk about better intimacy.",
         body: "These questions are private, judgment-free, and reviewed only by a licensed provider. About 2 minutes.", cta: "Begin" },
@@ -98,7 +98,7 @@ export const CONSULTS = {
     blurb: "Targeted, doctor-guided recovery — less downtime, fewer re-injuries.",
     Icon: Activity,
     img: "/site/sportpill.avif",
-    goalSlug: "unisex-sports-medicine",
+    goalSlug: "sports-medicine",
     steps: [
       { t: "intro", eyebrow: "Sports Medicine", title: "Let’s get you recovering faster.",
         body: "A few questions about your body and how you move, so we can target the right support. About 2 minutes.", cta: "Begin" },

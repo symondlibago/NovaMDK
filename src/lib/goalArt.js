@@ -9,7 +9,7 @@ export const GOAL_ART = {
     heroBg: "#a2845d",
     motion: "arrow",
   },
-  "mens-health": {
+  "sexual-health": {
     cutout: "/site/goals/sexual-wellness.avif",
     cutoutClass: "-top-[6%] h-[112%] right-[-7%]",
     hero: "/site/goals/sexual-wellness.avif",
@@ -19,7 +19,7 @@ export const GOAL_ART = {
     motion: "glow",
     figureMotion: "float",
   },
-  "unisex-sports-medicine": {
+  "sports-medicine": {
     cutout: "/site/goals/sportsmedperson.png",
     cutoutClass: "-top-[1%] h-[102%] left-0",
     hero: "/site/goals/sportsmedperson.png",

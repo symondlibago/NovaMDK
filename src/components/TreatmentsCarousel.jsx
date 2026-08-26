@@ -10,8 +10,8 @@ const CATEGORIES = [
   { name: "Weight & Metabolism", img: "/site/weight-metabolism.avif", goal: "weight-loss" },
   { name: "Dermatology", img: "/site/dermatology.avif", goal: "unisex-skin-health" },
   { name: "Longevity & Anti-Aging", img: "/site/mens-health.avif", goal: "unisex-anti-aging-rx" },
-  { name: "Sexual Health", img: "/site/sexual-health.avif", goal: "mens-health" },
-  { name: "Sports Medicine", img: "/site/pain-recovery.avif", goal: "unisex-sports-medicine" },
+  { name: "Sexual Health", img: "/site/sexual-health.avif", goal: "sexual-health" },
+  { name: "Sports Medicine", img: "/site/pain-recovery.avif", goal: "sports-medicine" },
 ];
 
 export default function Treatments() {

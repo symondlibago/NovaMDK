@@ -239,12 +239,58 @@ function FocusRow() {
   );
 }
 
+/* ----------------------------- 4. closing band ---------------------------- */
+
+function ExploreBand({ startTo }) {
+  return (
+    <div className="mx-auto max-w-[1320px] px-5 pb-[clamp(3rem,6vw,5rem)] md:px-10">
+      <Reveal>
+        <div
+          className={`relative flex min-h-[clamp(21rem,48vw,33rem)] items-end justify-center overflow-hidden px-6 pb-[clamp(2rem,4.5vw,3.5rem)] ${CARD_R}`}
+          /* A vertical ramp, not the radial the other closing bands use: this
+             one is darkest along the top and opens out into the light tan at the
+             floor, which is what lets the couple's legs disappear into it. */
+          style={{
+            background:
+              "linear-gradient(180deg, #ad8f56 0%, #b59660 38%, #c9ad78 72%, #dcc08d 100%)",
+          }}
+        >
+          {/* The export is trimmed to the couple's own bounds, so it can simply
+              be sized by height and stood on the band's floor — no inset to
+              compensate for. .nv-bandfade dissolves them into the gradient from
+              about the waist down, as the comp does. */}
+          <img
+            src="/site/sexual-health/explore-couple.avif"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="nv-bandfade pointer-events-none absolute bottom-0 left-1/2 h-[88%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom"
+          />
+
+          <div className="relative z-10 text-center">
+            <h2 className="nv-weight-keep mx-auto max-w-[12ch] font-display text-[clamp(1.75rem,4.4vw,3.1rem)] font-extrabold leading-[1.12] text-[#f0dcac]">
+              Explore Sexual Health
+            </h2>
+            <Link
+              to={startTo}
+              className="mt-5 inline-flex rounded-full border border-[#f0dcac]/60 px-7 py-2.5 text-[0.9rem] font-medium text-[#f0dcac] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#f0dcac]/10"
+            >
+              Begin Your Journey
+            </Link>
+          </div>
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
 export default function SexualHealthSections({ startTo = "/start" }) {
   return (
     <div style={{ background: "#faf8f4" }}>
       <ConfidenceStage startTo={startTo} />
       <OverallWellness />
       <FocusRow />
+      <ExploreBand startTo={startTo} />
     </div>
   );
 }

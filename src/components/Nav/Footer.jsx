@@ -46,8 +46,8 @@ export default function Footer() {
               <li><Link to="/treatments/weight-loss" className={link}>Weight Loss</Link></li>
               <li><Link to="/treatments/unisex-anti-aging-rx" className={link}>Anti-Aging</Link></li>
               <li><Link to="/treatments/unisex-skin-health" className={link}>Skin Health</Link></li>
-              <li><Link to="/treatments/mens-health" className={link}>Sexual Health</Link></li>
-              <li><Link to="/treatments/unisex-sports-medicine" className={link}>Sports Medicine</Link></li>
+              <li><Link to="/treatments/sexual-health" className={link}>Sexual Health</Link></li>
+              <li><Link to="/treatments/sports-medicine" className={link}>Sports Medicine</Link></li>
             </ul>
           </div>
 

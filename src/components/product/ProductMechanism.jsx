@@ -1,44 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Reveal from "../ui/Reveal";
 import useRunOnceInView from "../../lib/useRunOnceInView";
 
 const barWidth = (i, n) => `${34 + (i * 22) / Math.max(1, n - 1)}%`;
 const BAR_FILL = 0.75;
 const LABEL_LEAD = 0.55;
-
-/* ---------------------------------------------------------------------------
-   Callout layout (semaglutide comp): centred heading, the vial in the middle of
-   the diagram, and labelled wires running in to it from either side.
-
-   Positions live here rather than in the catalogue because they are composition,
-   not content — the copy is reviewed, where a line happens to land is not. They
-   are percentages of the diagram box, which is why the SVG is a 0–100 grid with
-   preserveAspectRatio="none": the wires then track the labels at any width, and
-   non-scaling-stroke keeps the hairline a hairline through the squash.
-   --------------------------------------------------------------------------- */
-/* Read off the comp and normalised to the box: its content spans 145–735px of a
-   904px canvas, mapped here to 4%–96%. The diagonal is deliberately short and
-   steep (about 27 degrees over ~7% of the width) — run long and shallow it stops
-   reading as a bend at all and the wire just looks like it trails off. */
 const WIRES = [
   { label: "left-[4%] top-[12%] text-left", points: "4,20 26,20 33,32" },
-  { label: "left-[14%] top-[66%] text-left", points: "14,74 37,74 44,62" },
-  { label: "right-[4%] top-[32%] text-right", points: "96,40 70,40 61,46" },
+  { label: "left-[14%] top-[66%] text-left", points: "14,74 32,74 39,62" },
+  { label: "right-[4%] top-[32%] text-right", points: "96,40 71,40 62,46" },
 ];
 
 const LABEL = "text-[0.78rem] font-bold uppercase leading-tight tracking-[0.12em] text-[#ffe8b1]";
 
-/* The render is a 2000x2000 canvas with the bottle occupying the middle 36% of
-   its width and 82.8% of its height, so a plain <img> lays out far larger than
-   the visible glass. The box below is the bottle's true aspect and the image is
-   blown up to 1 / 0.828 inside it, landing the bottle's own bounds on the box.
-   Re-measure if the render is re-exported. */
 function Vial({ src, className = "" }) {
   return (
-    /* Two spans on purpose: nv-float animates `transform`, so it cannot share an
-       element with the centring -translate-x-1/2 the caller passes in — the
-       keyframes would overwrite it and the vial would sit off-centre. Outer box
-       positions, inner box floats. */
     <span className={`pointer-events-none block aspect-721/1656 ${className}`}>
       <span className="nv-float relative block h-full w-full">
         <img
@@ -94,10 +70,6 @@ function CalloutDiagram({ m, product }) {
               pathLength="1"
               fill="none"
               stroke="rgba(255,232,177,0.55)"
-              /* No non-scaling-stroke: it puts the dash pattern in screen space,
-                 so the dasharray of 1 that draws the line became 1px on, 1px off
-                 and every wire rendered dotted. In user units the box is 100 tall
-                 against 250px, so 0.4 lands a 1px hairline. */
               strokeWidth="0.4"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -143,10 +115,22 @@ function CalloutDiagram({ m, product }) {
    the width, so its delay is that same fraction of the run and the dot lights as
    the line arrives. */
 const RAIL_S = 1.6;
+/* Dwell on each stop before moving to the next, per the comp's note. Long
+   enough to read the sentence under it, which is the point of the highlight. */
+const RAIL_HOLD_MS = 3000;
 
 function TimelineRail({ m }) {
   const [ref, running] = useRunOnceInView();
   const n = m.timeline.length;
+  const [active, setActive] = useState(0);
+
+  /* Starts only once the rail has drawn itself in — lighting stops on a section
+     nobody has reached yet would mean the cycle is mid-lap by the time it is. */
+  useEffect(() => {
+    if (!running) return undefined;
+    const t = setInterval(() => setActive((v) => (v + 1) % n), RAIL_HOLD_MS);
+    return () => clearInterval(t);
+  }, [running, n]);
 
   return (
     <div className="mt-[clamp(2.5rem,5vw,4rem)]">
@@ -163,29 +147,49 @@ function TimelineRail({ m }) {
           className="nv-rail__line absolute left-0 top-1.5 hidden h-px w-full bg-white/25 lg:block"
         />
         <ol className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-          {m.timeline.map((t, i) => (
-            <li key={t.label} className="relative lg:pt-9">
-              <span
-                aria-hidden="true"
-                className="nv-rail__dot absolute left-0 top-0 hidden h-3 w-3 rounded-full bg-[#ffe8b1] lg:block"
-                style={{
-                  animationDelay: `${(i / n) * RAIL_S}s`,
-                  // First stop carries a halo, as in the comp: it is where the
-                  // sequence starts, not a state that changes.
-                  boxShadow: i === 0 ? "0 0 20px 7px rgba(255,232,177,0.4)" : undefined,
-                }}
-              />
-              <span
-                className="nv-rail__item block"
-                style={{ animationDelay: `${(i / n) * RAIL_S + 0.12}s` }}
-              >
-                <span className={`block ${LABEL}`}>{t.label}</span>
-                <span className="mt-2 block max-w-[28ch] text-[0.9rem] leading-snug text-[#ffe8b1]/85">
-                  {t.text}
+          {m.timeline.map((t, i) => {
+            const on = i === active;
+            return (
+              <li key={t.label} className="relative lg:pt-9">
+                {/* Two spans: the entry keyframes end on `transform: none` with a
+                    `both` fill, so a scale on this element would be wiped the
+                    moment the dot has arrived. Outer one arrives, inner one
+                    carries the highlight. */}
+                <span
+                  aria-hidden="true"
+                  className="nv-rail__dot absolute left-0 top-0 hidden h-3 w-3 lg:block"
+                  style={{ animationDelay: `${(i / n) * RAIL_S}s` }}
+                >
+                  <span
+                    className="block h-full w-full rounded-full bg-[#ffe8b1] transition-all duration-500 ease-out"
+                    style={{
+                      transform: on ? "scale(1.4)" : "scale(1)",
+                      boxShadow: on ? "0 0 20px 7px rgba(255,232,177,0.4)" : "none",
+                    }}
+                  />
                 </span>
-              </span>
-            </li>
-          ))}
+                <span
+                  className="nv-rail__item block"
+                  style={{ animationDelay: `${(i / n) * RAIL_S + 0.12}s` }}
+                >
+                  {/* Dimmed by colour rather than opacity: the entry animation
+                      owns opacity and its `both` fill would win. */}
+                  <span
+                    className={`block transition-colors duration-500 ${LABEL}`}
+                    style={{ color: on ? "#fff6dd" : "rgba(255,232,177,0.55)" }}
+                  >
+                    {t.label}
+                  </span>
+                  <span
+                    className="mt-2 block max-w-[28ch] text-[0.9rem] leading-snug transition-colors duration-500"
+                    style={{ color: on ? "rgba(255,232,177,0.95)" : "rgba(255,232,177,0.55)" }}
+                  >
+                    {t.text}
+                  </span>
+                </span>
+              </li>
+            );
+          })}
         </ol>
       </div>
     </div>
@@ -217,18 +221,6 @@ export default function ProductMechanism({ product }) {
             )}
           </Reveal>
           <Reveal as="div" delay={0.06} className="relative z-10 hidden lg:block lg:-mr-7 lg:justify-self-end">
-            {/* Explicit width, not w-full: the grid track is `auto` and the only
-                child here is absolutely positioned, so there is no intrinsic width
-                anywhere in the chain for a percentage to resolve against and the
-                box collapses to zero.
-
-                The render is a square canvas with the vial occupying about the
-                middle 41% of its width, so a plain <img> lays out ~2.4x wider than
-                the visible bottle — that transparent margin was the gap between
-                the vial and the panel. This box is the bottle's true size and the
-                image is blown up to 244% (1 / 0.41) inside it, landing the
-                bottle's own bounds on the box. Re-measure the pair together if the
-                render is re-exported. */}
             <span className="nv-float pointer-events-none relative block aspect-138/297 w-44">
               <img
                 src={product.img}

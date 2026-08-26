@@ -19,7 +19,11 @@ const CURVE = `M ${POINTS[0].x} ${POINTS[0].y} C 31 47, 41 39, ${POINTS[1].x} ${
 const DRAW_MS = 1400;
 const STEP_MS = 260;
 const FILL_AT = DRAW_MS * 0.5;
-const CARD_ASPECT = "sm:aspect-[0.85]";
+/* The pair below runs the full width of the wide card above, so the two rows
+   share one left and right edge as the comp sets them. That makes each card
+   roughly half the block wide, hence a landscape aspect: at the old portrait
+   0.85 a full-width card would be taller than the viewport. */
+const CARD_ASPECT = "sm:aspect-[1.18] lg:aspect-[1.5]";
 
 function PhotoCard({ img, title, children, className = "", delay = 0, glass = false, veil = true }) {
   const shadow = veil
@@ -37,7 +41,10 @@ function PhotoCard({ img, title, children, className = "", delay = 0, glass = fa
           alt=""
           aria-hidden="true"
           loading="lazy"
-          className={`absolute inset-0 h-full w-full ${veil ? "object-cover" : "object-contain object-bottom"}`}
+          /* The un-veiled art is a cut-out on transparency, so it is contained
+             rather than cropped — and anchored right once the card goes
+             landscape, which is the side the comp stands her on. */
+          className={`absolute inset-0 h-full w-full ${veil ? "object-cover" : "object-contain object-bottom sm:object-bottom-right"}`}
         />
         {veil && <span className="pointer-events-none absolute inset-0" style={{ background: VEIL }} />}
         {glass && (
@@ -126,9 +133,8 @@ export default function NadDirected() {
           </div>
         </Reveal>
 
-        {/* Capped narrower than the wide card above it — at the full 1180 the two
-            cards could not be this tall without becoming enormous. */}
-        <div className="mx-auto mt-4 grid max-w-[980px] gap-4 sm:grid-cols-2 lg:gap-6">
+        {/* Flush with the wide card above: same container, no cap of its own. */}
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:gap-6">
           {/* No veil: the scrim was shifting this photograph's colour, and the
               comp's warmth is the shot's own. */}
           <PhotoCard img="/site/nad/care-injectable.avif" title="Injectable Format" veil={false}>

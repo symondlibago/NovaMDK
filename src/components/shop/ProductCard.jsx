@@ -8,18 +8,10 @@ import { productPath } from "../../lib/slug";
 import { ComplianceBadges } from "../Compliance";
 import { getLenis } from "../../lib/smoothScroll";
 
-// Shared by the treatment category listings and the supplements shelf so a
-// product looks identical wherever it appears.
+
 const EASE = [0.16, 1, 0.3, 1];
 
-// Tube/cream renders sit small inside a landscape frame — scale them up in the card.
 const isTube = (img = "") => /rapamycintropical|ghcku/.test(img);
-
-// Most branded GLP-1 pens are tall portrait renders, so object-contain fits them
-// to the frame's height and leaves half its width empty. Scaled less than the
-// tubes above: growth here is vertical too, and the frame has no room to spare.
-// Zepbound is deliberately absent — its render is near-square, so it already
-// fills the frame and scaling it just overflows.
 const isPen = (img = "") => /mounjaro|ozempic|wegovy/.test(img);
 
 export function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {

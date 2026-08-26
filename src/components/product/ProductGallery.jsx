@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Info } from "lucide-react";
 
-/* Product image gallery with thumbnails (2026-08 comp).
-
-   Most products carry two real assets: `img` (a transparent cut-out render) and
-   `imgDetail` (a photo with its own backdrop). Those two need opposite treatment
-   in the frame — a cut-out gets centred and multiplied onto the frame with a
-   pedestal shadow, a photo fills edge to edge — so each frame tracks its own kind
-   rather than the product's. */
-
-/* Stand-ins so the strip shows the comp's three frames until the real product
-   photography lands. Category lifestyle shots were deliberately kept out of this
-   gallery before now — next to a vial they read as "here is another view of the
-   product", which they are not — so pull these back out the moment the real
-   frames arrive rather than leaving them as the shipped gallery. */
 const PLACEHOLDER_FRAMES = ["/products/gallery/clinical.jpg", "/products/gallery/telehealth.jpg"];
 const TARGET_FRAMES = 3;
 
@@ -28,16 +15,8 @@ function framesFor(product) {
   };
 
   add(product.imgDetail, true);
-  // Extra photography for this specific product, in authored order.
   for (const src of product.imgGallery || []) add(src, true);
-
-  // The cut-out render is a fallback, not a gallery frame: next to real
-  // photography it reads as the same vial again on a flat bed. It only appears
-  // for products that have no photography of their own.
   if (!frames.length) add(product.img, false);
-
-  // Stand-ins only pad a product that has no photography of its own yet — a
-  // product with an imgGallery shows its real frames and nothing borrowed.
   if (!product.imgGallery?.length) {
     for (const src of PLACEHOLDER_FRAMES) {
       if (frames.length >= TARGET_FRAMES) break;
@@ -50,9 +29,6 @@ function framesFor(product) {
 export default function ProductGallery({ product, categoryLabel }) {
   const frames = framesFor(product);
   const [i, setI] = useState(0);
-
-  // Switching dose rungs swaps the product under us; reset to its first frame
-  // rather than leaving the viewer on a stale index.
   useEffect(() => { setI(0); }, [product.id]);
 
   const active = frames[Math.min(i, frames.length - 1)] || { src: product.img, photo: false };
@@ -63,9 +39,6 @@ export default function ProductGallery({ product, categoryLabel }) {
         className={`group/img relative flex min-h-90 items-center justify-center overflow-hidden rounded-[calc(26px*var(--nv-r-scale,1))] md:min-h-140 ${
           active.photo ? "" : "p-7 md:p-10"
         }`}
-        /* Warm tan bed rather than white: the comp's cut-out frames sit on the
-           same ground as the photo frames, so switching thumbnails no longer
-           flashes the panel from tan to white. */
         style={active.photo ? undefined : { background: "linear-gradient(145deg, #e6d9c3 0%, #d8c6a8 100%)" }}
       >
         {/* pedestal shadow — only grounds a cut-out; a photo has its own */}

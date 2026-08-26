@@ -1,10 +1,4 @@
 import React from "react";
-// `rx={false}` for the non-prescription retail line — labelling an OTC product
-// "Rx only" would be plainly wrong, so it gets the opposite badge instead.
-/* `size="lg"` is the product-hero treatment from the 2026-08 comp: bigger, and
-   both chips in the comp's brass rather than ink-on-white and grey. The default
-   stays the compact chip every card and listing already uses, so this is purely
-   additive — nothing outside the product hero moves. */
 const CHIP_LG = "gap-2 border-[#b47f2f]/45 px-3.5 py-1.5 text-[0.66rem] tracking-[0.1em] text-[#b47f2f]";
 const CHIP_SM =
   "gap-1 border-line px-2 py-0.5 text-[0.5rem] tracking-[0.08em] sm:gap-1.5 sm:px-2.5 sm:py-1 sm:text-[0.58rem] sm:tracking-[0.1em]";

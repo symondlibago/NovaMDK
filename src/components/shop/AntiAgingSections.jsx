@@ -1,22 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
 import Reveal from "../ui/Reveal";
 import ProductJourney from "../product/ProductJourney";
 import { visibleProducts } from "../data/products";
 import { stageOf } from "../../lib/catalog";
-
-/**
- * The editorial block below the anti-aging product grid (2026-08 design).
- *
- * Anti-aging only — the copy names NAD+ — so TreatmentShop renders it behind a
- * category check, the same way it gates WeightLossSections.
- *
- * Colours are the client's literal palette rather than --nv-* tokens: the comp
- * specifies this brass ramp exactly, and deriving it from the runtime accent
- * would drift the moment anyone touches the Design Studio.
- */
-
 const STEPS = [
   {
     title: "Complete Your Health Check-In",
@@ -38,11 +26,6 @@ const STEPS = [
   },
 ];
 
-/* Cheapest NAD+ injection actually listed on this shelf, so the quoted starting
-   price cannot drift from what the cards charge. Scoped to injections — the
-   comp's figure is the injection's — and to unstaged products, since the dose
-   ladder is filtered out of the listing and its rungs are not a price a patient
-   can pick. Falls back to no figure at all rather than to a guess. */
 function nadFromPrice() {
   const prices = visibleProducts
     .filter(
@@ -60,7 +43,14 @@ function nadFromPrice() {
 /* The claims that ride past the bottle. Kept to product facts the catalogue
    already states — sublingual, so needle-free; prescription, so provider
    guided — rather than outcomes. */
-const MARQUEE = ["Energy Support", "Needle-Free", "Easy Routine", "Provider Guided"];
+const MARQUEE = [
+  "Energy Support",
+  "Needle-Free",
+  "Easy Routine",
+  "Provider Guided",
+  "Dissolves Under the Tongue",
+  "At-Home or On the Go",
+];
 
 /* ProductJourney reads only these two fields off what it is handed. */
 const JOURNEY_CATEGORY = {
@@ -223,9 +213,6 @@ function Benefits() {
     >
       <div className="grid items-center gap-x-12 gap-y-8 lg:grid-cols-[minmax(0,0.62fr)_minmax(0,1fr)]">
         <Reveal as="div">
-          {/* Capped rather than stretched: the pills read as buttons at roughly a
-              phrase's width, and a full-column pill made the label float in a
-              lake of brass. Left-aligned so they stack against the column edge. */}
           <ul className="flex w-full max-w-[21rem] flex-col gap-3">
             {BENEFITS.map((b, i) => {
               const on = i === active;
@@ -278,11 +265,6 @@ function Benefits() {
               </p>
             </div>
 
-            {/* Cut-outs on transparency, so each figure stands on the card's own
-                gradient rather than carrying a rectangle of studio backdrop that
-                nearly — but not quite — matched it. Sized by height and anchored
-                to the floor; the four were shot at different crops, so `scale`
-                normalises how large a head reads from one tab to the next. */}
             <div className="relative mt-6 h-[clamp(18rem,34vw,29rem)]">
               {BENEFITS.map((b, i) => (
                 <img
@@ -310,11 +292,6 @@ function ExploreBand({ startTo }) {
   return (
     <div className="mx-auto max-w-[1520px] px-4 pt-[clamp(2.5rem,6vw,4.5rem)] md:px-6">
       <Reveal>
-        {/* Proportions read off the comp rather than picked: the band there is
-            about 1.67:1, the figure fills 96% of its height and the heading runs
-            a bit over a third of its width. The tall min-height is what makes
-            the other two land — at the old 2.7:1 the same percentages produced a
-            much smaller man on a much wider strip. */}
         <div
           className="relative flex min-h-[clamp(24rem,58vw,52rem)] items-end justify-center overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] px-6 pb-[clamp(2.5rem,5vw,4rem)]"
           style={{ background: "radial-gradient(circle at 50% 45%, #c8ab7e, #a2814a)" }}
@@ -344,32 +321,84 @@ function ExploreBand({ startTo }) {
     </div>
   );
 }
+function useMidChip(hostRef, focus = 0.78) {
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || typeof IntersectionObserver === "undefined") return undefined;
+
+    let raf = 0;
+    let lit = null;
+
+    const clear = () => {
+      if (lit) lit.classList.remove("is-mid");
+      lit = null;
+    };
+
+    const tick = () => {
+      const box = host.getBoundingClientRect();
+      const target = box.left + box.width * focus;
+      let best = null;
+      let bestGap = Number.POSITIVE_INFINITY;
+      host.querySelectorAll("[data-nv-chip]").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const gap = Math.abs(r.left + r.width / 2 - target);
+        if (gap < bestGap) {
+          bestGap = gap;
+          best = el;
+        }
+      });
+      if (best !== lit) {
+        clear();
+        if (best) best.classList.add("is-mid");
+        lit = best;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (!raf) raf = requestAnimationFrame(tick);
+      } else if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        clear();
+      }
+    });
+    io.observe(host);
+
+    return () => {
+      io.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+      clear();
+    };
+  }, [hostRef, focus]);
+}
 
 function SublingualBanner() {
+  const bandRef = useRef(null);
+  useMidChip(bandRef);
+
   return (
     <div className="mx-auto max-w-[1520px] px-4 pt-[clamp(2.5rem,6vw,4.5rem)] md:px-6">
       <Reveal>
         <div
-          className="relative min-h-[clamp(19rem,34vw,30rem)] overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] px-7 py-9 sm:px-11 sm:py-12"
+          ref={bandRef}
+          className="relative min-h-[clamp(17rem,26vw,24rem)] overflow-hidden rounded-[calc(30px*var(--nv-r-scale,1))] px-7 py-9 sm:px-11 sm:py-12"
           style={{ background: "radial-gradient(circle at 50% 50%, #c1a27a, #9a7843)" }}
         >
           <h2 className="relative z-20 max-w-[10ch] font-display text-[clamp(1.5rem,3vw,2.3rem)] font-extrabold leading-[1.14] text-[#ffe8b1]">
             NAD+ Sublingual Tablet
           </h2>
-
-          {/* Track first, bottle second: the claims run underneath it, so one
-              slides behind the glass exactly as the comp shows. The mask is
-              transparent across the left half, which is what makes them vanish
-              at the bottle instead of carrying on into the heading. */}
           <div className="nv-nadtrack pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 overflow-hidden">
-            <div className="nv-marquee flex w-max">
+            <div className="nv-marquee--claims flex w-max">
               {[0, 1].map((copy) => (
-                <div key={copy} className="flex shrink-0 items-center gap-5 pr-5 sm:gap-7 sm:pr-7">
+                <div key={copy} className="flex shrink-0 items-center gap-4 pr-4 sm:gap-6 sm:pr-6">
                   {MARQUEE.map((label) => (
                     <span
                       key={label}
+                      data-nv-chip=""
                       aria-hidden={copy === 1 ? "true" : undefined}
-                      className="whitespace-nowrap rounded-full border border-[#ffe8b1]/45 px-6 py-2.5 text-[clamp(0.95rem,1.6vw,1.4rem)] text-[#ffe8b1]"
+                      className="nv-midchip whitespace-nowrap rounded-full border border-[#ffe8b1]/40 px-5 py-2 text-[clamp(0.85rem,1.15vw,1.08rem)] text-[#ffe8b1]/85"
                     >
                       {label}
                     </span>
@@ -378,10 +407,18 @@ function SublingualBanner() {
               ))}
             </div>
           </div>
+          <span
+            className="pointer-events-none absolute left-1/2 top-1/2 z-12 aspect-[1.2] h-[92%] w-auto -translate-x-1/2 -translate-y-1/2"
+            aria-hidden="true"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 50%, #c2a37b 0%, #c2a37b 34%, rgba(194,163,123,0.72) 56%, rgba(194,163,123,0) 78%)",
+            }}
+          />
 
           {/* Two elements: nv-float writes `transform`, so it cannot share one
               with the centring translate or the keyframes would wipe it. */}
-          <span className="pointer-events-none absolute left-1/2 top-1/2 z-15 h-[78%] -translate-x-1/2 -translate-y-1/2">
+          <span className="pointer-events-none absolute left-1/2 top-1/2 z-15 h-[74%] -translate-x-1/2 -translate-y-1/2">
             <img
               src="/products/nad-sublingual.avif"
               alt=""
@@ -400,12 +437,8 @@ export default function AntiAgingSections({ startTo = "/start" }) {
   const price = nadFromPrice();
 
   return (
-    /* Full-bleed light ground, same as the weight-loss block: the page's own
-       --nv-bg reads noticeably warmer than the comp's. Padding lives on this
-       element rather than the inner container so the colour runs the full height
-       instead of a child margin collapsing out through it. */
     <div style={{ background: "#fbfaf7" }}>
-    <div className="mx-auto max-w-[1320px] px-5 pt-[clamp(2.5rem,6vw,4.5rem)] md:px-10">
+    <div className="mx-auto max-w-[1320px] px-5 pb-[clamp(1.5rem,4vw,3rem)] pt-[clamp(4rem,8vw,7rem)] md:px-10">
       <div className="grid items-center gap-x-14 gap-y-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.02fr)]">
         {/* ---------------- steps ---------------- */}
         <Reveal as="div">
@@ -436,11 +469,7 @@ export default function AntiAgingSections({ startTo = "/start" }) {
           </ul>
         </Reveal>
 
-        {/* ---------------- brass card ----------------
-            No overflow-hidden: the portrait deliberately breaks the card's top
-            edge, which is the whole gesture of the comp. She is anchored to the
-            bottom-right so her shoulders finish flush on the card's own floor
-            while her hair runs past the top. */}
+        {/* ---------------- brass card ---------------*/}
         <Reveal as="div" delay={0.08}>
           <div
             className="relative min-h-[clamp(21rem,36vw,31rem)] rounded-[calc(28px*var(--nv-r-scale,1))] px-7 py-9 sm:px-10 sm:py-11"
@@ -483,11 +512,6 @@ export default function AntiAgingSections({ startTo = "/start" }) {
 
     <SublingualBanner />
     <TwoWays />
-
-    {/* Same journey the product pages run. Passed a category stub rather than a
-        product: it only reads categorySlug and categoryName, and anti-aging has
-        no subscription programs, so the brass cross-sell at its foot skips
-        itself and the carousel is all that renders. */}
     <ProductJourney product={JOURNEY_CATEGORY} />
 
     <Benefits />

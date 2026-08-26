@@ -24,11 +24,11 @@ const VISIT = G("telehealth");
 const CATEGORY_MEDIA = {
   "weight-loss": { product: G("nutrition"), visit: VISIT },
   "unisex-anti-aging-rx": { product: G("clinical"), visit: VISIT },
-  "unisex-sports-medicine": { product: G("fitness"), visit: VISIT },
+  "sports-medicine": { product: G("fitness"), visit: VISIT },
   "unisex-skin-health": { product: G("skincare"), visit: VISIT },
   // Men's health leans abstract on purpose: a person in this category's imagery
   // reads as a claim about them, so the product slot stays texture.
-  "mens-health": { product: G("marble"), visit: VISIT },
+  "sexual-health": { product: G("marble"), visit: VISIT },
 };
 
 const EMPTY = { product: "", visit: "" };

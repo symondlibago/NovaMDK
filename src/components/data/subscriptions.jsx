@@ -1,17 +1,4 @@
 import { productsData, isHidden } from "./products";
-
-/**
- * Subscription programs — a dose ladder a patient stays on, versus the one-time
- * vials listed separately.
- *
- * Products are referenced by id rather than derived from their names: the "—
- * Starter / Mid-Dose / Maintenance" suffix is a display string, and quietly
- * regrouping the shelf because someone reworded a title is not a failure mode
- * worth having on a prescription page.
- *
- * Everything else — price, dose steps, refill cadence — is read from the
- * catalogue below, so this file never carries a second copy of a price.
- */
 export const PROGRAMS = [
   {
     slug: "tirzepatide",
@@ -53,31 +40,13 @@ export const doseStage = (product) => {
   return m ? m[1] : "Standard";
 };
 
-/**
- * The size/strength of a fill, e.g. "2.5 mL vial (20 mg)".
- * Held in its own `size` field since 2026-08-15, when the mL/mg portion was
- * taken out of product titles at the client's request. The ladder still needs to
- * show which vial each rung is, so it reads the field rather than the name.
- */
 export const doseSize = (product) => product?.size || "";
 
-/**
- * When a step applies, in the patient's own terms — the parenthetical of the
- * "Days Supply" spec ("56 days (Weeks 1–8)" -> "Weeks 1–8", "30 days per fill
- * (Month 4+)" -> "Month 4+"). Plain calendar language beats "56 days" for
- * someone working out where they are in a protocol.
- */
 export const doseWindow = (product) => {
   const m = spec(product, "Days Supply").match(/\(([^)]+)\)/);
   return m ? m[1].trim() : "";
 };
 
-/**
- * Refill rhythm, read from the "Days Supply" spec ("56 days (Weeks 1–8)" -> every
- * 8 weeks). Deliberately not called "per month": these vials run 28 or 56 days,
- * and rounding that to a calendar month on an Rx page would be a claim, not a
- * rounding.
- */
 export const refillCadence = (product) => {
   const days = Number((spec(product, "Days Supply").match(/(\d+)\s*days?/i) || [])[1]);
   if (!Number.isFinite(days) || days <= 0) return "";

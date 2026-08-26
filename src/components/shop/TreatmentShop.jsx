@@ -11,6 +11,8 @@ import TreatmentCard from "./TreatmentCard";
 import WeightLossSections from "./WeightLossSections";
 import AntiAgingSections from "./AntiAgingSections";
 import SexualHealthSections from "./SexualHealthSections";
+import SportsMedicineSections from "./SportsMedicineSections";
+import SkinHealthSections from "./SkinHealthSections";
 import BackButton from "../ui/BackButton";
 
 const GRID = {
@@ -86,26 +88,20 @@ export default function TreatmentShop({ category, showBack = false }) {
     <section
       id="shop"
       className="scroll-mt-24 pb-[clamp(2.5rem,5.5vw,5rem)] pt-2"
-      /* Same shape of gradient the goal grid uses — cream at the top settling
-         into the warm tint, on a pixel stop so it doesn't smear over the whole
-         section as a percentage would. */
       style={{
         background:
           "linear-gradient(180deg, var(--nv-surface) 0px, color-mix(in oklab, var(--nv-accent) 14%, var(--nv-surface)) 620px)",
       }}
     >
       <div className="mx-auto max-w-[1320px] px-4 md:px-6">
-        {/* Back sits inline-left of the centered header from sm up — no stacked
-            row above the title, so the header starts at the section's top edge */}
+      
         <div className="relative mb-8 pt-[clamp(1.5rem,4vw,3rem)] text-center sm:mb-10">
           {showBack && (
             <div className="mb-2 text-left sm:absolute sm:left-0 sm:top-[clamp(1.5rem,4vw,3rem)] sm:mb-0">
               <BackButton />
             </div>
           )}
-          {/* Gradient fill clipped to the glyphs, using the exact stops the comp
-              specifies (radial from the top-left, #d9c797 → #6b511e). The text
-              colour has to be transparent for the background to show through. */}
+        
           <h2
             className="bg-clip-text text-[clamp(1.9rem,4.4vw,3.1rem)] font-extrabold leading-[1.1] tracking-tight text-transparent"
             style={{ backgroundImage: "radial-gradient(circle at 0% 0%, #d9c797, #6b511e)" }}
@@ -157,9 +153,19 @@ export default function TreatmentShop({ category, showBack = false }) {
         <AntiAgingSections startTo={cards[0].startTo} />
       )}
 
-      {/* Men's health only — the copy is sexual-health specific. Same contract. */}
-      {category === "mens-health" && cards[0] && (
+      {/* Sexual health only — the copy is sexual-health specific. Same contract. */}
+      {category === "sexual-health" && cards[0] && (
         <SexualHealthSections startTo={cards[0].startTo} />
+      )}
+
+      {/* Sports medicine only — the copy is recovery and mobility specific. */}
+      {category === "sports-medicine" && cards[0] && (
+        <SportsMedicineSections startTo={cards[0].startTo} />
+      )}
+
+      {/* Skin health only — the copy names skin concerns. Same startTo contract. */}
+      {category === "unisex-skin-health" && cards[0] && (
+        <SkinHealthSections startTo={cards[0].startTo} />
       )}
 
       <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />

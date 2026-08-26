@@ -3,18 +3,6 @@ import { Check } from "lucide-react";
 import Reveal from "../ui/Reveal";
 import ScrollSteps from "./ScrollSteps";
 
-/* Alternating image / text section for the product page.
-
-   Deliberately built from the same primitives as the rest of the site rather
-   than as its own look: nv-eyebrow for the kicker, the display face and clamp
-   scale used by every other section heading, the shared radius token, nv-shadow,
-   and Reveal for the scroll-in. Only the layout is new. Flipping `reverse` on
-   alternate sections is what gives the page its rhythm.
-
-   The image column is a fixed aspect ratio rather than a stretched-to-match
-   panel: a tall text block next to a stretched photo is what makes these
-   sections look cheap, and a settled ratio reads as composed. */
-
 export default function ProductFeature({
   eyebrow,
   title,

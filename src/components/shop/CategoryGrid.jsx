@@ -111,16 +111,6 @@ function PhotoCard({ it, onClick, hero = false }) {
   );
 }
 
-/* Growth arrow for the Weight Management reveal. There is no arrow asset in the
-   repo, so it's an inline SVG: a chunky marker stroke that spans the whole card
-   on the diagonal — tail in the bottom-left corner, head in the top-right — and
-   draws itself tail→head on hover rather than fading in.
-
-   `pathLength="1"` normalises the shaft so the dash trick needs no JS length
-   measurement, and `slice` keeps the round caps circular at every card width
-   instead of squashing them to ovals. The viewBox matches the card's own aspect
-   so nothing meaningful gets cropped. See .nv-goal__arrow in index.css for the
-   draw timing, which the reveal wedge is locked to. */
 function GrowthArrow({ className }) {
   return (
     <svg
@@ -131,15 +121,6 @@ function GrowthArrow({ className }) {
       aria-hidden="true"
       focusable="false"
     >
-      {/* The viewBox has to track the card's aspect. `slice` scales to cover and
-          crops the overflow, so a landscape viewBox on a portrait card throws
-          away the left and right thirds — which is exactly how the tail and the
-          arrowhead went missing. A square viewBox on a ~315×320 card crops about
-          2px a side and nothing else.
-
-          The tail sits below the floor (y 332 > 320) so the stroke runs off the
-          card's bottom edge rather than stopping short of it, and the quadratic
-          starts shallow and steepens for the rising-trend-line shape. */}
       <path
         className="nv-goal__arrow-shaft"
         pathLength="1"
@@ -148,9 +129,6 @@ function GrowthArrow({ className }) {
         strokeWidth="15"
         strokeLinecap="round"
       />
-      {/* Head sits on the shaft's end tangent and unfurls forward from it once
-          the stroke lands, so the two read as one gesture. Base midpoint is the
-          shaft's end point (208,158) — keep them together if either moves. */}
       <path className="nv-goal__arrow-head" d="M226 134L222 169L194 147Z" fill="currentColor" />
     </svg>
   );
@@ -223,20 +201,10 @@ function CutoutCard({ it, onClick, hero = false }) {
         alt=""
         aria-hidden="true"
         loading="lazy"
-        /* No horizontal anchor here on purpose — cutoutClass owns it. Two
-           competing `right` utilities on one element resolve by Tailwind's own
-           sort order, not by the order they appear in this string, so a card
-           that wants to anchor left has to be the only one setting it. */
         className={`nv-goal__figure pointer-events-none absolute aspect-square w-auto max-w-none object-contain ${
           it.figureMotion ? `nv-goal__figure--${it.figureMotion}` : ""
         } ${it.cutoutClass || (hero ? "-top-[6%] right-0 h-[112%]" : "-top-[7%] right-0 h-[114%]")}`}
       />
-
-      {/* Per the comp the card splits in two: label and heading hold the top-left
-          corner, blurb and button sit centred on the bottom edge. Copy is cream
-          over the tan and flips to ink on hover, when the card goes light —
-          without that flip the cream text lands on a cream card. 62% keeps the
-          heading clear of the art; the centred bottom block deliberately isn't. */}
       <div className="nv-goal__content max-w-[62%]">
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[#ffe8b1]/85 transition-colors duration-300 group-hover:text-ink/70">
           {it.tag}

@@ -943,8 +943,8 @@ export const productsData = [
 
   {
     id: 26,
-    categorySlug: "unisex-sports-medicine",
-    categoryName: "Unisex Sports Medicine",
+    categorySlug: "sports-medicine",
+    categoryName: "Sports Medicine",
     name: "Low-Dose Naltrexone (LDN) — Starter",
     size: "1.5 mg flex-dose",
     qrImg: "/qr/Low Dose Naltrexone (LDN).avif",
@@ -974,8 +974,8 @@ export const productsData = [
   },
   {
     id: 27,
-    categorySlug: "unisex-sports-medicine",
-    categoryName: "Unisex Sports Medicine",
+    categorySlug: "sports-medicine",
+    categoryName: "Sports Medicine",
     name: "Low-Dose Naltrexone (LDN) — Mid-Dose",
     size: "3 mg flex-dose",
     qrImg: "/qr/Low Dose Naltrexone (LDN).avif",
@@ -1005,8 +1005,8 @@ export const productsData = [
   },
   {
     id: 28,
-    categorySlug: "unisex-sports-medicine",
-    categoryName: "Unisex Sports Medicine",
+    categorySlug: "sports-medicine",
+    categoryName: "Sports Medicine",
     name: "Low-Dose Naltrexone (LDN) — Maintenance",
     size: "4.5 mg flex-dose",
     qrImg: "/qr/Low Dose Naltrexone (LDN).avif",
@@ -1066,12 +1066,12 @@ export const productsData = [
     safety: "For external use only; avoid contact with eyes and mucous membranes; do not use on broken or irritated skin. Perform a patch test before first use.",
   },
   /* ============================================================ */
-  /* SEXUAL HEALTH (mens-health slug)                             */
+  /* SEXUAL HEALTH (sexual-health slug)                             */
   /* ============================================================ */
 
   {
     id: 30,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Olympus",
@@ -1100,7 +1100,7 @@ export const productsData = [
   },
   {
     id: 31,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Olympus +",
@@ -1130,7 +1130,7 @@ export const productsData = [
   },
   {
     id: 32,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     name: "Olympus Peak",
     size: "20 IU / 1 mg / 20 mg",
@@ -1159,7 +1159,7 @@ export const productsData = [
   },
   {
     id: 33,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Olympus Max",
@@ -1187,7 +1187,7 @@ export const productsData = [
   },
   {
     id: 34,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Olympus Max Peak",
@@ -1220,7 +1220,7 @@ export const productsData = [
 
   {
     id: 35,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Euphoria Cream O",
@@ -1247,7 +1247,7 @@ export const productsData = [
   },
   {
     id: 36,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Euphoria Cream S",
@@ -1274,7 +1274,7 @@ export const productsData = [
   },
   {
     id: 37,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Bremelanotide Injection",
@@ -1304,7 +1304,7 @@ export const productsData = [
   },
   {
     id: 38,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Bremelanotide Mini Troche",
@@ -1333,7 +1333,7 @@ export const productsData = [
   },
   {
     id: 39,
-    categorySlug: "mens-health",
+    categorySlug: "sexual-health",
     categoryName: "Sexual Health",
     hidden: true,
     name: "Bremelanotide Nasal Spray",
@@ -1690,7 +1690,7 @@ export const categoryContent = {
       { icon: Heart, text: "Improved Vitals", color: "text-green-600" }
     ]
   },
-  "Unisex Sports Medicine": {
+  "Sports Medicine": {
     title: "Peak performance,",
     highlight: "engineered for you",
     desc: "Accelerate recovery, manage metabolic efficiency, and heal faster with advanced peptides and clinical weight management protocols.",

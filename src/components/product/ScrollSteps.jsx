@@ -1,18 +1,6 @@
 import React, { useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform, useMotionValueEvent, useReducedMotion } from "framer-motion";
 
-/* Scroll-driven numbered steps.
-
-   A rail runs down through the number badges and fills as the section moves up
-   the viewport. The step the fill has reached is lit; the ones ahead of it sit
-   greyed back, so reading the section top to bottom is the same gesture as
-   scrolling it.
-
-   The scroll range is deliberately short of the section's full height: `end 65%`
-   means the rail finishes filling once the last step is comfortably on screen,
-   rather than only at the moment the section leaves it, which would leave the
-   final step greyed out for the entire time you can actually read it. */
-
 export default function ScrollSteps({ items }) {
   const ref = useRef(null);
   const reduced = useReducedMotion();

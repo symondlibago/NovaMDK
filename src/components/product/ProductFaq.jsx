@@ -1,18 +1,4 @@
 import React, { useState } from "react";
-
-/* Per-product FAQ accordion.
-
-   Short on purpose. This used to run to eight or nine entries built from every
-   spec on the product, including the whole safety paragraph, which already has
-   its own section further up the page. What is left is the handful of things a
-   patient actually asks before starting, in plain language.
-
-   The clinical answers are still read off the reviewed catalogue rather than
-   written per product, so they cannot drift from the specs above them. The two
-   service answers (packaging, care team) are authored, and state only what the
-   site already commits to elsewhere. A product can add its own `faqs` array of
-   { q, a } for anything specific to it. */
-
 const spec = (product, label) =>
   product?.specs?.find((s) => s.label === label)?.value || "";
 
@@ -59,13 +45,6 @@ function buildFaqs(product, { otc }) {
   return items;
 }
 
-/* The triptych beside the accordion. Middle card is the live one — solid brass
-   with the molecule over it — and the outer two are veiled back so the row reads
-   as depth rather than three equal tiles. Fixed rather than rotating: the comp
-   sets one arrangement, and there is nothing here to page through. */
-/* The outer two mirror each other around the live card: each figure is pulled
-   toward the centre and the veil sits on the outer edge, so the row closes in on
-   the middle rather than reading as three loose tiles. */
 const CARDS = [
   {
     key: "lifestyle",
@@ -88,9 +67,6 @@ const CARDS = [
 
 function Showcase({ pathwayTitle }) {
   return (
-    /* Capped and centred in its column rather than stretched across it: at full
-       width the third card ran out to the container edge and the row read as
-       pushed away from the accordion instead of sitting beside it. */
     <ul aria-hidden="true" className="mx-auto grid w-full max-w-165 grid-cols-3 gap-3 sm:gap-4">
       {CARDS.map((c) => {
         const live = c.key === "pathway";
@@ -111,10 +87,6 @@ function Showcase({ pathwayTitle }) {
                 src={c.img}
                 alt=""
                 loading="lazy"
-                /* contain, not cover: these are full-length cut-outs and cover
-                   was slicing them off at the chest. Anchored to the bottom so
-                   the figure stands on the card floor instead of floating, and
-                   to the inner edge so it sits against the live card. */
                 className={`absolute inset-0 h-full w-full object-contain ${c.anchor}`}
               />
             )}
@@ -158,15 +130,9 @@ export default function ProductFaq({ product, otc }) {
 
   if (!items.length) return null;
 
-  /* Named on the catalogue so the card cannot claim a dual pathway on a
-     single-pathway drug: tirzepatide sets "Dual-Hormone Pathway", semaglutide
-     "GLP-1 Pathway". Anything without a mechanism falls back to the neutral one. */
   const pathwayTitle = product?.mechanism?.cardTitle || "How It Works";
 
   return (
-    /* items-center, not items-start: the accordion column runs taller than the
-       card row, and top-aligning left the cards hanging off the top of the
-       block with dead space under them. */
     <div className="grid items-center gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
       <div>
         <h2 className="font-display text-[clamp(1.5rem,3vw,2rem)] font-extrabold leading-tight text-[#9a7843]">
