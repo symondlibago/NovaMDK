@@ -241,76 +241,9 @@ function BeyondRoutine({ startTo }) {
   );
 }
 
-/* --------------------------- 3. what are you noticing --------------------------- */
-const NOTICING = [
-  {
-    img: "/site/skin-health/notice-marks.avif",
-    label: "Those marks that just won't seem to fade",
-    ratio: "aspect-[2/3]",
-    lift: "",
-  },
-  {
-    img: "/site/skin-health/notice-uneven.avif",
-    label: "When some areas look darker or different than the rest",
-    ratio: "aspect-[2/3]",
-    lift: "sm:translate-y-5",
-  },
-  {
-    img: "/site/skin-health/guided-skin.avif",
-    label: "When your skin feels dry, tired, or just not as fresh",
-    ratio: "aspect-[2/3]",
-    lift: "sm:translate-y-1",
-  },
-  {
-    img: "/site/skin-health/notice-breakout.avif",
-    label: "When a breakout is gone, but the mark sticks around",
-    ratio: "aspect-[2/3]",
-    lift: "sm:translate-y-4",
-  },
-];
-
-function Noticing() {
-  return (
-    <div className="mx-auto max-w-[1320px] px-6 pt-[clamp(3rem,7vw,5.5rem)] md:px-10">
-      <Reveal as="div">
-        <h2 className="nv-weight-keep font-display text-[clamp(1.4rem,4.6vw,2.2rem)] font-extrabold leading-[1.24]">
-          <span className="block" style={{ color: GOLD_DEEP }}>
-            What are you noticing
-          </span>
-          <span className="block" style={{ color: GOLD_LIGHT }}>
-            in your skin?
-          </span>
-        </h2>
-
-        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4 sm:gap-x-5">
-          {NOTICING.map((n) => (
-            <li key={n.label} className={n.lift}>
-              <div className={`overflow-hidden ${TILE_R}`}>
-                <img
-                  src={n.img}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className={`block w-full object-cover ${n.ratio}`}
-                />
-              </div>
-              <p
-                className="mt-3 text-[clamp(0.72rem,2.2vw,0.82rem)] leading-snug"
-                style={{ color: MUTED }}
-              >
-                {n.label}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
-    </div>
-  );
-}
-
 /* ------------------------------- 4. the goal ------------------------------- */
 
-/* Same staggered row as Noticing, but the labels sit *inside* the frame in white
+/* A staggered row whose labels sit *inside* the frame in white
    rather than under it — that is the difference the comp draws between "what you
    are seeing now" and "what you are working toward".
 
@@ -512,7 +445,6 @@ export default function SkinHealthSections({ startTo = "/start" }) {
     <div style={{ background: GROUND }}>
       <HeroCard startTo={startTo} />
       <BeyondRoutine startTo={startTo} />
-      <Noticing />
       <TheGoal />
       <Guided />
       <ExploreBand startTo={startTo} />
