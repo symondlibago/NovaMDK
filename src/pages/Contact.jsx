@@ -24,11 +24,10 @@ export default function ContactPage() {
       {/* Kept for the page's own H1 and back button: the survey's headings live inside
           a cross-origin frame, so without this the page has no indexable heading. */}
       <PageHero
+        compact
         showBack
-        eyebrow="Contact"
         title="How can we help?"
         subtitle="Questions about your care, order, or account? Our team is here to help."
-        chips={["Reply within 1 business day", "HIPAA-compliant", "U.S.-licensed providers"]}
       />
 
       <section className="mx-auto max-w-[1140px] px-5 pb-[clamp(2.8rem,6vw,4.5rem)] pt-[clamp(1rem,2.5vw,2rem)] md:px-10">

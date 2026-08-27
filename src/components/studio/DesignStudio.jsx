@@ -45,13 +45,7 @@ function DevicePreview() {
   if (!active?.w) return null;
 
   const path = window.location.pathname;
-  // Re-key on theme so the iframe re-renders with the active palette/type.
-  // Include a signature of this palette's custom colors so edits show in-preview.
   const overrideSig = JSON.stringify(paletteOverrides[palette.id] || {});
-  // On the tablet frame, force the homepage so the portrait layout is always
-  // what's previewed, and carry the chosen variant through to it. The kiosk
-  // frame keeps the current page but also runs in kiosk mode — it's the
-  // physical 32" unit at native resolution.
   const isKioskFrame = active?.id === "kiosk";
   const previewPath = isTablet ? "/" : path;
   const kioskQuery = isTablet || isKioskFrame ? `&kiosk=${kioskLayout.id}` : "";
@@ -98,11 +92,6 @@ function DevicePreview() {
           style={{ width: (active.w + BEZEL * 2) * scale, height: (active.h + BEZEL * 2) * scale }}
           className="relative"
         >
-          {/* box-content is load-bearing: preflight makes everything border-box, so
-              the bezel used to eat 2×10px out of the declared size and the iframe
-              rendered a 814px viewport while the caption claimed 834. That 20px
-              straddles real breakpoints, so the preview could sit on the opposite
-              side of one from the device it was imitating. */}
           <div
             style={{
               width: active.w,
@@ -647,10 +636,6 @@ export default function DesignStudio() {
                   Opens the live site in a scaled phone · tablet · desktop frame.
                 </p>
               </Section>
-
-              {/* Tablet hero layout — always available. Picking a layout applies
-                  it to the LIVE portrait tablet / kiosk view immediately (and
-                  persists), so a client on the kiosk sees the change at once. */}
               <Section icon={<Tablet size={14} />} title="Tablet hero layout">
                 <div className="flex flex-col gap-2.5">
                   {kioskLayouts.map((k) => {

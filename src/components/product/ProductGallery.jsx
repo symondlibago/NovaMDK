@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Info } from "lucide-react";
 
-const PLACEHOLDER_FRAMES = ["/products/gallery/clinical.jpg", "/products/gallery/telehealth.jpg"];
+const PLACEHOLDER_FRAMES = ["/products/gallery/clinical.avif", "/products/gallery/telehealth.avif"];
 const TARGET_FRAMES = 3;
 
 function framesFor(product) {

@@ -22,12 +22,12 @@ const FEATURED = {
 };
 
 const SHELF = [
-  { id: 1, name: "GLP-1", label: "Appetite & metabolic support", img: "/products/shelf/semaglutide.png" },
-  { id: 26, name: "Low-Dose Naltrexone", label: "Inflammation & wellness support", img: "/products/shelf/ldn.png" },
-  { id: 29, name: "Luminance", label: "Dark spot & skin tone support", img: "/products/shelf/luminance.png" },
-  { id: 32, name: "Olympus Peak", label: "Support for strength & vitality", img: "/products/shelf/olympus-peak.png" },
-  { id: 16, name: "NAD+", label: "Helps support daily energy", img: "/products/shelf/nad-plus.png" },
-  { id: 13, name: "SubMagna Drops", label: "Weight management drops", img: "/products/shelf/submagna.png" },
+  { id: 1, name: "GLP-1", label: "Appetite & metabolic support", img: "/products/shelf/semaglutide.avif" },
+  { id: 26, name: "Low-Dose Naltrexone", label: "Inflammation & wellness support", img: "/products/shelf/ldn.avif" },
+  { id: 29, name: "Luminance", label: "Dark spot & skin tone support", img: "/products/shelf/luminance.avif" },
+  { id: 32, name: "Olympus Peak", label: "Support for strength & vitality", img: "/products/shelf/olympus-peak.avif" },
+  { id: 16, name: "NAD+", label: "Helps support daily energy", img: "/products/shelf/nad-plus.avif" },
+  { id: 13, name: "SubMagna Drops", label: "Weight management drops", img: "/products/shelf/submagna.avif" },
 ];
 
 const SPOT_COPY = {
@@ -57,10 +57,14 @@ const SPOTS = CONSULT_ORDER.map((key) => {
 
 const SPOT_MS = 4200;
 
+/* Both were heavy enough to read as a tint over the artwork rather than a veil
+   under the type. Pulled back about a third at the dark end, which still leaves
+   ~0.6 behind the headline — the copy only occupies the left 26ch, so that is the
+   only part that has to carry white text. */
 const VIDEO_SCRIM =
-  "linear-gradient(96deg, rgba(22,16,9,0.86) 0%, rgba(22,16,9,0.66) 38%, rgba(22,16,9,0.3) 68%, rgba(22,16,9,0.12) 100%)";
+  "linear-gradient(96deg, rgba(22,16,9,0.6) 0%, rgba(22,16,9,0.44) 38%, rgba(22,16,9,0.18) 68%, rgba(22,16,9,0.06) 100%)";
 const SPOT_SCRIM =
-  "linear-gradient(96deg, rgba(42,29,10,0.8) 0%, rgba(42,29,10,0.62) 34%, rgba(42,29,10,0.4) 60%, rgba(42,29,10,0.22) 82%, rgba(42,29,10,0.12) 100%)";
+  "linear-gradient(96deg, rgba(42,29,10,0.56) 0%, rgba(42,29,10,0.42) 34%, rgba(42,29,10,0.24) 60%, rgba(42,29,10,0.12) 82%, rgba(42,29,10,0.05) 100%)";
 
 const TITLE_FILL = "radial-gradient(circle at 0% 0%, #6b511e, #d9c797)";
 
@@ -94,29 +98,49 @@ function CardCopy({ tag, name, blurb, cta, big = false }) {
   );
 }
 
+/* Two separate things were making these cards flicker on hover.
+
+   `group` belongs on a wrapper that never moves, not on the card that lifts:
+   with :hover and the lift on the same element, a cursor near the card's bottom
+   edge is left outside it the moment it rises, which drops the hover, which
+   drops the card back under the cursor, which re-hovers.
+
+   And a <video> inside a rounded overflow-hidden box that is being transformed
+   makes the browser flip it between a hardware video overlay and a composited
+   layer, which flashes. GPU_LAYER pins it to the composited path — `transform-gpu`
+   rather than a literal translateZ, so it still composes with the translate
+   utility on the same element instead of overwriting it. */
+const GPU_LAYER = "transform-gpu will-change-transform [backface-visibility:hidden]";
+
 function VideoCard() {
   return (
-    <Link
-      to="/treatments"
-      onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero-video" })}
-      className={`group relative block aspect-[1.5/1] overflow-hidden sm:aspect-[1.7/1] lg:aspect-[2.25/1] ${CARD_R} nv-shadow-lg transition-transform duration-500 hover:-translate-y-1`}
-    >
-      <video
-        src="/video/right-vid.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-[1200ms] group-hover:scale-105"
-      />
-      <span className="pointer-events-none absolute inset-0" style={{ background: VIDEO_SCRIM }} />
-      <CardCopy
-        tag="New here"
-        name="Explore your treatments"
-        blurb="Answer a few questions and a licensed provider matches you to a plan"
-        cta="Find your match"
-      />
-    </Link>
+    <div className="group isolate">
+      <Link
+        to="/treatments"
+        onClick={() => track(EVENTS.BROWSE_TREATMENTS, { source: "hero-video" })}
+        className={`relative block aspect-[1.5/1] overflow-hidden sm:aspect-[1.7/1] lg:aspect-[2.25/1] ${CARD_R} ${GPU_LAYER} nv-shadow-lg transition-transform duration-500 group-hover:-translate-y-1`}
+      >
+        {/* preload="auto" because the clip is ~15MB and the default only fetches
+            metadata, so the loop can reach the end before the start is buffered
+            again and stall there. */}
+        <video
+          src="/video/right-vid.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className={`absolute inset-0 h-full w-full object-cover object-center ${GPU_LAYER} transition-transform duration-[1200ms] group-hover:scale-105`}
+        />
+        <span className="pointer-events-none absolute inset-0" style={{ background: VIDEO_SCRIM }} />
+        <CardCopy
+          tag="New here"
+          name="Explore your treatments"
+          blurb="Answer a few questions and a licensed provider matches you to a plan"
+          cta="Find your match"
+        />
+      </Link>
+    </div>
   );
 }
 
@@ -134,8 +158,12 @@ function SpotlightCard() {
   if (!s) return null;
 
   return (
+    /* This wrapper already existed to hold the dots and the pause handlers, and
+       it is the element that does not move — so `group` goes here for the same
+       reason it does on the video card. It also means the rotation no longer
+       pauses and resumes as the lift flickers the pointer in and out. */
     <div
-      className="relative"
+      className="group relative"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -145,7 +173,7 @@ function SpotlightCard() {
         to={s.to}
         onClick={() => track(EVENTS.CATEGORY_SELECTED, { category: s.goal, source: "hero-spotlight" })}
         aria-live="polite"
-        className={`group relative block aspect-[1.5/1] overflow-hidden sm:aspect-[1.7/1] lg:aspect-[2.25/1] ${CARD_R} nv-shadow-lg transition-transform duration-500 hover:-translate-y-1`}
+        className={`relative block aspect-[1.5/1] overflow-hidden sm:aspect-[1.7/1] lg:aspect-[2.25/1] ${CARD_R} ${GPU_LAYER} nv-shadow-lg transition-transform duration-500 group-hover:-translate-y-1`}
         style={{ background: s.bg }}
       >
         {SPOTS.map((it, i) => (
@@ -164,7 +192,7 @@ function SpotlightCard() {
               /* No bottom-0 here: men's health has to hang below the floor, and
                  a base value would race its override in the emitted CSS. Every
                  heroClass carries its own vertical anchor. */
-              className={`absolute w-auto max-w-none object-contain object-bottom transition-transform duration-[1200ms] group-hover:scale-105 ${it.imgClass}`}
+              className={`absolute w-auto max-w-none object-contain object-bottom ${GPU_LAYER} transition-transform duration-[1200ms] group-hover:scale-105 ${it.imgClass}`}
             />
           </span>
         ))}
@@ -309,29 +337,13 @@ export default function HomeHero() {
           </div>
 
           <div className="lg:pb-2">
+            {/* The "See How It Works" and "Get Started" pair was removed here on
+                2026-08-27. The two wide cards below carry their own CTAs into the
+                same two places, so the buttons were a second set of entrances to
+                the same journeys. */}
             <p className="max-w-[34ch] text-[0.92rem] leading-relaxed text-muted sm:text-[0.98rem]">
               Care plans tailored to you by licensed medical providers
             </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <a
-                href="#how"
-                className="inline-flex items-center rounded-full px-5 py-2.5 text-[0.85rem] font-semibold text-on-primary transition-all duration-300 hover:-translate-y-0.5 sm:text-[0.9rem]"
-                /* Between --nv-accent and --nv-primary, which is where the comp's
-                   button sits — and a mix rather than a literal so it still
-                   follows a palette swap from the Design Studio. */
-                style={{ background: "color-mix(in oklab, var(--nv-accent) 58%, var(--nv-primary))" }}
-              >
-                See How It Works
-              </a>
-              <Link
-                to="/start"
-                onClick={() => track(EVENTS.QUIZ_STARTED, { source: "hero" })}
-                className="group inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface px-5 py-2.5 text-[0.85rem] font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-primary sm:text-[0.9rem]"
-              >
-                Get Started
-                <ArrowRight size={15} strokeWidth={2.2} className="transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </div>
           </div>
         </Motion.div>
 

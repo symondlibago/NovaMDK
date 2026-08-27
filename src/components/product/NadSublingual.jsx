@@ -112,16 +112,19 @@ export default function NadSublingual({ startTo = "/start" }) {
               >
                 NAD+ Without the Injection
               </h2>
-              {/* The float goes on the frame, not the image inside it: the image
-                  is blown up to 249% and pulled back into place, so a transform
-                  on it would drift the art out from under the crop. */}
-              <div className="nv-float relative mt-6 aspect-[442/340] w-full max-w-[13rem] overflow-hidden sm:mt-8 sm:max-w-[21rem]">
+              {/* The old art was a pair of tablets buried in a much larger
+                  canvas, so it was blown up to 249% and pulled back by measured
+                  offsets to crop down to them. The re-export is trimmed to the
+                  tablets already, so the crop is gone and the frame just holds
+                  the image at its own square ratio. Nothing to re-measure if it
+                  is exported again. */}
+              <div className="nv-float relative mt-6 w-full max-w-[13rem] sm:mt-8 sm:max-w-[21rem]">
                 <img
-                  src="/site/goals/sexual-wellness.avif"
+                  src="/products/detail/nad-tablet-pair.avif"
                   alt=""
                   aria-hidden="true"
                   loading="lazy"
-                  className="absolute left-[-76%] top-[-103%] h-auto w-[249%] max-w-none"
+                  className="block h-auto w-full"
                 />
               </div>
             </Reveal>

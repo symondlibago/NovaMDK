@@ -25,6 +25,7 @@ import ProductWhy from "../components/product/ProductWhy";
 import NadSupport from "../components/product/NadSupport";
 import NadDirected from "../components/product/NadDirected";
 import NadSublingual from "../components/product/NadSublingual";
+import GlutathioneSections from "../components/product/GlutathioneSections";
 
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
@@ -94,6 +95,7 @@ export default function ProductPage() {
   const otc = isOtc(product);
   const isNad = /nad\+/i.test(product.name);
   const isSublingual = /sublingual/i.test(product.name);
+  const isGlutathione = /glutathione/i.test(product.name);
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
   const seenTitle = new Set();
   const related = visibleProducts
@@ -354,6 +356,11 @@ export default function ProductPage() {
       {isNad && !isSublingual && <NadSupport />}
       {isNad && !isSublingual && <NadDirected />}
 
+      {/* Glutathione's own editorial. Same contract as the NAD+ blocks: gated on
+          the product name, and its CTA lands on the intake this page's own Get
+          Started uses rather than a second entry point. */}
+      {isGlutathione && <GlutathioneSections startTo={`${productPath(product)}?start=1`} />}
+
       <ProductMechanism product={active} />
       {product.howItWorks && (
         <section className="bg-surface-2 py-[clamp(2.5rem,5vw,5.5rem)]">
@@ -508,7 +515,7 @@ const fmtCountdown = (s) => `${Math.floor(s / 60)}:${String(Math.max(0, s % 60))
    phone (recommended), or continue right here on the public kiosk. Auto-closes
    after 60s so the screen resets for the next patient. */
 function KioskQrModal({ product, onClose, onContinueHere, loading = false, err = "" }) {
-  const qrSrc = product.qrImg || `/qr/${product.id}.png`;
+  const qrSrc = product.qrImg || `/qr/${product.id}.avif`;
   const [imgError, setImgError] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(60);
 

@@ -3,9 +3,6 @@ import { motion } from "framer-motion";
 
 const EASE = [0.16, 1, 0.3, 1];
 
-/* The branded loading mark — pulsing wordmark over a sweeping bar. Shared by
-   RouteTransition and the patient portal so every wait in the app looks the
-   same rather than a spinner in one place and this in another. */
 export default function BrandLoader() {
   return (
     <motion.div

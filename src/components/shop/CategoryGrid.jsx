@@ -151,7 +151,7 @@ function GoalMotion({ motion }) {
   if (motion === "spark") {
     return (
       <img
-        src="/site/goals/sportsmed.png"
+        src="/site/goals/sportsmed.avif"
         alt=""
         aria-hidden="true"
         loading="lazy"
@@ -165,7 +165,7 @@ function GoalMotion({ motion }) {
         {/* longetivityhover.png is an orbs-only cut-out — no figure baked in —
             so it flies as its own drifting layer behind the hand. */}
         <img
-          src="/site/goals/longetivityhover.png"
+          src="/site/goals/longetivityhover.avif"
           alt=""
           aria-hidden="true"
           loading="lazy"

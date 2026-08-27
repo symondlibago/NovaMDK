@@ -1,9 +1,50 @@
 import React from "react";
 import Reveal from "../ui/Reveal";
 import BackButton from "../ui/BackButton";
+export default function PageHero({
+  eyebrow,
+  title,
+  subtitle,
+  chips = [],
+  children,
+  showBack = false,
+  compact = false,
+}) {
+  // No ground of its own — it inherits the page's. The tall variant below paints
+  // bg-surface and closes with a rule, which reads as a deliberate band; without
+  // that rule the same fill just stops in mid-air above the content.
+  if (compact) {
+    return (
+      <section>
+        <div className="mx-auto max-w-[1320px] px-4 md:px-6">
+          <div className="relative mb-8 pt-[clamp(1.5rem,4vw,3rem)] text-center sm:mb-10">
+            {showBack && (
+              <div className="mb-2 text-left sm:absolute sm:left-0 sm:top-[clamp(1.5rem,4vw,3rem)] sm:mb-0">
+                <BackButton />
+              </div>
+            )}
+            <Reveal>
+              {/* Gradient clipped to the glyphs, the same stops the shop header
+                  uses. The text colour has to be transparent for it to show. */}
+              <h1
+                className="bg-clip-text text-[clamp(1.9rem,4.4vw,3.1rem)] font-extrabold leading-[1.1] tracking-tight text-transparent"
+                style={{ backgroundImage: "radial-gradient(circle at 0% 0%, #d9c797, #6b511e)" }}
+              >
+                {title}
+              </h1>
+              {subtitle && (
+                <p className="mx-auto mt-3 max-w-[46ch] text-[0.95rem] leading-relaxed text-muted sm:text-[1.02rem]">
+                  {subtitle}
+                </p>
+              )}
+              {children}
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-/** Centered page header used by the Treatments / Supplements / Contact pages. */
-export default function PageHero({ eyebrow, title, subtitle, chips = [], children, showBack = false }) {
   return (
     <section className="border-b border-line bg-surface">
       {showBack && (

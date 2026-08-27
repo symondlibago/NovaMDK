@@ -247,18 +247,11 @@ function ExploreBand({ startTo }) {
       <Reveal>
         <div
           className={`relative flex min-h-[clamp(21rem,48vw,33rem)] items-end justify-center overflow-hidden px-6 pb-[clamp(2rem,4.5vw,3.5rem)] ${CARD_R}`}
-          /* A vertical ramp, not the radial the other closing bands use: this
-             one is darkest along the top and opens out into the light tan at the
-             floor, which is what lets the couple's legs disappear into it. */
           style={{
             background:
               "linear-gradient(180deg, #ad8f56 0%, #b59660 38%, #c9ad78 72%, #dcc08d 100%)",
           }}
         >
-          {/* The export is trimmed to the couple's own bounds, so it can simply
-              be sized by height and stood on the band's floor — no inset to
-              compensate for. .nv-bandfade dissolves them into the gradient from
-              about the waist down, as the comp does. */}
           <img
             src="/site/sexual-health/explore-couple.avif"
             alt=""

@@ -2,24 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
 import Reveal from "../ui/Reveal";
-
-/**
- * The editorial sections below the skin-health product grid (2026-08 design).
- *
- * Skin health only — the copy names skin concerns throughout — so TreatmentShop
- * renders it behind a category check, the same way it gates the weight-loss,
- * anti-aging, men's-health and sports-medicine blocks.
- *
- * Colours are the comp's literal palette rather than --nv-* tokens, as in the
- * sibling blocks: this one runs on a warm gold and a beige panel that no runtime
- * token produces, and deriving any of it from the accent would drift the moment
- * anyone touches the Design Studio.
- *
- * Written mobile-first throughout — every layout starts as a single stacked
- * column and only splits into the comp's two- and four-across arrangements at
- * `sm` and `lg`.
- */
-
 const GROUND = "#f8f6f2";
 const PANEL = "#ebe4d8";
 const INK = "#4a4238";
@@ -37,14 +19,10 @@ const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 /* --------------------- 1. hero + "routine" panel, one card -------------------- */
 
-/* The comp joins these two: the photograph has the rounded top corners and the
-   beige panel the rounded bottom ones, with no seam between them. So they are one
-   overflow-hidden card with two children rather than two stacked cards. */
-
 const TRUST = [
-  { img: "/site/skin-health/trust-clinician.png", label: "Licensed provider review" },
-  { img: "/site/skin-health/trust-phone.png", label: "Prescription skin treatment options" },
-  { img: "/site/skin-health/trust-delivery.png", label: "Online care with home delivery" },
+  { img: "/site/skin-health/trust-clinician.avif", label: "Licensed provider review" },
+  { img: "/site/skin-health/trust-phone.avif", label: "Prescription skin treatment options" },
+  { img: "/site/skin-health/trust-delivery.avif", label: "Online care with home delivery" },
 ];
 
 function HeroCard({ startTo }) {
@@ -52,21 +30,14 @@ function HeroCard({ startTo }) {
     <div className="mx-auto max-w-[1320px] px-4 pt-[clamp(1.5rem,3vw,2.5rem)] md:px-10">
       <Reveal as="div">
         <div className={`overflow-hidden ${CARD_R}`}>
-          {/* Her face sits in the right third of the frame, so the crop is pulled
-              that way on a phone — object-center would land the headline on her
-              and leave the empty sky off-screen. */}
           <div className="relative flex min-h-[clamp(20rem,64vw,30rem)] items-center justify-center px-5 py-12 sm:px-10">
             <img
-              src="/site/skin-health/hero-sky.png"
+              src="/site/skin-health/hero-sky.avif"
               alt=""
               aria-hidden="true"
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover object-[72%_center] sm:object-center"
             />
-
-            {/* The comp runs white type straight over the sky. It holds because
-                the sky is a mid blue, but only just, so this is the minimum pool
-                that keeps it legible without flattening the gradient. */}
             <span
               className="pointer-events-none absolute inset-0"
               aria-hidden="true"
@@ -94,20 +65,12 @@ function HeroCard({ startTo }) {
               </Link>
             </div>
           </div>
-
-          {/* One column on a phone, the comp's two from lg. The photo strip needs
-              the full width to itself below that — three landscape frames in half
-              a tablet's width are unreadable. */}
           <div
             className="grid gap-8 px-6 py-9 sm:px-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-12"
             style={{ background: PANEL }}
           >
             <div>
               <h2 className="nv-weight-keep font-display text-[clamp(1.4rem,4.6vw,2.4rem)] font-extrabold leading-[1.14]">
-                {/* Two weights and two golds in one sentence, per the comp: the
-                    lighter gold carries the setup and the deeper one lands the
-                    phrase. Split with a span rather than two blocks so it still
-                    wraps as one paragraph at any width. */}
                 <span style={{ color: GOLD_LIGHT }}>Sometimes, your routine can only do </span>
                 <span style={{ color: GOLD }}>so much</span>
               </h2>
@@ -131,19 +94,6 @@ function HeroCard({ startTo }) {
 
 /* ------------------------------- the trust reel ------------------------------ */
 
-/* Three frames, the middle one large and the flanking two small, all sitting on
-   one centre line, advancing on their own. Only the centred frame's label shows —
-   which is why the comp carries a single caption under a row of three.
-
-   Everything is a percentage of the reel's own width, so it needs no measuring
-   pass and no ResizeObserver: each frame is positioned by how many slots it sits
-   from the active one, and animates its own left and width. Centre is 34% wide
-   and the flanks 24%, on a 30% pitch, which leaves the ~1% gap the comp has.
-
-   The list is tripled and the index lives in the middle copy so there is always a
-   frame waiting on both sides. Once the index walks off the middle copy it is
-   pulled back a copy's length with transitions suppressed for one frame — the
-   copies are identical, so the reader sees nothing. */
 const REEL = [...TRUST, ...TRUST, ...TRUST];
 const REEL_MID = TRUST.length;
 const SLOT_MS = 3400;
@@ -158,9 +108,6 @@ function TrustReel() {
   const [snap, setSnap] = useState(false);
 
   useEffect(() => {
-    // The stylesheet flattens transition durations under reduced motion, which
-    // would turn this into a jump cut every few seconds rather than calming it
-    // down. Nothing moves at all instead.
     const still = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     if (still?.matches) return undefined;
 
@@ -189,16 +136,10 @@ function TrustReel() {
   return (
     <div>
       <div className="relative overflow-hidden">
-        {/* Sizes the reel: same width and ratio as the centre slot, so the box
-            follows the largest frame without a hard height anywhere. */}
         <div className="invisible mx-auto aspect-[4/3] w-[34%]" />
 
         {REEL.map((t, k) => {
           const offset = k - i;
-          // Two slots either side of the three on show. Those land at -22% and
-          // 98%, so the clip hides them — which is the point: a frame mounts out
-          // there and travels in, rather than appearing at the edge of the reel
-          // out of nothing.
           if (Math.abs(offset) > 2) return null;
 
           return (
@@ -221,10 +162,6 @@ function TrustReel() {
           );
         })}
       </div>
-
-      {/* Keyed on the label so the fade replays whenever the reel lands on the
-          next frame. Not a live region: an auto-advancing one would announce
-          itself every few seconds with nothing having been asked of it. */}
       <div key={active.label} className="nv-fade-in mt-5 flex items-start justify-center gap-2.5">
         <CheckDot />
         <span className="text-[clamp(0.76rem,2.3vw,0.86rem)] leading-snug" style={{ color: INK }}>
@@ -257,48 +194,19 @@ function BeyondRoutine({ startTo }) {
       <Reveal as="div">
         <div
           className={`relative overflow-hidden ${CARD_R}`}
-          /* The comp's own fill, read off the Canva swatch rather than sampled:
-             a circular gradient centred on the card, light middle to dark edge. */
           style={{ background: "radial-gradient(circle at 50% 50%, #c1a27a 0%, #9a7843 100%)" }}
         >
-          {/* Stacked on a phone: copy first, then the figure standing on the
-              band's floor. From lg she moves into the left third and the copy
-              takes the right, which is the comp's arrangement. */}
-          {/* The comp's card is 1.81:1. Driven off vw rather than an aspect ratio
-              because the card stops widening at the 1320 wrapper while the
-              viewport does not, so the rem ceiling is what actually holds the
-              proportion on a wide screen. */}
           <div className="relative flex flex-col items-center gap-8 px-6 pb-0 pt-10 text-center sm:px-10 lg:min-h-[clamp(26rem,52vw,43rem)] lg:flex-row lg:items-end lg:gap-0 lg:pt-0 lg:text-left">
             <div className="order-2 w-full max-w-[26rem] lg:order-1 lg:max-w-none lg:flex-[0_0_46%]">
-              {/* `cover` from lg, not `contain`. Contained, she is fitted inside
-                  the box and lands about 80% of the band's height with air above
-                  and below; the comp runs her the full height and lets the crop
-                  take her hair at the top and her shoulders at the bottom. She is
-                  centred in her own export, so the horizontal crop that comes with
-                  filling by height falls evenly either side of her face. */}
               <img
-                src="/site/skin-health/routine-figure.png"
+                src="/site/skin-health/routine-figure.avif"
                 alt=""
                 aria-hidden="true"
                 loading="lazy"
-                /* The percentage moves the crop window, not the subject, so it
-                   reads backwards: a higher number shows more of the export's
-                   right-hand side, which slides her left in the frame and buys
-                   the fingers of her far hand room before the column's edge. */
                 className="block h-auto w-full object-contain object-bottom lg:absolute lg:bottom-0 lg:left-0 lg:h-[90%] lg:w-[48%] lg:object-cover lg:object-[56%_center]"
               />
             </div>
-
-            {/* Top-aligned from lg, not centred: the comp seats the heading about
-                a sixth of the way down and lets the copy finish well above the
-                floor, which is what leaves the tube its corner. The pad tracks the
-                card's own width, since that is what sets the card's height. */}
             <div className="order-1 lg:order-2 lg:flex-1 lg:self-start lg:pl-4 lg:pt-[clamp(2rem,9vw,7.5rem)]">
-              {/* The break is explicit because no single max-width produces it:
-                  the comp breaks after "beyond", and greedy wrapping at a width
-                  that fits "your everyday routine" also fits "An option beyond
-                  your" on the line before. The span only goes block from lg, so
-                  the phone still wraps to its own column. */}
               <h2
                 className="nv-weight-keep mx-auto max-w-[22ch] font-display text-[clamp(1.5rem,5vw,2.9rem)] font-extrabold leading-[1.12] lg:mx-0"
                 style={{ color: CREAM }}
@@ -319,14 +227,6 @@ function BeyondRoutine({ startTo }) {
                 See Your Options
               </Link>
             </div>
-
-            {/* Decoration only, and the first thing to go: below lg the band has
-                no width to spare for it beside the figure and the copy.
-
-                The height is of the element, and the export carries transparent
-                margin, so the tube itself renders a good deal shorter than the
-                number reads — hence 78% for a tube that measures about 57% of the
-                band in the comp. Same reason the inset is nearly nothing. */}
             <img
               src="/products/luminance.avif"
               alt=""
@@ -342,35 +242,27 @@ function BeyondRoutine({ startTo }) {
 }
 
 /* --------------------------- 3. what are you noticing --------------------------- */
-
-/* The comp scatters these rather than aligning them: each frame has its own
-   height and sits at its own offset, which is what stops the row reading as a
-   plain grid. `lift` is the offset, applied only from sm — stacked two-up on a
-   phone they need to line up or the column gaps go ragged. */
 const NOTICING = [
   {
-    img: "/site/skin-health/notice-marks.png",
+    img: "/site/skin-health/notice-marks.avif",
     label: "Those marks that just won't seem to fade",
     ratio: "aspect-[2/3]",
     lift: "",
   },
   {
-    img: "/site/skin-health/notice-uneven.png",
+    img: "/site/skin-health/notice-uneven.avif",
     label: "When some areas look darker or different than the rest",
     ratio: "aspect-[2/3]",
     lift: "sm:translate-y-5",
   },
-  /* TODO: the comp's third frame is a dry-skin texture close-up that was not in
-     the handoff — this is the section-4 photograph standing in for it. Swap the
-     src once the real export lands. */
   {
-    img: "/site/skin-health/guided-skin.png",
+    img: "/site/skin-health/guided-skin.avif",
     label: "When your skin feels dry, tired, or just not as fresh",
     ratio: "aspect-[2/3]",
     lift: "sm:translate-y-1",
   },
   {
-    img: "/site/skin-health/notice-breakout.png",
+    img: "/site/skin-health/notice-breakout.avif",
     label: "When a breakout is gone, but the mark sticks around",
     ratio: "aspect-[2/3]",
     lift: "sm:translate-y-4",
@@ -416,7 +308,103 @@ function Noticing() {
   );
 }
 
-/* ------------------------------ 4. guided panel ----------------------------- */
+/* ------------------------------- 4. the goal ------------------------------- */
+
+/* Same staggered row as Noticing, but the labels sit *inside* the frame in white
+   rather than under it — that is the difference the comp draws between "what you
+   are seeing now" and "what you are working toward".
+
+   Cards three and four carry the same wording in the comp. Left as supplied. */
+const GOAL = [
+  {
+    img: "/site/skin-health/goal-clear.avif",
+    label: "What we're working toward",
+    lift: "",
+    plot: true,
+  },
+  {
+    img: "/site/skin-health/goal-change.avif",
+    label: "The kind of change you want to see",
+    lift: "sm:translate-y-6",
+  },
+  {
+    img: "/site/skin-health/goal-even.avif",
+    label: "For skin that looks more even and refreshed",
+    lift: "sm:translate-y-2",
+  },
+  {
+    img: "/site/skin-health/goal-refreshed.avif",
+    label: "For skin that looks more even and refreshed",
+    lift: "sm:translate-y-8",
+  },
+];
+
+function TheGoal() {
+  return (
+    <div className="mx-auto max-w-[1320px] px-6 pt-[clamp(3rem,7vw,5.5rem)] md:px-10">
+      <Reveal as="div">
+        <h2 className="nv-weight-keep font-display text-[clamp(1.4rem,4.6vw,2.2rem)] font-extrabold leading-[1.24]">
+          <span className="block" style={{ color: GOLD_DEEP }}>
+            The goal?
+          </span>
+          <span className="block" style={{ color: GOLD_LIGHT }}>
+            Skin you feel good about
+          </span>
+        </h2>
+
+        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4 sm:gap-x-5">
+          {GOAL.map((g) => (
+            <li key={g.img} className={g.lift}>
+              <div className={`relative overflow-hidden ${TILE_R}`}>
+                <img
+                  src={g.img}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="block aspect-[2/3] w-full object-cover"
+                />
+
+                {/* The rising line over the first frame, per the comp. Drawn
+                    rather than baked into the photograph so it stays crisp and
+                    the shot underneath can be swapped on its own. */}
+                {g.plot && (
+                  <svg
+                    viewBox="0 0 100 60"
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-[22%] h-auto w-full"
+                    preserveAspectRatio="none"
+                  >
+                    <polyline
+                      points="12,44 30,20 44,38 60,10 82,30"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.9)"
+                      strokeWidth="1.1"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </svg>
+                )}
+
+                {/* Just enough veil at the foot to carry white type over a light
+                    photograph, without washing the skin tones above it. */}
+                <span
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3"
+                  style={{ background: "linear-gradient(180deg, transparent, rgba(40,28,16,0.55))" }}
+                />
+                <p className="absolute inset-x-0 bottom-0 p-4 text-[clamp(0.7rem,2vw,0.8rem)] font-bold leading-snug text-white">
+                  {g.label}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+    </div>
+  );
+}
+
+/* ------------------------------ 5. guided panel ----------------------------- */
 
 const GUIDED = [
   "Tell us about your skin, health history, current medications, and treatment goals",
@@ -456,7 +444,7 @@ function Guided() {
               past the bottom of the column. */}
           <div className={`overflow-hidden ${CARD_R}`}>
             <img
-              src="/site/skin-health/guided-skin.png"
+              src="/site/skin-health/guided-skin.avif"
               alt=""
               aria-hidden="true"
               loading="lazy"
@@ -484,21 +472,11 @@ function ExploreBand({ startTo }) {
     <div className="mx-auto max-w-[1320px] px-4 pb-[clamp(3rem,6vw,5rem)] pt-[clamp(3rem,7vw,5.5rem)] md:px-10">
       <Reveal>
         <div
-          /* Raised to the same 1.8:1 the other gold band runs at. She is fitted
-             by height, so the band's proportion is half of how large she can get
-             before her head starts leaving the frame. */
           className={`relative flex min-h-[clamp(22rem,52vw,40rem)] items-end justify-center overflow-hidden px-6 pb-[clamp(2rem,4.5vw,3.5rem)] ${CARD_R}`}
           style={{ background: "radial-gradient(circle at 52% 44%, #c3a670 0%, #a2854b 100%)" }}
         >
-          {/* .nv-bandfade dissolves her shoulders into the gradient, as the comp
-              does — the export is a hard cutout and reads pasted on without it.
-
-              Over 100% on purpose: she is stood on the band's floor, so the height
-              scales her and the overflow comes off the top, where the export is
-              empty gold above her hair. Push it much past this and the crop starts
-              taking the hair itself. */}
           <img
-            src="/site/skin-health/explore-figure.png"
+            src="/site/skin-health/explore-figure.avif"
             alt=""
             aria-hidden="true"
             loading="lazy"
@@ -535,6 +513,7 @@ export default function SkinHealthSections({ startTo = "/start" }) {
       <HeroCard startTo={startTo} />
       <BeyondRoutine startTo={startTo} />
       <Noticing />
+      <TheGoal />
       <Guided />
       <ExploreBand startTo={startTo} />
     </div>

@@ -327,6 +327,14 @@
     mask-image: linear-gradient(90deg, transparent 0%, transparent 46%, #000 66%, #000 92%, transparent 100%);
   }
 
+  /* Glutathione closing band. The shot's own backdrop is the band's colour, so
+     fading its left edge to nothing is what makes the two read as one surface
+     rather than a photo pasted onto a panel. */
+  .nv-feelfade {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%, #000 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 42%, #000 100%);
+  }
+
   /* Sports-medicine recovery row. The cards on either end are meant to be half
      gone, and the comp dissolves them rather than cutting them — so the fade is
      a mask on the scroller itself, symmetric, and tight enough that the three in

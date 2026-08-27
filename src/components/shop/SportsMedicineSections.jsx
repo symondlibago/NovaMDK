@@ -20,7 +20,7 @@ function KeepMoving({ assessmentTo }) {
   return (
     <section className="relative isolate overflow-hidden">
       <img
-        src="/site/sports-medicine/hero-run.png"
+        src="/site/sports-medicine/hero-run.avif"
         alt=""
         aria-hidden="true"
         loading="lazy"
@@ -222,16 +222,7 @@ function RecoveryCarousel() {
     setIndex(i);
   };
 
-  /* Advances itself. `goTo` is what carries the meter, so the ticks turn on the
-     same tick as the cards without a second timer to keep in step.
-
-     Reads the index off the ref rather than closing over it, which is what lets
-     the interval be set up once instead of being town down and rebuilt on every
-     step. */
   useEffect(() => {
-    // The stylesheet flattens transition durations under reduced motion, so a
-    // running timer would jump-cut the row every few seconds rather than calm it
-    // down. It holds on the opening slide instead.
     const still = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     if (still?.matches) return undefined;
 
@@ -288,10 +279,6 @@ function RecoveryCarousel() {
 
       <div
         ref={boxRef}
-        /* Wider gap than the comp shows below the subtitle, and it is here to buy
-           the arc its clearance rather than for its own sake. */
-        /* No grab cursor and no touch-action override any more: the row drives
-           itself, so the page keeps its own scrolling over this area. */
         className="nv-fanrow relative mx-auto mt-[clamp(2rem,5vw,4rem)] max-w-[58rem] select-none overflow-hidden py-5"
         style={{ height: `${m.box}px` }}
       >
@@ -308,10 +295,6 @@ function RecoveryCarousel() {
               <button
                 key={s.key}
                 type="button"
-                /* Kept clickable even though nothing needs to be clicked: it is
-                   the only way to reach a given card by keyboard, and the guard
-                   that used to sit here was only there to tell a click apart from
-                   the end of a drag. */
                 onClick={() => goTo(i)}
                 aria-current={on ? "true" : undefined}
                 aria-label={s.label}
@@ -395,14 +378,6 @@ function MosaicRow() {
                 />
               ) : (
                 <>
-                  {/* The ring in the comp's top-right corner, struck in the block's
-                      brass rather than the comp's grey so it reads as an ornament
-                      on the tint instead of the loading placeholder it started
-                      life as. Decorative, so no busy/live role — a screen reader
-                      should not announce the card as still loading.
-
-                      Three quarters of the circumference drawn, one quarter open:
-                      2πr at r=10 is 62.8, so 47 on and 16 off. */}
                   <span className="absolute right-[6%] top-[6%] block aspect-square w-[16%]" aria-hidden="true">
                     <svg viewBox="0 0 24 24" className="h-full w-full animate-spin [animation-duration:1100ms]">
                       <circle

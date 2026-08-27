@@ -1,9 +1,9 @@
 
 export const GOAL_ART = {
   "weight-loss": {
-    cutout: "/site/goals/weightlossnobg.png",
+    cutout: "/site/goals/weightlossnobg.avif",
     cutoutClass: "-top-[2%] h-[104%] right-[-4%]",
-    hero: "/site/goals/weightlossnobg.png",
+    hero: "/site/goals/weightlossnobg.avif",
     heroClass: "bottom-0 h-[116%] right-[-6%]",
     bg: "bg-[#a2845d]",
     heroBg: "#a2845d",
@@ -20,9 +20,9 @@ export const GOAL_ART = {
     figureMotion: "float",
   },
   "sports-medicine": {
-    cutout: "/site/goals/sportsmedperson.png",
+    cutout: "/site/goals/sportsmedperson.avif",
     cutoutClass: "-top-[1%] h-[102%] left-0",
-    hero: "/site/goals/sportsmedperson.png",
+    hero: "/site/goals/sportsmedperson.avif",
     heroClass: "bottom-0 h-[117%] right-[-24%]",
     bg: "bg-[#d1b995]",
     heroBg: "#d1b995",
@@ -38,9 +38,9 @@ export const GOAL_ART = {
     motion: "orbs",
   },
   "unisex-skin-health": {
-    cutout: "/site/goals/glowing.png",
+    cutout: "/site/goals/glowing.avif",
     cutoutClass: "-top-[3%] h-[106%] right-[-4%]",
-    hero: "/site/goals/glowing.png",
+    hero: "/site/goals/glowing.avif",
     // Widest of the four portraits, so it runs a little shorter to keep the
     // copy clear at the card's 2.25:1.
     heroClass: "bottom-0 h-[112%] right-[-7%]",

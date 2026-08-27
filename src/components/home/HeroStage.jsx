@@ -19,12 +19,12 @@ const FEATURED = {
 };
 
 const SHELF = [
-  { id: 1, label: "Metabolic health support", short: "Semaglutide", img: "/products/shelf/semaglutide.png" },
-  { id: 16, label: "Cellular Vitality", short: "NAD+", img: "/products/shelf/nad-plus.png" },
-  { id: 32, label: "Performance Support", short: "Olympus Peak", img: "/products/shelf/olympus-peak.png" },
-  { id: 29, label: "Skin Renewal", short: "Luminance", img: "/products/shelf/luminance.png" },
-  { id: 26, label: "Recovery Support", short: "Low-Dose Naltrexone", img: "/products/shelf/ldn.png" },
-  { id: 13, label: "Needle-free GLP-1", short: "SubMagna Drops", img: "/products/shelf/submagna.png" },
+  { id: 1, label: "Metabolic health support", short: "Semaglutide", img: "/products/shelf/semaglutide.avif" },
+  { id: 16, label: "Cellular Vitality", short: "NAD+", img: "/products/shelf/nad-plus.avif" },
+  { id: 32, label: "Performance Support", short: "Olympus Peak", img: "/products/shelf/olympus-peak.avif" },
+  { id: 29, label: "Skin Renewal", short: "Luminance", img: "/products/shelf/luminance.avif" },
+  { id: 26, label: "Recovery Support", short: "Low-Dose Naltrexone", img: "/products/shelf/ldn.avif" },
+  { id: 13, label: "Needle-free GLP-1", short: "SubMagna Drops", img: "/products/shelf/submagna.avif" },
 ];
 
 // Legacy card-wall layouts — only used by the retired KioskHero below; kept

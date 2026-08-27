@@ -12,12 +12,12 @@ const STEPS = [
   {
     title: "Your Care Starts Here",
     text: "Tell us about your health history, current medications, and treatment goals through a guided online assessment",
-    img: "/products/detail/journey-assessment.png",
+    img: "/products/detail/journey-assessment.avif",
   },
   {
     title: "Physician Review",
     text: "A licensed physician reviews your information and determines whether treatment is medically appropriate for you",
-    img: "/products/detail/journey-review.png",
+    img: "/products/detail/journey-review.avif",
   },
   {
     title: "Your Treatment Is Prepared",
@@ -27,7 +27,7 @@ const STEPS = [
   {
     title: "Ongoing Care",
     text: "Stay supported with follow-ups, treatment guidance, and refill management as your plan continues",
-    img: "/products/detail/journey-ongoing.png",
+    img: "/products/detail/journey-ongoing.avif",
   },
 ];
 

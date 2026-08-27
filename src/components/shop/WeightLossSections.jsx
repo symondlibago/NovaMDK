@@ -37,11 +37,11 @@ const CHAT_PILLS = [
 ];
 
 const CHIPS = [
-  { src: "/site/weight-loss/chip-2.png", alt: "Example progress card: 3 weeks in" },
-  { src: "/site/weight-loss/chip-4.png", alt: "Example check-in card: Friday, Aug 28" },
-  { src: "/site/weight-loss/chip-1.png", alt: "Example dose card: weekly dose completed, week 3 of 4" },
-  { src: "/site/weight-loss/chip-5.png", alt: "Example goal card: stay hydrated" },
-  { src: "/site/weight-loss/chip-3.png", alt: "Example summary card: 8 lbs down, goal 160 lbs" },
+  { src: "/site/weight-loss/chip-2.avif", alt: "Example progress card: 3 weeks in" },
+  { src: "/site/weight-loss/chip-4.avif", alt: "Example check-in card: Friday, Aug 28" },
+  { src: "/site/weight-loss/chip-1.avif", alt: "Example dose card: weekly dose completed, week 3 of 4" },
+  { src: "/site/weight-loss/chip-5.avif", alt: "Example goal card: stay hydrated" },
+  { src: "/site/weight-loss/chip-3.avif", alt: "Example summary card: 8 lbs down, goal 160 lbs" },
 ];
 
 const CHIP_H = "h-24 w-[13.7rem]";
@@ -129,7 +129,7 @@ function MembershipBanner({ to }) {
 
         <div className={`${ART_BOX} z-4`}>
           <img
-            src="/site/weight-loss/membership-man.png"
+            src="/site/weight-loss/membership-man.avif"
             alt=""
             aria-hidden="true"
             loading="lazy"
@@ -141,7 +141,7 @@ function MembershipBanner({ to }) {
             cards as well, which left the checkmark clipped from both sides. */}
         <div className={`${ART_BOX} z-3`}>
           <img
-            src="/site/weight-loss/check-badge.png"
+            src="/site/weight-loss/check-badge.avif"
             alt=""
             aria-hidden="true"
             loading="lazy"
@@ -310,13 +310,13 @@ function StartCare({ to }) {
             <span
               key={copy}
               className="block h-full w-1/2 shrink-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('/site/weight-loss/start-care-labels.png')" }}
+              style={{ backgroundImage: "url('/site/weight-loss/start-care-labels.avif')" }}
             />
           ))}
         </div>
       </div>
       <img
-        src="/site/weight-loss/start-care-woman.png"
+        src="/site/weight-loss/start-care-woman.avif"
         alt=""
         aria-hidden="true"
         loading="lazy"
