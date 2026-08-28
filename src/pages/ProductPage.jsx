@@ -26,6 +26,7 @@ import NadSupport from "../components/product/NadSupport";
 import NadDirected from "../components/product/NadDirected";
 import NadSublingual from "../components/product/NadSublingual";
 import GlutathioneSections from "../components/product/GlutathioneSections";
+import ScreamCreamSections from "../components/product/ScreamCreamSections";
 
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
@@ -40,6 +41,9 @@ const HERO_ASSURANCES_OTC = [
 const ingredients = (p) => baseName(p).split("/").map((s) => s.trim()).filter(Boolean);
 const primaryName = (p) => ingredients(p)[0] || baseName(p);
 const comboTagline = (p) => {
+  // An explicit tagline wins: the blend line does not always read as a list of
+  // ingredients split out of the product's own name.
+  if (p?.tagline) return p.tagline;
   if (!isCompounded(p)) return "";
   const parts = ingredients(p);
   return parts.length > 1
@@ -96,6 +100,7 @@ export default function ProductPage() {
   const isNad = /nad\+/i.test(product.name);
   const isSublingual = /sublingual/i.test(product.name);
   const isGlutathione = /glutathione/i.test(product.name);
+  const isScreamCream = /scream cream/i.test(product.name);
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
   const seenTitle = new Set();
   const related = visibleProducts
@@ -250,7 +255,10 @@ export default function ProductPage() {
 
               {/* price block */}
               <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-line pt-6">
-                <span className="text-[1rem] uppercase tracking-[0.08em] text-ink">From</span>
+                {/* "Starts at", not "Start": the label runs straight into the
+                    figure, and a bare verb there ("Start $139/mo") does not
+                    read as English. */}
+                <span className="text-[1rem] uppercase tracking-[0.08em] text-ink">Starts at</span>
                 <span className="font-display text-[clamp(2.2rem,4vw,2.9rem)] font-extrabold leading-none tracking-tight">
                   {active.price}
                   <span className="font-semibold">{priceUnit(active)}</span>
@@ -360,6 +368,7 @@ export default function ProductPage() {
           the product name, and its CTA lands on the intake this page's own Get
           Started uses rather than a second entry point. */}
       {isGlutathione && <GlutathioneSections startTo={`${productPath(product)}?start=1`} />}
+      {isScreamCream && <ScreamCreamSections startTo={`${productPath(product)}?start=1`} />}
 
       <ProductMechanism product={active} />
       {product.howItWorks && (

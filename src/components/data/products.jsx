@@ -1071,6 +1071,36 @@ export const productsData = [
   /* ============================================================ */
 
   {
+    id: 44,
+    categorySlug: "sexual-health",
+    categoryName: "Sexual Health",
+    name: "Scream Cream",
+    tagline: "Compounded with DHEA, Oxytocin, Sildenafil + Theophylline",
+    subtitle:
+      "A prescription topical cream designed to support arousal, sensitivity, and physical sexual response before intimacy. Apply externally as directed by your healthcare provider",
+    price: "$149",
+    shipping: "Discreetly to Your Door",
+    dosageForm: "Topical Cream",
+    icon: <Heart size={16} />,
+    img: "/products/scream-cream.avif",
+    imgDetail: "/products/detail/scream-cream.avif",
+    questionnaireId: "f3ac4fcd-728c-4495-809b-ae6aea0406e4",
+    highlights: [
+      { text: "Topical Application" },
+      { text: "Applied Before Intimacy" },
+      { text: "Provider Prescribed" },
+    ],
+    specs: [
+      { label: "Active Compounds", value: "DHEA, Oxytocin, Sildenafil and Theophylline" },
+      {
+        label: "Dosing Schedule",
+        value: "Apply the amount prescribed by your provider to the external intimate area before intimacy.",
+      },
+      { label: "Formulation", value: "Topical cream" },
+    ],
+    safety: "For external use only; avoid contact with the eyes and mucous membranes, and do not apply to broken or irritated skin. Sildenafil must not be combined with nitrates in any form. Tell your provider about every medication you take, and discuss transfer to a partner during intimacy.",
+  },
+  {
     id: 30,
     categorySlug: "sexual-health",
     categoryName: "Sexual Health",

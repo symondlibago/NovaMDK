@@ -39,14 +39,24 @@ export default function GhlPrewarm({ src }) {
 
   if (!warm || pathname === "/contact") return null;
 
+  /* The frame can't be trusted to keep itself hidden. LeadConnector's
+     form_embed.js — which /contact appends to the document and never removes —
+     walks document.querySelectorAll("iframe"), adopts every GHL widget src it
+     finds, and rewrites that element's inline position, left, height, opacity,
+     visibility and display. Those are exactly the properties this frame used to
+     hide itself with, so once /contact had been visited the prewarm came back as
+     a ~1600px visible block at the top of #root and pushed the whole page down by
+     that much. It read as a reload bug because only /contact loads the script, so
+     landing anywhere else fresh left nothing to adopt it.
+
+     Hiding therefore lives on a wrapper the script has no reason to look at: out
+     of flow, zero-sized and clipping, so whatever height it writes onto the frame
+     stays inside. Zero-sized rather than display:none, and at 0,0 rather than off
+     to the left, because the frame still has to load — being hidden is the point,
+     being skipped or deprioritised is not. */
   return (
-    <iframe
-      src={src}
-      title=""
-      aria-hidden="true"
-      tabIndex={-1}
-      className="pointer-events-none fixed h-px w-px border-0 opacity-0"
-      style={{ left: -9999, top: 0, visibility: "hidden" }}
-    />
+    <div aria-hidden="true" className="pointer-events-none fixed left-0 top-0 h-0 w-0 overflow-hidden">
+      <iframe src={src} title="" tabIndex={-1} className="h-px w-px border-0" />
+    </div>
   );
 }

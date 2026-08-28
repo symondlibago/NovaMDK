@@ -154,6 +154,18 @@
   }
 }
 
+/* Chrome will not interpolate background-image between two gradients: it swaps
+   them in a single frame, so the take-turns cross-fade had no fade in it at all
+   no matter how long the keyframes were. A custom property registered with a
+   <color> syntax IS interpolated, so the animation moves this one value and the
+   gradient recomputes from it every frame. Top level rather than inside a layer
+   so nothing can reorder it away from the rules that use it. */
+@property --nv-edge {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #8f7c55;
+}
+
 @layer components {
   .nv-eyebrow {
     font-family: var(--nv-font-mono);
@@ -333,6 +345,36 @@
   .nv-feelfade {
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%, #000 100%);
     mask-image: linear-gradient(90deg, transparent 0%, #000 42%, #000 100%);
+  }
+
+  /* Scream Cream's brass card: three phrases that take it in turns to light up,
+     one lit at a time. One keyframe on all three with the cycle split into
+     thirds by a stagger, so there is no timer in React and nothing re-renders.
+     The delays are negative so the row is already mid-cycle on the first paint
+     rather than starting with all three dim. */
+  /* 9s, three phrases, so each holds the light for 3s. The cross-fades are a
+     tenth of the cycle each (0.9s) and eased, which is what stops the change
+     reading as a snap — at 6.6s with a 0.66s linear fade it was over before the
+     eye had found it. */
+  /* Only the two edge stops move. Lit is the whole phrase at #f1e3ca, dim keeps
+     that colour in the middle and darkens towards both ends, so animating the
+     edge alone is the entire difference between the two states.
+
+     9s, three phrases, so each holds the light for 3s, and each hand-off takes
+     a fifth of the cycle (1.8s) rather than a frame. */
+  .nv-taketurns > * {
+    background-image: linear-gradient(90deg, var(--nv-edge) 0%, #f1e3ca 50%, var(--nv-edge) 100%);
+    animation: nv-turn 9s ease-in-out infinite;
+  }
+  .nv-taketurns > :nth-child(2) { animation-delay: -6s; }
+  .nv-taketurns > :nth-child(3) { animation-delay: -3s; }
+
+  @keyframes nv-turn {
+    0% { --nv-edge: #f1e3ca; }
+    12% { --nv-edge: #f1e3ca; }
+    32% { --nv-edge: #8f7c55; }
+    80% { --nv-edge: #8f7c55; }
+    100% { --nv-edge: #f1e3ca; }
   }
 
   /* Sports-medicine recovery row. The cards on either end are meant to be half
@@ -764,6 +806,9 @@
   .nv-steps .nv-steps__item { animation: none !important; opacity: 1 !important; transform: none !important; }
   .nv-ticks .nv-ticks__tick { animation: none !important; opacity: 1 !important; transform: none !important; }
   .nv-midchip.is-mid { transform: none !important; }
+  /* No rotation, so all three read at full strength instead of two sitting
+     permanently dimmed on whichever frame the cycle froze. */
+  .nv-taketurns > * { animation: none !important; --nv-edge: #f1e3ca; }
   /* Swapped content arrives in place rather than fading up. */
   .nv-fade-in, .nv-fade-slow { animation: none !important; }
   /* The bars and labels arrive already in place rather than relay-running. */
