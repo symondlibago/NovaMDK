@@ -1030,6 +1030,7 @@ export const productsData = [
     icon: <Sparkles size={16} />,
     img: "/products/luminance.avif",
     imgDetail: "/products/detail/luminance.avif",
+    imgGallery: ["/products/detail/luminance-2.avif", "/products/detail/luminance-3.avif"],
     questionnaireId: "",
     highlights: [
       { text: "Rx Brightening Blend" },
@@ -1181,7 +1182,8 @@ export const productsData = [
     dosageForm: "Sublingual Flex-Dose Tablet",
     icon: <Flame size={16} />,
     img: "/products/olympus-peak.avif",
-    imgDetail: "/products/detail/olympus-peak.avif",
+    imgDetail: "/products/detail/olympus-peak-hero.avif",
+    imgGallery: ["/products/detail/olympus-peak-2.avif", "/products/detail/olympus-peak-3.avif"],
     questionnaireId: "",
     caseOfferingId: "413c5be8-ef97-4138-8311-8675a9702ca9",
     highlights: [
@@ -1317,7 +1319,6 @@ export const productsData = [
     id: 37,
     categorySlug: "sexual-health",
     categoryName: "Sexual Health",
-    hidden: true,
     name: "Bremelanotide Injection",
     size: "5 mL vial",
     subtitle: "On-demand PT-141 injection taken about an hour before anticipated intimacy.",
@@ -1347,7 +1348,6 @@ export const productsData = [
     id: 38,
     categorySlug: "sexual-health",
     categoryName: "Sexual Health",
-    hidden: true,
     name: "Bremelanotide Mini Troche",
     size: "1 mg or 2 mg",
     subtitle: "Needle-free PT-141 — a mini troche dissolved 30–60 minutes before intimacy.",
@@ -1355,7 +1355,10 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Sublingual Mini Troche",
     icon: <Pill size={16} />,
-    img: "/products/dihexa.avif",
+    /* Was pointing at dihexa.avif, a different peptide's render. Until a troche
+       shot exists, the PT-141 render is the honest stand-in: same molecule, and
+       the dosage form is named on the card. */
+    img: "/products/pt-141.avif",
     questionnaireId: "f99bcee9-db6f-449a-81fa-34d842a4a834",
     highlights: [
       { text: "Needle-Free" },
@@ -1376,7 +1379,6 @@ export const productsData = [
     id: 39,
     categorySlug: "sexual-health",
     categoryName: "Sexual Health",
-    hidden: true,
     name: "Bremelanotide Nasal Spray",
     size: "10 or 25 mg/mL",
     subtitle: "On-demand PT-141 nasal spray — two sprays per nostril about 30 minutes before intimacy.",
@@ -1384,7 +1386,9 @@ export const productsData = [
     shipping: "Discreetly to Your Door",
     dosageForm: "Nasal Spray",
     icon: <Droplets size={16} />,
-    img: "/products/selank.avif",
+    /* Was pointing at selank.avif, a different peptide's render. Same stand-in
+       reasoning as the troche above. */
+    img: "/products/pt-141.avif",
     questionnaireId: "496b14b5-15c3-4e63-94ea-b063c3729976",
     highlights: [
       { text: "Needle-Free" },

@@ -29,6 +29,8 @@ import GlutathioneSections from "../components/product/GlutathioneSections";
 import ScreamCreamSections from "../components/product/ScreamCreamSections";
 import SermorelinSections from "../components/product/SermorelinSections";
 import LdnSections from "../components/product/LdnSections";
+import LuminanceSections from "../components/product/LuminanceSections";
+import OlympusSections from "../components/product/OlympusSections";
 
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
@@ -109,6 +111,10 @@ export default function ProductPage() {
   const isScreamCream = /scream cream/i.test(product.name);
   const isSermorelin = /sermorelin/i.test(product.name);
   const isLdn = /naltrexone/i.test(product.name);
+  const isLuminance = /luminance/i.test(product.name);
+  /* Exact, not /olympus peak/i: the ladder also carries an Olympus Max Peak,
+     and this block's copy names Olympus Peak throughout. */
+  const isOlympusPeak = product.name === "Olympus Peak";
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
   const seenTitle = new Set();
   const related = visibleProducts
@@ -379,6 +385,8 @@ export default function ProductPage() {
       {isScreamCream && <ScreamCreamSections startTo={`${productPath(product)}?start=1`} />}
       {isSermorelin && <SermorelinSections startTo={`${productPath(product)}?start=1`} />}
       {isLdn && <LdnSections startTo={`${productPath(product)}?start=1`} />}
+      {isLuminance && <LuminanceSections startTo={`${productPath(product)}?start=1`} />}
+      {isOlympusPeak && <OlympusSections startTo={`${productPath(product)}?start=1`} />}
 
       <ProductMechanism product={active} />
       {product.howItWorks && (

@@ -1,7 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
+/* Aliased: the project lint rule does not count `motion.span` as a use of the
+   lowercase binding, so the capitalised alias keeps this file clean. */
+import { motion as Motion } from "framer-motion";
 import Reveal from "../ui/Reveal";
+
+/* Matched to Reveal's own easing and trigger margin so the ladder's rules and
+   the words they lead to are sequenced by one clock rather than two. */
+const EASE = [0.2, 0.7, 0.3, 1];
+const VIEWPORT_MARGIN = "-80px 0px -80px 0px";
+/* One rung per 0.62s: the rule draws, then its word lands, then the next rule
+   starts. */
+const RUNG_MS = 0.62;
+const RULE_DUR = 0.4;
+const WORD_LAG = 0.34;
 
 const INK = "#6b511e";
 const INK_DEEP = "#5a4620";
@@ -21,24 +34,27 @@ const ENDORPHIN_ROWS = [
   // Canva uses a short elbow under the first item, two straight rules in the
   // middle, and another elbow above the final item. Keeping the rule geometry
   // separate from the labels prevents the ladder from looking like a table.
+  /* Evenly stepped at 30% now: the old 0 / 36 / 55 / 90 left gaps of 36, 19 and
+     35, which is what made the cascade look bunched in the middle. The lefts
+     keep the comp's diagonal. */
   {
     label: { top: "0%", left: "39.5%" },
-    rule: { top: "15.5%", left: "53%", width: "30%" },
+    rule: { top: "13%", left: "53%", width: "30%" },
     shape: "elbow-down",
   },
   {
-    label: { top: "36%", left: "18.5%" },
-    rule: { top: "36%", left: "33.7%", width: "61%" },
+    label: { top: "30%", left: "18.5%" },
+    rule: { top: "30%", left: "33.7%", width: "61%" },
     shape: "straight",
   },
   {
-    label: { top: "55%", left: "8.1%" },
-    rule: { top: "55%", left: "43.5%", width: "49%" },
+    label: { top: "60%", left: "8.1%" },
+    rule: { top: "60%", left: "43.5%", width: "49%" },
     shape: "straight",
   },
   {
     label: { top: "90%", left: "34%" },
-    rule: { top: "75%", left: "53%", width: "37%" },
+    rule: { top: "77%", left: "53%", width: "37%" },
     shape: "elbow-up",
   },
 ];
@@ -131,25 +147,25 @@ function WhyTheDose() {
     <div className="mx-auto max-w-[1180px] px-5 pb-[clamp(2.5rem,6vw,4.5rem)] md:px-10">
       <Reveal>
         <div
-          className={`px-6 py-12 sm:px-10 sm:py-16 lg:px-14 lg:py-20 ${CARD_R}`}
+          className={`px-5 py-8 sm:px-10 sm:py-16 lg:px-14 lg:py-20 ${CARD_R}`}
           style={{ background: PANEL }}
         >
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
+          <div className="grid gap-8 sm:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
             {/* -------- left: the claim -------- */}
             <div>
               <span className="nv-eyebrow">Why the dose matters</span>
 
               {/* Serif here and nowhere else in the block, as the comp sets it. */}
               <h2
-                className="nv-weight-keep mt-3 max-w-[14ch] text-[clamp(1.9rem,4.2vw,3.1rem)] font-medium leading-[1.14]"
+                className="nv-weight-keep mt-3 max-w-[14ch] text-[clamp(1.6rem,4.2vw,3.1rem)] font-medium leading-[1.14]"
                 style={{ color: INK_DEEP, fontFamily: SERIF }}
               >
                 Why does the &ldquo;low dose&rdquo; matter?
               </h2>
 
-              <span aria-hidden="true" className="mt-6 block h-px w-16" style={{ background: LINE }} />
+              <span aria-hidden="true" className="mt-5 block h-px w-16 sm:mt-6" style={{ background: LINE }} />
 
-              <ul className="mt-9 flex flex-col gap-5">
+              <ul className="mt-6 flex flex-col gap-3.5 sm:mt-9 sm:gap-5">
                 {DOSE_POINTS.map((p) => (
                   <li key={p} className="flex items-start gap-3.5">
                     <span
@@ -168,11 +184,11 @@ function WhyTheDose() {
 
             {/* -------- right: the comparison -------- */}
             <div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                 {DOSE_CARDS.map((c) => (
                   <div
                     key={c.label}
-                    className={`border px-4 py-8 text-center ${TILE_R}`}
+                    className={`border px-4 py-5 text-center sm:py-8 ${TILE_R}`}
                     style={{ background: "#fdfaf3", borderColor: LINE }}
                   >
                     <span className="block font-mono text-[0.64rem] uppercase tracking-[0.14em] text-muted">
@@ -184,12 +200,12 @@ function WhyTheDose() {
                       style={{ background: LINE }}
                     />
                     <span
-                      className="mt-6 block whitespace-nowrap text-[clamp(1.45rem,2.5vw,2.2rem)] leading-none"
+                      className="mt-4 block whitespace-nowrap text-[clamp(1.45rem,2.5vw,2.2rem)] leading-none sm:mt-6"
                       style={{ color: "#8a6a2f", fontFamily: SERIF }}
                     >
                       {c.amount}
                     </span>
-                    <span className="mt-5 block text-[0.86rem] leading-snug" style={{ color: BODY }}>
+                    <span className="mt-3 block text-[0.86rem] leading-snug sm:mt-5" style={{ color: BODY }}>
                       {c.note}
                     </span>
                   </div>
@@ -198,7 +214,7 @@ function WhyTheDose() {
 
               {/* The scale. Ticks are a repeating gradient rather than eleven
                   elements, so the spacing stays even at any width. */}
-              <div className="mt-8">
+              <div className="mt-6 sm:mt-8">
                 <div className="relative flex items-center">
                   <span
                     aria-hidden="true"
@@ -233,10 +249,10 @@ function WhyTheDose() {
                 </div>
               </div>
 
-              <span aria-hidden="true" className="mt-8 block h-px w-full" style={{ background: LINE }} />
+              <span aria-hidden="true" className="mt-6 block h-px w-full sm:mt-8" style={{ background: LINE }} />
 
               <p
-                className="mt-8 text-center text-[clamp(1.1rem,1.9vw,1.45rem)]"
+                className="mt-6 text-center text-[clamp(1.1rem,1.9vw,1.45rem)] sm:mt-8"
                 style={{ color: INK_DEEP, fontFamily: SERIF }}
               >
                 Same active ingredient. Different dosing approach.
@@ -285,11 +301,15 @@ const MECHANISM = [
 ];
 
 const MECH_MS = 5000;
+/* The seats are spaced by their gaps, not by round numbers: the old tops left
+   28px between the top pair and 8px between the bottom pair, which read as the
+   stack drifting. Every gap is 24px now (148 + 24 = 172, 196 + 24 = 392), and
+   the off-stage seat sits one gap above the top one. */
 const MECH_SLOTS = [
-  { top: "380px", height: "148px", width: "78%", left: "11%", opacity: 0.75 },
-  { top: "176px", height: "196px", width: "100%", left: "0%", opacity: 1 },
+  { top: "392px", height: "148px", width: "78%", left: "11%", opacity: 0.75 },
+  { top: "172px", height: "196px", width: "100%", left: "0%", opacity: 1 },
   { top: "0px", height: "148px", width: "78%", left: "11%", opacity: 0.75 },
-  { top: "-180px", height: "148px", width: "78%", left: "11%", opacity: 0 },
+  { top: "-172px", height: "148px", width: "78%", left: "11%", opacity: 0 },
 ];
 
 const MECH_EASE = "cubic-bezier(0.22,1,0.36,1)";
@@ -297,7 +317,7 @@ const MECH_EASE = "cubic-bezier(0.22,1,0.36,1)";
 function GlassCard({ item }) {
   return (
     <div
-      className={`flex h-full min-h-[8.5rem] items-stretch gap-3.5 overflow-hidden border border-white/45 p-3 backdrop-blur-xl sm:min-h-[9.5rem] sm:gap-4 md:min-h-0 ${TILE_R}`}
+      className={`flex h-full min-h-[7.25rem] items-stretch gap-3 overflow-hidden border border-white/45 p-2.5 backdrop-blur-xl sm:min-h-[9.5rem] sm:gap-4 sm:p-3 md:min-h-0 ${TILE_R}`}
       style={{
         background: "rgba(240,227,203,0.28)",
         boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5), 0 10px 30px rgba(96,74,40,0.07)",
@@ -326,12 +346,22 @@ function GlassCard({ item }) {
 
 function Mechanism() {
   const [step, setStep] = React.useState(0);
+  const [staged, setStaged] = React.useState(false);
 
   React.useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setStaged(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  React.useEffect(() => {
+    if (!staged) return undefined;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
     const t = setInterval(() => setStep((v) => v + 1), MECH_MS);
     return () => clearInterval(t);
-  }, []);
+  }, [staged]);
 
   return (
     <div className="mx-auto max-w-[1180px] px-5 pb-[clamp(2.5rem,6vw,4.5rem)] md:px-10">
@@ -348,14 +378,18 @@ function Mechanism() {
             <div
               key={m.label}
               className="md:absolute"
-              style={{
-                top: slot.top,
-                left: slot.left,
-                width: slot.width,
-                height: slot.height,
-                opacity: slot.opacity,
-                transition: `top 800ms ${MECH_EASE}, left 800ms ${MECH_EASE}, width 800ms ${MECH_EASE}, height 800ms ${MECH_EASE}, opacity 800ms ease`,
-              }}
+              style={
+                staged
+                  ? {
+                      top: slot.top,
+                      left: slot.left,
+                      width: slot.width,
+                      height: slot.height,
+                      opacity: slot.opacity,
+                      transition: `top 800ms ${MECH_EASE}, left 800ms ${MECH_EASE}, width 800ms ${MECH_EASE}, height 800ms ${MECH_EASE}, opacity 800ms ease`,
+                    }
+                  : undefined
+              }
             >
               <GlassCard item={m} />
             </div>
@@ -381,15 +415,21 @@ function EndorphinsBand({ startTo }) {
           <div className="grid items-end gap-6 lg:h-full lg:grid-cols-[minmax(0,1fr)_minmax(0,0.66fr)] lg:gap-10">
             <div className="pb-8 sm:pb-10 lg:flex lg:h-full lg:flex-col lg:items-start">
               <h2
-                className="nv-weight-keep max-w-[16ch] font-display text-[clamp(1.5rem,3.2vw,2.4rem)] font-extrabold leading-[1.14]"
+                /* 16ch dropped "good" onto a line of its own. The break is set
+                   where the comp sets it instead of left to the wrap. */
+                className="nv-weight-keep max-w-[24ch] font-display text-[clamp(1.5rem,3.2vw,2.4rem)] font-extrabold leading-[1.14]"
                 style={{ color: CREAM }}
               >
-                Endorphins do more than make you feel good
+                Endorphins do more{" "}
+                <span className="sm:block">than make you feel good</span>
               </h2>
 
-              <p className={`mt-5 max-w-[46ch] leading-relaxed ${BODY_SIZE}`} style={{ color: CREAM_SOFT }}>
+              <p className={`mt-5 max-w-[56ch] leading-relaxed ${BODY_SIZE}`} style={{ color: CREAM_SOFT }}>
                 Most people know endorphins as the chemicals behind a &ldquo;runner&rsquo;s
-                high.&rdquo; But they also interact with systems involved in:
+                high.&rdquo; But they also interact with systems{" "}
+                {/* Held together so the colon can never be orphaned onto its own
+                    line at any width. */}
+                <span className="whitespace-nowrap">involved in:</span>
               </p>
 
               <Link
@@ -399,12 +439,20 @@ function EndorphinsBand({ startTo }) {
               >
                 Get Started
               </Link>
-              <ul className="mt-[clamp(1.5rem,3vw,2.25rem)] flex flex-col gap-3.5 sm:relative sm:block sm:h-[clamp(10.75rem,12vw,11.5rem)] sm:mt-[clamp(1.75rem,2.4vw,2.25rem)] lg:mt-auto lg:mb-0 lg:w-full">
+              {/* lg:mb-10 lifts the ladder off the card's bottom edge: with
+                  mt-auto alone it sat flush against it. */}
+              <ul className="mt-[clamp(1.5rem,3vw,2.25rem)] flex flex-col gap-3.5 sm:relative sm:block sm:h-[clamp(10.75rem,12vw,11.5rem)] sm:mt-[clamp(1.75rem,2.4vw,2.25rem)] lg:mt-auto lg:mb-14 lg:w-full">
                 {ENDORPHINS.map((e, i) => (
                   <li key={e} className="contents sm:block">
-                    <span
+                    {/* Each word waits for its own rule to finish drawing, so the
+                        ladder reads rung by rung: line, word, line, word. */}
+                    <Motion.span
                       className="flex items-center gap-3 sm:absolute sm:whitespace-nowrap"
                       style={ENDORPHIN_ROWS[i].label}
+                      initial={{ opacity: 0, x: -8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: VIEWPORT_MARGIN }}
+                      transition={{ duration: 0.45, ease: EASE, delay: i * RUNG_MS + WORD_LAG }}
                     >
                       <span aria-hidden="true" className="relative grid h-3 w-3 shrink-0 place-items-center">
                         <span
@@ -416,15 +464,22 @@ function EndorphinsBand({ startTo }) {
                       <span className="text-[0.92rem]" style={{ color: CREAM }}>
                         {e}
                       </span>
-                    </span>
+                    </Motion.span>
 
-                    <span
+                    {/* Drawn left to right by clipping, not by scaling: the
+                        elbows are borders, and scaling one would thin its
+                        stroke as it grew. */}
+                    <Motion.span
                       aria-hidden="true"
                       className="pointer-events-none hidden sm:absolute sm:block"
                       style={{
                         ...ENDORPHIN_ROWS[i].rule,
                         height: ENDORPHIN_ROWS[i].shape === "straight" ? "1px" : "14px",
                       }}
+                      initial={{ clipPath: "inset(0 100% 0 0)" }}
+                      whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+                      viewport={{ once: true, margin: VIEWPORT_MARGIN }}
+                      transition={{ duration: RULE_DUR, ease: EASE, delay: i * RUNG_MS }}
                     >
                       <span
                         className="absolute inset-0 block"
@@ -442,7 +497,7 @@ function EndorphinsBand({ startTo }) {
                               : { background: "rgba(247,233,201,0.28)" }
                         }
                       />
-                    </span>
+                    </Motion.span>
                   </li>
                 ))}
               </ul>

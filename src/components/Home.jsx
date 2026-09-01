@@ -98,7 +98,7 @@ export default function Home() {
       <section id="how" className="mx-auto w-full max-w-[1240px] scroll-mt-24 px-5 pt-[clamp(1.75rem,4.5vw,4.5rem)] md:px-10">
         <Reveal className="mx-auto mb-[clamp(1.5rem,3vw,2.5rem)] max-w-[60ch] text-center">
           <span className="nv-eyebrow">How it works</span>
-          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Care in three simple steps</h2>
+          <h2 className="mt-3 text-[clamp(1.9rem,4vw,2.9rem)] font-extrabold leading-tight">Care In Three Simple Steps</h2>
         </Reveal>
         <div className="grid grid-cols-1 items-stretch gap-3.5 md:grid-cols-3">
           {HOW_STEPS.map((s, i) => (

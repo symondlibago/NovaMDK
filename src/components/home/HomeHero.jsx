@@ -70,42 +70,10 @@ const TITLE_FILL = "radial-gradient(circle at 0% 0%, #6b511e, #d9c797)";
 
 const CARD_R = "rounded-[calc(20px*var(--nv-r-scale,1))]";
 const TILE_R = "rounded-[calc(14px*var(--nv-r-scale,1))]";
-
-/* Below lg the shelf is a swipe rail, above it the original 4-column grid.
-
-   48% + a 12px gap puts the comp's two whole cards on screen and leaves ~11px
-   of the third showing. That sliver is the only affordance saying the row moves
-   — there are no dots under it — and it costs about 4px off the right margin,
-   which is inside the error of measuring a soft-edged card in a screenshot. The
-   5:6 box is the comp's card, and it is what gives the bottle its own half of
-   the card instead of a side column.
-
-   Widths are a percentage of the rail's content box, and `-mx-5 px-5` makes that
-   box exactly the page measure while letting cards scroll out under the page
-   padding. `scroll-pl` has to repeat that padding or snap-start would park each
-   card flush to the viewport edge and eat the inset. */
-const RAIL_ITEM =
-  "w-[48%] shrink-0 snap-start aspect-[5/6] min-w-0 lg:aspect-auto lg:w-auto lg:h-full";
-
+const RAIL_ITEM ="w-[48%] shrink-0 snap-start aspect-[5/6] min-w-0 lg:aspect-auto lg:w-auto lg:h-full";
 const AUTO_MS = 3000;
-/* Long enough that the momentum from a flick has certainly stopped before the
-   seam is rebased, short enough not to be felt as a delay. */
 const SETTLE_MS = 180;
 
-/* Steps the rail on by one card every AUTO_MS while leaving it an ordinary
-   native scroller, so the finger still owns it.
-
-   The cards are rendered twice below lg. That makes the rail periodic, so once
-   it has advanced a whole set the offset can be walked back by exactly one set
-   width and nothing moves on screen — which is why this can keep going forward
-   forever instead of sweeping all the way back to the start every 18 seconds.
-   The rebase is only ever done when no animation is in flight, because writing
-   scrollLeft cancels a smooth scroll in progress.
-
-   Stride comes from the difference between two children's offsetLeft, so it
-   needs no assumption about where the rail itself sits on the page. Above lg
-   the rail is a grid with nothing to scroll and the duplicates are display:none,
-   which the scrollWidth guard catches on its own. */
 function useAutoAdvance(ref, unique) {
   useEffect(() => {
     const el = ref.current;
@@ -218,19 +186,6 @@ function CardCopy({ tag, name, blurb, cta, big = false }) {
     </div>
   );
 }
-
-/* Two separate things were making these cards flicker on hover.
-
-   `group` belongs on a wrapper that never moves, not on the card that lifts:
-   with :hover and the lift on the same element, a cursor near the card's bottom
-   edge is left outside it the moment it rises, which drops the hover, which
-   drops the card back under the cursor, which re-hovers.
-
-   And a <video> inside a rounded overflow-hidden box that is being transformed
-   makes the browser flip it between a hardware video overlay and a composited
-   layer, which flashes. GPU_LAYER pins it to the composited path — `transform-gpu`
-   rather than a literal translateZ, so it still composes with the translate
-   utility on the same element instead of overwriting it. */
 const GPU_LAYER = "transform-gpu will-change-transform [backface-visibility:hidden]";
 
 function VideoCard() {
@@ -359,16 +314,6 @@ const railMotion = (delay, clone) =>
         transition: { duration: 0.6, ease: EASE, delay },
       };
 
-/* Two different tiles in one component.
-
-   Below lg it is a portrait card in the swipe rail: copy at the top, the whole
-   bottle contained and floor-anchored underneath. Squeezing the old side-by-side
-   layout into a half-width phone column was what put "Low-Dose Naltrexone" on
-   three lines and pushed the labels under the bottles — there is only ~60px of
-   copy width left once a 6rem image column is taken out of a 165px card.
-
-   From lg it is the original wide tile, where the art is oversized to 215% and
-   pulled up so the bottle bleeds out of a shallow box. */
 function Tile({ item, delay, clone }) {
   return (
     <Motion.div
@@ -404,11 +349,6 @@ function Tile({ item, delay, clone }) {
   );
 }
 
-/* The tall tile — two grid rows from lg, one more card in the rail below that.
-   It was already the vertical one at lg, so from the phone's point of view it is
-   simply the first card in the swipe rail and shares the portrait layout with
-   the six. The master here is the catalogue's file, not a shelf crop, so it
-   carries its own padding; `object-contain` fits whichever canvas it is given. */
 function FeaturedTile({ product, delay, clone }) {
   return (
     <Motion.div
@@ -472,25 +412,15 @@ export default function HomeHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: EASE }}
         >
-          {/* Eyebrow ("Physician-guided care") and standfirst ("Care plans
-              tailored to you…") both came out on 2026-08-31 at the client's
-              request: the hero opens on the headline alone. The two-column grid
-              went with them, since the standfirst was the only thing that ever
-              sat in the second column, and the headline's own 16ch measure is
-              what holds its line breaks now. The "See How It Works" / "Get
-              Started" pair had already gone from that column on 2026-08-27. */}
-          {/* Two lines on a phone, breaking after the comma — hard-broken
-              rather than measure-broken, because a `ch` box on an extrabold
-              display face is far too loose to land the break reliably. */}
           <h1
             className="nv-weight-keep text-[clamp(1.5rem,5.8vw,3.05rem)] font-extrabold leading-[1.15] tracking-[-0.015em] lg:max-w-[16ch] lg:leading-[1.1]"
             style={{ color: "#6b511e" }}
           >
             Modern{" "}
             <span className="bg-clip-text text-transparent" style={{ backgroundImage: TITLE_FILL }}>
-              Healthcare
-            </span>
-            , <span className="block">Built Around You</span>
+              Healthcare,
+            </span>{" "}
+            <span className="block">Built Around You</span>
           </h1>
         </Motion.div>
 

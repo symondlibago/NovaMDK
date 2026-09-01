@@ -35,7 +35,7 @@ function GlassPill({ children, tone = "light", on = false, className = "", ...re
       className={`inline-flex items-center whitespace-nowrap rounded-full backdrop-blur-md ${light ? "gap-3 px-5 py-3 text-[clamp(0.82rem,1.4vw,0.98rem)] font-bold" : "gap-2 border px-4 py-2 text-[0.78rem] font-semibold"} ${className}`}
       style={{
         background: light
-          ? "rgba(252,249,243,0.94)"
+          ? "rgba(252,249,243,0.55)"
           : on
             ? "rgba(255,255,255,0.3)"
             : "rgba(255,255,255,0.14)",
@@ -109,8 +109,15 @@ function ConfidenceStage({ startTo }) {
               aria-hidden="true"
               className="absolute bottom-0 left-1/2 h-full w-auto max-w-none -translate-x-1/2 object-contain object-bottom"
             />
-            {ORBITS.map((o) => (
-              <span key={o.label} className={`absolute ${o.pos}`}>
+            {ORBITS.map((o, i) => (
+              /* Staggered so the four never rise and fall together, which would
+                 read as the whole picture moving rather than the words drifting
+                 across it. */
+              <span
+                key={o.label}
+                className={`nv-drift absolute ${o.pos}`}
+                style={{ animationDelay: `${i * -1.6}s` }}
+              >
                 <GlassPill>
                   <span className="h-3 w-3 shrink-0 rounded-full blur-[1.5px]" style={{ background: BEAD, boxShadow: BEAD_GLOW }} aria-hidden="true" />
                   {o.label}

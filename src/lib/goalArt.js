@@ -22,8 +22,8 @@ export const GOAL_ART = {
   "sports-medicine": {
     cutout: "/site/goals/sportsmedperson.avif",
     cutoutClass: "-top-[1%] h-[102%] left-0",
-    hero: "/site/goals/sportsmedperson.avif",
-    heroClass: "bottom-0 h-[117%] right-[-24%]",
+    hero: "/site/goals/sportsmed-hero.avif",
+    heroClass: "bottom-0 h-[112%] right-[-6%]",
     bg: "bg-[#d1b995]",
     heroBg: "#d1b995",
     motion: "spark",
@@ -31,8 +31,8 @@ export const GOAL_ART = {
   "unisex-anti-aging-rx": {
     cutout: "/site/goals/longevity.avif",
     cutoutClass: "-top-[4%] h-[108%] right-[18%]",
-    hero: "/site/goals/longevity.avif",
-    heroClass: "bottom-0 h-[116%] right-[-2%]",
+    hero: "/site/goals/longevity-hero.avif",
+    heroClass: "bottom-0 h-[113%] right-[-4%]",
     bg: "bg-[#d1c0a0]",
     heroBg: "#c9b48f",
     motion: "orbs",

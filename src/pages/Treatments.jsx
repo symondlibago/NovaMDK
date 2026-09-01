@@ -63,17 +63,7 @@ const STEPS = [
   { icon: PackageOpen, title: "Delivered to your door", desc: "Fast, discreet delivery — with ongoing care and easy adjustments anytime." },
 ];
 
-/* Categories whose own block below the shelf already walks through how care
-   works, so the generic three-step explainer and the stats band are suppressed
-   for them. Add a slug here when a category grows its own editorial block. */
 const SELF_CONTAINED = new Set(["weight-loss", "unisex-anti-aging-rx"]);
-
-/* Categories that drop the three-step explainer alone, keeping the social-proof
-   band that normally follows it. Skin health was taken off it on 2026-08-31 at
-   the client's request. This is deliberately not SELF_CONTAINED: that set
-   suppresses HowItWorks and SocialProof together, and here only the first of the
-   two goes. The bare /treatments index passes validGoal === null, which is not
-   in here, so the explainer still runs on the index. */
 const NO_HOW_IT_WORKS = new Set(["unisex-skin-health"]);
 
 // Mirrors the homepage band — "Waiting rooms" was dropped at the client's request.
@@ -114,7 +104,7 @@ function HowItWorks() {
     <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
       <Reveal className="mx-auto max-w-[60ch] text-center">
         <span className="nv-eyebrow">How it works</span>
-        <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">Care in three simple steps</h2>
+        <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">Care In Three Simple Steps</h2>
         <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">From first question to front door — no clinics, no waiting rooms, no awkward pharmacy runs.</p>
       </Reveal>
       <div className="mt-12 grid gap-5 sm:grid-cols-3">

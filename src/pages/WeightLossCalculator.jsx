@@ -2,7 +2,6 @@ import React from "react";
 import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
-import PageHero from "../components/shop/PageHero";
 import Reveal from "../components/ui/Reveal";
 import BmiCalculator from "../components/tools/BmiCalculator";
 
@@ -28,17 +27,26 @@ export default function WeightLossCalculatorPage() {
       />
       <Navbar />
 
-      <PageHero
-        showBack
-        eyebrow="Free tool"
-        title="Weight loss calculator"
-        subtitle="Drag the sliders to see your BMI and which category it falls into."
-        chips={["No sign-up", "Updates as you drag", "Nothing stored"]}
-      />
-
       <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.4rem,5vw,4rem)] md:px-10">
+        {/* The comp sets this header inline above the card rather than as a full
+            PageHero: no back link, no chips, and the two-line standfirst does the
+            job the chips used to. */}
         <Reveal>
-          <BmiCalculator />
+          <span className="nv-eyebrow">Free tool</span>
+          <h1 className="nv-weight-keep mt-2 font-display text-[clamp(1.9rem,4.4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">
+            See where you stand
+          </h1>
+          <p className="mt-3 max-w-[62ch] text-[0.92rem] leading-relaxed text-muted">
+            Use the sliders to estimate your BMI and see where it falls.
+            <br />
+            A screening tool only, not a predictor of individual outcomes.
+          </p>
+        </Reveal>
+
+        <Reveal>
+          <div className="mt-[clamp(1.5rem,3vw,2.25rem)]">
+            <BmiCalculator />
+          </div>
         </Reveal>
 
         {/* Reference table, so the page answers the query even for visitors who

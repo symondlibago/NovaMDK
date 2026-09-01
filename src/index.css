@@ -888,3 +888,19 @@ html.lenis body { height: auto; }
 @media (prefers-reduced-motion: reduce) {
   .nv-ghspin { animation: none !important; }
 }
+
+@layer components {
+  /* The orbit pills on the sexual-health stage. Long and slow so it reads as
+     drifting rather than bobbing, and each pill is offset in SexualHealthSections
+     so the four never travel together. */
+  .nv-drift { animation: nv-drift 6.4s ease-in-out infinite; }
+
+  @keyframes nv-drift {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-drift { animation: none !important; }
+}
