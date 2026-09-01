@@ -33,7 +33,14 @@ const BODY = "#7a6d58";
    same two stops barely register. */
 const TITLE = "nv-weight-keep font-display font-extrabold leading-[1.14]";
 /* Both headings are the same size in the comp; mine were a third too small. */
-const TITLE_SIZE = "text-[clamp(1.6rem,3.6vw,2.85rem)]";
+/* The ceiling is 2.7rem, not 2.85rem, because of one line. Above 1280px the
+   clamp is pinned at its maximum while the column it sits in stops growing at
+   389px (the row is capped by max-w-[1180px]), and at 2.85rem "your body is
+   already" measures ~395px — so "already" dropped to a line of its own and the
+   heading ran to four lines. 2.7rem brings that line to ~373px and holds the
+   comp's three. Measured, not guessed: it is the widest line in the row, so it
+   is the one that sets this number. */
+const TITLE_SIZE = "text-[clamp(1.6rem,3.6vw,2.7rem)]";
 const BODY_SIZE = "text-[clamp(0.9rem,1.2vw,1.05rem)]";
 
 function Ramp({ children }) {
@@ -48,6 +55,15 @@ function Ramp({ children }) {
 }
 const CREAM = "#f4e3c1";
 const CREAM_SOFT = "rgba(244,227,193,0.88)";
+
+/* The "Support how you want to feel" headline is two-tone in the comp: the first
+   line is this warm gold, the second stays on CREAM. #f5e6b4 — rgb(245,230,180)
+   — was eyedropped off the comp by the client on 2026-09-01, and it applies to
+   that first line ONLY. Not the second line, not the other tan band, not the
+   shared token. (The #f1e3ca quoted in the written brief was wrong: it is 22
+   points bluer than the image it was taken from, which is why it kept rendering
+   cooler and paler than the comp.) */
+const CREAM_LEAD = "#f5e6b4";
 
 const CARD_R = "rounded-[calc(26px*var(--nv-r-scale,1))]";
 
@@ -246,7 +262,13 @@ function HowYouWantToFeel() {
             same colour and the shot is faded out along its left edge — the two
             meet with no seam and the copy sits on open ground. */}
         <div
-          className={`relative flex min-h-[clamp(16rem,34vw,25rem)] flex-col justify-between overflow-hidden px-7 py-8 sm:px-11 sm:py-10 ${CARD_R}`}
+          /* Asymmetric vertical padding on purpose. justify-between pins the
+             headline to the top edge and the footnote to the bottom, and with an
+             even py-10 that put the headline hard against the top of the band —
+             the comp drops it about a quarter of the way down and lets the
+             photograph carry the top corner. The top value is the one doing that
+             work, so it scales with the viewport while the bottom stays put. */
+          className={`relative flex min-h-[clamp(16rem,34vw,30rem)] flex-col justify-between overflow-hidden px-7 pb-8 pt-[clamp(2.5rem,8vw,7.5rem)] sm:px-11 sm:pb-10 ${CARD_R}`}
           style={{ background: "#c4a279" }}
         >
           <img
@@ -257,16 +279,30 @@ function HowYouWantToFeel() {
             className="nv-feelfade pointer-events-none absolute inset-y-0 right-0 h-full w-[72%] object-cover object-right sm:w-[62%]"
           />
 
+          {/* 16ch, not 11ch: the comp sets this on two lines, "Support how you /
+              want to feel", and an 11ch measure broke it into three by dropping
+              "feel" onto a line of its own. */}
           <h2
-            className="nv-weight-keep relative z-10 max-w-[11ch] font-display text-[clamp(1.6rem,4.4vw,2.9rem)] font-extrabold leading-[1.1]"
+            className="nv-weight-keep relative z-10 max-w-[16ch] font-display text-[clamp(1.6rem,4.4vw,2.9rem)] font-extrabold leading-[1.1]"
             style={{ color: CREAM }}
           >
-            Support how you want to feel
+            {/* Hard break, so the colour change and the line break are the same
+                place at every width — a natural wrap would drift off the tint. */}
+            <span style={{ color: CREAM_LEAD }}>Support how you</span>
+            <br />
+            want to feel
           </h2>
 
+          {/* Blended, per the comp: the same cream as the headline but carried at
+              62% and italic, so it settles into the tan instead of sitting on it.
+              Setting it at full strength (which is what I did first) made a legal
+              footnote the second-brightest thing in the band — the opposite of
+              blending it. Italic is what separates it from the headline now that
+              the two share a colour, so it does not need contrast to read as a
+              different kind of text. */}
           <p
-            className="relative z-10 mt-10 max-w-[46ch] text-[0.74rem] leading-relaxed"
-            style={{ color: "rgba(253,246,230,0.82)" }}
+            className="relative z-10 mt-10 max-w-[52ch] text-[0.74rem] italic leading-relaxed"
+            style={{ color: "rgba(244,227,193,0.62)" }}
           >
             Individual results may vary. Treatment is subject to evaluation and approval by a
             licensed healthcare provider. Compounded medications are not FDA-approved.

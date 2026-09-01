@@ -27,6 +27,8 @@ import NadDirected from "../components/product/NadDirected";
 import NadSublingual from "../components/product/NadSublingual";
 import GlutathioneSections from "../components/product/GlutathioneSections";
 import ScreamCreamSections from "../components/product/ScreamCreamSections";
+import SermorelinSections from "../components/product/SermorelinSections";
+import LdnSections from "../components/product/LdnSections";
 
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
@@ -54,9 +56,13 @@ const priceUnit = (p) => {
   const raw = p.specs?.find((s) => s.label === "Days Supply")?.value || "";
   const days = Number(raw.match(/(\d+)\s*days?/i)?.[1]);
   if (!days) return "";
+  /* "/mo" is the only unit left (2026-08-31, client's request). Both "/N weeks"
+     and "/N days" came off, so a 56-day supply now prices as a bare "$179";
+     monthly keeps its unit because that is the one reading a price next to a
+     subscription already expects. Nothing is hidden by this — every supply
+     period is still stated in full in the Days Supply spec further down. */
   if (days >= 28 && days <= 31) return "/mo";
-  if (days % 7 === 0) return `/${days / 7} weeks`;
-  return `/${days} days`;
+  return "";
 };
 
 // Fallback questionnaire used when a product has no questionnaireId yet.
@@ -101,6 +107,8 @@ export default function ProductPage() {
   const isSublingual = /sublingual/i.test(product.name);
   const isGlutathione = /glutathione/i.test(product.name);
   const isScreamCream = /scream cream/i.test(product.name);
+  const isSermorelin = /sermorelin/i.test(product.name);
+  const isLdn = /naltrexone/i.test(product.name);
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
   const seenTitle = new Set();
   const related = visibleProducts
@@ -369,6 +377,8 @@ export default function ProductPage() {
           Started uses rather than a second entry point. */}
       {isGlutathione && <GlutathioneSections startTo={`${productPath(product)}?start=1`} />}
       {isScreamCream && <ScreamCreamSections startTo={`${productPath(product)}?start=1`} />}
+      {isSermorelin && <SermorelinSections startTo={`${productPath(product)}?start=1`} />}
+      {isLdn && <LdnSections startTo={`${productPath(product)}?start=1`} />}
 
       <ProductMechanism product={active} />
       {product.howItWorks && (
@@ -401,12 +411,13 @@ export default function ProductPage() {
       {/* ===== Safety ===== */}
       {active.safety && (
         <section className="mx-auto mb-[clamp(3rem,6vw,5rem)] max-w-[1180px] px-5 md:px-10">
-          <div className="rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface-2 p-6 md:p-8">
-            <h3 className="flex items-center gap-2 font-display text-[1.1rem] font-bold">
-              <ShieldAlert size={18} className="text-primary" /> Important safety information
-            </h3>
-            <p className="mt-3 text-[0.92rem] leading-relaxed text-muted">{active.safety}</p>
-          </div>
+          {/* Typeset as running copy rather than a bordered callout (2026-08-31).
+              The tinted card, the rule around it and the alert icon together read
+              as a highlight — a box the eye files as promotional and skips. This
+              wording is part of the product's own description, so it is set like
+              the rest of the description and simply sits in the page. */}
+          <h3 className="font-display text-[1.05rem] font-bold text-ink">Important safety information</h3>
+          <p className="mt-2 max-w-[86ch] text-[0.9rem] leading-relaxed text-muted">{active.safety}</p>
         </section>
       )}
       {!otc && <ProductJourney product={active} />}

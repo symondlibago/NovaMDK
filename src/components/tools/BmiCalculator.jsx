@@ -40,70 +40,104 @@ const DEFAULT_KG = 84;
 const clamp = (n, { min, max }) => Math.min(max, Math.max(min, n));
 const feetInches = (totalIn) => `${Math.floor(totalIn / 12)}' ${totalIn % 12}"`;
 
-/* ------------------------------- the dial ------------------------------- */
+/* ------------------------------- the scale ------------------------------- */
 
-const DIAL = { cx: 150, cy: 148, r: 108, labelR: 130 };
-const ARC_LEN = Math.PI * DIAL.r;
+/* Replaced the semicircle dial on 2026-09-01. The dial and the 2x2 grid of band
+   boxes beside it were two drawings of one fact: the dial showed where the
+   reading sat on the range, the boxes showed the same ranges again as a list,
+   and the lit box repeated the band name already printed inside the arc. That
+   cost a tall two-column row to say one thing three times. This is the same
+   information as a single object — the bands ARE the track, and the reading is a
+   position along it — which is both shorter and easier to read at a glance,
+   because "which segment am I in" is answered by looking at one place. */
 
-// BMI -> point on the semicircle. 180deg is the left end, 0deg the right.
-function pointAt(value, radius) {
-  const t = (clamp(value, { min: DIAL_MIN, max: DIAL_MAX }) - DIAL_MIN) / (DIAL_MAX - DIAL_MIN);
-  const rad = ((180 - t * 180) * Math.PI) / 180;
-  return { x: DIAL.cx + radius * Math.cos(rad), y: DIAL.cy - radius * Math.sin(rad) };
-}
+/* Each band as a segment of the track, sized by how much of the 16-40 range it
+   actually spans. Proportional, not equal quarters: obesity is 10 BMI points
+   wide and underweight is 2.5, and drawing them the same width would misstate
+   the scale a patient is reading themselves against. */
+const SEGMENTS = BANDS.map((b, i) => {
+  const lo = i === 0 ? DIAL_MIN : BANDS[i - 1].max;
+  const hi = Math.min(b.max, DIAL_MAX);
+  return { ...b, lo, hi, width: ((hi - lo) / (DIAL_MAX - DIAL_MIN)) * 100 };
+});
 
-function Dial({ bmi, color }) {
-  const t = (clamp(bmi, { min: DIAL_MIN, max: DIAL_MAX }) - DIAL_MIN) / (DIAL_MAX - DIAL_MIN);
-  const knob = pointAt(bmi, DIAL.r);
-  const arc = `M ${DIAL.cx - DIAL.r} ${DIAL.cy} A ${DIAL.r} ${DIAL.r} 0 0 1 ${DIAL.cx + DIAL.r} ${DIAL.cy}`;
+const SCALE_STOPS = [DIAL_MIN, 18.5, 25, 30, DIAL_MAX];
+const pctOf = (v) => ((clamp(v, { min: DIAL_MIN, max: DIAL_MAX }) - DIAL_MIN) / (DIAL_MAX - DIAL_MIN)) * 100;
 
+function Scale({ bmi, band }) {
+  const left = pctOf(bmi);
   return (
-    <svg viewBox="0 0 300 172" className="w-full" role="img" aria-label={`BMI ${bmi}`}>
-      <defs>
-        <linearGradient id="nv-bmi-sweep" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0%" stopColor={`color-mix(in oklab, ${color} 45%, var(--nv-surface))`} />
-          <stop offset="100%" stopColor={color} />
-        </linearGradient>
-      </defs>
+    /* No top margin of its own — it is a grid cell beside the reading, and the
+       row's gap sets the space above it when the two stack on a phone. */
+    <div>
+      {/* The marker rides above the track rather than on it, so it never covers
+          the one colour the reader is trying to identify. */}
+      <div className="relative h-6" aria-hidden="true">
+        <span
+          className="absolute bottom-0 flex -translate-x-1/2 flex-col items-center transition-[left] duration-200 ease-out"
+          style={{ left: `${left}%` }}
+        >
+          <span className="font-mono text-[0.66rem] font-semibold tabular-nums" style={{ color: band.color }}>
+            {bmi}
+          </span>
+          <span
+            className="mt-1 h-0 w-0 border-x-[5px] border-t-[6px] border-x-transparent transition-colors duration-300"
+            style={{ borderTopColor: band.color }}
+          />
+        </span>
+      </div>
 
-      <path d={arc} fill="none" stroke="var(--nv-line)" strokeWidth="15" strokeLinecap="round" />
-      <path
-        d={arc}
-        fill="none"
-        stroke="url(#nv-bmi-sweep)"
-        strokeWidth="15"
-        strokeLinecap="round"
-        strokeDasharray={`${t * ARC_LEN} ${ARC_LEN}`}
-        style={{ transition: "stroke-dasharray 0.2s cubic-bezier(0.22, 1, 0.36, 1)" }}
-      />
-      {/* White collar under the knob keeps it legible where it overlaps the track. */}
-      <circle
-        cx={knob.x}
-        cy={knob.y}
-        r="10"
-        fill={color}
-        stroke="var(--nv-surface)"
-        strokeWidth="5"
-        style={{ transition: "cx 0.2s cubic-bezier(0.22, 1, 0.36, 1), cy 0.2s cubic-bezier(0.22, 1, 0.36, 1), fill 0.3s ease" }}
-      />
-      {[DIAL_MIN, 18.5, 25, 30, DIAL_MAX].map((v) => {
-        const p = pointAt(v, DIAL.labelR);
-        return (
-          <text
+      <div className="flex gap-1">
+        {SEGMENTS.map((s) => (
+          <span
+            key={s.key}
+            className="h-2.5 rounded-full transition-colors duration-300"
+            style={{
+              width: `${s.width}%`,
+              background:
+                s.key === band.key ? s.color : `color-mix(in oklab, ${s.color} 20%, var(--nv-surface-2))`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Boundary numbers sit at the value they mark, not spread evenly, so each
+          one lines up with the join it names in the track above. */}
+      <div className="relative mt-2 h-4" aria-hidden="true">
+        {SCALE_STOPS.map((v) => (
+          <span
             key={v}
-            x={p.x}
-            y={p.y}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="var(--nv-muted)"
-            className="font-mono"
-            fontSize="10.5"
+            className="absolute -translate-x-1/2 font-mono text-[0.64rem] tabular-nums text-muted"
+            style={{ left: `${pctOf(v)}%` }}
           >
             {v}
-          </text>
-        );
-      })}
-    </svg>
+          </span>
+        ))}
+      </div>
+
+      {/* Legend widths are natural rather than tied to the segments above:
+          "Underweight" is a long word over a segment worth a tenth of the track,
+          and pinning it there set it in a two-character column. */}
+      <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+        {SEGMENTS.map((s) => {
+          const on = s.key === band.key;
+          return (
+            <li
+              key={s.key}
+              className={`flex items-center gap-1.5 text-[0.78rem] transition-colors duration-300 ${on ? "font-bold" : "text-muted"}`}
+              style={on ? { color: s.color } : undefined}
+            >
+              <span
+                className="h-2 w-2 shrink-0 rounded-full transition-colors duration-300"
+                style={{ background: on ? s.color : `color-mix(in oklab, ${s.color} 35%, var(--nv-line))` }}
+              />
+              {s.label}
+              <span className={`font-mono text-[0.68rem] tabular-nums ${on ? "" : "text-muted/70"}`}>{s.range}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
@@ -167,6 +201,15 @@ export default function BmiCalculator({ className = "" }) {
 
   if (!result) return null;
 
+  /* Three bands, in reading order: what you are, where that sits, what it means.
+     The result half was rebuilt on 2026-09-01 — see the note above Scale for why
+     the dial went. The shell keeps its three stacked sections because they are
+     the three steps of using the thing, and the divider between inputs and
+     reading is what stops a drag feeling like it edits the answer in place.
+
+     Radii here come from --nv-r-scale like every other card on the site. They
+     used to be Tailwind's fixed rounded-xl, so turning the global scale up left
+     this tool's insides square inside its own rounded shell. */
   return (
     <div
       className={`overflow-hidden rounded-[calc(24px*var(--nv-r-scale,1))] border border-line bg-surface nv-shadow ${className}`}
@@ -180,7 +223,7 @@ export default function BmiCalculator({ className = "" }) {
           </p>
         </div>
 
-        <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-x-12">
+        <div className="mt-5 grid gap-6 sm:grid-cols-2 sm:gap-x-10">
           <SliderField
             id="bmi-height-in" label="Height"
             value={clamp(heightIn, RANGE.heightIn)} display={feetInches(clamp(heightIn, RANGE.heightIn))}
@@ -197,7 +240,7 @@ export default function BmiCalculator({ className = "" }) {
           />
         </div>
 
-        <p className="mt-6 flex items-start gap-2 text-[0.82rem] leading-relaxed text-muted">
+        <p className="mt-5 flex items-start gap-2 text-[0.82rem] leading-relaxed text-muted">
           <Info size={14} className="mt-0.5 shrink-0 text-primary/70" />
           Nothing you enter is sent anywhere or saved, the calculation runs entirely in your browser.
         </p>
@@ -207,86 +250,40 @@ export default function BmiCalculator({ className = "" }) {
           aria-live sits here rather than on the card: the sliders are inside the
           card too, and announcing their own labels back on every drag would bury
           the number the patient is listening for. */}
-      <div className="relative border-t border-line p-6 md:px-9 md:py-8" aria-live="polite">
-        {/* Dial left, scale right. Stacking the reading ran the card past a laptop
-            viewport and made a patient scroll to see their own number, so the two
-            halves of the result sit side by side from md up. */}
-        <div className="grid items-center gap-x-12 gap-y-7 md:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
-          <div className="relative mx-auto w-full max-w-80">
-            {/* Warm wash rides with the dial rather than the block, so it stays
-                behind the arc whichever way the two halves are laid out. */}
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-8"
-              style={{
-                background:
-                  "radial-gradient(60% 60% at 50% 62%, color-mix(in oklab, var(--nv-primary) 12%, transparent), transparent 70%)",
-              }}
-            />
-            <Dial bmi={result.bmi} color={result.band.color} />
-            {/* Reading sits inside the dial's own arc, band name included. A
-                separate pill underneath cost a whole row to repeat what the lit
-                segment of the scale already says. */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 text-center">
-              <span className="block font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted">
-                Your BMI
-              </span>
-              <span className="block font-display text-[clamp(2.5rem,5.5vw,3.3rem)] font-extrabold leading-none tracking-tight text-ink tabular-nums">
-                {result.bmi}
-              </span>
-              <span
-                className="mt-1.5 block text-[0.95rem] font-bold leading-tight transition-colors duration-300"
-                style={{ color: result.band.color }}
-              >
-                {result.band.label}
-              </span>
-            </div>
-          </div>
-
+      <div className="relative border-t border-line p-6 md:px-9 md:py-7" aria-live="polite">
+        {/* Reading beside the scale, not above it. Stacked, the two ran the card
+            taller than the dial layout it replaced, which would have traded one
+            problem for another — side by side they use the same vertical space
+            and the number still comes first in reading order. The left column is
+            auto-width so the track takes whatever the number does not. */}
+        <div className="grid gap-x-10 gap-y-5 md:grid-cols-[minmax(0,auto)_minmax(0,1fr)] md:items-center">
           <div>
-            {/* Two by two, each segment on a single line. Four stacked full-width
-                rows read as a list to scroll; this reads as a scale to glance at. */}
-            <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-              {BANDS.map((b) => {
-                const on = b.key === result.band.key;
-                return (
-                  <li
-                    key={b.key}
-                    className={`flex items-baseline justify-between gap-2 rounded-xl border px-4 py-2.5 transition-colors duration-300 ${
-                      on ? "" : "border-line text-muted"
-                    }`}
-                    style={
-                      on
-                        ? {
-                            color: b.color,
-                            borderColor: `color-mix(in oklab, ${b.color} 38%, transparent)`,
-                            background: `color-mix(in oklab, ${b.color} 10%, var(--nv-surface))`,
-                          }
-                        : undefined
-                    }
-                  >
-                    <span className={`text-[0.9rem] leading-tight ${on ? "font-bold" : ""}`}>
-                      {b.label}
-                    </span>
-                    <span className={`font-mono text-[0.7rem] ${on ? "" : "text-muted/70"}`}>
-                      {b.range}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-
-            {/* Keyed on the band so the note crossfades when the reading crosses a
-                boundary, instead of the text swapping under the cursor mid-drag. */}
-            <p
-              key={result.band.key}
-              className="nv-fade-in mt-3.5 rounded-xl px-5 py-4 text-[0.86rem] leading-relaxed text-muted"
-              style={{ background: `color-mix(in oklab, ${result.band.color} 7%, var(--nv-surface-2))` }}
+            <span className="block font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted">
+              Your BMI
+            </span>
+            <span className="block font-display text-[clamp(2.6rem,6vw,3.5rem)] font-extrabold leading-none tracking-tight text-ink tabular-nums">
+              {result.bmi}
+            </span>
+            <span
+              className="mt-1.5 block text-[1.02rem] font-bold leading-tight transition-colors duration-300"
+              style={{ color: result.band.color }}
             >
-              {result.band.note}
-            </p>
+              {result.band.label}
+            </span>
           </div>
+
+          <Scale bmi={result.bmi} band={result.band} />
         </div>
+
+        {/* Keyed on the band so the note crossfades when the reading crosses a
+            boundary, instead of the text swapping under the cursor mid-drag. */}
+        <p
+          key={result.band.key}
+          className="nv-fade-in mt-6 rounded-[calc(12px*var(--nv-r-scale,1))] px-4 py-3.5 text-[0.86rem] leading-relaxed text-muted"
+          style={{ background: `color-mix(in oklab, ${result.band.color} 7%, var(--nv-surface-2))` }}
+        >
+          {result.band.note}
+        </p>
       </div>
 
       {/* ---------------- CTA rail ---------------- */}

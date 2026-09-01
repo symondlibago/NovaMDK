@@ -139,8 +139,12 @@ export default function TreatmentShop({ category, showBack = false }) {
           </Link>
         </div>
 
-        {/* required compounded-drug + GLP-1 marketing disclaimers */}
-        <CompoundedDisclaimer className="mx-auto mb-[clamp(2rem,4vw,3.5rem)] mt-10 max-w-[680px] border-t border-line pt-6 text-center" />
+        {/* Required compounded-drug + GLP-1 marketing disclaimers. Blended into
+            the foot of the shelf rather than ruled off it (2026-08-31): the
+            border-t drew a line across the page and turned a legal footnote into
+            what looked like another section. It has to stay readable, so this is
+            a softer weight and a tighter measure, not smaller type. */}
+        <CompoundedDisclaimer className="mx-auto mb-[clamp(2rem,4vw,3.5rem)] mt-8 max-w-[620px] text-center opacity-75" />
       </div>
 
       {/* Weight-loss only — the copy is GLP-1 specific. `startTo` points at the

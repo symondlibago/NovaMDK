@@ -491,18 +491,28 @@ export const productsData = [
   },
   {
     id: 11,
-    categorySlug: "weight-loss",
-    categoryName: "Weight Loss",
-    hidden: true,
+    /* Moved out of weight-loss and un-hidden on 2026-09-01. The GH pathway this
+       sits on is the anti-aging story, not the GLP-1 one, and the whole editorial
+       block written for it (SermorelinSections) is about recovery, lean mass and
+       decline with age. */
+    categorySlug: "unisex-anti-aging-rx",
+    categoryName: "Anti-Aging Rx",
     name: "Sermorelin Nasal Spray",
     size: "10 mL bottle",
     qrImg: "/qr/Sermorelin.avif",
-    subtitle: "Needle-free GHRH analog spray taken nightly to support the natural growth-hormone pulse.",
+    subtitle:
+      "A compounded nasal spray designed to support your body's natural growth hormone release, with potential support for metabolism, recovery, and maintaining lean mass over time.",
     price: "$129",
     shipping: "Discreetly to Your Door",
     dosageForm: "Nasal Spray",
     icon: <Droplets size={16} />,
     img: "/products/sermorelin-nasal.avif",
+    /* The comp's hero shot. It goes in imgDetail, not img, and that is the whole
+       fix for the yellow cast: ProductGallery treats img as a cut-out, so it
+       paints a tan gradient behind it and composites with mix-blend-multiply,
+       which tinted this photograph's own background. imgDetail is flagged as a
+       real photograph, so it renders full-bleed with no wash and no blend. */
+    imgDetail: "/site/anti-aging/sermorelin-bottle.png",
     questionnaireId: "89a610eb-569e-4db6-9f12-3173bf7c553c",
     highlights: [
       { text: "Needle-Free" },

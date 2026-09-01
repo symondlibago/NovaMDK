@@ -68,6 +68,14 @@ const STEPS = [
    for them. Add a slug here when a category grows its own editorial block. */
 const SELF_CONTAINED = new Set(["weight-loss", "unisex-anti-aging-rx"]);
 
+/* Categories that drop the three-step explainer alone, keeping the social-proof
+   band that normally follows it. Skin health was taken off it on 2026-08-31 at
+   the client's request. This is deliberately not SELF_CONTAINED: that set
+   suppresses HowItWorks and SocialProof together, and here only the first of the
+   two goes. The bare /treatments index passes validGoal === null, which is not
+   in here, so the explainer still runs on the index. */
+const NO_HOW_IT_WORKS = new Set(["unisex-skin-health"]);
+
 // Mirrors the homepage band — "Waiting rooms" was dropped at the client's request.
 const STATS = [
   { b: "100%", s: "Physician-reviewed" },
@@ -78,10 +86,13 @@ const STATS = [
 /* ------------------------------- sections ------------------------------- */
 function TrustBand() {
   return (
-    /* A contained card rather than a full-bleed band, so it reads as the closing
-       row of the goal grid above it. */
+    /* Set straight onto the page rather than in a card (2026-08-31). The border,
+       the fill and the radius together turned four short promises into a
+       highlighted panel that read as separate from the shelf it belongs to. Only
+       the box is gone — the grid, the icons and the copy are untouched, so the
+       row still lands as the closing line of the goal grid above it. */
     <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(2.5rem,5vw,4.5rem)] md:px-10">
-      <div className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-[calc(18px*var(--nv-r-scale,1))] border border-line bg-surface px-6 py-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
         {TRUST.map((t) => (
           <div key={t.label} className="flex items-start gap-3">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[calc(9px*var(--nv-r-scale,1))] bg-surface-2 text-primary">
@@ -280,7 +291,7 @@ export default function TreatmentsPage() {
           three-step explainer and the stats band just repeat it there. */}
       {!SELF_CONTAINED.has(validGoal) && (
         <>
-          <HowItWorks />
+          {!NO_HOW_IT_WORKS.has(validGoal) && <HowItWorks />}
           <SocialProof />
         </>
       )}

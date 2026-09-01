@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
 import Reveal from "../ui/Reveal";
 import useRunOnceInView from "../../lib/useRunOnceInView";
+import { getLenis } from "../../lib/smoothScroll";
 const INK = "#6b511e";
 const SOFT = "#c0a878";
 const CREAM = "#f2ece1";
@@ -17,13 +17,6 @@ const ORBITS = [
   { label: "Satisfaction", pos: "right-[0%] top-[47%] sm:right-[2%]" },
   { label: "Intimacy", pos: "left-[2%] top-[77%] sm:left-[6%]" },
 ];
-
-/* Two rows of glass chips. `on` is the comp's single highlighted chip. */
-const CHIPS = [
-  ["Sensitivity", "Affection", "Desire", "Confidence", "Connection", "Function", "Fulfillment", "Harmony"],
-  ["Pleasure", "Closeness", "Wellness", "Desire", "Comfort", "Passion", "Authenticity"],
-];
-const CHIP_ON = "Confidence";
 
 const FOCUS = [
   { label: "Desire & Arousal", img: "/site/sexual-health/focus-desire.avif", fit: "object-center" },
@@ -131,65 +124,61 @@ function ConfidenceStage({ startTo }) {
   );
 }
 
-/* --------------------------- 2. overall wellness -------------------------- */
+/* ----------------------------- 2. talking band ---------------------------- */
 
-function OverallWellness() {
+/* Replaces the old "Explore Sexual Health" band (2026-09-01). Same job — the
+   closing CTA — but it sends the reader back up to the shelf on this page
+   instead of out to the intake, which is what the comp's arrow asks for: the
+   products are already above, so pushing to /start skipped past them. */
+function TalkingBand() {
+  /* Scrolls to the shelf, which carries id="shop" and its own scroll-mt. Lenis
+     owns the scroll position site-wide, so it has to be told rather than the
+     window — a plain #shop href would fight the smooth-scroll and jump. */
+  const seeOptions = () => {
+    const el = document.getElementById("shop");
+    if (!el) return;
+    const lenis = getLenis();
+    if (lenis) lenis.scrollTo(el, { offset: -84 });
+    else el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
+    /* Top padding, not bottom. This was written as a closing band, where the
+       space belonged underneath it; sitting second it needs the gap above
+       instead or it butts straight into the hero card. FocusRow below brings its
+       own top padding, so adding one here too would double the gap. */
     <div className="mx-auto max-w-[1320px] px-5 pt-[clamp(2rem,5vw,3.5rem)] md:px-10">
       <Reveal>
-        <div className={`relative overflow-hidden px-6 py-9 sm:px-10 sm:py-12 lg:pr-[42%] ${CARD_R}`}>
+        <div className={`relative flex min-h-[clamp(20rem,42vw,34rem)] items-center overflow-hidden ${CARD_R}`}>
+          {/* The photograph is the whole card. Its left third is a plain wall, so
+              the copy sits on that rather than on a scrim over the couple. */}
           <img
-            src="/site/sexual-health/wellness-couple.avif"
+            src="/site/sexual-health/talking-about.png"
             alt=""
             aria-hidden="true"
             loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover object-right"
-          />
-          <span
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(100deg, rgba(58,44,34,0.8) 0%, rgba(58,44,34,0.58) 38%, rgba(58,44,34,0.26) 68%, rgba(58,44,34,0.08) 100%)",
-            }}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-right"
           />
 
-          <div className="relative z-10">
-            <h2 className="nv-weight-keep max-w-[16ch] font-display text-[clamp(1.6rem,4.6vw,2.6rem)] font-extrabold leading-[1.12] text-white">
-              Sexual Health Is Part of{" "}
-              <span className="lg:block" style={{ color: "#a89a8b" }}>
-                Overall Wellness
-              </span>
+          <div className="relative z-10 px-7 py-10 sm:px-12">
+            <h2 className="nv-weight-keep font-display text-[clamp(1.5rem,3.4vw,2.7rem)] font-extrabold leading-[1.16] text-white">
+              When something feels different,
+              <br />
+              {/* #ffe8b1 — the comp's "Light orange", second line only. */}
+              <span style={{ color: "#ffe8b1" }}>it’s worth talking about</span>
             </h2>
-            <p className="mt-6 text-[0.92rem] font-bold text-white">
-              Your sexual health can change over time
+            <p className="mt-5 text-[clamp(0.88rem,1.25vw,1.02rem)] leading-relaxed text-white/85">
+              Changes in desire, arousal, or performance happen.
+              <br />
+              Getting support doesn’t have to feel complicated
             </p>
-            <p className="mt-3 max-w-[46ch] text-[0.85rem] leading-relaxed" style={{ color: "#b9ada0" }}>
-              Physical health, stress, lifestyle, medications, hormones, and other factors can all
-              influence desire, comfort, and sexual function
-            </p>
-          </div>
-          <div className="relative z-10 mt-9 flex flex-col gap-3 lg:-mr-[72%]">
-            {CHIPS.map((row, r) => (
-              <div key={r} className="overflow-hidden">
-                <div className={`flex w-max ${r === 0 ? "nv-chiprow--ltr" : "nv-chiprow--rtl"}`}>
-                  {[0, 1].map((copy) => (
-                    <div key={copy} className="flex shrink-0 items-center gap-2.5 pr-2.5">
-                      {row.map((c, i) => (
-                        <GlassPill
-                          key={`${c}-${i}`}
-                          tone="dark"
-                          on={c === CHIP_ON && r === 0}
-                          aria-hidden={copy === 1 ? "true" : undefined}
-                        >
-                          {c}
-                          {c === CHIP_ON && r === 0 && <Check size={12} strokeWidth={3} />}
-                        </GlassPill>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <button
+              type="button"
+              onClick={seeOptions}
+              className="mt-7 inline-flex rounded-full bg-white px-7 py-3 text-[0.95rem] font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 nv-shadow"
+            >
+              See My Options
+            </button>
           </div>
         </div>
       </Reveal>
@@ -281,7 +270,7 @@ export default function SexualHealthSections({ startTo = "/start" }) {
   return (
     <div style={{ background: "#faf8f4" }}>
       <ConfidenceStage startTo={startTo} />
-      <OverallWellness />
+      <TalkingBand />
       <FocusRow />
       <ExploreBand startTo={startTo} />
     </div>

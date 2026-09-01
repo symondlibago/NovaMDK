@@ -64,12 +64,16 @@ function KeepMoving({ assessmentTo }) {
 
 /* --------------------------- 2. recovery carousel -------------------------- */
 
+/* "Give Your Body Time to Respond" (recovery-stretch) and "Support That Fits
+   Your Training" (recovery-reach) were pulled from the rotation on 2026-08-31 at
+   the client's request. Both photographs are still on the page — they are the
+   two picture tiles in the mosaic row below — so this is a rotation change, not
+   a deletion, and neither file is now unreferenced. Everything downstream sizes
+   itself from SLIDES.length, so three is as valid a count here as five. */
 const SLIDES = [
-  { label: "Give Your Body Time to Respond", img: "/site/sports-medicine/recovery-stretch.avif", fit: "object-center" },
   { label: "Built Around How You Move", img: "/site/sports-medicine/recovery-shoulder.avif", fit: "object-center" },
   { label: "Make Recovery Part of the Routine", img: "/site/sports-medicine/recovery-routine.avif", fit: "object-[62%_center]" },
   { label: "Stay Ready for What's Next", img: "/site/sports-medicine/recovery-ready.avif", fit: "object-center" },
-  { label: "Support That Fits Your Training", img: "/site/sports-medicine/recovery-reach.avif", fit: "object-center" },
 ];
 
 /* Shared by the meter and the cards, so the two move as one gesture. */
@@ -377,30 +381,18 @@ function MosaicRow() {
                   className={`absolute inset-0 h-full w-full object-cover ${t.fit}`}
                 />
               ) : (
-                <>
-                  <span className="absolute right-[6%] top-[6%] block aspect-square w-[16%]" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" className="h-full w-full animate-spin [animation-duration:1100ms]">
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        fill="none"
-                        stroke={BRASS}
-                        strokeOpacity="0.55"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeDasharray="47 16"
-                      />
-                    </svg>
-                  </span>
-
-                  <p
-                    className="absolute inset-x-0 bottom-0 px-5 pb-5 text-[clamp(0.86rem,1.25vw,1.05rem)] font-medium leading-snug"
-                    style={{ color: LABEL_INK }}
-                  >
-                    {t.label}
-                  </p>
-                </>
+                /* Centred, and the spinner is gone (2026-09-01, client). The
+                   spinning ring read as the tile still loading rather than as
+                   decoration, which is the one thing a placeholder-coloured tile
+                   must not look like. With it removed the label is the only
+                   thing in the tile, so it takes the middle rather than hanging
+                   off the bottom edge. */
+                <p
+                  className="absolute inset-0 flex items-center justify-center px-5 text-center text-[clamp(0.86rem,1.25vw,1.05rem)] font-medium leading-snug"
+                  style={{ color: LABEL_INK }}
+                >
+                  {t.label}
+                </p>
               )}
             </div>
           ))}

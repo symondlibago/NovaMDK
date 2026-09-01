@@ -383,10 +383,10 @@ function Tile({ item, delay, clone }) {
         className={`group flex h-full flex-col overflow-hidden border border-line bg-surface p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/45 lg:min-h-[6.5rem] lg:flex-row lg:items-center lg:gap-2 lg:px-4 lg:py-3 ${TILE_R} nv-shadow`}
       >
         <span className="min-w-0 lg:flex-1">
-          <span className="block font-display text-[0.9rem] font-bold leading-tight text-primary lg:text-[0.95rem]">
+          <span className="block font-display text-[1.02rem] font-bold leading-tight text-primary lg:text-[1.12rem]">
             {item.name}
           </span>
-          <span className="mt-1 block font-mono text-[0.55rem] uppercase leading-[1.35] tracking-[0.1em] text-muted lg:text-[0.57rem]">
+          <span className="mt-1 block font-mono text-[0.5rem] uppercase leading-[1.35] tracking-[0.1em] text-muted lg:text-[0.52rem]">
             {item.label}
           </span>
         </span>
@@ -423,10 +423,10 @@ function FeaturedTile({ product, delay, clone }) {
         className={`group flex h-full flex-col overflow-hidden border border-line bg-surface p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/45 lg:px-5 lg:py-5 ${TILE_R} nv-shadow`}
       >
         <span className="min-w-0">
-          <span className="block font-display text-[0.9rem] font-bold leading-tight text-primary lg:text-[1.05rem]">
+          <span className="block font-display text-[1.02rem] font-bold leading-tight text-primary lg:text-[1.22rem]">
             {FEATURED.name}
           </span>
-          <span className="mt-1 block font-mono text-[0.55rem] uppercase leading-[1.35] tracking-[0.1em] text-muted lg:text-[0.57rem]">
+          <span className="mt-1 block font-mono text-[0.5rem] uppercase leading-[1.35] tracking-[0.1em] text-muted lg:text-[0.52rem]">
             {FEATURED.label}
           </span>
         </span>
@@ -471,41 +471,27 @@ export default function HomeHero() {
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: EASE }}
-          className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)] lg:items-end lg:gap-10"
         >
-          <div>
-            {/* Eyebrow and standfirst are desktop-only as of the mobile comp:
-                the phone opens on the headline and goes straight into the cards.
-                Both stay in the markup rather than being deleted so the wide
-                layout is unchanged, but they are display:none on a phone, so
-                treat them as carrying no weight for mobile-first indexing. */}
-            <span className="hidden font-mono text-[0.6rem] uppercase tracking-[0.22em] text-primary sm:text-[0.68rem] lg:block">
-              Physician-guided care
+          {/* Eyebrow ("Physician-guided care") and standfirst ("Care plans
+              tailored to you…") both came out on 2026-08-31 at the client's
+              request: the hero opens on the headline alone. The two-column grid
+              went with them, since the standfirst was the only thing that ever
+              sat in the second column, and the headline's own 16ch measure is
+              what holds its line breaks now. The "See How It Works" / "Get
+              Started" pair had already gone from that column on 2026-08-27. */}
+          {/* Two lines on a phone, breaking after the comma — hard-broken
+              rather than measure-broken, because a `ch` box on an extrabold
+              display face is far too loose to land the break reliably. */}
+          <h1
+            className="nv-weight-keep text-[clamp(1.5rem,5.8vw,3.05rem)] font-extrabold leading-[1.15] tracking-[-0.015em] lg:max-w-[16ch] lg:leading-[1.1]"
+            style={{ color: "#6b511e" }}
+          >
+            Modern{" "}
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: TITLE_FILL }}>
+              Healthcare
             </span>
-            {/* Two lines on a phone, breaking after the comma — hard-broken
-                rather than measure-broken, because a `ch` box on an extrabold
-                display face is far too loose to land the break reliably. */}
-            <h1
-              className="nv-weight-keep text-[clamp(1.5rem,5.8vw,3.05rem)] font-extrabold leading-[1.15] tracking-[-0.015em] lg:mt-3 lg:max-w-[16ch] lg:leading-[1.1]"
-              style={{ color: "#6b511e" }}
-            >
-              Modern{" "}
-              <span className="bg-clip-text text-transparent" style={{ backgroundImage: TITLE_FILL }}>
-                Healthcare
-              </span>
-              , <span className="block">Built Around You</span>
-            </h1>
-          </div>
-
-          <div className="hidden lg:block lg:pb-2">
-            {/* The "See How It Works" and "Get Started" pair was removed here on
-                2026-08-27. The two wide cards below carry their own CTAs into the
-                same two places, so the buttons were a second set of entrances to
-                the same journeys. */}
-            <p className="max-w-[34ch] text-[0.92rem] leading-relaxed text-muted sm:text-[0.98rem]">
-              Care plans tailored to you by licensed medical providers
-            </p>
-          </div>
+            , <span className="block">Built Around You</span>
+          </h1>
         </Motion.div>
 
         {/* --------------------------- wide cards --------------------------- */}

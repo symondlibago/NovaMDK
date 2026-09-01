@@ -873,3 +873,18 @@ html.lenis body { height: auto; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
 }
+
+@layer components {
+  /* The GH pathway card icons turn slowly and forever. 18s is deliberately far
+     past "noticeable": at anything quicker four spinning glyphs pull the eye off
+     the copy they are labelling. */
+  .nv-ghspin { animation: nv-ghspin 18s linear infinite; }
+
+  @keyframes nv-ghspin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-ghspin { animation: none !important; }
+}
