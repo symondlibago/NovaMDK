@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import BrandLoader from "../components/transition/BrandLoader";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CalendarDays, Lock, Menu, MessageSquare, RefreshCw, UserRound } from "lucide-react";
+import { ArrowLeft, CalendarDays, House, Lock, Menu, MessageSquare, RefreshCw, UserRound } from "lucide-react";
 import Seo from "../components/Seo";
 import PortalLogin from "../components/portal/PortalLogin";
 import PortalSidebar from "../components/portal/PortalSidebar";
 import PortalNotifications from "../components/portal/PortalNotifications";
+import PortalHome from "../components/portal/PortalHome";
 import PortalMessages from "../components/portal/PortalMessages";
 import PortalVisits from "../components/portal/PortalVisits";
 import PortalProfile from "../components/portal/PortalProfile";
@@ -14,6 +15,7 @@ import { getLenis } from "../lib/smoothScroll";
 import { portalAuth } from "../lib/portal";
 
 const TABS = [
+  { key: "home", label: "Home", icon: House },
   { key: "messages", label: "Messages", icon: MessageSquare },
   { key: "visits", label: "Visits", icon: CalendarDays },
   { key: "profile", label: "Profile", icon: UserRound },
@@ -24,7 +26,7 @@ const COLLAPSE_KEY = "nv_portal_sidebar_collapsed";
 export default function PatientPortalPage() {
   const navigate = useNavigate();
   const [state, setState] = useState("checking"); // checking | out | in | down
-  const [tab, setTab] = useState("messages");
+  const [tab, setTab] = useState("home");
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Bumping this remounts the active view, which is what the Refresh control
   // in MDI's own portal does.
@@ -66,7 +68,7 @@ export default function PatientPortalPage() {
       portalAuth({ action: "logout" }).catch(() => {}),
       new Promise((r) => setTimeout(r, 450)),
     ]);
-    setTab("messages");
+    setTab("home");
     setState("out");
   }, []);
 
@@ -180,6 +182,7 @@ export default function PatientPortalPage() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
               >
+                {tab === "home" && <PortalHome onUnauthorized={signOut} onNavigate={selectTab} />}
                 {tab === "messages" && <PortalMessages onUnauthorized={signOut} />}
                 {tab === "visits" && <PortalVisits onUnauthorized={signOut} />}
                 {tab === "profile" && (

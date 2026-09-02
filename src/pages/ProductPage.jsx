@@ -262,7 +262,7 @@ export default function ProductPage() {
                   {comboTagline(active)}
                 </p>
               )}
-              <p className="mt-4 max-w-[58ch] text-[0.92rem] leading-relaxed text-muted">{active.subtitle}</p>
+              <p className="mt-4 max-w-[58ch] text-[clamp(0.98rem,1.15vw,1.1rem)] leading-[1.65] text-muted">{active.subtitle}</p>
 
               {/* required regulatory labels */}
               <ComplianceBadges compounded={isCompounded(active)} rx={!otc} size="lg" className="mt-5" />
@@ -374,8 +374,11 @@ export default function ProductPage() {
       {/* NAD+ editorial, split by format. The sublingual tablet gets its own
           block; May Support and Provider-Directed are the injection's — their
           copy and photography are about an injected treatment. */}
+      {/* The decline graph runs on both NAD+ formats, straight after the
+          product image, per the update. Everything below it is the injection's
+          own editorial. */}
+      {isNad && <NadSupport />}
       {isNad && isSublingual && <NadSublingual />}
-      {isNad && !isSublingual && <NadSupport />}
       {isNad && !isSublingual && <NadDirected />}
 
       {/* Glutathione's own editorial. Same contract as the NAD+ blocks: gated on

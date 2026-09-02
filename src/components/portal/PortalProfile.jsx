@@ -17,9 +17,6 @@ const ftInToCm = (ft, inch) => {
   return Number(((Number(ft || 0) * 12 + Number(inch || 0)) * 2.54).toFixed(1));
 };
 
-const cToF = (c) => (c == null ? "" : String(Math.round((c * 9) / 5 + 32)));
-const fToC = (f) => (f === "" ? null : Number((((Number(f) - 32) * 5) / 9).toFixed(1)));
-
 const SECTIONS = [
   { key: "details", label: "Profile details", icon: UserRound },
   { key: "medical", label: "Medical details", icon: HeartPulse },
@@ -93,7 +90,6 @@ export default function PortalProfile({ onUnauthorized }) {
           weight_lb: kgToLb(p.weight),
           height_ft: ft,
           height_in: inch,
-          body_temperature_f: cToF(p.body_temperature),
         });
       })
       .catch((err) => {
@@ -273,10 +269,6 @@ export default function PortalProfile({ onUnauthorized }) {
                   </div>
                 </div>
 
-                <p className="mt-3 text-[0.78rem] leading-relaxed text-muted">
-                  This is the physical address your medication ships to. PO boxes can't be used.
-                </p>
-
                 <div className="mt-5 space-y-3 border-t border-line pt-5">
                   {isFemale && (
                     <label className="flex items-start gap-2.5 text-[0.9rem] text-ink">
@@ -320,9 +312,10 @@ export default function PortalProfile({ onUnauthorized }) {
                     weight: lbToKg(form.weight_lb),
                     height: ftInToCm(form.height_ft, form.height_in),
                     blood_pressure: form.blood_pressure,
-                    body_temperature: fToC(form.body_temperature_f),
-                    oxygen_saturation: form.oxygen_saturation === "" || form.oxygen_saturation === null
-                      ? null : Number(form.oxygen_saturation),
+                    // Body temperature and oxygen saturation are no longer shown
+                    // here, so they're left out of the payload entirely — MDI
+                    // merges on write, and sending null would quietly erase
+                    // readings a clinician recorded.
                     current_medications: form.current_medications,
                     allergies: form.allergies,
                     medical_conditions: form.medical_conditions,
@@ -348,16 +341,6 @@ export default function PortalProfile({ onUnauthorized }) {
                     <label className={label} htmlFor="m-bp">Blood pressure</label>
                     <input id="m-bp" placeholder="120/80" className={field} value={form.blood_pressure}
                       onChange={(e) => set({ blood_pressure: e.target.value })} />
-                  </div>
-                  <div>
-                    <label className={label} htmlFor="m-temp">Body temp. (°F)</label>
-                    <input id="m-temp" inputMode="decimal" placeholder="98" className={field}
-                      value={form.body_temperature_f} onChange={(e) => set({ body_temperature_f: e.target.value })} />
-                  </div>
-                  <div>
-                    <label className={label} htmlFor="m-o2">Oxygen sat. (%)</label>
-                    <input id="m-o2" inputMode="numeric" placeholder="99" className={field}
-                      value={form.oxygen_saturation ?? ""} onChange={(e) => set({ oxygen_saturation: e.target.value })} />
                   </div>
                 </div>
 

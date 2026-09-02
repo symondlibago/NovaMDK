@@ -363,16 +363,8 @@ export default function NadSupport() {
                 color: TITLE_LIGHT,
               }}
             >
-              Your NAD+ levels
+              NAD+ levels naturally
             </span>
-
-            <img
-              src="/site/anti-aging/ways-droplet.avif"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              className="nv-float ml-3 inline-block h-[0.9em] w-auto translate-y-[0.04em] align-middle"
-            />
 
             <span
               className="block"
@@ -380,47 +372,30 @@ export default function NadSupport() {
                 color: TITLE_DARK,
               }}
             >
-              don&apos;t stay the same
+              decline with age
+              {/* The droplet trails the last word in the update, rather than
+                  splitting the two lines as it did before. */}
+              <img
+                src="/site/anti-aging/ways-droplet.avif"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="nv-float ml-3 inline-block h-[0.9em] w-auto translate-y-[0.04em] align-middle"
+              />
             </span>
           </h2>
 
-          {/* UPDATED BODY TEXT */}
+          {/* The update replaces the two-part copy with one line and drops the
+              "going backward" callout entirely. */}
           <p
-            className="mt-8 max-w-[36ch] text-[clamp(0.95rem,2.5vw,1.08rem)] leading-[1.12]"
+            className="mt-6 max-w-[42ch] text-[clamp(0.95rem,2.5vw,1.08rem)] leading-[1.55]"
             style={{
               color: BODY_GOLD,
             }}
           >
-            As we age, NAD+ levels naturally tend to decline. NAD+ plays an
-            important role in how your cells produce energy and maintain normal
-            function
+            A vital coenzyme involved in cellular energy production, DNA repair, and cellular
+            maintenance
           </p>
-
-          {/* UPDATED QUOTE */}
-          <div
-            className="mt-10 border-l-[4px] pl-4"
-            style={{
-              borderColor: QUOTE_LINE,
-            }}
-          >
-            <p
-              className="text-[clamp(0.88rem,2.3vw,1rem)] font-bold leading-snug"
-              style={{
-                color: TITLE_DARK,
-              }}
-            >
-              This isn&apos;t about going backward
-            </p>
-
-            <p
-              className="mt-3 max-w-[32ch] text-[clamp(0.85rem,2.2vw,0.98rem)] leading-relaxed"
-              style={{
-                color: QUOTE_GOLD,
-              }}
-            >
-              It&apos;s about feeling your best moving forward
-            </p>
-          </div>
         </Reveal>
 
         {/* =====================================================
@@ -439,22 +414,25 @@ export default function NadSupport() {
               boxShadow: "0 18px 45px rgba(130, 100, 48, 0.055)",
             }}
           >
-            {/* GRAPH */}
-            <div className="relative">
-              {/* TOP TEXT */}
-              <div
-                className="nv-energy-top-copy pointer-events-none absolute right-[4%] top-0 z-10 w-[52%] text-right italic"
-                style={{
-                  color: "#9f8e68",
-                  fontSize: "clamp(0.66rem, 1.4vw, 0.82rem)",
-                  fontWeight: 600,
-                  lineHeight: 1.15,
-                }}
+            {/* The update titles the card and moves its caption to the left,
+                where the old copy sat right-aligned and italic. */}
+            <div className="nv-energy-top-copy">
+              <h3
+                className="nv-weight-keep font-display text-[clamp(1rem,2.4vw,1.35rem)] font-extrabold leading-tight"
+                style={{ color: INK }}
               >
-                NAD+ naturally declines over time, and the
-                <br />
-                difference can become more noticeable with age
-              </div>
+                NAD+ levels by age
+              </h3>
+              <p
+                className="mt-1 text-[clamp(0.66rem,1.4vw,0.8rem)] leading-snug"
+                style={{ color: MUTED }}
+              >
+                Levels tend to decline as we age
+              </p>
+            </div>
+
+            {/* GRAPH */}
+            <div className="relative mt-3">
 
               <svg
                 viewBox="0 0 458 198"
@@ -734,17 +712,22 @@ export default function NadSupport() {
                     {item.age}
                   </span>
 
-                  <span
-                    className="mx-auto mt-2 block max-w-[105px] text-[clamp(0.6rem,1.55vw,0.72rem)] leading-[1.35]"
-                    style={{
-                      color: MUTED,
-                    }}
-                  >
-                    {item.text}
-                  </span>
                 </li>
               ))}
             </ul>
+
+            {/* Closing note from the update, under a hairline. */}
+            <span
+              aria-hidden="true"
+              className="mt-6 block h-px w-full"
+              style={{ background: LINE }}
+            />
+            <p
+              className="mt-4 text-[clamp(0.66rem,1.4vw,0.78rem)] italic leading-snug"
+              style={{ color: MUTED }}
+            >
+              Illustrative trend. Individual NAD+ levels vary.
+            </p>
           </div>
         </Reveal>
       </div>

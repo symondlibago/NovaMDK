@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { format } from "date-fns";
-import { AlertCircle, ChevronLeft, ChevronRight, FileText, Pill, Stethoscope, Truck } from "lucide-react";
+import { AlertCircle, ChevronLeft, ChevronRight, FileClock, FileText, Pill, Stethoscope, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { portalData } from "../../lib/portal";
 
@@ -14,7 +15,19 @@ const STATUS = {
   closed: { label: "Complete", tone: "done" },
   cancelled: { label: "Cancelled", tone: "muted" },
   canceled: { label: "Cancelled", tone: "muted" },
+  incomplete: { label: "Not finished", tone: "warn" },
+  expired: { label: "Expired", tone: "muted" },
 };
+
+/* The filter across the top. "All" first so the page still opens on everything;
+   the rest match the buckets the API assigns. */
+const FILTERS = [
+  { key: "all", label: "All" },
+  { key: "active", label: "Active" },
+  { key: "pending", label: "Pending" },
+  { key: "incomplete", label: "Incomplete" },
+  { key: "inactive", label: "Inactive" },
+];
 
 const titleCase = (s) => String(s || "").replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -25,6 +38,7 @@ function StatusPill({ status }) {
     active: "border-primary/30 bg-primary/10 text-primary",
     done: "border-line-strong bg-surface-2 text-ink",
     muted: "border-line bg-surface-2 text-muted",
+    warn: "border-amber-400/40 bg-amber-400/10 text-amber-700",
   };
   return (
     <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[0.72rem] font-semibold ${tones[tone]}`}>
@@ -198,8 +212,141 @@ function Treatments({ treatments }) {
   );
 }
 
+/* Segmented filter with a sliding pill, matching the Profile toggle. Buckets
+   with nothing in them are dropped rather than shown at zero — an empty tab is
+   just a dead end to click. "All" always stays. */
+function VisitFilter({ visits, value, onChange }) {
+  const counts = visits.reduce((acc, v) => ({ ...acc, [v.bucket]: (acc[v.bucket] || 0) + 1 }), {});
+  const shown = FILTERS.filter((f) => f.key === "all" || counts[f.key]);
+  if (shown.length < 2) return null;
+
+  return (
+    <div className="nv-scroll -mx-1 mt-5 overflow-x-auto px-1 pb-1">
+      <div className="inline-flex w-fit gap-1 rounded-full border border-line bg-surface-2 p-1">
+        {shown.map(({ key, label }) => {
+          const active = value === key;
+          const n = key === "all" ? visits.length : counts[key] || 0;
+          return (
+            <button
+              key={key}
+              onClick={() => onChange(key)}
+              aria-pressed={active}
+              className={`relative shrink-0 rounded-full px-3.5 py-1.5 text-[0.83rem] font-semibold transition-colors ${
+                active ? "text-ink" : "text-muted hover:text-ink"
+              }`}
+            >
+              {active && (
+                <motion.span
+                  layoutId="portal-visit-pill"
+                  className="absolute inset-0 rounded-full bg-surface nv-shadow"
+                  transition={{ type: "spring", stiffness: 420, damping: 36 }}
+                />
+              )}
+              <span className="relative z-10">
+                {label} <span className="text-muted">{n}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function VisitList({ visits, filter, onOpen }) {
+  if (!visits.length) {
+    return (
+      <p className="mt-8 rounded-2xl border border-line bg-surface p-8 text-center text-[0.9rem] text-muted">
+        Nothing {filter === "all" ? "here" : `marked ${filter}`} right now.
+      </p>
+    );
+  }
+
+  return (
+    <ul className="mt-5 space-y-3">
+      {visits.map((v) => (
+        <li key={v.id}>{v.kind === "draft" ? <DraftRow draft={v} /> : <CaseRow visit={v} onOpen={onOpen} />}</li>
+      ))}
+    </ul>
+  );
+}
+
+function CaseRow({ visit: c, onOpen }) {
+  return (
+    <button
+      onClick={() => onOpen(c.case_id)}
+      className="group flex w-full items-center gap-4 rounded-2xl border border-line bg-surface p-4 text-left transition-colors hover:border-primary sm:p-5"
+    >
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface-2 text-primary">
+        <FileText size={18} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+          <span className="text-[1rem] font-semibold text-ink">Visit #{c.number}</span>
+          <StatusPill status={c.status} />
+        </span>
+        <span className="mt-1 block truncate text-[0.85rem] text-muted">
+          {format(new Date(c.created_at), "MMM d, yyyy")}
+          {c.clinician && <> · Dr. {c.clinician}</>}
+          {" · "}
+          {c.treatments.length
+            ? `${c.treatments.length} treatment${c.treatments.length > 1 ? "s" : ""}`
+            : "No treatment prescribed"}
+        </span>
+      </span>
+      <ChevronRight size={18} className="shrink-0 text-muted transition-colors group-hover:text-primary" />
+    </button>
+  );
+}
+
+/* An intake that was started and never submitted. There is no case behind it,
+   so there is nothing to drill into — the only useful action is finishing it,
+   and that is only possible while MDI still honours the original link. */
+function DraftRow({ draft }) {
+  const resumable = Boolean(draft.resume_url);
+  return (
+    <div className="flex items-center gap-4 rounded-2xl border border-line bg-surface p-4 sm:p-5">
+      <span
+        className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${
+          resumable ? "bg-amber-400/10 text-amber-600" : "bg-surface-2 text-muted"
+        }`}
+      >
+        <FileClock size={18} />
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+          <span className="text-[1rem] font-semibold text-ink">Unfinished intake</span>
+          <StatusPill status={draft.status} />
+        </div>
+        <p className="mt-1 truncate text-[0.85rem] text-muted">
+          Started {format(new Date(draft.created_at), "MMM d, yyyy")}
+          {draft.answered > 0 && <> · {draft.answered} answer{draft.answered > 1 ? "s" : ""} saved</>}
+          {!resumable && <> · this link has expired</>}
+        </p>
+      </div>
+      {resumable ? (
+        <a
+          href={draft.resume_url}
+          className="shrink-0 rounded-full bg-primary px-4 py-2 text-[0.85rem] font-semibold text-on-primary transition-colors hover:bg-primary-deep"
+        >
+          Resume
+        </a>
+      ) : (
+        <Link
+          to="/treatments"
+          className="shrink-0 rounded-full border border-line px-4 py-2 text-[0.85rem] font-semibold text-muted transition-colors hover:border-primary hover:text-ink"
+        >
+          Start again
+        </Link>
+      )}
+    </div>
+  );
+}
+
 export default function PortalVisits({ onUnauthorized }) {
   const [cases, setCases] = useState(null);
+  const [visits, setVisits] = useState([]);
+  const [filter, setFilter] = useState("all");
   const [error, setError] = useState(null);
   const [openId, setOpenId] = useState(null);
   // Keyed by case id so reopening a visit doesn't refetch it.
@@ -207,7 +354,11 @@ export default function PortalVisits({ onUnauthorized }) {
 
   useEffect(() => {
     portalData({ resource: "cases" })
-      .then(({ cases: next }) => setCases(next))
+      .then(({ cases: next, visits: all }) => {
+        setCases(next);
+        // `visits` folds in unfinished intakes, which have no case behind them.
+        setVisits(all || next || []);
+      })
       .catch((err) => {
         if (err.status === 401) return onUnauthorized();
         setError(err.message);
@@ -336,10 +487,14 @@ export default function PortalVisits({ onUnauthorized }) {
       <div className="mx-auto max-w-3xl">
         <h1 className="text-[1.45rem] leading-tight text-ink">Your visits</h1>
         <p className="mt-1 text-[0.9rem] text-muted">
-          Every consultation you've submitted, newest first.
+          Every consultation you've started or submitted, newest first.
         </p>
 
-        {cases.length === 0 ? (
+        {visits.length > 0 && (
+          <VisitFilter visits={visits} value={filter} onChange={setFilter} />
+        )}
+
+        {visits.length === 0 ? (
           <div className="mt-8 rounded-2xl border border-line bg-surface p-10 text-center nv-shadow">
             <FileText size={26} className="mx-auto text-primary" />
             <p className="mt-3 text-[1.05rem] font-semibold text-ink">No visits yet</p>
@@ -354,35 +509,11 @@ export default function PortalVisits({ onUnauthorized }) {
             </Link>
           </div>
         ) : (
-          <ul className="mt-6 space-y-3">
-            {[...cases].reverse().map((c) => (
-              <li key={c.case_id}>
-                <button
-                  onClick={() => setOpenId(c.case_id)}
-                  className="group flex w-full items-center gap-4 rounded-2xl border border-line bg-surface p-4 text-left transition-colors hover:border-primary sm:p-5"
-                >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface-2 text-primary">
-                    <FileText size={18} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                      <span className="text-[1rem] font-semibold text-ink">Visit #{c.number}</span>
-                      <StatusPill status={c.status} />
-                    </span>
-                    <span className="mt-1 block truncate text-[0.85rem] text-muted">
-                      {format(new Date(c.created_at), "MMM d, yyyy")}
-                      {c.clinician && <> · Dr. {c.clinician}</>}
-                      {" · "}
-                      {c.treatments.length
-                        ? `${c.treatments.length} treatment${c.treatments.length > 1 ? "s" : ""}`
-                        : "No treatment prescribed"}
-                    </span>
-                  </span>
-                  <ChevronRight size={18} className="shrink-0 text-muted transition-colors group-hover:text-primary" />
-                </button>
-              </li>
-            ))}
-          </ul>
+          <VisitList
+            visits={visits.filter((v) => filter === "all" || v.bucket === filter)}
+            filter={filter}
+            onOpen={setOpenId}
+          />
         )}
       </div>
     </div>

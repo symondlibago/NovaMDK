@@ -1,8 +1,8 @@
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  width="600"
-  height="200"
-  viewBox="0 0 600 200"
+  width="624"
+  height="224"
+  viewBox="-12 -12 624 224"
   preserveAspectRatio="xMidYMid meet"
   role="img"
   aria-label="Sermorelin decline graph"
@@ -43,19 +43,30 @@
       .drop:nth-child(5) { animation-delay: 1.11s; }
       .drop:nth-child(6) { animation-delay: 1.30s; }
 
+      /* Two animations on one element: popDot is the entry and owns `transform`,
+         dotGlow is the repeating highlight and owns `r`, `fill-opacity` and
+         `filter`. Different properties, so they never fight, and each gets its
+         own delay from the paired animation-delay list below.
+
+         The highlight matches the Semaglutide rail: one dot lit at a time,
+         moving on every 3s. Six dots means an 18s lap, and each dot's glow
+         delay is 3s later than the one before it. GLOW_LEAD (1.6s) holds the
+         first light until the entry sequence has finished landing. */
       .dot {
         transform-box: fill-box;
         transform-origin: center;
         transform: scale(0);
-        animation: popDot 0.46s cubic-bezier(.2,1.55,.5,1) forwards;
+        animation:
+          popDot 0.46s cubic-bezier(.2,1.55,.5,1) forwards,
+          dotGlow 18s linear infinite;
       }
 
-      .dot:nth-child(1) { animation-delay: .28s; }
-      .dot:nth-child(2) { animation-delay: .47s; }
-      .dot:nth-child(3) { animation-delay: .66s; }
-      .dot:nth-child(4) { animation-delay: .85s; }
-      .dot:nth-child(5) { animation-delay: 1.04s; }
-      .dot:nth-child(6) { animation-delay: 1.23s; }
+      .dot:nth-child(1) { animation-delay: .28s,  1.6s; }
+      .dot:nth-child(2) { animation-delay: .47s,  4.6s; }
+      .dot:nth-child(3) { animation-delay: .66s,  7.6s; }
+      .dot:nth-child(4) { animation-delay: .85s, 10.6s; }
+      .dot:nth-child(5) { animation-delay: 1.04s, 13.6s; }
+      .dot:nth-child(6) { animation-delay: 1.23s, 16.6s; }
 
       @keyframes curveIn {
         to { opacity: 1; }
@@ -71,6 +82,33 @@
         100% { transform: scale(1); }
       }
 
+      /* 18s lap: lit through the first 3s (0 to ~17%), dim for the rest, with a
+         half-second ramp either side so it reads as a swell rather than a
+         switch. `r` is animated instead of a scale because popDot already owns
+         this element's transform. */
+      @keyframes dotGlow {
+        0% {
+          r: 6.15px;
+          fill-opacity: 0.78;
+          filter: drop-shadow(0 0 0 rgba(255, 232, 177, 0));
+        }
+        3% {
+          r: 8.5px;
+          fill-opacity: 1;
+          filter: drop-shadow(0 0 7px rgba(255, 232, 177, 0.75));
+        }
+        14% {
+          r: 8.5px;
+          fill-opacity: 1;
+          filter: drop-shadow(0 0 7px rgba(255, 232, 177, 0.75));
+        }
+        17%, 100% {
+          r: 6.15px;
+          fill-opacity: 0.78;
+          filter: drop-shadow(0 0 0 rgba(255, 232, 177, 0));
+        }
+      }
+
       @keyframes areaIn {
         to { opacity: 1; }
       }
@@ -83,6 +121,9 @@
           animation: none !important;
           opacity: 1;
           transform: none;
+          r: 6.15px;
+          fill-opacity: 0.78;
+          filter: none;
         }
       }
     </style>

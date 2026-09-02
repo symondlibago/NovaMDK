@@ -92,6 +92,43 @@ const STATUS_STEP = {
   completed: 'rx_approved', closed: 'rx_approved',
 };
 
+/* Coarse progress for a visit, derived from its status alone so the list and
+   the Home page cost no extra upstream calls. It tops out at "Rx Approved":
+   the last two steps come from the pharmacy order, which only the case detail
+   fetches. The label is what's shown, so this never claims more than it knows. */
+const stepOf = (status) => {
+  const key = STATUS_STEP[String(status || '').toLowerCase()];
+  const index = key ? STEPS.findIndex((s) => s.key === key) : -1;
+  return { index, total: STEPS.length, label: index >= 0 ? STEPS[index].label : null };
+};
+
+const VISIT_BUCKET = {
+  created: 'pending', pending: 'pending', new: 'pending',
+  assigned: 'pending', processing: 'pending', in_review: 'pending',
+  prescribed: 'active', approved: 'active', completed: 'active',
+  closed: 'inactive', cancelled: 'inactive', canceled: 'inactive',
+  rejected: 'inactive', denied: 'inactive',
+};
+
+const shapeDraft = (v) => {
+  const resumable = String(v.status || '').toLowerCase() === 'pending' && !v.is_expired;
+  return {
+    kind: 'draft',
+    id: v.id,
+    case_id: null,
+    created_at: v.created_at,
+    status: resumable ? 'incomplete' : 'expired',
+    bucket: resumable ? 'incomplete' : 'inactive',
+    answered: Array.isArray(v.questionnaire_progress) ? v.questionnaire_progress.length : 0,
+    resume_url: resumable ? v.onboarding_url || null : null,
+    // Lets the portal name and illustrate the treatment they were part-way through.
+    questionnaire_id: v.partner_questionnaire_id || null,
+    clinician: null,
+    specialty: null,
+    treatments: [],
+  };
+};
+
 /* Only statuses worth telling a patient about. Anything unlisted produces no
    notification rather than leaking an internal workflow name. */
 const VISIT_HEADLINE = {
@@ -272,24 +309,44 @@ export default async function handler(req, res) {
     }
 
     if (resource === 'cases') {
-      const r = await mdi(`/patients/${id}/cases`);
+      const [r, v] = await Promise.all([
+        mdi(`/patients/${id}/cases`),
+        mdi(`/patients/${id}/vouchers`),
+      ]);
       if (!r.ok) {
         console.error('Portal cases failed:', r.status);
         return res.status(502).json({ error: 'Could not load your visits' });
       }
+
+      if (!v.ok) console.error('Portal vouchers failed:', v.status);
+      const vouchers = v.ok ? listOf(v.data) : [];
+      const questionnaireByCase = new Map(
+        vouchers.filter((x) => x.case_id).map((x) => [x.case_id, x.partner_questionnaire_id || null])
+      );
+
       const cases = listOf(r.data)
         .map(shapeCase)
-        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-      // Numbered oldest-first so "Visit #1" stays #1 as new ones arrive.
-      return res.status(200).json({ cases: cases.map((c, i) => ({ ...c, number: i + 1 })) });
+        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+        // Numbered oldest-first so "Visit #1" stays #1 as new ones arrive.
+        .map((c, i) => ({
+          ...c,
+          kind: 'case',
+          id: c.case_id,
+          number: i + 1,
+          bucket: VISIT_BUCKET[String(c.status || '').toLowerCase()] || 'pending',
+          step: stepOf(c.status),
+          questionnaire_id: questionnaireByCase.get(c.case_id) || null,
+        }));
+
+      const drafts = vouchers.filter((x) => !x.case_id).map(shapeDraft);
+
+      const visits = [...cases, ...drafts].sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      return res.status(200).json({ cases, visits });
     }
 
     if (resource === 'notifications') {
-      /* MDI's patient notification list is only on its internal patient-app API
-         and 404s for a partner credential, so this is derived from data we can
-         reach: unread replies, and visits whose status changed recently. The
-         upside is it can't go stale — an item disappears when the underlying
-         condition clears, instead of needing to be dismissed. */
       const [msgs, cases] = await Promise.all([
         mdi(`/patients/${id}/messages?channel=patient&per_page=${MESSAGE_PAGE}`),
         mdi(`/patients/${id}/cases`),

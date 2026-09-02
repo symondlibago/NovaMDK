@@ -137,10 +137,10 @@ export default function NadDirected() {
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:gap-6">
           {/* No veil: the scrim was shifting this photograph's colour, and the
               comp's warmth is the shot's own. */}
-          <PhotoCard img="/site/nad/care-injectable.avif" title="Injectable Format" veil={false}>
+          <PhotoCard img="/site/nad/care-injectable.avif" title="Personalized Dosing" veil={false}>
             <p className="relative z-10 mt-4 max-w-[26ch] text-[0.85rem] leading-relaxed" style={{ color: "rgba(247,239,226,0.88)" }}>
-              NAD+ is administered by injection according to the instructions provided with your
-              prescription
+              Your dose and schedule are prescribed based on your individual treatment plan, with
+              clear instructions for at-home use
             </p>
           </PhotoCard>
           <PhotoCard img="/site/nad/care-consistency.avif" title="Consistency" delay={0.08} glass>

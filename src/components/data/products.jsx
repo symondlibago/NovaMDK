@@ -512,7 +512,8 @@ export const productsData = [
        paints a tan gradient behind it and composites with mix-blend-multiply,
        which tinted this photograph's own background. imgDetail is flagged as a
        real photograph, so it renders full-bleed with no wash and no blend. */
-    imgDetail: "/site/anti-aging/sermorelin-bottle.png",
+    imgDetail: "/products/detail/sermorelin-nasal.avif",
+    imgGallery: ["/products/detail/sermorelin-nasal-2.avif", "/products/detail/sermorelin-nasal-3.avif"],
     questionnaireId: "89a610eb-569e-4db6-9f12-3173bf7c553c",
     highlights: [
       { text: "Needle-Free" },
@@ -845,6 +846,7 @@ export const productsData = [
     icon: <Pill size={16} />,
     img: "/products/nad-sublingual.avif",
     imgDetail: "/products/detail/nad-sublingual.avif",
+    imgGallery: ["/products/detail/nad-sublingual-2.avif", "/products/detail/nad-sublingual-3.avif"],
     questionnaireId: "91480561-864e-4bda-8bad-694696ac2e1f",
     caseOfferingId: "6a3b5e15-806a-4ea1-b1f6-b6567ca80066",
     highlights: [
@@ -1095,6 +1097,7 @@ export const productsData = [
     icon: <Heart size={16} />,
     img: "/products/scream-cream.avif",
     imgDetail: "/products/detail/scream-cream.avif",
+    imgGallery: ["/products/detail/scream-cream-2.avif", "/products/detail/scream-cream-3.avif"],
     questionnaireId: "f3ac4fcd-728c-4495-809b-ae6aea0406e4",
     highlights: [
       { text: "Topical Application" },

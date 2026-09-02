@@ -103,18 +103,11 @@ function FormulaPanel({ startTo }) {
               <span className="md:block">than blood flow</span>
             </h2>
 
-            <p
-              className={`mt-3 max-w-[46ch] leading-relaxed sm:mt-5 ${BODY_SIZE}`}
-              style={{ color: CREAM_SOFT }}
-            >
-              Some treatments focus on the physical side of sexual performance alone. Olympus Peak
-              takes a broader approach by combining three active ingredients that work across
-              different parts of sexual response
-            </p>
-
+            {/* The standfirst is gone per the update, so the button rises to sit
+                directly under the heading. */}
             <Link
               to={startTo}
-              className="mt-5 inline-flex rounded-full px-8 py-3 text-[0.88rem] font-semibold transition-all duration-300 hover:-translate-y-0.5 sm:mt-7 sm:px-9 sm:py-3.5 sm:text-[0.92rem]"
+              className="mt-5 inline-flex rounded-full px-8 py-3 text-[0.88rem] font-semibold transition-all duration-300 hover:-translate-y-0.5 sm:mt-6 sm:px-9 sm:py-3.5 sm:text-[0.92rem]"
               style={{ background: PALE_BTN, color: INK }}
             >
               Get Started
@@ -135,7 +128,10 @@ function FormulaPanel({ startTo }) {
               alt=""
               aria-hidden="true"
               loading="lazy"
-              className="nv-drift pointer-events-none absolute right-[4%] top-[6%] hidden w-[15%] max-w-[9.5rem] md:block lg:right-[8%]"
+              /* Raised, and a touch narrower: dropping the standfirst shortened
+                 the copy above it, so the formula heading rose to meet the
+                 bottle's lower half. */
+              className="nv-drift pointer-events-none absolute right-[4%] top-[-3%] hidden w-[13%] max-w-[8.5rem] md:block lg:right-[8%]"
               style={BOTTLE_TILT}
             />
 
@@ -143,7 +139,7 @@ function FormulaPanel({ startTo }) {
                 On a phone this is one column: eyebrow, heading, ladder, figure.
                 From md the ladder takes the left and the heading sits above the
                 cut-out on the right, as the comp has it. */}
-            <div className="mt-8 sm:mt-12 md:mt-[clamp(3.5rem,7vw,6rem)] md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] md:gap-10">
+            <div className="mt-8 sm:mt-12 md:mt-[clamp(4rem,8vw,7rem)] md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] md:gap-10">
               <div className="md:order-2 md:flex md:flex-col">
                 <span
                   className="font-mono text-[0.58rem] font-semibold uppercase tracking-[0.16em] sm:text-[0.62rem]"
@@ -189,17 +185,19 @@ function FormulaPanel({ startTo }) {
                       <Glow />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[0.88rem] font-bold sm:text-[0.95rem]" style={{ color: CREAM }}>
+                      {/* Stepped up a notch across the board: the update asks
+                          for this ladder to read easily, not compactly. */}
+                      <span className="block text-[0.98rem] font-bold sm:text-[1.1rem]" style={{ color: CREAM }}>
                         {a.name}
                       </span>
                       <span
-                        className="mt-0.5 block text-[0.8rem] italic sm:text-[0.86rem]"
+                        className="mt-1 block text-[0.88rem] italic sm:text-[0.97rem]"
                         style={{ color: CREAM_SOFT }}
                       >
                         {a.role}
                       </span>
                       <span
-                        className="mt-1.5 block max-w-[38ch] text-[0.78rem] leading-relaxed sm:mt-2 sm:text-[0.84rem]"
+                        className="mt-2 block max-w-[40ch] text-[0.86rem] leading-relaxed sm:mt-2.5 sm:text-[0.95rem]"
                         style={{ color: CREAM_SOFT }}
                       >
                         {a.body}

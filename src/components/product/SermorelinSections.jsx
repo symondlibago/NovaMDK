@@ -13,7 +13,8 @@ const BODY = "#7a6d58";
 
 const CREAM_SOFT = "rgba(244,227,193,0.86)";
 
-const BRASS_CARD = "radial-gradient(circle at 50% 50%, #c1a27a, #9a7843)";
+const BRASS_CARD =
+  "radial-gradient(circle at 50% 50%, #c1a27a, #9a7843)";
 
 const HEADING = "#ffe8b1";
 
@@ -24,22 +25,28 @@ const TAN_PALE = "#d0bd99";
 
 const CARD_R = "rounded-[calc(26px*var(--nv-r-scale,1))]";
 
-const TITLE = "nv-weight-keep font-display font-extrabold leading-[1.14]";
+const TITLE =
+  "nv-weight-keep font-display font-extrabold leading-[1.14]";
 
-const TITLE_SIZE = "text-[clamp(1.5rem,3.4vw,2.5rem)]";
+const TITLE_SIZE =
+  "text-[clamp(1.5rem,3.4vw,2.5rem)]";
 
-const BODY_SIZE = "text-[clamp(0.82rem,1.02vw,0.95rem)]";
+const BODY_SIZE =
+  "text-[clamp(0.82rem,1.02vw,0.95rem)]";
 
 /* SMALL GOLD TITLE WORD */
 
-/* The comp ramps every tail word left to right, dark gold into pale tan, the
-   same way "simple" runs on the Scream Cream block. Flat #a98a4e was reading as
-   one solid colour. */
 function Tail({ children }) {
   return (
     <span
       className="bg-clip-text text-transparent"
-      style={{ backgroundImage: `linear-gradient(90deg, ${TAN_DEEP} 0%, ${TAN_PALE} 100%)` }}
+      style={{
+        backgroundImage: `linear-gradient(
+          90deg,
+          ${TAN_DEEP} 0%,
+          ${TAN_PALE} 100%
+        )`,
+      }}
     >
       {children}
     </span>
@@ -51,7 +58,8 @@ function Tail({ children }) {
 const CURVE_EASE = [0.22, 0.61, 0.18, 1];
 
 const IN_VIEW = {
-  once: true, margin: "-60px 0px -60px 0px",
+  once: true,
+  margin: "-60px 0px -60px 0px",
 };
 
 /* 1. SUPPORT THE SIGNAL */
@@ -59,15 +67,9 @@ const IN_VIEW = {
 function SignalBand({ startTo }) {
   const graphRef = React.useRef(null);
 
-  /*
-   * The external SVG contains its own animations.
-   *
-   * We only mount the SVG after this graph enters
-   * the viewport. That causes its internal CSS
-   * animations to start at the correct time.
-   */
   const graphIsInView = useInView(
-    graphRef, IN_VIEW
+    graphRef,
+    IN_VIEW
   );
 
   return (
@@ -78,16 +80,17 @@ function SignalBand({ startTo }) {
           style={{ background: BRASS_CARD }}
         >
           {/* TOP SECTION */}
-          <div
-            className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-12"
-          >
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
             {/* LEFT */}
             <div>
               <h2
-                className={`${TITLE} ${TITLE_SIZE} max-w-[14ch]`}
+                className={`${TITLE} ${TITLE_SIZE} max-w-[20ch]`}
                 style={{ color: HEADING }}
               >
-                Support the signal behind recovery
+                Support your body&rsquo;s{" "}
+                <span className="sm:block">
+                  natural GH signaling
+                </span>
               </h2>
 
               <Link
@@ -103,8 +106,9 @@ function SignalBand({ startTo }) {
               className={`${BODY_SIZE} max-w-[46ch] leading-relaxed lg:pt-2`}
               style={{ color: CREAM_SOFT }}
             >
-              Sermorelin is a compounded prescription peptide that signals your pituitary gland to
-              release more of your body's own growth hormone
+              Sermorelin is a compounded prescription
+              peptide that stimulates the pituitary gland
+              to release the body&rsquo;s own growth hormone
             </p>
           </div>
 
@@ -115,53 +119,71 @@ function SignalBand({ startTo }) {
               className="mx-auto max-w-[34ch] text-center text-[clamp(0.82rem,1.1vw,0.95rem)] font-semibold leading-snug"
               style={{ color: CREAM_SOFT }}
             >
-              After age 30, natural GH secretion may decline by about
+              Growth hormone levels naturally change with age
             </p>
 
-            {/* GRAPH WRAPPER IMPORTANT: SVG itself is 600 x 200 = 3:1. Using aspect-[3/1] prevents Chrome from stretching the SVG differently from the VS Code preview. */}
-            <div
-              ref={graphRef}
-              className="relative mt-3 w-full aspect-[3/1]"
-            >
-              {/* ANIMATED EXTERNAL SVG */}
-              {graphIsInView && (
-                <img
-                  src="/site/anti-aging/sermorelin-canva-graph-animated.svg"
-                  alt=""
-                  aria-hidden="true"
-                  draggable="false"
-                  className="absolute inset-0 z-10 block h-full w-full select-none object-contain"
-                />
-              )}
-
-              {/* LARGE 14% */}
-              <Motion.div
-                className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
-                initial={{ opacity: 0, scale: 0.92 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={IN_VIEW}
-                transition={{ duration: 0.8, ease: CURVE_EASE, delay: 0.15 }}
-              >
-                <span
-                  className="font-display text-[clamp(4.5rem,17vw,11rem)] font-extrabold leading-none tracking-tight"
-                  style={{ color: "rgba(246,239,224,0.42)" }}
-                >
-                  14%
-                </span>
-              </Motion.div>
-
-              {/* EACH DECADE */}
-              <Motion.span
-                className="pointer-events-none absolute right-[6%] top-1/2 z-20 text-[clamp(0.78rem,1vw,0.92rem)] font-semibold"
+            <div className="mt-3 flex items-stretch gap-2 sm:gap-3">
+              <span
+                className="shrink-0 self-center whitespace-nowrap text-[clamp(0.66rem,0.9vw,0.8rem)] font-semibold [writing-mode:vertical-rl] rotate-180"
                 style={{ color: CREAM_SOFT }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={IN_VIEW}
-                transition={{ duration: 0.5, delay: 1.5 }}
               >
-                each decade
-              </Motion.span>
+                Natural GH production
+              </span>
+
+              <div
+                ref={graphRef}
+                /* 39/14 is the SVG's own ratio now that its canvas carries 12
+                   units of bleed on every side (624x224). Leaving this at 3/1
+                   would letterbox the artwork inside the box instead. */
+                className="relative aspect-[39/14] min-w-0 flex-1"
+              >
+                {/* ANIMATED EXTERNAL SVG */}
+                {graphIsInView && (
+                  <img
+                    src="/site/anti-aging/sermorelin-canva-graph-animated.svg"
+                    alt=""
+                    aria-hidden="true"
+                    draggable="false"
+                    className="absolute inset-0 z-10 block h-full w-full select-none object-contain"
+                  />
+                )}
+
+                {/* LARGE 14% */}
+                <Motion.div
+                  className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.92,
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    scale: 1,
+                  }}
+                  viewport={IN_VIEW}
+                  transition={{
+                    duration: 0.8,
+                    ease: CURVE_EASE,
+                    delay: 0.15,
+                  }}
+                >
+                  <span
+                    className="font-display text-[clamp(4.5rem,17vw,11rem)] font-extrabold leading-none tracking-tight"
+                    style={{
+                      color: "rgba(246,239,224,0.42)",
+                    }}
+                  >
+                    14%
+                  </span>
+                </Motion.div>
+              </div>
             </div>
+
+            <p
+              className="mt-2 text-center text-[clamp(0.66rem,0.9vw,0.8rem)] font-semibold"
+              style={{ color: CREAM_SOFT }}
+            >
+              Age
+            </p>
           </div>
         </div>
       </Reveal>
@@ -169,14 +191,10 @@ function SignalBand({ startTo }) {
   );
 }
 
-/* 2. HOW SERMORELIN WORKS */
+/* =========================================================
+   2. HOW SERMORELIN WORKS
+   ========================================================= */
 
-/*
- * Coordinates measured from the Canva composition.
- * The artwork is 3:2, so this viewBox deliberately uses the same ratio.
- * Four shared nodes are used instead of six independent endpoints because
- * the Canva design has two junctions: pituitary and growth-hormone.
- */
 const WORKS_NODES = {
   signal: [350, 100],
   pituitary: [727, 184],
@@ -184,103 +202,245 @@ const WORKS_NODES = {
   body: [728, 528],
 };
 
-const WORKS_NODE_LIST = Object.values(WORKS_NODES);
+const WORKS_NODE_LIST =
+  Object.values(WORKS_NODES);
 
 const STEPS = [
   {
     title: "Sends the signal",
-    body: "Support the processes involved in rest, repair, and recovery",
+    body:
+      "Support the processes involved in rest, repair, and recovery",
     pos: "left-[5%] top-[4.8%]",
   },
   {
     title: "Pituitary gland",
-    body: "Responds by releasing your own growth hormone",
+    body:
+      "Responds by releasing your own growth hormone",
     pos: "right-[2.5%] top-[16.4%]",
   },
   {
     title: "Growth hormone",
-    body: "Travels throughout the body and signals the production of IGF-1",
+    body:
+      "Travels throughout the body and signals the production of IGF-1",
     pos: "left-[5%] top-[47.3%]",
   },
   {
     title: "Your body responds",
-    body: "Through processes involved in recovery, metabolism, lean tissue, and overall function",
+    body:
+      "Through processes involved in recovery, metabolism, lean tissue, and overall function",
     pos: "right-[2.5%] top-[66.6%]",
   },
 ];
 
 const CONNECTOR_STROKE = "#f7ead0";
 
-function GlassChip({ title, body, className = "" }) {
+/*
+ * TIMELINE
+ *
+ * Adjust these if you want the whole sequence
+ * faster or slower.
+ */
+const CHIP_LEAD = 0.15;
+
+const CHIP_DURATION = 0.42;
+
+const CONNECTOR_DURATION = 0.62;
+
+const SEQUENCE_GAP = 0.06;
+
+const SEQUENCE_STEP =
+  CHIP_DURATION +
+  SEQUENCE_GAP +
+  CONNECTOR_DURATION;
+
+function getChipDelay(index) {
   return (
-    <div
+    CHIP_LEAD +
+    index * SEQUENCE_STEP
+  );
+}
+
+/*
+ * Connector starts only AFTER its previous card
+ * has finished revealing.
+ */
+function getConnectorDelay(index) {
+  return (
+    getChipDelay(index) +
+    CHIP_DURATION +
+    SEQUENCE_GAP
+  );
+}
+
+/* CARD */
+
+function GlassChip({
+  title,
+  body,
+  className = "",
+  delay = 0,
+}) {
+  return (
+    <Motion.div
       className={`z-40 w-[26.2%] rounded-[calc(28px*var(--nv-r-scale,1))] border border-white/15 px-[clamp(1rem,1.35vw,1.45rem)] py-[clamp(0.85rem,1.15vw,1.2rem)] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_10px_28px_rgba(75,55,28,0.06)] backdrop-blur-[10px] ${className}`}
-      style={{ background: CHIP }}
+      style={{
+        background: CHIP,
+      }}
+      initial={{
+        opacity: 0,
+        scale: 0.9,
+      }}
+      whileInView={{
+        opacity: 1,
+        scale: 1,
+      }}
+      viewport={IN_VIEW}
+      transition={{
+        duration: CHIP_DURATION,
+        ease: CURVE_EASE,
+        delay,
+      }}
     >
       <p className="text-[clamp(0.72rem,0.78vw,0.92rem)] font-bold leading-[1.15] text-white">
         {title}
       </p>
+
       <p className="mt-2 text-[clamp(0.68rem,0.72vw,0.86rem)] leading-[1.35] text-white/85">
         {body}
       </p>
-    </div>
+    </Motion.div>
   );
 }
 
 function WorksBackConnectors() {
-  const { signal, pituitary, growthHormone } = WORKS_NODES;
+  const {
+    signal,
+    pituitary,
+    growthHormone,
+  } = WORKS_NODES;
+
+  const svgRef = React.useRef(null);
+
+  const isInView = useInView(
+    svgRef,
+    IN_VIEW
+  );
+
+  const signalToPituitary = `
+    M${signal[0]} ${signal[1]}
+    L${pituitary[0]} ${pituitary[1]}
+  `;
+
+  const pituitaryToGrowth = `
+    M${pituitary[0]} ${pituitary[1]}
+    L${growthHormone[0]} ${growthHormone[1]}
+  `;
 
   return (
-    <svg
+    <Motion.svg
+      ref={svgRef}
       viewBox="0 0 1040 693"
       preserveAspectRatio="none"
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-10 hidden h-full w-full lg:block"
-    >
-      <g
-        fill="none"
-        stroke={CONNECTOR_STROKE}
-        strokeOpacity="0.9"
-        strokeWidth="3.25"
-        strokeDasharray="12 9"
-        strokeLinecap="butt"
-      >
-        {/* Behind the runner, exactly like the Canva composition. */}
-        <path
-          d={`M${signal[0]} ${signal[1]} L${pituitary[0]} ${pituitary[1]}`}
-          vectorEffect="non-scaling-stroke"
-        />
-        <path
-          d={`M${growthHormone[0]} ${growthHormone[1]} L${pituitary[0]} ${pituitary[1]}`}
-          vectorEffect="non-scaling-stroke"
-        />
-      </g>
-    </svg>
-  );
-}
-
-function WorksFrontConnectors() {
-  const { growthHormone, body } = WORKS_NODES;
-
-  return (
-    <svg
-      viewBox="0 0 1040 693"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-30 hidden h-full w-full lg:block"
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: isInView
+          ? 1
+          : 0,
+      }}
+      transition={{
+        duration: 0.25,
+        ease: CURVE_EASE,
+      }}
     >
       <defs>
-        <radialGradient id="nvWorksNodeGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#fffdf5" stopOpacity="1" />
-          <stop offset="23%" stopColor="#fff5d9" stopOpacity="0.95" />
-          <stop offset="48%" stopColor="#f3d69b" stopOpacity="0.42" />
-          <stop offset="100%" stopColor="#f3d69b" stopOpacity="0" />
-        </radialGradient>
+        {/*
+          MASK 1
+
+          This solid path grows from the first
+          checkpoint to the second checkpoint.
+
+          The broken line underneath stays still.
+        */}
+        <mask
+          id="nvWorksMaskSignalPituitary"
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="1040"
+          height="693"
+        >
+          <Motion.path
+            d={signalToPituitary}
+            fill="none"
+            stroke="white"
+            strokeWidth="14"
+            strokeLinecap="round"
+            initial={{
+              pathLength: 0,
+            }}
+            animate={{
+              pathLength:
+                isInView
+                  ? 1
+                  : 0,
+            }}
+            transition={{
+              duration:
+                CONNECTOR_DURATION,
+              ease:
+                CURVE_EASE,
+              delay:
+                getConnectorDelay(0),
+            }}
+          />
+        </mask>
+
+        {/*
+          MASK 2
+
+          This one runs from:
+          pituitary → growth hormone
+        */}
+        <mask
+          id="nvWorksMaskPituitaryGrowth"
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="1040"
+          height="693"
+        >
+          <Motion.path
+            d={pituitaryToGrowth}
+            fill="none"
+            stroke="white"
+            strokeWidth="14"
+            strokeLinecap="round"
+            initial={{
+              pathLength: 0,
+            }}
+            animate={{
+              pathLength:
+                isInView
+                  ? 1
+                  : 0,
+            }}
+            transition={{
+              duration:
+                CONNECTOR_DURATION,
+              ease:
+                CURVE_EASE,
+              delay:
+                getConnectorDelay(1),
+            }}
+          />
+        </mask>
       </defs>
 
-      {/* This lower connector intentionally sits IN FRONT of the runner. */}
+      {/* DASHED LINE 1 */}
       <path
-        d={`M${growthHormone[0]} ${growthHormone[1]} L${body[0]} ${body[1]}`}
+        d={signalToPituitary}
         fill="none"
         stroke={CONNECTOR_STROKE}
         strokeOpacity="0.9"
@@ -288,16 +448,170 @@ function WorksFrontConnectors() {
         strokeDasharray="12 9"
         strokeLinecap="butt"
         vectorEffect="non-scaling-stroke"
+        mask="url(#nvWorksMaskSignalPituitary)"
       />
 
-      {/* Four shared glowing nodes from the Canva artwork. */}
-      {WORKS_NODE_LIST.map(([cx, cy]) => (
-        <g key={`node-${cx}-${cy}`}>
-          <circle cx={cx} cy={cy} r="28" fill="url(#nvWorksNodeGlow)" />
-          <circle cx={cx} cy={cy} r="8" fill="#fff9e8" fillOpacity="0.98" />
-        </g>
-      ))}
-    </svg>
+      {/* DASHED LINE 2 */}
+      <path
+        d={pituitaryToGrowth}
+        fill="none"
+        stroke={CONNECTOR_STROKE}
+        strokeOpacity="0.9"
+        strokeWidth="3.25"
+        strokeDasharray="12 9"
+        strokeLinecap="butt"
+        vectorEffect="non-scaling-stroke"
+        mask="url(#nvWorksMaskPituitaryGrowth)"
+      />
+    </Motion.svg>
+  );
+}
+
+function WorksFrontConnectors() {
+  const {
+    growthHormone,
+    body,
+  } = WORKS_NODES;
+
+  const svgRef = React.useRef(null);
+
+  const isInView = useInView(
+    svgRef,
+    IN_VIEW
+  );
+
+  const growthToBody = `
+    M${growthHormone[0]} ${growthHormone[1]}
+    L${body[0]} ${body[1]}
+  `;
+
+  return (
+    <Motion.svg
+      ref={svgRef}
+      viewBox="0 0 1040 693"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-30 hidden h-full w-full lg:block"
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: isInView
+          ? 1
+          : 0,
+      }}
+      transition={{
+        duration: 0.25,
+        ease: CURVE_EASE,
+      }}
+    >
+      <defs>
+        <radialGradient
+          id="nvWorksNodeGlow"
+          cx="50%"
+          cy="50%"
+          r="50%"
+        >
+          <stop
+            offset="0%"
+            stopColor="#fffdf5"
+            stopOpacity="1"
+          />
+
+          <stop
+            offset="23%"
+            stopColor="#fff5d9"
+            stopOpacity="0.95"
+          />
+
+          <stop
+            offset="48%"
+            stopColor="#f3d69b"
+            stopOpacity="0.42"
+          />
+
+          <stop
+            offset="100%"
+            stopColor="#f3d69b"
+            stopOpacity="0"
+          />
+        </radialGradient>
+
+        {/*
+          MASK 3
+
+          Growth hormone → body
+        */}
+        <mask
+          id="nvWorksMaskGrowthBody"
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="1040"
+          height="693"
+        >
+          <Motion.path
+            d={growthToBody}
+            fill="none"
+            stroke="white"
+            strokeWidth="14"
+            strokeLinecap="round"
+            initial={{
+              pathLength: 0,
+            }}
+            animate={{
+              pathLength:
+                isInView
+                  ? 1
+                  : 0,
+            }}
+            transition={{
+              duration:
+                CONNECTOR_DURATION,
+              ease:
+                CURVE_EASE,
+              delay:
+                getConnectorDelay(2),
+            }}
+          />
+        </mask>
+      </defs>
+
+      {/* DASHED LINE 3 */}
+      <path
+        d={growthToBody}
+        fill="none"
+        stroke={CONNECTOR_STROKE}
+        strokeOpacity="0.9"
+        strokeWidth="3.25"
+        strokeDasharray="12 9"
+        strokeLinecap="butt"
+        vectorEffect="non-scaling-stroke"
+        mask="url(#nvWorksMaskGrowthBody)"
+      />
+
+      {/* Four shared glowing nodes */}
+      {WORKS_NODE_LIST.map(
+        ([cx, cy]) => (
+          <g
+            key={`node-${cx}-${cy}`}
+          >
+            <circle
+              cx={cx}
+              cy={cy}
+              r="28"
+              fill="url(#nvWorksNodeGlow)"
+            />
+
+            <circle
+              cx={cx}
+              cy={cy}
+              r="8"
+              fill="#fff9e8"
+              fillOpacity="0.98"
+            />
+          </g>
+        )
+      )}
+    </Motion.svg>
   );
 }
 
@@ -311,8 +625,9 @@ function HowItWorks({ startTo }) {
         className="max-w-[52ch] text-[0.78rem] italic leading-relaxed"
         style={{ color: BODY }}
       >
-        Prescription required. Eligibility is determined by a licensed healthcare provider.
-        Individual results may vary.
+        Prescription required. Eligibility is determined
+        by a licensed healthcare provider. Individual
+        results may vary.
       </p>
 
       {/* MAIN GRID */}
@@ -324,14 +639,17 @@ function HowItWorks({ startTo }) {
             style={{ color: INK }}
           >
             How Sermorelin{" "}
-            <Tail>works</Tail>
+            <Tail>
+              works
+            </Tail>
           </h2>
 
           <p
             className="mt-7 max-w-[39ch] text-[clamp(1rem,1.25vw,1.22rem)] leading-[1.42]"
             style={{ color: BODY }}
           >
-            Sermorelin signals the pituitary gland to release growth hormone, supporting processes
+            Sermorelin signals the pituitary gland to
+            release growth hormone, supporting processes
             involved in metabolism, lean mass, and recovery
           </p>
 
@@ -344,9 +662,14 @@ function HowItWorks({ startTo }) {
         </Reveal>
 
         {/* RIGHT IMAGE / DIAGRAM */}
-        <Reveal as="div" delay={0.08}>
-          <div className={`relative isolate overflow-hidden ${CARD_R}`}>
-            {/* Base photo. */}
+        <Reveal
+          as="div"
+          delay={0.08}
+        >
+          <div
+            className={`relative isolate overflow-hidden ${CARD_R}`}
+          >
+            {/* Base photo */}
             <img
               src="/site/anti-aging/sermorelin-works.png"
               alt=""
@@ -355,10 +678,10 @@ function HowItWorks({ startTo }) {
               className="relative z-0 block aspect-[3/2] w-full object-cover object-center"
             />
 
-            {/* Two connectors live behind the runner. */}
+            {/* Lines 1 and 2 live behind the runner */}
             <WorksBackConnectors />
 
-            {/* Transparent runner cutout creates the behind/in-front effect. */}
+            {/* Transparent runner cutout */}
             <img
               src="/site/anti-aging/sermorelin-works-man.png"
               alt=""
@@ -368,35 +691,53 @@ function HowItWorks({ startTo }) {
               className="pointer-events-none absolute inset-0 z-20 hidden h-full w-full select-none object-cover object-center lg:block"
             />
 
-            {/* Lower connector and all glows live above the runner. */}
+            {/* Line 3 + glowing nodes */}
             <WorksFrontConnectors />
 
             {/* DESKTOP GLASS CHIPS */}
-            {STEPS.map((step) => (
-              <GlassChip
-                key={step.title}
-                title={step.title}
-                body={step.body}
-                className={`absolute hidden lg:block ${step.pos}`}
-              />
-            ))}
+            {STEPS.map(
+              (step, i) => (
+                <GlassChip
+                  key={step.title}
+                  title={step.title}
+                  body={step.body}
+                  delay={
+                    getChipDelay(i)
+                  }
+                  className={`absolute hidden lg:block ${step.pos}`}
+                />
+              )
+            )}
           </div>
 
           {/* MOBILE / TABLET LIST */}
           <ul className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:hidden">
-            {STEPS.map((step) => (
-              <li
-                key={step.title}
-                className="rounded-[calc(14px*var(--nv-r-scale,1))] bg-[#f1e8d8] px-4 py-3"
-              >
-                <p className="text-[0.8rem] font-bold leading-tight" style={{ color: INK }}>
-                  {step.title}
-                </p>
-                <p className="mt-1 text-[0.76rem] leading-snug" style={{ color: BODY }}>
-                  {step.body}
-                </p>
-              </li>
-            ))}
+            {STEPS.map(
+              (step) => (
+                <li
+                  key={step.title}
+                  className="rounded-[calc(14px*var(--nv-r-scale,1))] bg-[#f1e8d8] px-4 py-3"
+                >
+                  <p
+                    className="text-[0.8rem] font-bold leading-tight"
+                    style={{
+                      color: INK,
+                    }}
+                  >
+                    {step.title}
+                  </p>
+
+                  <p
+                    className="mt-1 text-[0.76rem] leading-snug"
+                    style={{
+                      color: BODY,
+                    }}
+                  >
+                    {step.body}
+                  </p>
+                </li>
+              )
+            )}
           </ul>
         </Reveal>
       </div>
@@ -404,23 +745,12 @@ function HowItWorks({ startTo }) {
   );
 }
 
-/* 3. GH PATHWAY */
+/* =========================================================
+   3. GH PATHWAY
+   ========================================================= */
 
-/* The four cards sit on a cross and trade places every few seconds. Position
-   and size belong to the SLOT, never to the card, so a card grows as it moves
-   into the bottom seat and shrinks on its way to the top one.
-
-   Clockwise order (top -> right -> bottom -> left) so the rotation reads as one
-   motion rather than four independent hops. Percentages are of the photo, and
-   each slot carries the translate that centres it on its own axis. */
 const SLOT_MS = 5000;
 
-/*
- * The four seats are intentionally closer to the centre than before.
- * The bottom seat is the hero state: it is much larger, fully opaque,
- * has stronger glass, a larger icon, and larger type. The other three
- * stay deliberately quieter so the eye always lands on the bottom card.
- */
 const SLOTS = [
   // top: smallest + quietest
   {
@@ -469,7 +799,8 @@ const SLOTS = [
     opacity: 1,
     background: "rgba(188,153,99,0.58)",
     borderColor: "rgba(255,255,255,0.36)",
-    boxShadow: "0 16px 38px rgba(77,55,26,0.16), inset 0 1px 0 rgba(255,255,255,0.16)",
+    boxShadow:
+      "0 16px 38px rgba(77,55,26,0.16), inset 0 1px 0 rgba(255,255,255,0.16)",
     transform: "translate(-50%, -100%)",
   },
 
@@ -493,53 +824,77 @@ const SLOTS = [
 
 const PATHWAY = [
   {
-    icon: "/site/anti-aging/gh-metabolism.avif",
+    icon:
+      "/site/anti-aging/gh-metabolism.avif",
 
-    title: "Metabolism",
+    title:
+      "Metabolism",
 
-    body: "Growth hormone influences how the body handles fats, proteins, and carbohydrates as part of normal metabolic function",
-
+    body:
+      "Growth hormone influences how the body handles fats, proteins, and carbohydrates as part of normal metabolic function",
   },
 
   {
-    icon: "/site/anti-aging/gh-sleep.avif",
+    icon:
+      "/site/anti-aging/gh-sleep.avif",
 
-    title: "Sleep and overnight recovery",
+    title:
+      "Sleep and overnight recovery",
 
-    body: "Natural GH release is closely tied to nighttime and deep sleep. Supporting this pathway may be part of a broader approach to sleep and recovery",
-
+    body:
+      "Natural GH release is closely tied to nighttime and deep sleep. Supporting this pathway may be part of a broader approach to sleep and recovery",
   },
 
   {
-    icon: "/site/anti-aging/gh-composition.avif",
+    icon:
+      "/site/anti-aging/gh-composition.avif",
 
-    title: "Body composition",
+    title:
+      "Body composition",
 
-    body: "Growth hormone and IGF-1 are involved in the processes that help maintain lean tissue and regulate how the body stores and uses fat",
-
+    body:
+      "Growth hormone and IGF-1 are involved in the processes that help maintain lean tissue and regulate how the body stores and uses fat",
   },
 
   {
-    icon: "/site/anti-aging/gh-recovery.avif",
+    icon:
+      "/site/anti-aging/gh-recovery.avif",
 
-    title: "Recovery",
+    title:
+      "Recovery",
 
-    body: "The GH pathway plays a role in tissue maintenance, protein metabolism, and normal repair processes",
-
+    body:
+      "The GH pathway plays a role in tissue maintenance, protein metabolism, and normal repair processes",
   },
 ];
 
 /* GH PATHWAY SECTION */
 
 function GhPathway() {
-  /* One counter for the whole cross: every card reads its slot from it, so the
-     four can never drift out of formation. */
-  const [step, setStep] = React.useState(0);
+  const [step, setStep] =
+    React.useState(0);
 
   React.useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    const t = setInterval(() => setStep((v) => v + 1), SLOT_MS);
-    return () => clearInterval(t);
+    if (
+      window
+        .matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        )
+        .matches
+    ) {
+      return undefined;
+    }
+
+    const t = setInterval(
+      () =>
+        setStep(
+          (v) => v + 1
+        ),
+      SLOT_MS
+    );
+
+    return () =>
+      clearInterval(t);
   }, []);
 
   return (
@@ -553,9 +908,6 @@ function GhPathway() {
           className={`${TITLE} mt-3 max-w-[22ch] text-[clamp(2rem,3.8vw,3.35rem)] leading-[1.03]`}
           aria-label="What growth hormone does in the body"
         >
-          {/* Canva uses a fresh dark-to-light gold ramp on EACH line.
-              Resetting the gradient per line keeps "does" dark instead of
-              inheriting the pale end of the first line. */}
           <span
             className="block w-fit bg-clip-text text-transparent"
             style={{
@@ -565,6 +917,7 @@ function GhPathway() {
           >
             What growth hormone
           </span>
+
           <span
             className="block w-fit bg-clip-text text-transparent"
             style={{
@@ -582,9 +935,7 @@ function GhPathway() {
         delay={0.06}
       >
         {/* IMAGE */}
-        <div
-          className="relative mt-8"
-        >
+        <div className="relative mt-8">
           <img
             src="/site/anti-aging/sermorelin-pathway.png"
             alt=""
@@ -594,103 +945,158 @@ function GhPathway() {
           />
 
           {/* DESKTOP PATHWAY CARDS */}
-          {PATHWAY.map((item, i) => {
-            const slot = SLOTS[(i + step) % SLOTS.length];
-            return (
-              <div
+          {PATHWAY.map(
+            (item, i) => {
+              const slot =
+                SLOTS[
+                  (i + step) %
+                    SLOTS.length
+                ];
+
+              return (
+                <div
+                  key={item.title}
+                  className="absolute hidden items-center rounded-[calc(20px*var(--nv-r-scale,1))] border backdrop-blur-md md:flex"
+                  style={{
+                    background:
+                      slot.background,
+
+                    borderColor:
+                      slot.borderColor,
+
+                    boxShadow:
+                      slot.boxShadow,
+
+                    left:
+                      slot.left,
+
+                    top:
+                      slot.top,
+
+                    width:
+                      slot.width,
+
+                    gap:
+                      slot.gap,
+
+                    padding:
+                      slot.padding,
+
+                    transform:
+                      slot.transform,
+
+                    opacity:
+                      slot.opacity,
+
+                    transition:
+                      "left 900ms cubic-bezier(0.22,1,0.36,1), top 900ms cubic-bezier(0.22,1,0.36,1), width 900ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1), opacity 900ms ease, background-color 900ms ease, border-color 900ms ease, box-shadow 900ms ease, padding 900ms cubic-bezier(0.22,1,0.36,1), gap 900ms cubic-bezier(0.22,1,0.36,1)",
+                  }}
+                >
+                  <img
+                    src={item.icon}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    className="block shrink-0 object-contain"
+                    style={{
+                      width:
+                        slot.iconSize,
+
+                      height:
+                        slot.iconSize,
+
+                      transition:
+                        "width 900ms cubic-bezier(0.22,1,0.36,1), height 900ms cubic-bezier(0.22,1,0.36,1)",
+                    }}
+                  />
+
+                  <span className="min-w-0">
+                    <span
+                      className="block font-bold leading-tight text-white"
+                      style={{
+                        fontSize:
+                          slot.titleSize,
+
+                        transition:
+                          "font-size 900ms cubic-bezier(0.22,1,0.36,1)",
+                      }}
+                    >
+                      {item.title}
+                    </span>
+
+                    <span
+                      className="mt-1 block leading-snug text-white/90"
+                      style={{
+                        fontSize:
+                          slot.bodySize,
+
+                        transition:
+                          "font-size 900ms cubic-bezier(0.22,1,0.36,1)",
+                      }}
+                    >
+                      {item.body}
+                    </span>
+                  </span>
+                </div>
+              );
+            }
+          )}
+        </div>
+
+        {/* MOBILE PATHWAY */}
+        <ul className="mt-4 grid gap-2.5 sm:grid-cols-2 md:hidden">
+          {PATHWAY.map(
+            (item, i) => (
+              <li
                 key={item.title}
-                className="absolute hidden items-center rounded-[calc(20px*var(--nv-r-scale,1))] border backdrop-blur-md md:flex"
-                style={{
-                  background: slot.background,
-                  borderColor: slot.borderColor,
-                  boxShadow: slot.boxShadow,
-                  left: slot.left,
-                  top: slot.top,
-                  width: slot.width,
-                  gap: slot.gap,
-                  padding: slot.padding,
-                  transform: slot.transform,
-                  opacity: slot.opacity,
-                  transition:
-                    "left 900ms cubic-bezier(0.22,1,0.36,1), top 900ms cubic-bezier(0.22,1,0.36,1), width 900ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1), opacity 900ms ease, background-color 900ms ease, border-color 900ms ease, box-shadow 900ms ease, padding 900ms cubic-bezier(0.22,1,0.36,1), gap 900ms cubic-bezier(0.22,1,0.36,1)",
-                }}
+                className="rounded-[calc(14px*var(--nv-r-scale,1))] bg-[#f1e8d8] px-4 py-3"
               >
                 <img
                   src={item.icon}
                   alt=""
                   aria-hidden="true"
                   loading="lazy"
-                  className="block shrink-0 object-contain"
+                  className="block h-[17px] w-[17px] object-contain"
                   style={{
-                    width: slot.iconSize,
-                    height: slot.iconSize,
-                    transition: "width 900ms cubic-bezier(0.22,1,0.36,1), height 900ms cubic-bezier(0.22,1,0.36,1)",
+                    animationDelay:
+                      `${i * -3}s`,
+
+                    filter:
+                      "brightness(0.42) sepia(1) saturate(2.2) hue-rotate(5deg)",
                   }}
                 />
 
-                <span className="min-w-0">
-                  <span
-                    className="block font-bold leading-tight text-white"
-                    style={{
-                      fontSize: slot.titleSize,
-                      transition: "font-size 900ms cubic-bezier(0.22,1,0.36,1)",
-                    }}
-                  >
-                    {item.title}
-                  </span>
-                  <span
-                    className="mt-1 block leading-snug text-white/90"
-                    style={{
-                      fontSize: slot.bodySize,
-                      transition: "font-size 900ms cubic-bezier(0.22,1,0.36,1)",
-                    }}
-                  >
-                    {item.body}
-                  </span>
-                </span>
-              </div>
-            );
-          })}
-        </div>
+                <p
+                  className="mt-1.5 text-[0.8rem] font-bold leading-tight"
+                  style={{ color: INK }}
+                >
+                  {item.title}
+                </p>
 
-        {/* MOBILE PATHWAY */}
-        <ul
-          className="mt-4 grid gap-2.5 sm:grid-cols-2 md:hidden"
-        >
-          {PATHWAY.map((item, i) => (
-            <li
-              key={item.title}
-              className="rounded-[calc(14px*var(--nv-r-scale,1))] bg-[#f1e8d8] px-4 py-3"
-            >
-              {/* The artwork is a pale cream, so on the light mobile card it has
-                  to be darkened to the ink rather than shown as drawn. */}
-              <img
-                src={item.icon}
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                className="block h-[17px] w-[17px] object-contain"
-                style={{ animationDelay: `${i * -3}s`, filter: "brightness(0.42) sepia(1) saturate(2.2) hue-rotate(5deg)" }}
-              />
-
-              <p className="mt-1.5 text-[0.8rem] font-bold leading-tight" style={{ color: INK }}>
-                {item.title}
-              </p>
-
-              <p className="mt-1 text-[0.76rem] leading-snug" style={{ color: BODY }}>
-                {item.body}
-              </p>
-            </li>
-          ))}
+                <p
+                  className="mt-1 text-[0.76rem] leading-snug"
+                  style={{ color: BODY }}
+                >
+                  {item.body}
+                </p>
+              </li>
+            )
+          )}
         </ul>
       </Reveal>
     </div>
   );
 }
 
-/* 4. WITHOUT INJECTIONS */
+/* =========================================================
+   4. WITHOUT INJECTIONS
+   ========================================================= */
 
-const NEEDLE_FREE = ["Needle-Free Treatment", "Provider-Directed Care", "At-Home Routine"];
+const NEEDLE_FREE = [
+  "Needle-Free Treatment",
+  "Provider-Directed Care",
+  "At-Home Routine",
+];
 
 /* WITHOUT INJECTIONS SECTION */
 
@@ -700,7 +1106,9 @@ function WithoutInjections() {
       <Reveal>
         <div
           className={`grid gap-8 px-6 py-9 sm:px-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)] lg:items-center lg:gap-12 ${CARD_R}`}
-          style={{ background: "#f2ead9" }}
+          style={{
+            background: "#f2ead9",
+          }}
         >
           {/* LEFT */}
           <div>
@@ -709,15 +1117,19 @@ function WithoutInjections() {
               style={{ color: INK }}
             >
               Sermorelin, without the{" "}
-              <Tail>injections</Tail>
+              <Tail>
+                injections
+              </Tail>
             </h2>
 
             <p
               className={`mt-5 max-w-[44ch] leading-relaxed ${BODY_SIZE}`}
               style={{ color: BODY }}
             >
-              NovaMDK offers Sermorelin as a compounded nasal spray. It provides a needle-free way
-              to receive provider-prescribed Sermorelin without syringes or injection preparation.
+              NovaMDK offers Sermorelin as a compounded
+              nasal spray. It provides a needle-free way
+              to receive provider-prescribed Sermorelin
+              without syringes or injection preparation.
             </p>
           </div>
 
@@ -731,7 +1143,10 @@ function WithoutInjections() {
                 >
                   <span
                     className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-white"
-                    style={{ background: "#a98a4e" }}
+                    style={{
+                      background:
+                        "#a98a4e",
+                    }}
                   >
                     <Check
                       size={15}
@@ -741,7 +1156,9 @@ function WithoutInjections() {
 
                   <span
                     className="text-[0.95rem] font-bold"
-                    style={{ color: INK }}
+                    style={{
+                      color: INK,
+                    }}
                   >
                     {item}
                   </span>
@@ -755,7 +1172,9 @@ function WithoutInjections() {
   );
 }
 
-/* 5. CLOSING BAND */
+/* =========================================================
+   5. CLOSING BAND
+   ========================================================= */
 
 function UnderstandBand({
   startTo,
@@ -776,9 +1195,7 @@ function UnderstandBand({
           />
 
           {/* CONTENT */}
-          <div
-            className="relative z-10 flex h-full max-w-[52ch] flex-col justify-center px-6 py-10 sm:px-10 md:py-0"
-          >
+          <div className="relative z-10 flex h-full max-w-[52ch] flex-col justify-center px-6 py-10 sm:px-10 md:py-0">
             <h2
               className={`${TITLE} ${TITLE_SIZE} max-w-[12ch]`}
               style={{ color: INK }}
@@ -797,7 +1214,8 @@ function UnderstandBand({
               className={`mt-3 max-w-[52ch] leading-relaxed ${BODY_SIZE}`}
               style={{ color: BODY }}
             >
-              Start with a licensed provider who can review your health and determine whether
+              Start with a licensed provider who can
+              review your health and determine whether
               Sermorelin may be appropriate for you
             </p>
 
@@ -810,9 +1228,12 @@ function UnderstandBand({
 
             <p
               className="mt-6 max-w-[40ch] text-[0.76rem] italic leading-relaxed"
-              style={{ color: "#9a8a6d" }}
+              style={{
+                color: "#9a8a6d",
+              }}
             >
-              Individual response may vary. Treatment requires evaluation by a licensed healthcare
+              Individual response may vary. Treatment
+              requires evaluation by a licensed healthcare
               provider.
             </p>
           </div>
@@ -829,7 +1250,9 @@ export default function SermorelinSections({
 }) {
   return (
     <section
-      style={{ background: "#faf8f4" }}
+      style={{
+        background: "#faf8f4",
+      }}
     >
       <SignalBand
         startTo={startTo}
@@ -838,8 +1261,11 @@ export default function SermorelinSections({
       <HowItWorks
         startTo={startTo}
       />
+
       <GhPathway />
+
       <WithoutInjections />
+
       <UnderstandBand
         startTo={startTo}
       />
