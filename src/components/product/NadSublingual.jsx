@@ -151,13 +151,13 @@ export default function NadSublingual({ startTo = "/start" }) {
                     {s.n}
                   </span>
                   <span className="block pt-1.5">
-                    <h3 className="font-display text-[1.02rem] font-bold leading-tight" style={{ color: CREAM }}>
-                      {s.title}
-                    </h3>
-                    <p className="mt-1.5 max-w-[42ch] text-[0.86rem] leading-relaxed" style={{ color: CREAM_SOFT }}>
-                      {s.body}
-                    </p>
-                  </span>
+                  <h3 className="font-display text-[1.18rem] font-bold leading-tight" style={{ color: CREAM }}>
+                    {s.title}
+                  </h3>
+                  <p className="mt-1.5 max-w-[42ch] text-[0.98rem] leading-relaxed" style={{ color: CREAM_SOFT }}>
+                    {s.body}
+                  </p>
+                </span>
                 </li>
               ))}
             </ol>

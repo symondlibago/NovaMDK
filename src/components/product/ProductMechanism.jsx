@@ -45,13 +45,8 @@ function CalloutDiagram({ m, product }) {
           </p>
         )}
       </Reveal>
-
-      {/* Desktop diagram. Below md the wires would have nowhere to run, so the
-          same three labels stack under the vial instead. */}
       <div
         ref={ref}
-        /* Wide and shallow, as the comp sets it: the vial is small against the
-           span of the labels, so a taller box would strand it in empty brass. */
         className={`nv-diagram relative mx-auto mt-[clamp(1.5rem,3vw,2.5rem)] hidden aspect-82/25 w-full max-w-205 md:block ${
           running ? "is-in" : ""
         }`}
@@ -101,9 +96,9 @@ function CalloutDiagram({ m, product }) {
         <Vial src={product.img} className="mx-auto h-56" />
         <ul className="mt-6 flex flex-col items-center gap-2.5">
           {m.callouts.map((c) => (
-            <li key={c.name} className={`rounded-full border border-white/25 px-4 py-1.5 ${LABEL}`}>
-              {c.name}
-            </li>
+            <li key={c.name} className={`rounded-full border border-white/25 px-5 py-2 text-[1rem] ${LABEL}`}>
+            {c.name}
+          </li>
           ))}
         </ul>
       </div>

@@ -163,7 +163,7 @@
 @property --nv-edge {
   syntax: "<color>";
   inherits: false;
-  initial-value: #8f7c55;
+  initial-value: #b49a5d;
 }
 
 @layer components {
@@ -372,10 +372,10 @@
   @keyframes nv-turn {
     0% { --nv-edge: #f1e3ca; }
     12% { --nv-edge: #f1e3ca; }
-    32% { --nv-edge: #8f7c55; }
-    80% { --nv-edge: #8f7c55; }
+    32% { --nv-edge: #b49a5d; }
+    80% { --nv-edge: #b49a5d; }
     100% { --nv-edge: #f1e3ca; }
-  }
+}
 
   /* Sports-medicine recovery row. The cards on either end are meant to be half
      gone, and the comp dissolves them rather than cutting them — so the fade is

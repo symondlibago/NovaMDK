@@ -103,20 +103,20 @@ function SignalBand({ startTo }) {
 
             {/* RIGHT */}
             <p
-              className={`${BODY_SIZE} max-w-[46ch] leading-relaxed lg:pt-2`}
-              style={{ color: CREAM_SOFT }}
-            >
-              Sermorelin is a compounded prescription
-              peptide that stimulates the pituitary gland
-              to release the body&rsquo;s own growth hormone
-            </p>
+            className="text-[clamp(0.95rem,1.25vw,1.15rem)] max-w-[46ch] leading-relaxed lg:pt-2"
+            style={{ color: CREAM_SOFT }}
+          >
+            Sermorelin is a compounded prescription
+            peptide that stimulates the pituitary gland
+            to release the body&rsquo;s own growth hormone
+          </p>
           </div>
 
           {/* GRAPH / STATISTIC SECTION */}
           <div className="relative mt-[clamp(2rem,5vw,3.5rem)]">
             {/* TEXT ABOVE GRAPH */}
             <p
-              className="mx-auto max-w-[34ch] text-center text-[clamp(0.82rem,1.1vw,0.95rem)] font-semibold leading-snug"
+              className="mx-auto max-w-[34ch] text-center text-[clamp(0.95rem,1.35vw,1.15rem)] font-semibold leading-snug"
               style={{ color: CREAM_SOFT }}
             >
               Growth hormone levels naturally change with age
@@ -756,12 +756,12 @@ const SLOTS = [
   {
     left: "50%",
     top: "16%",
-    width: "21.5%",
-    iconSize: "2rem",
-    titleSize: "0.69rem",
-    bodySize: "0.63rem",
-    gap: "0.7rem",
-    padding: "0.72rem 0.9rem",
+    width: "24%",
+    iconSize: "2.3rem",
+    titleSize: "0.82rem",
+    bodySize: "0.74rem",
+    gap: "0.75rem",
+    padding: "0.82rem 1.05rem",
     opacity: 0.5,
     background: "rgba(196,168,124,0.22)",
     borderColor: "rgba(255,255,255,0.14)",
@@ -773,12 +773,12 @@ const SLOTS = [
   {
     left: "89%",
     top: "50%",
-    width: "25.5%",
-    iconSize: "2.5rem",
-    titleSize: "0.73rem",
-    bodySize: "0.66rem",
-    gap: "0.8rem",
-    padding: "0.82rem 1rem",
+    width: "28.5%",
+    iconSize: "2.8rem",
+    titleSize: "0.88rem",
+    bodySize: "0.79rem",
+    gap: "0.85rem",
+    padding: "0.92rem 1.15rem",
     opacity: 0.66,
     background: "rgba(196,168,124,0.26)",
     borderColor: "rgba(255,255,255,0.18)",
@@ -790,12 +790,12 @@ const SLOTS = [
   {
     left: "50%",
     top: "84%",
-    width: "46%",
-    iconSize: "4.7rem",
-    titleSize: "0.9rem",
-    bodySize: "0.78rem",
-    gap: "1.05rem",
-    padding: "1rem 1.35rem",
+    width: "50%",
+    iconSize: "5.1rem",
+    titleSize: "1.05rem",
+    bodySize: "0.92rem",
+    gap: "1.1rem",
+    padding: "1.15rem 1.5rem",
     opacity: 1,
     background: "rgba(188,153,99,0.58)",
     borderColor: "rgba(255,255,255,0.36)",
@@ -808,12 +808,12 @@ const SLOTS = [
   {
     left: "11%",
     top: "50%",
-    width: "25.5%",
-    iconSize: "2.5rem",
-    titleSize: "0.73rem",
-    bodySize: "0.66rem",
-    gap: "0.8rem",
-    padding: "0.82rem 1rem",
+    width: "28.5%",
+    iconSize: "2.8rem",
+    titleSize: "0.88rem",
+    bodySize: "0.79rem",
+    gap: "0.85rem",
+    padding: "0.92rem 1.15rem",
     opacity: 0.66,
     background: "rgba(196,168,124,0.26)",
     borderColor: "rgba(255,255,255,0.18)",
@@ -1197,11 +1197,11 @@ function UnderstandBand({
           {/* CONTENT */}
           <div className="relative z-10 flex h-full max-w-[52ch] flex-col justify-center px-6 py-10 sm:px-10 md:py-0">
             <h2
-              className={`${TITLE} ${TITLE_SIZE} max-w-[12ch]`}
-              style={{ color: INK }}
-            >
-              Understand the pathway
-            </h2>
+            className={`${TITLE} max-w-[24ch] text-[clamp(1.5rem,2.8vw,2rem)]`}
+            style={{ color: INK }}
+          >
+            Understand the pathway
+          </h2>
 
             <p
               className={`mt-4 font-semibold ${BODY_SIZE}`}
@@ -1211,7 +1211,7 @@ function UnderstandBand({
             </p>
 
             <p
-              className={`mt-3 max-w-[52ch] leading-relaxed ${BODY_SIZE}`}
+              className={`mt-4 max-w-[52ch] leading-relaxed ${BODY_SIZE}`}
               style={{ color: BODY }}
             >
               Start with a licensed provider who can

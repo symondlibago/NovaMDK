@@ -31,6 +31,9 @@ import SermorelinSections from "../components/product/SermorelinSections";
 import LdnSections from "../components/product/LdnSections";
 import LuminanceSections from "../components/product/LuminanceSections";
 import OlympusSections from "../components/product/OlympusSections";
+import BremelanotideSections from "../components/product/BremelanotideSections";
+import BremelanotideNasalSections from "../components/product/BremelanotideNasalSections";
+import LipoCSections from "../components/product/LipoCSections";
 
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
@@ -55,6 +58,7 @@ const comboTagline = (p) => {
     : "";
 };
 const priceUnit = (p) => {
+  if (p.priceSuffix) return p.priceSuffix;
   const raw = p.specs?.find((s) => s.label === "Days Supply")?.value || "";
   const days = Number(raw.match(/(\d+)\s*days?/i)?.[1]);
   if (!days) return "";
@@ -115,6 +119,9 @@ export default function ProductPage() {
   /* Exact, not /olympus peak/i: the ladder also carries an Olympus Max Peak,
      and this block's copy names Olympus Peak throughout. */
   const isOlympusPeak = product.name === "Olympus Peak";
+  const isBremelanotideInjection = product.name === "Bremelanotide Injection";
+  const isBremelanotideNasal = product.name === "Bremelanotide Nasal Spray";
+  const isLipoC = /lipo-c/i.test(product.name);
   const backLink = otc ? "/treatments" : `/treatments/${product.categorySlug}`;
   const seenTitle = new Set();
   const related = visibleProducts
@@ -255,7 +262,7 @@ export default function ProductPage() {
               {/* The drug alone. The blend, the dose rung and the vial size are
                   all named below it rather than crowded into the heading. */}
               <h1 className="wrap-break-word font-display text-[clamp(2rem,4.4vw,3.05rem)] font-extrabold leading-[1.04] tracking-tight text-[#725826]">
-                {primaryName(product)}
+                {product.heroTitle || primaryName(product)}
               </h1>
               {comboTagline(active) && (
                 <p className="mt-2.5 text-[clamp(1.05rem,1.9vw,1.35rem)] font-semibold leading-snug text-ink">
@@ -390,6 +397,11 @@ export default function ProductPage() {
       {isLdn && <LdnSections startTo={`${productPath(product)}?start=1`} />}
       {isLuminance && <LuminanceSections startTo={`${productPath(product)}?start=1`} />}
       {isOlympusPeak && <OlympusSections startTo={`${productPath(product)}?start=1`} />}
+      {isBremelanotideInjection && <BremelanotideSections startTo={`${productPath(product)}?start=1`} />}
+      {isBremelanotideNasal && (
+        <BremelanotideNasalSections startTo={`${productPath(product)}?start=1`} />
+      )}
+      {isLipoC && <LipoCSections startTo={`${productPath(product)}?start=1`} />}
 
       <ProductMechanism product={active} />
       {product.howItWorks && (

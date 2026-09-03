@@ -97,11 +97,6 @@ function MoreFeeling({ startTo }) {
         </Reveal>
 
         <Reveal as="div" delay={0.08}>
-          {/* Square on a phone. The comp's 0.82 crop is 427px at full width,
-              more than half an 844px screen for one decorative photo. Square is
-              as short as this master goes before the window starts cutting the
-              eyebrows and chin — the face nearly fills the frame in the source,
-              so a landscape crop has nothing spare to lose. */}
           <div className={`relative aspect-square w-full overflow-hidden lg:aspect-[0.82] ${CARD_R}`}>
             <img
               src="/site/sexual-health/scream-feeling.avif"
@@ -166,12 +161,6 @@ function MomentsThatMatter() {
             loading="lazy"
             className="nv-feelfade pointer-events-none absolute inset-y-0 right-0 h-full w-[70%] object-cover object-center sm:w-[58%]"
           />
-
-          {/* A plain width cap, not a ch measure: ch here would resolve against
-              the wrapper's inherited 16px while the heading inside sets at more
-              than twice that, which is what folded "Sometimes your mind" onto
-              two lines. The cap still stops the copy short of the point where
-              the photograph's fade has finished. */}
           <div className="relative z-10 max-w-xs sm:max-w-xl">
             <h3
               className={`${TITLE} text-[clamp(1.4rem,3.4vw,2.2rem)] leading-[1.12]`}
@@ -243,10 +232,7 @@ function MeetScreamCream() {
           </div>
 
           <div className="nv-taketurns mt-8 grid gap-4 sm:grid-cols-3 sm:gap-6 lg:mt-[clamp(2.5rem,6vw,4.5rem)]">
-            {TURNS.map(([a, b]) => (
-              /* w-fit so the box hugs the longer of the two lines. The ramp is
-                 painted across the element, so on a full-width grid cell its
-                 bright midpoint would land past the middle of the words. */
+              {TURNS.map(([a, b]) => (
               <p
                 key={a}
                 className={`${TITLE} w-fit bg-clip-text text-transparent text-[clamp(1.15rem,2.4vw,1.55rem)] leading-[1.2]`}
@@ -270,12 +256,7 @@ function KeepTheRoutine() {
     <div className="mx-auto max-w-[1180px] px-5 pb-10 md:px-10 lg:pb-[clamp(3rem,6vw,5rem)]">
       <Reveal>
         <h2 className={`${TITLE} text-[clamp(1.6rem,4vw,2.6rem)] leading-[1.14]`} style={{ color: INK }}>
-          Keep the routine
-          <br />
-          {/* Not flat tan: the comp ramps this word left to right, dark gold on
-              the "s" to a pale tan by the "e". The span sits on its own line, so
-              its box is exactly the word and the ramp lands across the letters
-              rather than across the column. */}
+          Keep the routine{" "}
           <span
             className="bg-clip-text text-transparent"
             style={{ backgroundImage: `linear-gradient(90deg, ${TAN_DEEP} 0%, ${TAN_PALE} 100%)` }}
@@ -284,13 +265,6 @@ function KeepTheRoutine() {
           </span>
         </h2>
       </Reveal>
-
-      {/* The rail is two segments, not one bar, so it can run from marker to
-          marker in time with them: 1 lands, the line travels to 2, 2 lands, the
-          line travels to 3, 3 lands. Each starts at the centre of one column and
-          is exactly one column wide, and scaleX from a left origin draws it.
-          Only from sm, where the row is horizontal — below that the steps stack
-          and there is nothing to connect. */}
       <div className="relative mt-7 grid gap-5 sm:grid-cols-3 sm:gap-6 lg:mt-[clamp(2.5rem,5vw,4rem)]">
         {RAILS.map((r) => (
           <Motion.span
@@ -305,13 +279,6 @@ function KeepTheRoutine() {
           />
         ))}
         {STEPS.map((s, i) => (
-          /* 0.75s apart, not 0.14: all three cross the viewport edge together,
-             so the stagger is the only thing sequencing them, and it has to
-             leave room for the rail to travel between each pair. */
-          /* A phone reads this as a list, so the marker sits beside its step
-             rather than stacked above it: three centred columns cost about 145px
-             each, the same content in a row costs about 85. From sm the row is
-             horizontal and the centred column is back. */
           <Reveal
             as="div"
             key={s.n}
@@ -325,11 +292,11 @@ function KeepTheRoutine() {
               {s.n}
             </span>
             <div className="min-w-0">
-              <h3 className="font-display text-[0.95rem] font-bold sm:mt-4" style={{ color: INK }}>
+              <h3 className="font-display text-[1.1rem] font-bold sm:mt-4" style={{ color: INK }}>
                 {s.t}
               </h3>
               <p
-                className="mt-1.5 text-[0.8rem] leading-[1.5] sm:mx-auto sm:mt-2.5 sm:max-w-[30ch] sm:leading-[1.55]"
+                className="mt-1.5 text-[0.92rem] leading-[1.5] sm:mx-auto sm:mt-2.5 sm:max-w-[30ch] sm:leading-[1.55]"
                 style={{ color: BODY }}
               >
                 {s.d}

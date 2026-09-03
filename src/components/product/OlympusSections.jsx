@@ -277,19 +277,21 @@ function MoreThanOneSide() {
       </Reveal>
 
       {/* The middle tile is the emphasised one in the comp: deeper fill, larger
-          thumbnail, larger label. It keeps that weight at every width. */}
-      <div className="mt-6 grid gap-3 sm:mt-10 sm:gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.22fr)_minmax(0,1fr)] md:items-center">
+          thumbnail, larger label. It keeps that weight at every width. The
+          middle column is widened and the lead tile's padding + thumbnail are
+          bumped so it reads clearly bigger than the two beside it. */}
+      <div className="mt-6 grid gap-3 sm:mt-10 sm:gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.45fr)_minmax(0,1fr)] md:items-center">
         {SIDES.map((s, i) => (
           <Reveal as="div" key={s.label} delay={i * 0.1}>
             <div
               className={`flex items-center gap-3.5 p-3 transition-transform duration-300 hover:-translate-y-0.5 sm:gap-4 ${
-                s.lead ? "sm:p-4" : ""
+                s.lead ? "sm:p-5" : ""
               } ${TILE_R}`}
               style={{ background: s.lead ? TILE_HI : TILE }}
             >
               <span
                 className={`relative shrink-0 overflow-hidden rounded-[calc(12px*var(--nv-r-scale,1))] ${
-                  s.lead ? "h-14 w-14 sm:h-16 sm:w-16" : "h-12 w-12 sm:h-14 sm:w-14"
+                  s.lead ? "h-16 w-16 sm:h-20 sm:w-20" : "h-12 w-12 sm:h-14 sm:w-14"
                 }`}
               >
                 <img
@@ -369,7 +371,9 @@ function DesireIsDifferent({ startTo }) {
             <span className="block">Desire can be different</span>
           </h2>
 
-          <p className={`mt-3 max-w-[52ch] leading-relaxed sm:mt-5 ${BODY_SIZE}`} style={{ color: BODY }}>
+          {/* Bumped a step up from the shared BODY_SIZE (which also drives the
+              MoreThanOneSide standfirst) so only this paragraph grows. */}
+          <p className="mt-3 max-w-[52ch] leading-relaxed sm:mt-5 text-[clamp(0.92rem,1.25vw,1.1rem)]" style={{ color: BODY }}>
             Blood flow may be only one part of the experience. Changes in desire, arousal,
             responsiveness, or physical performance can each affect intimacy differently
           </p>
@@ -382,7 +386,7 @@ function DesireIsDifferent({ startTo }) {
             See if Olympus Peak is right for you
           </Link>
 
-          <p className="mt-5 max-w-[54ch] text-[0.68rem] italic leading-relaxed text-muted sm:mt-[clamp(2rem,4vw,3.5rem)] sm:text-[0.72rem]">
+          <p className="mt-5 max-w-[54ch] text-[0.78rem] italic leading-relaxed text-muted sm:mt-[clamp(2rem,4vw,3.5rem)] sm:text-[0.82rem]">
             Olympus Peak is a compounded prescription medication and is not FDA-approved.
             Compounded medications are not reviewed by the FDA for safety, effectiveness, or quality
           </p>
@@ -396,19 +400,22 @@ function DesireIsDifferent({ startTo }) {
             className={`relative aspect-[4/3] overflow-hidden sm:aspect-[3/2] lg:aspect-[10/11] ${CARD_R}`}
             style={{ background: BRASS }}
           >
-            <img
-              src="/site/sexual-health/olympus-figure.avif"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              className="absolute bottom-0 right-0 h-[86%] w-auto max-w-none object-contain object-bottom sm:h-[92%] lg:h-[78%]"
-            />
+            {/* Order matters: the stat card is rendered first and sits at z-0 so
+                the figure below (z-10) occludes it — the card now reads as being
+                *behind* the girl. It is also scaled up per the update. */}
             <img
               src="/site/sexual-health/olympus-stat.avif"
               alt=""
               aria-hidden="true"
               loading="lazy"
-              className="nv-drift absolute left-[-3%] top-[7%] w-[62%] max-w-[19rem] drop-shadow-xl sm:w-[52%] lg:left-[-6%] lg:w-[76%]"
+              className="nv-drift absolute left-[8%] top-[7%] z-0 w-[74%] max-w-[23rem] drop-shadow-xl sm:w-[62%] lg:left-[6%] lg:w-[92%]"
+            />
+            <img
+              src="/site/sexual-health/olympus-figure.avif"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              className="absolute bottom-0 right-0 z-10 h-[86%] w-auto max-w-none object-contain object-bottom sm:h-[92%] lg:h-[78%]"
             />
           </div>
         </Reveal>
