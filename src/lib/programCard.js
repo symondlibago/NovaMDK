@@ -1,4 +1,5 @@
 import { refillCadence } from "../components/data/subscriptions";
+import { priceLabel } from "../components/data/products";
 import { displayTitle } from "./catalog";
 import { productPath } from "./slug";
 
@@ -27,7 +28,7 @@ export const programItem = (program) => {
     ribbon: "Subscription",
     title: program.name,
     chips: [
-      program.fromPrice ? `From $${program.fromPrice}` : "",
+      program.fromPrice ? `From $${program.fromPrice}/mo` : "",
       cadenceLabel(cheapest.cadence),
     ],
     img: program.image || starter.img,
@@ -46,7 +47,9 @@ export const productItem = (p) => ({
   // card should read "NAD+ Injection", not "NAD+ Injection — Starter". It also
   // sets combination names with a plus rather than a slash.
   title: displayTitle(p),
-  chips: [p.price, cadenceLabel(refillCadence(p)) || p.dosageForm || ""],
+  /* The price is a monthly rate; the cadence chip beside it still states the
+     actual refill rhythm, which is a different fact and stays as it was. */
+  chips: [priceLabel(p), cadenceLabel(refillCadence(p)) || p.dosageForm || ""],
   img: p.img,
   blurb: p.blurb || p.description || "",
   product: p,

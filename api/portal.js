@@ -234,8 +234,31 @@ const stripHtml = (html) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+/* MDI substitutes patient answers into prescription directions, but any token
+   it can't resolve is left in the string verbatim — patients were seeing raw
+   "[patient_special_necessities]" on their own visit page. */
+const cleanDirections = (text) =>
+  String(text || '').replace(/\[[a-z0-9_]+\]/gi, '').replace(/\s{2,}/g, ' ').trim() || null;
+
 const shapeCase = (c) => {
   const clinician = c.case_assignment?.clinician;
+
+  /* A prescribed offering comes back in BOTH arrays under the SAME id, so
+     concatenating them listed every prescription twice. The prescription is the
+     richer record (quantity, directions), so offerings only contribute what
+     isn't already prescribed — lab panels, add-on services.
+
+     Note that two prescriptions sharing a name are NOT duplicates: a titration
+     ladder is one line per dose step (0.25 mg for weeks 1-4, then 0.5 mg), and
+     collapsing those would hide half the schedule from the patient. */
+  const prescriptions = (c.case_prescriptions || []).map((rx) => ({
+    id: rx.case_prescription_id || rx.id,
+    name: rx.name || rx.medication_name || 'Prescription',
+    detail: [rx.strength, rx.quantity && `Qty ${rx.quantity}`, cleanDirections(rx.directions)]
+      .filter(Boolean).join(' · ') || null,
+  }));
+  const prescribedIds = new Set(prescriptions.map((t) => t.id));
+
   return {
     case_id: c.case_id || c.id,
     created_at: c.created_at,
@@ -243,20 +266,15 @@ const shapeCase = (c) => {
     status: c.case_status?.name || null,
     clinician: clinician ? `${clinician.first_name || ''} ${clinician.last_name || ''}`.trim() : null,
     specialty: clinician?.specialty || null,
-    // Both arrays are what MDI shows as "Requested Treatment"; they stay empty
-    // until an offering is attached to the case.
     treatments: [
-      ...(c.case_prescriptions || []).map((rx) => ({
-        id: rx.case_prescription_id || rx.id,
-        name: rx.name || rx.medication_name || 'Prescription',
-        detail: [rx.strength, rx.quantity && `Qty ${rx.quantity}`, rx.directions]
-          .filter(Boolean).join(' · ') || null,
-      })),
-      ...(c.case_offerings || []).map((o) => ({
-        id: o.case_offering_id || o.id,
-        name: o.name || o.title || 'Treatment',
-        detail: o.description || null,
-      })),
+      ...prescriptions,
+      ...(c.case_offerings || [])
+        .filter((o) => !prescribedIds.has(o.case_offering_id || o.id))
+        .map((o) => ({
+          id: o.case_offering_id || o.id,
+          name: o.name || o.title || 'Treatment',
+          detail: o.description || null,
+        })),
     ],
   };
 };

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ShieldAlert, X, Check } from "lucide-react";
-import { isCompounded } from "../data/products";
+import { isCompounded, priceLabel } from "../data/products";
 import { displayTitle } from "../../lib/catalog";
 import { productPath } from "../../lib/slug";
 import { ComplianceBadges } from "../Compliance";
@@ -26,7 +26,7 @@ export function ProductCard({ p, delay, floatDelay = 0, onQuickView }) {
     >
       <div className="mb-2 flex items-center justify-between gap-3">
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.13em] text-accent">{p.categoryName}</span>
-        <span className="text-[13px] font-semibold text-muted">{p.price}</span>
+        <span className="text-[13px] font-semibold text-muted">{priceLabel(p)}</span>
       </div>
       {/* fixed-height zones keep image + description aligned across all cards */}
       <h3 className="min-h-8 wrap-break-word text-[0.7rem] font-bold leading-snug text-ink sm:min-h-12 sm:text-[1.05rem] md:text-[0.85rem] lg:text-[1rem]">{p.name}</h3>
@@ -138,7 +138,7 @@ export function QuickViewModal({ product, onClose }) {
                 <h3 className="mt-2 font-display text-[1.4rem] font-extrabold leading-tight tracking-tight">{displayTitle(product)}</h3>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <span className="font-display text-[1.6rem] font-extrabold leading-none">{product.price}</span>
+                  <span className="font-display text-[1.6rem] font-extrabold leading-none">{priceLabel(product)}</span>
                   {product.dosageForm && (
                     <span className="rounded-full bg-surface-2 px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-[0.1em] text-muted">{product.dosageForm}</span>
                   )}

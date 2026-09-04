@@ -106,7 +106,7 @@ export default function PortalHome({ onUnauthorized, onNavigate }) {
             not something to browse, and a picture would only slow that down. */}
         {unfinished.length > 0 && (
           <section className="mt-10">
-            <Label>Needs you</Label>
+            <Label>Incomplete</Label>
             <ul className="mt-4 space-y-3">
               {unfinished.map((d) => {
                 const t = treatmentFor(d.questionnaire_id);

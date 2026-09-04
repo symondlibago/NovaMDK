@@ -37,7 +37,8 @@ function nadFromPrice() {
     )
     .map((p) => Number(String(p.price).replace(/[^0-9.]/g, "")))
     .filter((n) => Number.isFinite(n) && n > 0);
-  return prices.length ? `$${Math.min(...prices)}` : "";
+  /* Monthly, like every other prescription price on the site. */
+  return prices.length ? `$${Math.min(...prices)}/mo` : "";
 }
 
 /* The claims that ride past the bottle. Kept to product facts the catalogue

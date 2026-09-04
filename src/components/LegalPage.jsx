@@ -5,6 +5,33 @@ import Footer from './Nav/Footer';
 import BackButton from './ui/BackButton';
 import Seo from './Seo';
 
+/* "MD Integrations Clinician Network" is the one phrase in the legal copy that
+   links out (client, 2026-09-04). Split on it rather than reaching for
+   dangerouslySetInnerHTML, so legal text is never parsed as markup. */
+const MDI_PHRASE = 'MD Integrations Clinician Network';
+const MDI_URL = 'https://mdintegrations.com/';
+
+const withLinks = (text) => {
+  const parts = String(text).split(MDI_PHRASE);
+  if (parts.length === 1) return text;
+  return parts.flatMap((part, i) =>
+    i === 0
+      ? [part]
+      : [
+          <a
+            key={i}
+            href={MDI_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-accent"
+          >
+            {MDI_PHRASE}
+          </a>,
+          part,
+        ]
+  );
+};
+
 const legalDocuments = {
   'terms-and-conditions': {
     title: 'Terms of Service',
@@ -706,7 +733,7 @@ export default function LegalPage() {
         </h3>
         {sub.text && (
           <p className="whitespace-pre-line text-[14px] sm:text-[15px] md:text-[16px] leading-relaxed text-ink/80 font-light">
-            {sub.text}
+            {withLinks(sub.text)}
           </p>
         )}
       </div>
@@ -747,7 +774,7 @@ export default function LegalPage() {
           {documentData.intro && (
             <div className="mb-8 md:mb-10 space-y-4 text-[14.5px] sm:text-[15px] md:text-[16px] leading-relaxed text-ink/80 font-light">
               {documentData.intro.map((para, i) => (
-                <p key={i} className="whitespace-pre-line">{para}</p>
+                <p key={i} className="whitespace-pre-line">{withLinks(para)}</p>
               ))}
             </div>
           )}
@@ -761,7 +788,7 @@ export default function LegalPage() {
                 </h2>
 
                 {section.text && (
-                  <p className="whitespace-pre-line">{section.text}</p>
+                  <p className="whitespace-pre-line">{withLinks(section.text)}</p>
                 )}
 
                 {/* Subsections */}

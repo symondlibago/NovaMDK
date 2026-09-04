@@ -9,7 +9,15 @@ import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
 import Footer from "../components/Nav/Footer";
 import Reveal from "../components/ui/Reveal";
-import { productsData, visibleProducts, isCompounded, isOtc, isHidden } from "../components/data/products";
+import {
+  productsData,
+  visibleProducts,
+  isCompounded,
+  isOtc,
+  isHidden,
+  priceUnit,
+  priceLabel,
+} from "../components/data/products";
 import { productSlug, productPath } from "../lib/slug";
 import { syncToGhl, treatmentLabel } from "../lib/ghl";
 import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
@@ -56,19 +64,6 @@ const comboTagline = (p) => {
   return parts.length > 1
     ? `Compounded ${parts[0]} with ${parts.slice(1).join(" and ")}`
     : "";
-};
-const priceUnit = (p) => {
-  if (p.priceSuffix) return p.priceSuffix;
-  const raw = p.specs?.find((s) => s.label === "Days Supply")?.value || "";
-  const days = Number(raw.match(/(\d+)\s*days?/i)?.[1]);
-  if (!days) return "";
-  /* "/mo" is the only unit left (2026-08-31, client's request). Both "/N weeks"
-     and "/N days" came off, so a 56-day supply now prices as a bare "$179";
-     monthly keeps its unit because that is the one reading a price next to a
-     subscription already expects. Nothing is hidden by this — every supply
-     period is still stated in full in the Days Supply spec further down. */
-  if (days >= 28 && days <= 31) return "/mo";
-  return "";
 };
 
 // Fallback questionnaire used when a product has no questionnaireId yet.
@@ -514,7 +509,7 @@ export default function ProductPage() {
                 </div>
                 <div className="mt-3 flex items-start justify-between gap-3">
                   <h3 className="text-[0.98rem] font-bold leading-snug">{displayTitle(r)}</h3>
-                  <span className="shrink-0 text-[0.9rem] font-bold text-primary">{r.price}</span>
+                  <span className="shrink-0 text-[0.9rem] font-bold text-primary">{priceLabel(r)}</span>
                 </div>
                 <span className="mt-2 inline-flex items-center gap-1 text-[0.82rem] font-semibold text-muted transition-colors group-hover:text-accent">
                   Shop now <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />

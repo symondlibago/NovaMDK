@@ -19,10 +19,9 @@ const STATUS = {
   expired: { label: "Expired", tone: "muted" },
 };
 
-/* The filter across the top. "All" first so the page still opens on everything;
-   the rest match the buckets the API assigns. */
+/* The filter across the top, matching the buckets the API assigns. Order is
+   also the fallback order for which tab opens first. */
 const FILTERS = [
-  { key: "all", label: "All" },
   { key: "active", label: "Active" },
   { key: "pending", label: "Pending" },
   { key: "incomplete", label: "Incomplete" },
@@ -214,18 +213,18 @@ function Treatments({ treatments }) {
 
 /* Segmented filter with a sliding pill, matching the Profile toggle. Buckets
    with nothing in them are dropped rather than shown at zero — an empty tab is
-   just a dead end to click. "All" always stays. */
+   just a dead end to click. */
 function VisitFilter({ visits, value, onChange }) {
   const counts = visits.reduce((acc, v) => ({ ...acc, [v.bucket]: (acc[v.bucket] || 0) + 1 }), {});
-  const shown = FILTERS.filter((f) => f.key === "all" || counts[f.key]);
-  if (shown.length < 2) return null;
+  const shown = FILTERS.filter((f) => counts[f.key]);
+  if (!shown.length) return null;
 
   return (
     <div className="nv-scroll -mx-1 mt-5 overflow-x-auto px-1 pb-1">
       <div className="inline-flex w-fit gap-1 rounded-full border border-line bg-surface-2 p-1">
         {shown.map(({ key, label }) => {
           const active = value === key;
-          const n = key === "all" ? visits.length : counts[key] || 0;
+          const n = counts[key] || 0;
           return (
             <button
               key={key}
@@ -257,7 +256,7 @@ function VisitList({ visits, filter, onOpen }) {
   if (!visits.length) {
     return (
       <p className="mt-8 rounded-2xl border border-line bg-surface p-8 text-center text-[0.9rem] text-muted">
-        Nothing {filter === "all" ? "here" : `marked ${filter}`} right now.
+        Nothing {filter ? `marked ${filter}` : "here"} right now.
       </p>
     );
   }
@@ -346,7 +345,9 @@ function DraftRow({ draft }) {
 export default function PortalVisits({ onUnauthorized }) {
   const [cases, setCases] = useState(null);
   const [visits, setVisits] = useState([]);
-  const [filter, setFilter] = useState("all");
+  // Set once the visits land: with no "All" tab, the page has to open on a
+  // bucket that actually has something in it.
+  const [filter, setFilter] = useState(null);
   const [error, setError] = useState(null);
   const [openId, setOpenId] = useState(null);
   // Keyed by case id so reopening a visit doesn't refetch it.
@@ -357,7 +358,11 @@ export default function PortalVisits({ onUnauthorized }) {
       .then(({ cases: next, visits: all }) => {
         setCases(next);
         // `visits` folds in unfinished intakes, which have no case behind them.
-        setVisits(all || next || []);
+        const rows = all || next || [];
+        setVisits(rows);
+        // Open on the first bucket in FILTERS order that has visits, so the
+        // list is never empty on arrival.
+        setFilter(FILTERS.find((f) => rows.some((v) => v.bucket === f.key))?.key ?? null);
       })
       .catch((err) => {
         if (err.status === 401) return onUnauthorized();
@@ -510,7 +515,7 @@ export default function PortalVisits({ onUnauthorized }) {
           </div>
         ) : (
           <VisitList
-            visits={visits.filter((v) => filter === "all" || v.bucket === filter)}
+            visits={visits.filter((v) => v.bucket === filter)}
             filter={filter}
             onOpen={setOpenId}
           />

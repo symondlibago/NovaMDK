@@ -1728,6 +1728,21 @@ export const isCompounded = (product) => !product?.fdaApproved && !product?.otc;
 
 /** Non-prescription retail products — no Rx label, no intake handoff. */
 export const isOtc = (product) => !!product?.otc;
+
+/**
+ * Every prescription price is a monthly rate (2026-09-04, client's request), so
+ * the unit no longer depends on the Days Supply spec: a 56-day supply and a
+ * 30-day supply both read "/mo", and each supply period is still stated in full
+ * in the Days Supply spec on the product page. Retail items are one-time
+ * purchases, so they stay bare. A product can still override with priceSuffix.
+ */
+export const priceUnit = (product) => {
+  if (product?.priceSuffix) return product.priceSuffix;
+  return isOtc(product) ? "" : "/mo";
+};
+
+/** The price as patients read it, unit included. */
+export const priceLabel = (product) => `${product?.price ?? ""}${priceUnit(product)}`;
 export const isHidden = (product) => !!product?.hidden;
 export const visibleProducts = productsData.filter((p) => !p.hidden);
 
