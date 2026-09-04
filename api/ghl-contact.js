@@ -13,14 +13,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { patient, treatment, tags, source, note, value } = req.body || {};
+    const { patient, treatment, tags, source, note, value, kioskLocation } = req.body || {};
     const contact = await upsertContact({ patient, treatment, tags, source });
     // Returned to the client so the payment step can move this exact
     // opportunity to Paid, rather than guessing at it by contact later.
     let opportunityId = null;
     if (contact?.id && treatment) {
       try {
-        const { opportunity, created } = await createVisitOpportunity({ contactId: contact.id, treatment, value, source });
+        const { opportunity, created } = await createVisitOpportunity({ contactId: contact.id, treatment, value, source, kioskLocation });
         opportunityId = opportunity?.id || null;
         if (!created) {
           console.warn(

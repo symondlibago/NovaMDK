@@ -3,12 +3,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Palette, Type, Italic, Check, X, Sparkles, RotateCcw,
   Smartphone, Tablet, Monitor, Eye, Lock, MoveHorizontal,
-  Pipette, ChevronDown, Square, Share2, Link2, Code2,
+  Pipette, ChevronDown, Square, Share2, Link2, Code2, MapPin,
 } from "lucide-react";
 import { useTheme } from "../../theme/ThemeContext";
 import { DEFAULTS } from "../../theme/themes";
 import { contrastRatio, grade } from "../../lib/contrast";
 import { encodeTheme } from "../../theme/share";
+import {
+  KIOSK_LOCATIONS, readKioskLocation, saveKioskLocation, sourceLabel, bootUrl,
+} from "../../lib/kioskLocations";
+import { KIOSK_MQ } from "../../lib/useKioskMode";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -393,6 +397,25 @@ function ShareExport() {
 /* ------------------------------- main panel ------------------------------- */
 export default function DesignStudio() {
   const t = useTheme();
+  const [kioskLoc, setKioskLoc] = useState(null);
+  const [copied, setCopied] = useState(false);
+  const [needsLocation, setNeedsLocation] = useState(false);
+  const syncLocation = (id) =>
+    setNeedsLocation(!id && window.matchMedia(KIOSK_MQ).matches);
+
+  useEffect(() => {
+    const id = readKioskLocation();
+    setKioskLoc(id);
+    syncLocation(id);
+  }, []);
+
+  const pickLocation = (id) => {
+    saveKioskLocation(id);
+    setKioskLoc(id);
+    syncLocation(id);
+    setCopied(false);
+  };
+
   if (t.isPreview || !t.studioUnlocked) return null;
 
   const {
@@ -428,12 +451,17 @@ export default function DesignStudio() {
         whileTap={{ scale: 0.94 }}
         transition={{ type: "spring", stiffness: 260, damping: 18 }}
         onClick={() => setStudioOpen(true)}
-        aria-label="Open Design Studio"
+        aria-label={needsLocation ? "Open Design Studio — no kiosk location set" : "Open Design Studio"}
         /* Bottom-left: the GHL chat widget owns the bottom-right corner. */
         className="fixed bottom-6 left-6 z-[140] grid h-14 w-14 place-items-center rounded-full text-white nv-shadow-lg"
         style={{ background: "linear-gradient(155deg, var(--nv-primary), var(--nv-primary-deep))" }}
       >
         <Palette size={22} />
+        {needsLocation && (
+          <span className="absolute -right-0.5 -top-0.5 grid h-5 w-5 place-items-center rounded-full bg-amber-400 text-[11px] font-bold text-amber-950 ring-2 ring-surface">
+            !
+          </span>
+        )}
       </motion.button>
 
       <AnimatePresence>
@@ -661,6 +689,74 @@ export default function DesignStudio() {
                 <p className="mt-2 text-[11px] leading-relaxed text-muted">
                   Applies live to the portrait tablet / kiosk homepage hero. Use the Tablet preview above to see it on other screens.
                 </p>
+              </Section>
+
+              {/* Kiosk location */}
+              <Section icon={<MapPin size={14} />} title="Kiosk location">
+                <div className="flex flex-col gap-2.5">
+                  {KIOSK_LOCATIONS.map((loc) => {
+                    const on = loc.id === kioskLoc;
+                    return (
+                      <button
+                        key={loc.id}
+                        onClick={() => pickLocation(on ? null : loc.id)}
+                        className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${
+                          on ? "border-primary bg-surface-2 ring-2 ring-primary/15" : "border-line hover:border-line-strong"
+                        }`}
+                      >
+                        <span
+                          className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${
+                            on ? "text-white" : "bg-surface-2 text-muted"
+                          }`}
+                          style={on ? { background: "var(--nv-primary)" } : undefined}
+                        >
+                          <MapPin size={16} />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[14px] font-semibold">{loc.label}</span>
+                          <span className="block truncate text-[11px] text-muted">{sourceLabel(loc.id)}</span>
+                        </span>
+                        {on && <Check size={16} className="shrink-0 text-primary" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {kioskLoc ? (
+                  <div className="mt-3 rounded-2xl border border-line bg-surface-2 p-3.5">
+                    <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+                      <Lock size={11} /> Locked to this device
+                    </p>
+                    <p className="mt-2 text-[11px] leading-relaxed text-muted">
+                      Every QR on this screen now carries <b className="text-ink">{sourceLabel(kioskLoc)}</b>, which is the
+                      Source you filter by in GHL.
+                    </p>
+                    <p className="mt-3 text-[11px] leading-relaxed text-muted">
+                      That&rsquo;s the setup done. The link below is optional: make it the tablet&rsquo;s home page and the
+                      location restores itself if site data ever gets cleared. Skip it and you&rsquo;d re-pick by hand,
+                      and the launcher shows a warning dot when that happens.
+                    </p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <code className="min-w-0 flex-1 truncate rounded-lg border border-line bg-surface px-2.5 py-2 text-[11px] text-ink">
+                        {bootUrl(kioskLoc)}
+                      </code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard?.writeText(bootUrl(kioskLoc));
+                          setCopied(true);
+                        }}
+                        className="shrink-0 rounded-lg border border-line px-2.5 py-2 text-[11px] font-medium text-muted transition-colors hover:border-line-strong hover:text-ink"
+                      >
+                        {copied ? "Copied" : "Copy"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-2 text-[11px] leading-relaxed text-muted">
+                    Pick the site this tablet is standing in, then lock it. Until you do, scans from this device reach GHL
+                    with no location attached.
+                  </p>
+                )}
               </Section>
 
               {/* Share & handoff */}

@@ -20,6 +20,10 @@ import {
 } from "../components/data/products";
 import { productSlug, productPath } from "../lib/slug";
 import { syncToGhl, treatmentLabel } from "../lib/ghl";
+import {
+  readKioskLocation, scanUrl, captureScanSource, readScanSource, sourceLabel, SCAN_PARAM,
+} from "../lib/kioskLocations";
+import KioskQr from "../components/kiosk/KioskQr";
 import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
 import useKioskMode from "../lib/useKioskMode";
 import useLockBodyScroll from "../lib/useLockBodyScroll";
@@ -76,7 +80,7 @@ export default function ProductPage() {
   const product = productsData.find((p) => String(p.id) === String(id) || productSlug(p) === id);
 
   const isKiosk = useKioskMode();
-  const [search] = useSearchParams();
+  const [search, setSearch] = useSearchParams();
   const navigate = useNavigate();
   const [showQR, setShowQR] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -87,6 +91,28 @@ export default function ProductPage() {
     if (!product || isKiosk) return;
     if (search.get("start") === "1" && !isOtc(product)) setShowInfo(true);
   }, [search, product, isKiosk]);
+
+  /* A scan lands here carrying ?from=<kiosk>. Bank it, then take it back out of
+     the address bar — this is the patient's own phone, and the marker is our
+     bookkeeping, not something they should see or accidentally share. Routed
+     through setSearchParams rather than history.replaceState so the router
+     doesn't end up disagreeing with the URL about ?start=1. */
+  useEffect(() => {
+    const from = captureScanSource();
+    if (!from) return;
+
+    /* The only place a scan can be counted. GHL never sees this one: nobody has
+       identified themselves yet, and most people who scan never will. */
+    track(EVENTS.KIOSK_SCAN, {
+      kiosk_location: from,
+      treatment: product?.name,
+      category: product?.categorySlug,
+    });
+
+    const next = new URLSearchParams(search);
+    next.delete(SCAN_PARAM);
+    setSearch(next, { replace: true });
+  }, [search, setSearch, product?.id]);
 
   // Record a product view (high-signal: which treatments get attention).
   useEffect(() => {
@@ -161,15 +187,28 @@ export default function ProductPage() {
         // The opportunity id is stashed for the payment step, which moves that
         // same record to the Paid stage. It lands long before checkout, which is
         // several screens into the questionnaire.
+        /* The kiosk that sent them, if a QR did. This is the first moment
+           there's a person to attach it to — a scan on its own is anonymous,
+           so nothing can reach GHL before now. */
+        const scannedFrom = readScanSource();
+        const originLabel = scannedFrom ? sourceLabel(scannedFrom) : "NovaMDK website";
+
         syncToGhl({
           patient: profile,
           treatment: treatmentLabel(active),
           // Prices are display strings ("$249"), so strip to a number for the
           // opportunity's value — GHL rejects anything non-numeric.
           value: Number(String(active.price).replace(/[^0-9.]/g, "")) || undefined,
-          source: "NovaMDK website",
-          tags: ["website-lead", active.categorySlug, "intake-started"],
+          source: originLabel,
+          kioskLocation: scannedFrom ? originLabel : undefined,
+          tags: [
+            "website-lead",
+            active.categorySlug,
+            "intake-started",
+            ...(scannedFrom ? ["kiosk", `kiosk-${scannedFrom}`] : []),
+          ],
           note: `Started ${treatmentLabel(active)}.` +
+            (scannedFrom ? ` Scanned at ${sourceLabel(scannedFrom)}.` : "") +
             (patient?.consent?.accepted_at
               ? ` Accepted telehealth consent and terms at ${patient.consent.accepted_at}.`
               : ""),
@@ -555,7 +594,27 @@ const fmtCountdown = (s) => `${Math.floor(s / 60)}:${String(Math.max(0, s % 60))
 function KioskQrModal({ product, onClose, onContinueHere, loading = false, err = "" }) {
   const qrSrc = product.qrImg || `/qr/${product.id}.avif`;
   const [imgError, setImgError] = useState(false);
+  const [qrFailed, setQrFailed] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(60);
+
+  /* undefined until the placement has actually been read, so the code is drawn
+     once. Resolving it to null first would paint an untagged QR for a frame,
+     which is long enough for someone to scan the wrong link. */
+  const [locId, setLocId] = useState(undefined);
+  useEffect(() => setLocId(readKioskLocation()), []);
+
+  /* Counted once the placement is known, so it's attributable. The gap between
+     this and kiosk_scan is the number worth watching: people who stood at the
+     kiosk, saw the code and walked off without scanning. "unset" surfaces a
+     kiosk that lost its location, which otherwise fails silently. */
+  useEffect(() => {
+    if (locId === undefined) return;
+    track(EVENTS.KIOSK_QR_SHOWN, {
+      kiosk_location: locId || "unset",
+      treatment: product.name,
+      category: product.categorySlug,
+    });
+  }, [locId, product.id]);
 
   // Don't auto-close while a "continue here" request is in flight.
   useEffect(() => {
@@ -594,8 +653,13 @@ function KioskQrModal({ product, onClose, onContinueHere, loading = false, err =
           <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-on-primary">
             Recommended
           </span>
+          {/* Drawn here rather than served as a file so the link can carry this
+              kiosk's placement. Falls back to the saved image, then to the
+              build-time placeholder, so a scan is never a blank square. */}
           <div className="mx-auto grid h-[190px] w-[190px] place-items-center overflow-hidden rounded-xl border border-line bg-white p-2.5">
-            {imgError ? (
+            {locId === undefined ? null : !qrFailed ? (
+              <KioskQr value={scanUrl(product, locId)} onError={() => setQrFailed(true)} />
+            ) : imgError ? (
               <div className="flex flex-col items-center gap-2 text-muted">
                 <QrCode size={48} strokeWidth={1.4} />
                 <span className="px-3 text-[0.68rem] leading-snug">Add a QR at <code className="text-ink">{qrSrc}</code></span>

@@ -13,6 +13,8 @@ export const EVENTS = {
   QUIZ_COMPLETED: "quiz_completed",       // finished the guided assessment
   CONTACT_SUBMITTED: "contact_submitted", // submitted the contact form
   CALCULATOR_USED: "calculator_used",     // completed a BMI / goal-weight calculation
+  KIOSK_QR_SHOWN: "kiosk_qr_shown",       // a kiosk put a QR on screen for a treatment
+  KIOSK_SCAN: "kiosk_scan",               // a phone opened one of those QRs
 };
 
 /**

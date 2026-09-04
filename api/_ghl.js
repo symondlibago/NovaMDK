@@ -8,6 +8,9 @@ const FIELD = {
   TREATMENT: "treatment",
   SEX_AT_BIRTH: "sex_at_birth",
   EMAIL_ADDRESS: "email_address",
+  // Lives on the Opportunity, not the Contact: one person can walk up to two
+  // different kiosks, and per-visit is the only place that stays true.
+  KIOSK_LOCATION: "kiosk_location",
 };
 const TREATMENT_FIELD_ID = "aUvylLMgR2BFDDjxKNm1";
 const TREATMENT_SEPARATOR = "; ";
@@ -189,12 +192,17 @@ export async function markOpportunityPaid(opportunityId) {
  * how repeat visits stay individually trackable without duplicating the person.
  * Deliberately separate from upsertContact: a patient who books twice is one
  * contact and two opportunities. */
-export async function createVisitOpportunity({ contactId, treatment, value, source } = {}) {
+export async function createVisitOpportunity({ contactId, treatment, value, source, kioskLocation } = {}) {
   const name = clean(treatment);
   if (!contactId || !name) return null;
 
   const { pipelineId, stageId } = await resolvePipeline();
   const amount = Number(value) > 0 ? { monetaryValue: Number(value) } : null;
+  // Bare key, like the contact fields. GHL shows it as `contact.kiosk_location`
+  // in the UI but only accepts the unprefixed form on write.
+  const kiosk = clean(kioskLocation)
+    ? { customFields: [{ key: FIELD.KIOSK_LOCATION, field_value: clean(kioskLocation) }] }
+    : null;
 
   try {
     const data = await ghlFetch("/opportunities/", {
@@ -207,6 +215,7 @@ export async function createVisitOpportunity({ contactId, treatment, value, sour
         name,
         status: "open",
         ...amount,
+        ...kiosk,
         ...(clean(source) && { source: clean(source) }),
       },
     });
@@ -220,9 +229,11 @@ export async function createVisitOpportunity({ contactId, treatment, value, sour
     const existingId = e.details?.meta?.existingId;
     if (e.details?.code !== "OPPORTUNITY_NO_DUPLICATE" || !existingId) throw e;
 
+    // Roll the placement forward too: this record now represents the newer
+    // visit, and that visit came from wherever this scan did.
     const data = await ghlFetch(`/opportunities/${existingId}`, {
       method: "PUT",
-      body: { name, ...amount },
+      body: { name, ...amount, ...kiosk, ...(clean(source) && { source: clean(source) }) },
     });
     return { opportunity: data?.opportunity || null, created: false };
   }
