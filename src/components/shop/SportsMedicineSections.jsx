@@ -73,7 +73,9 @@ function KeepMoving({ assessmentTo }) {
 const SLIDES = [
   { label: "Built Around How You Move", img: "/site/sports-medicine/recovery-shoulder.avif", fit: "object-center" },
   { label: "Make Recovery Part of the Routine", img: "/site/sports-medicine/recovery-routine.avif", fit: "object-[62%_center]" },
-  { label: "Stay Ready for What's Next", img: "/site/sports-medicine/recovery-ready.avif", fit: "object-center" },
+  { label: "Stay Ready for What's Next", img: "/site/sports-medicine/recovery-stayready.avif", fit: "object-[50%_28%]" },
+  { label: "Recovery That Fits Your Pace", img: "/site/sports-medicine/recovery-pace.avif", fit: "object-center" },
+  { label: "Stay Connected to Your Goals", img: "/site/sports-medicine/recovery-goals.avif", fit: "object-[50%_35%]" },
 ];
 
 /* Shared by the meter and the cards, so the two move as one gesture. */

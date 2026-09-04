@@ -1737,6 +1737,104 @@ export const isCompounded = (product) => !product?.fdaApproved && !product?.otc;
 export const isOtc = (product) => !!product?.otc;
 
 /**
+ * Client-supplied Q&A, one set per treatment (2026-09-05). Matched on the
+ * product name rather than pasted into each entry so every rung of a ladder
+ * (Starter / Mid-Dose / Maintenance) carries the same set from one copy of the
+ * text. First match wins, so put the narrower patterns first.
+ *
+ * Patterns are deliberately narrow where the copy names a specific formulation:
+ * the Olympus set names tadalafil, which only Peak and Max Peak contain, and
+ * the Sermorelin set says "nasal spray", so the injection and troche are out.
+ */
+const FAQ_SETS = [
+  [/tirzepatide/i, [
+    { q: "What does Tirzepatide do?", a: "Tirzepatide acts on GIP and GLP-1 receptors involved in appetite and food intake." },
+    { q: "How is it taken?", a: "It is usually given by injection on a schedule set by your healthcare provider." },
+    { q: "What happens after I start treatment?", a: "Response varies from person to person. Your provider will monitor how you are doing and adjust treatment if needed." },
+    { q: "Are there side effects?", a: "Some people may experience nausea, constipation, diarrhea, or stomach discomfort. Your provider can review what to watch for before treatment starts." },
+  ]],
+  [/semaglutide/i, [
+    { q: "Is Semaglutide right for me?", a: "Your provider will review your health history, medications, and goals to decide if treatment may be appropriate for you." },
+    { q: "How will my dose be chosen?", a: "Your dose is based on your individual treatment plan and may be adjusted over time depending on how you respond." },
+    { q: "What if I have side effects?", a: "Some people experience nausea, constipation, diarrhea, or stomach discomfort. Your provider can help you manage them and adjust treatment if needed." },
+    { q: "How will my treatment be monitored?", a: "Your provider may check in on your response, tolerance, and overall treatment plan and make adjustments when appropriate." },
+  ]],
+  [/lipo-c/i, [
+    { q: "What is Lipo-C Injection?", a: "Lipo-C is a compounded injectable treatment. Its ingredients and strength depend on the prescribed formulation." },
+    { q: "How is it used?", a: "It is given by injection on a schedule determined by your healthcare provider." },
+    { q: "Who might consider Lipo-C?", a: "Your provider will review your health history, medications, and treatment goals to determine whether it may be appropriate for you." },
+    { q: "What should I know before starting?", a: "Injection-site discomfort and other side effects can occur. Your provider can explain what to expect and what to watch for during treatment." },
+  ]],
+  [/scream cream/i, [
+    { q: "What is Scream Cream?", a: "Scream Cream is a compounded prescription topical treatment used before intimacy." },
+    { q: "When do I use it?", a: "Use it only as directed by your healthcare provider, including timing and application instructions." },
+    { q: "What should I know before using it?", a: "Your provider will review your medications and health history to make sure the treatment is appropriate for you." },
+    { q: "What if I experience irritation?", a: "Contact your provider if you experience irritation, discomfort, or another unexpected reaction." },
+  ]],
+  [/olympus (max )?peak/i, [
+    { q: "What is Olympus Peak?", a: "Olympus Peak is a compounded sublingual prescription that combines tadalafil, bremelanotide, and oxytocin." },
+    { q: "How do I take it?", a: "Use it exactly as prescribed by your provider, including the amount and timing." },
+    { q: "Is Olympus Peak right for me?", a: "Your provider will review your health history, medications, and sexual health concerns before deciding if it is appropriate for you." },
+    { q: "What should I know before using it?", a: "Because it contains multiple prescription ingredients, side effects and drug interactions are possible. Your provider will review important precautions before treatment starts." },
+  ]],
+  [/^bremelanotide injection$/i, [
+    { q: "What is PT-141 Injection?", a: "PT-141 is a compounded prescription injection containing bremelanotide, a melanocortin receptor agonist." },
+    { q: "When is it used?", a: "Your provider will give you specific instructions on when to use it based on your treatment plan." },
+    { q: "How do I know if it may be appropriate for me?", a: "Your provider will review your health history, medications, and sexual health concerns before prescribing it." },
+    { q: "What should I watch for?", a: "Side effects can occur, including nausea, flushing, headache, or injection-site reactions. Contact your provider if you have concerns during treatment." },
+  ]],
+  [/^bremelanotide nasal spray$/i, [
+    { q: "What is PT-141 Nasal Spray?", a: "PT-141 Nasal Spray is a compounded prescription treatment containing bremelanotide." },
+    { q: "How do I use it?", a: "Use it exactly as directed by your provider, including the number of sprays and timing." },
+    { q: "Who is it for?", a: "Your provider will review your health history, medications, and sexual health concerns to decide if it may be appropriate for you." },
+    { q: "What should I watch for?", a: "Side effects can occur, including nasal irritation or other unexpected reactions. Your provider will review potential risks and what to watch for before treatment." },
+  ]],
+  [/^sermorelin nasal spray$/i, [
+    { q: "What is Sermorelin Nasal Spray?", a: "Sermorelin is a compounded prescription nasal spray that acts on the growth hormone pathway." },
+    { q: "How do I use it?", a: "Use it exactly as prescribed, including the number of sprays and timing set by your healthcare provider." },
+    { q: "How is my treatment plan decided?", a: "Your provider will review your health history, goals, and response to treatment before deciding what schedule is appropriate for you." },
+    { q: "What should I do if I have side effects?", a: "If you experience nasal irritation or another unexpected reaction, contact your provider for guidance." },
+  ]],
+  [/^nad\+ injection/i, [
+    { q: "What is NAD+ Injection?", a: "NAD+ Injection is a compounded prescription treatment containing nicotinamide adenine dinucleotide, a coenzyme naturally found in the body." },
+    { q: "How is it used?", a: "Your provider will determine the dose and injection schedule based on your individual treatment plan." },
+    { q: "Is NAD+ Injection right for me?", a: "A licensed provider will review your health history, medications, and goals before deciding if treatment may be appropriate." },
+    { q: "What should I know before starting?", a: "Injection-site reactions and other side effects can occur. Your provider will explain what to expect and when to contact your care team." },
+  ]],
+  [/^nad\+ sublingual tablet/i, [
+    { q: "What is NAD+ Sublingual Tablet?", a: "NAD+ Sublingual Tablet is a compounded prescription treatment designed to dissolve under the tongue." },
+    { q: "How do I take it?", a: "Use it exactly as prescribed, including the amount and frequency recommended by your provider." },
+    { q: "How is my dose decided?", a: "Your provider will base your treatment plan on your health history, medications, goals, and response over time." },
+    { q: "What should I know before starting?", a: "Side effects or medication-related concerns can occur. Your provider will review what to watch for and when to contact your care team." },
+  ]],
+  [/luminance/i, [
+    { q: "What is Luminance Brightening Cream?", a: "Luminance is a compounded prescription cream formulated for concerns such as dark spots, uneven skin tone, and hyperpigmentation." },
+    { q: "How do I use it?", a: "Apply it exactly as directed by your provider, including how much to use and how often." },
+    { q: "Is Luminance right for my skin?", a: "Your provider will review your skin concerns, health history, and current products before deciding if it may be appropriate for you." },
+    { q: "What if my skin becomes irritated?", a: "Dryness, redness, peeling, or irritation can occur. Contact your provider if symptoms become bothersome, persistent, or unusual." },
+  ]],
+  [/^glutathione injection/i, [
+    { q: "What is Glutathione Injection?", a: "Glutathione Injection is a compounded prescription treatment containing glutathione, an antioxidant naturally produced by the body." },
+    { q: "How is it used?", a: "Your provider will determine the dose and injection schedule based on your individual treatment plan." },
+    { q: "Is Glutathione Injection right for me?", a: "A licensed provider will review your health history, medications, and goals before deciding if treatment may be appropriate." },
+    { q: "What should I know before starting?", a: "Injection-site reactions and other side effects can occur. Your provider will explain what to watch for and when to contact your care team." },
+  ]],
+  [/naltrexone/i, [
+    { q: "What is Low-Dose Naltrexone?", a: "Low-Dose Naltrexone, or LDN, refers to naltrexone prescribed at doses lower than those used for its FDA-approved indications. Low-dose use is considered off-label." },
+    { q: "How is it taken?", a: "LDN is usually taken by mouth on a schedule determined by your healthcare provider." },
+    { q: "Why might my provider consider LDN?", a: "Your provider may consider it based on your health history, symptoms, medications, and individual treatment goals." },
+    { q: "What should I know before starting?", a: "Tell your provider if you currently use opioid medications. Naltrexone can block opioid effects and may not be appropriate for people currently using opioids or experiencing opioid withdrawal." },
+  ]],
+];
+
+/** The Q&A for a product: its own `faqs` if it has one, otherwise its set. */
+export const faqsFor = (product) => {
+  if (Array.isArray(product?.faqs)) return product.faqs;
+  const hit = FAQ_SETS.find(([pattern]) => pattern.test(product?.name || ""));
+  return hit ? hit[1] : [];
+};
+
+/**
  * Every prescription price is a monthly rate (2026-09-04, client's request), so
  * the unit no longer depends on the Days Supply spec: a 56-day supply and a
  * 30-day supply both read "/mo", and each supply period is still stated in full

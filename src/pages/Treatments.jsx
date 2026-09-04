@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { Link, useParams, useSearchParams, Navigate } from "react-router-dom";
 import {
-  Stethoscope, Truck, Lock, FlaskConical, ShieldCheck, ClipboardCheck, PackageOpen, ArrowRight,
+  Truck, Lock, FlaskConical, ShieldCheck, ArrowRight,
 } from "lucide-react";
 import Seo from "../components/Seo";
 import Navbar from "../components/Nav/Navbar";
@@ -57,21 +57,6 @@ const TRUST = [
   { icon: Truck, label: "Delivered to your door", sub: "Fast, discreet, and convenient." },
 ];
 
-const STEPS = [
-  { icon: ClipboardCheck, title: "Take the 2-minute assessment", desc: "Answer a few private questions about your goals and history — no wrong answers." },
-  { icon: Stethoscope, title: "A provider builds your plan", desc: "A licensed U.S. clinician reviews your intake and prescribes what actually fits you." },
-  { icon: PackageOpen, title: "Delivered to your door", desc: "Fast, discreet delivery — with ongoing care and easy adjustments anytime." },
-];
-
-const SELF_CONTAINED = new Set(["weight-loss", "unisex-anti-aging-rx"]);
-const NO_HOW_IT_WORKS = new Set(["unisex-skin-health"]);
-
-// Mirrors the homepage band — "Waiting rooms" was dropped at the client's request.
-const STATS = [
-  { b: "100%", s: "Physician-reviewed" },
-  { b: "Fast", s: "Doorstep delivery" },
-  { b: "1:1", s: "Provider messaging" },
-];
 
 /* ------------------------------- sections ------------------------------- */
 function TrustBand() {
@@ -95,58 +80,6 @@ function TrustBand() {
           </div>
         ))}
       </div>
-    </section>
-  );
-}
-
-function HowItWorks() {
-  return (
-    <section className="mx-auto max-w-[1180px] px-5 py-[clamp(2.5rem,5vw,5.5rem)] md:px-10">
-      <Reveal className="mx-auto max-w-[60ch] text-center">
-        <span className="nv-eyebrow">How it works</span>
-        <h2 className="mt-3 text-[clamp(1.7rem,3.6vw,2.5rem)] font-extrabold leading-tight">Care In Three Simple Steps</h2>
-        <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">From first question to front door — no clinics, no waiting rooms, no awkward pharmacy runs.</p>
-      </Reveal>
-      <div className="mt-12 grid gap-5 sm:grid-cols-3">
-        {STEPS.map((s, i) => (
-          <Reveal as="div" key={s.title} delay={(i % 3) * 0.08}>
-            <div className="relative h-full rounded-[calc(22px*var(--nv-r-scale,1))] border border-line bg-surface p-7 nv-shadow">
-              <span className="absolute right-6 top-6 font-mono text-[1.15rem] font-bold text-line-strong">0{i + 1}</span>
-              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-on-primary"><s.icon size={22} /></span>
-              <h3 className="mt-5 font-display text-[1.15rem] font-bold leading-tight">{s.title}</h3>
-              <p className="mt-2 text-[0.92rem] leading-relaxed text-muted">{s.desc}</p>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function SocialProof() {
-  return (
-    <section className="mx-auto max-w-[1180px] px-5 pb-[clamp(2rem,4vw,3rem)] md:px-10">
-      <Reveal>
-        <div className="relative overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))] border border-line bg-surface-2 px-6 py-[clamp(2.4rem,5vw,3.4rem)] text-ink md:px-10">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{ background: "radial-gradient(60% 90% at 85% 0%, color-mix(in srgb, var(--nv-accent) 18%, transparent), transparent 70%)" }}
-          />
-          <div className="relative flex flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
-            <div>
-              <h2 className="max-w-[20ch] font-display text-[clamp(1.5rem,3vw,2.2rem)] font-extrabold leading-tight">Care patients can actually stick with.</h2>
-            </div>
-            <div className="grid grid-cols-3 gap-x-8 gap-y-4 sm:gap-x-12">
-              {STATS.map((s) => (
-                <div key={s.s} className="text-center">
-                  <b className="block text-[clamp(1.6rem,3.5vw,2.4rem)] font-extrabold tracking-tight text-primary">{s.b}</b>
-                  <span className="mt-1 block font-mono text-[0.66rem] uppercase tracking-[0.12em] text-muted">{s.s}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Reveal>
     </section>
   );
 }
@@ -275,16 +208,6 @@ export default function TreatmentsPage() {
       )}
 
       <TrustBand />
-      {/* Weight-loss and anti-aging carry their own editorial blocks from
-          WeightLossSections / AntiAgingSections, which already cover this ground
-          — anti-aging even runs the same assessment-to-delivery journey — so the
-          three-step explainer and the stats band just repeat it there. */}
-      {!SELF_CONTAINED.has(validGoal) && (
-        <>
-          {!NO_HOW_IT_WORKS.has(validGoal) && <HowItWorks />}
-          <SocialProof />
-        </>
-      )}
 
       {/* FAQ (reused, re-themed). Testimonials live on the homepage only. */}
       <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>

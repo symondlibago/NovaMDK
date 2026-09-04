@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { track, EVENTS } from "../../lib/analytics";
@@ -8,94 +8,69 @@ import { programItem } from "../../lib/programCard";
 import Reveal from "../ui/Reveal";
 import TreatmentCard from "../shop/TreatmentCard";
 
+/* Four brass panels rather than the old carousel: the comp shows every step at
+   once, each with its cut-out standing on the panel floor and the caption over
+   the photo's lower edge. */
 const STEPS = [
   {
-    title: "Your Care Starts Here",
-    text: "Tell us about your health history, current medications, and treatment goals through a guided online assessment",
-    img: "/products/detail/journey-assessment.avif",
+    title: "Complete your medical intake",
+    text: "Tell us about your health history, medications, and treatment goals",
+    img: "/products/detail/journey-intake.avif",
+    /* Each cut-out is framed differently, so its height and horizontal seat are
+       set per card rather than shared. */
+    art: "h-[74%] left-[6%] w-[94%]",
   },
   {
-    title: "Physician Review",
-    text: "A licensed physician reviews your information and determines whether treatment is medically appropriate for you",
-    img: "/products/detail/journey-review.avif",
+    title: "Licensed provider review",
+    text: "A licensed healthcare provider evaluates your information and determines whether treatment is medically appropriate",
+    img: "/products/detail/journey-provider.avif",
+    art: "h-[76%] left-[2%] w-[98%]",
   },
   {
-    title: "Your Treatment Is Prepared",
-    text: "If prescribed, your prescription is sent to a partner pharmacy for preparation and delivery directly to your door",
-    img: "/products/detail/journey-prepared.avif",
+    title: "Prescription, if appropriate",
+    text: "If prescribed, your prescription is sent to a qualified pharmacy for fulfillment",
+    img: "/products/detail/journey-shipment.avif",
+    art: "h-[42%] left-[6%] w-[88%] bottom-[26%]",
   },
   {
-    title: "Ongoing Care",
-    text: "Stay supported with follow-ups, treatment guidance, and refill management as your plan continues",
-    img: "/products/detail/journey-ongoing.avif",
+    title: "Ongoing care",
+    text: "Follow-up care and treatment guidance are available throughout your treatment plan",
+    img: "/products/detail/journey-followup.avif",
+    art: "h-[76%] left-[4%] w-[92%]",
   },
 ];
 
-const SLIDES = STEPS.filter((s) => s.img);
-const AUTOPLAY_MS = 2000;
-function SideFrame({ index, side }) {
-  const toCentre = side === "left" ? "to right" : "to left";
+const PANEL = "linear-gradient(160deg, #a4854f 0%, #9a7843 55%, #8f6f3c 100%)";
+
+function StepPanel({ step, index }) {
   return (
-    <span
-      aria-hidden="true"
-      className={`relative mt-9 hidden h-50 w-[32%] shrink-0 sm:block ${
-        side === "left" ? "-mr-2" : "-ml-2"
-      }`}
-    >
-      {/* Every slide stacked, only one at full opacity. Swapping a single src
-          could only fade the incoming photo up from the page background, which
-          is the blink that made the change read as a cut rather than a fade. */}
-      {SLIDES.map((s, k) => (
+    <Reveal as="div" delay={index * 0.09} y={16}>
+      <div
+        className="relative flex h-full min-h-76 flex-col overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] px-5 pb-5 pt-6 sm:min-h-84 lg:min-h-96"
+        style={{ background: PANEL }}
+      >
+        <h3 className="relative z-10 max-w-[15ch] font-display text-[0.95rem] font-bold uppercase leading-[1.2] tracking-[0.02em] text-[#f8e8c5] sm:text-[1.02rem]">
+          {step.title}
+        </h3>
+        {/* Seated on the panel floor and behind the caption, the way the comp
+            crops each figure at the bottom edge. */}
         <img
-          key={s.img}
-          src={s.img}
+          src={step.img}
           alt=""
+          aria-hidden="true"
           loading="lazy"
-          className={`absolute inset-0 h-full w-full rounded-[calc(14px*var(--nv-r-scale,1))] object-cover transition-opacity duration-700 ease-out ${
-            k === index ? "opacity-100" : "opacity-0"
-          }`}
+          className={`pointer-events-none absolute bottom-0 max-w-none object-contain object-bottom ${step.art}`}
         />
-      ))}
-      <span
-        className="absolute inset-0 rounded-[calc(14px*var(--nv-r-scale,1))]"
-        style={{
-          background: `linear-gradient(${toCentre}, transparent 40%, color-mix(in oklab, var(--nv-bg) 90%, transparent) 100%)`,
-        }}
-      />
-    </span>
+        <p className="relative z-10 mt-auto pt-6 text-[0.82rem] font-semibold leading-[1.35] text-white sm:text-[0.86rem]">
+          {step.text}
+        </p>
+      </div>
+    </Reveal>
   );
 }
 
 export default function ProductJourney({ product }) {
   const navigate = useNavigate();
-  const [i, setI] = useState(0);
-  const n = SLIDES.length;
-  // Wraps both ways, so the strip always has a frame either side of the active
-  // one and the arrows never dead-end.
-  const at = (k) => SLIDES[(k + n) % n];
-  const step = at(i);
-
-  /* Autoplay. Held while the pointer is over the strip or focus is inside it,
-     so a step can't slide out from under someone reading its caption or
-     reaching for an arrow. */
-  const [paused, setPaused] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduceMotion(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  const autoplaying = !paused && !reduceMotion && n > 1;
-  useEffect(() => {
-    if (!autoplaying) return;
-    const t = setTimeout(() => setI((v) => (v + 1) % n), AUTOPLAY_MS);
-    return () => clearTimeout(t);
-  }, [autoplaying, i, n]);
-
   const programs = programsFor(product.categorySlug).map(programItem);
 
   return (
@@ -119,71 +94,14 @@ export default function ProductJourney({ product }) {
           </Link>
         </div>
       </Reveal>
-      <div
-        className="relative mt-[clamp(2rem,4vw,3.25rem)]"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocusCapture={() => setPaused(true)}
-        onBlurCapture={() => setPaused(false)}
-      >
-        <div className="flex items-start justify-center px-12 sm:px-16">
-          <SideFrame index={(i - 1 + n) % n} side="left" />
-          <div className="relative z-10 w-full sm:w-[36%]">
-            {/* Step number, straddling the frame's left edge as in the comp. */}
-            <span className="absolute -left-7 -top-6 z-10 grid h-14 w-14 place-items-center rounded-full bg-[#8a6a33] font-display text-[1.35rem] font-bold text-[#ffe8b1]">
-              {i + 1}
-            </span>
-            <div className="relative h-49 sm:h-55">
-              {SLIDES.map((s, k) => (
-                <img
-                  key={s.img}
-                  src={s.img}
-                  alt={k === i ? s.title : ""}
-                  aria-hidden={k !== i}
-                  loading="lazy"
-                  className={`absolute inset-0 h-full w-full rounded-[calc(14px*var(--nv-r-scale,1))] border-2 border-[#b47f2f] object-cover transition-opacity duration-700 ease-out ${
-                    k === i ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          <SideFrame index={(i + 1) % n} side="right" />
-        </div>
-      </div>
-
-      <div
-        className="mx-auto mt-7 max-w-[42ch] text-center"
-        aria-live={autoplaying ? "off" : "polite"}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocusCapture={() => setPaused(true)}
-        onBlurCapture={() => setPaused(false)}
-      >
-        <div className="flex items-center justify-center gap-2.5">
-          {SLIDES.map((s, k) => (
-            <button
-              key={s.img}
-              type="button"
-              onClick={() => setI(k)}
-              aria-label={`Show step ${k + 1}, ${s.title}`}
-              aria-current={k === i ? "true" : undefined}
-              className={`h-2.5 w-2.5 rounded-full transition-all duration-500 ${
-                k === i ? "scale-125 bg-[#8a6a33]" : "bg-[#d9c9a8] hover:bg-[#c0aa80]"
-              }`}
-            />
-          ))}
-        </div>
-        {/* Same brown as the section heading above it — the black in the text
-            spec sheet was placeholder styling, not the colour. */}
-        <h3 key={`t${i}`} className="nv-fade-slow mt-6 font-display text-[1.35rem] font-extrabold text-[#725826]">
-          {step.title}
-        </h3>
-        <p key={`d${i}`} className="nv-fade-slow mx-auto mt-2.5 max-w-[34ch] text-[0.86rem] leading-relaxed text-muted">
-          {step.text}
-        </p>
-      </div>
+      {/* One column on a phone, two on a tablet, the comp's four-across from lg. */}
+      <ol className="mt-[clamp(2rem,4vw,3.25rem)] grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+        {STEPS.map((s, k) => (
+          <li key={s.img} className="h-full">
+            <StepPanel step={s} index={k} />
+          </li>
+        ))}
+      </ol>
       </div>
 
       {/* Deliberately outside the 1180 container the rest of the section uses —
@@ -196,10 +114,7 @@ export default function ProductJourney({ product }) {
             style={{ background: "linear-gradient(135deg, #9a7843 0%, #b8935c 45%, #a07c46 100%)" }}
           >
             <div>
-              <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[#ffe8b1]">
-                Membership Required
-              </span>
-              <h3 className="mt-3 max-w-[10ch] font-display text-[clamp(1.5rem,2.8vw,2.1rem)] font-extrabold leading-[1.2] text-[#ffe8b1]">
+              <h3 className="max-w-[10ch] font-display text-[clamp(1.5rem,2.8vw,2.1rem)] font-extrabold leading-[1.2] text-[#ffe8b1]">
                 {product.categoryName} Treatments
               </h3>
             </div>
