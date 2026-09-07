@@ -4,17 +4,17 @@ export const CATEGORY_META = {
     description:
       "Physician-prescribed GLP-1 weight loss treatments online: compounded semaglutide and tirzepatide injections, sublingual drops and metabolic support — delivered discreetly to your door.",
   },
-  "unisex-anti-aging-rx": {
-    title: "Anti-Aging & Longevity Treatments — NAD+, Glutathione & Sermorelin",
+  "longevity": {
+    title: "Longevity Treatments — NAD+, Glutathione & Sermorelin",
     description:
       "NAD+ injections and IV protocols, glutathione and sermorelin — longevity treatments prescribed online by licensed U.S. physicians and shipped to your door.",
   },
-  "sports-medicine": {
-    title: "Sports Medicine & Recovery — Low-Dose Naltrexone (LDN)",
+  "recovery-wellness": {
+    title: "Recovery & Wellness — Low-Dose Naltrexone (LDN)",
     description:
       "Low-dose naltrexone (LDN) and recovery-focused treatments, prescribed online by licensed physicians for pain, inflammation and performance recovery.",
   },
-  "unisex-skin-health": {
+  "skin-health": {
     title: "Prescription Skin Health Treatments Online",
     description:
       "Physician-prescribed skincare, including compounded brightening treatments — prescribed online after a private assessment and delivered to your door.",

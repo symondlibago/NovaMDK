@@ -18,23 +18,14 @@ const CARD = "#fdfbf7";
 
 const CARD_R = "rounded-[calc(20px*var(--nv-r-scale,1))]";
 
+/* Five plain age points per the approved reference (2026-09-08). The descriptive
+   line each one used to carry was a life-stage claim, not axis data. */
 const AGES = [
-  {
-    age: "30s",
-    text: "Building strong habits",
-  },
-  {
-    age: "40s",
-    text: "Prioritizing recovery",
-  },
-  {
-    age: "50s",
-    text: "Supporting daily function",
-  },
-  {
-    age: "60s+",
-    text: "Maintaining strength & vitality",
-  },
+  { age: "30" },
+  { age: "40" },
+  { age: "50" },
+  { age: "60" },
+  { age: "70+" },
 ];
 
 const CURVE = `
@@ -231,6 +222,10 @@ export default function NadSupport() {
           animation-delay: 1.9s;
         }
 
+        .nv-energy-active .nv-energy-age:nth-child(5) {
+          animation-delay: 2.15s;
+        }
+
         /* ==============================
            KEYFRAMES
         ============================== */
@@ -363,7 +358,7 @@ export default function NadSupport() {
                 color: TITLE_LIGHT,
               }}
             >
-              NAD+ levels naturally
+              NAD+ levels tend to
             </span>
 
             <span
@@ -385,17 +380,9 @@ export default function NadSupport() {
             </span>
           </h2>
 
-          {/* The update replaces the two-part copy with one line and drops the
-              "going backward" callout entirely. */}
-          <p
-            className="mt-6 max-w-[42ch] text-[clamp(0.95rem,2.5vw,1.08rem)] leading-[1.55]"
-            style={{
-              color: BODY_GOLD,
-            }}
-          >
-            A vital coenzyme involved in cellular energy production, DNA repair, and cellular
-            maintenance
-          </p>
+          {/* The supporting paragraph under this headline was removed on
+              2026-09-08 with the compliance pass: the graph is educational
+              population data and carries no claim of its own. */}
         </Reveal>
 
         {/* =====================================================
@@ -423,21 +410,22 @@ export default function NadSupport() {
               >
                 NAD+ levels by age
               </h3>
-              <p
-                className="mt-1 text-[clamp(0.66rem,1.4vw,0.8rem)] leading-snug"
-                style={{ color: MUTED }}
-              >
-                Levels tend to decline as we age
-              </p>
             </div>
 
-            {/* GRAPH */}
-            <div className="relative mt-3">
+            {/* GRAPH. The y-axis label sits beside the plot rather than over
+                it, so the curve keeps its full width. */}
+            <div className="relative mt-3 flex items-stretch gap-2 sm:gap-3">
+              <span
+                className="shrink-0 self-center whitespace-nowrap text-[clamp(0.6rem,1.3vw,0.72rem)] font-semibold [writing-mode:vertical-rl] rotate-180"
+                style={{ color: MUTED }}
+              >
+                Relative NAD+ Level
+              </span>
 
               <svg
                 viewBox="0 0 458 198"
                 aria-hidden="true"
-                className="block h-auto w-full overflow-visible"
+                className="block h-auto min-w-0 flex-1 overflow-visible"
               >
                 <defs>
                   {/* GOLD LINE */}
@@ -689,7 +677,7 @@ export default function NadSupport() {
             </div>
 
             {/* AGE LABELS */}
-            <ul className="mt-3 grid grid-cols-4 gap-1 text-center sm:gap-3">
+            <ul className="mt-3 grid grid-cols-5 gap-1 text-center sm:gap-3">
               {AGES.map((item) => (
                 <li
                   key={item.age}
@@ -726,7 +714,8 @@ export default function NadSupport() {
               className="mt-4 text-[clamp(0.66rem,1.4vw,0.78rem)] italic leading-snug"
               style={{ color: MUTED }}
             >
-              Illustrative trend. Individual NAD+ levels vary.
+              Illustrative trend. Individual NAD+ levels vary. Educational information only, not an
+              expected treatment result.
             </p>
           </div>
         </Reveal>

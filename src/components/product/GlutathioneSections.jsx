@@ -56,23 +56,15 @@ function Ramp({ children }) {
 const CREAM = "#f4e3c1";
 const CREAM_SOFT = "rgba(244,227,193,0.88)";
 
-/* The "Support how you want to feel" headline is two-tone in the comp: the first
-   line is this warm gold, the second stays on CREAM. #f5e6b4 — rgb(245,230,180)
-   — was eyedropped off the comp by the client on 2026-09-01, and it applies to
-   that first line ONLY. Not the second line, not the other tan band, not the
-   shared token. (The #f1e3ca quoted in the written brief was wrong: it is 22
-   points bluer than the image it was taken from, which is why it kept rendering
-   cooler and paler than the comp.) */
-const CREAM_LEAD = "#f5e6b4";
-
 const CARD_R = "rounded-[calc(26px*var(--nv-r-scale,1))]";
 
-/* Left column of the brass card. Support, not treat — the verbs are the comp's
-   and they are deliberately soft. */
+/* Left column of the brass card. The approved information panels (2026-09-08
+   compliance pass): each one states what glutathione is or does biologically,
+   with no verb that promises the reader a result. */
 const WITHIN = [
-  "Support your skin from within",
-  "Everyday antioxidant support",
-  "Support your overall wellness",
+  { label: "Naturally Produced", body: "Found throughout the body" },
+  { label: "Antioxidant Role", body: "Participates in the body's response to oxidative stress" },
+  { label: "Cellular Function", body: "Involved in normal cellular processes" },
 ];
 
 /* ------------------------- 1. already using it ------------------------- */
@@ -111,13 +103,22 @@ function AlreadyUsing() {
             correction; this is sized directly and floats. */}
         <Reveal as="div" delay={0.06} className="order-first lg:order-none">
           <span className="nv-float mx-auto block w-[52%] max-w-[13rem] sm:w-[38%] lg:w-full">
-            <img
-              src="/products/glutathione-tilted.avif"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              className="block h-auto w-full drop-shadow-[0_22px_34px_rgba(104,82,50,0.22)]"
-            />
+            {/* WebP first, AVIF second. Some iOS Safari builds decode this
+                AVIF's alpha plane wrong and paint the cut-out's hidden colour
+                channels as a solid rectangle; WebP alpha is reliable
+                everywhere. The AVIF stays as the fallback for anything without
+                WebP, and both now carry the page ground behind the transparent
+                region, so even a dropped alpha plane is invisible. */}
+            <picture>
+              <source srcSet="/products/glutathione-tilted.webp" type="image/webp" />
+              <img
+                src="/products/glutathione-tilted.avif"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="block h-auto w-full drop-shadow-[0_22px_34px_rgba(104,82,50,0.22)]"
+              />
+            </picture>
           </span>
         </Reveal>
 
@@ -159,23 +160,39 @@ function NotSurfaceLevel() {
                 className="nv-weight-keep max-w-[13ch] font-display text-[clamp(1.4rem,3.2vw,2.05rem)] font-extrabold leading-[1.12]"
                 style={{ color: CREAM }}
               >
-                Good skin isn&apos;t only surface level
+                Glutathione in the body
               </h3>
-              <ul className="mt-7 flex flex-col gap-4">
+              <ul className="mt-7 flex flex-col gap-5">
                 {WITHIN.map((w) => (
-                  <li key={w} className="flex items-center gap-3.5">
+                  <li key={w.label} className="flex items-start gap-3.5">
                     <span
-                      className="grid h-6 w-6 shrink-0 place-items-center rounded-full"
+                      className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full"
                       style={{ background: "rgba(244,227,193,0.24)", color: CREAM }}
                     >
                       <Check size={13} strokeWidth={3} />
                     </span>
-                    <span className="text-[0.92rem]" style={{ color: CREAM }}>
-                      {w}
+                    <span className="min-w-0">
+                      <span className="block text-[0.92rem] font-semibold" style={{ color: CREAM }}>
+                        {w.label}
+                      </span>
+                      <span
+                        className="mt-1 block max-w-[38ch] text-[0.86rem] leading-relaxed"
+                        style={{ color: CREAM_SOFT }}
+                      >
+                        {w.body}
+                      </span>
                     </span>
                   </li>
                 ))}
               </ul>
+              {/* Required framing: what a molecule does in the body is not what
+                  a treatment will do for the reader. */}
+              <p
+                className="mt-6 max-w-[44ch] text-[0.74rem] italic leading-relaxed"
+                style={{ color: "rgba(244,227,193,0.62)" }}
+              >
+                Biological role does not guarantee a treatment outcome
+              </p>
             </div>
 
             <div className="lg:border-l lg:border-[#f4e3c1]/30 lg:pl-12">
@@ -213,12 +230,11 @@ function GoodSupport({ startTo }) {
             className="nv-weight-keep max-w-[15ch] font-display text-[clamp(1.7rem,4.2vw,2.8rem)] font-extrabold leading-[1.12]"
             style={{ color: INK }}
           >
-            Good skin starts with good support
+            The Role of Glutathione
           </h2>
           <p className="mt-5 max-w-[48ch] text-[0.9rem] leading-relaxed" style={{ color: BODY }}>
-            Glutathione is an antioxidant your body already makes. Provider-guided treatment may
-            help support your skin&apos;s natural defenses, healthy-looking tone, and overall
-            cellular health
+            A naturally occurring antioxidant involved in the body&apos;s normal cellular defense
+            processes
           </p>
           <Link
             to={startTo}
@@ -230,9 +246,12 @@ function GoodSupport({ startTo }) {
           >
             See if it&apos;s right for you
           </Link>
-          {/* Required qualifier, verbatim from the comp and set in its italic. */}
-          <p className="mt-[clamp(2rem,4vw,3.5rem)] text-[0.76rem] italic leading-relaxed text-muted">
-            Prescription required. Eligibility determined by a licensed provider
+          {/* Required qualifiers. The second sentence moved up here when the
+              "Support how you want to feel" band was removed on 2026-09-08 —
+              that band was the only place it appeared. */}
+          <p className="mt-[clamp(2rem,4vw,3.5rem)] max-w-[52ch] text-[0.76rem] italic leading-relaxed text-muted">
+            Prescription required. Eligibility determined by a licensed provider. Individual results
+            may vary. Compounded medications are not FDA-approved.
           </p>
         </Reveal>
 
@@ -252,66 +271,11 @@ function GoodSupport({ startTo }) {
   );
 }
 
-/* ----------------------------- 4. closing band ---------------------------- */
+/* ----------------------------- 4. closing band ----------------------------
+   Removed on 2026-09-08 with the compliance pass: "Support how you want to
+   feel" is an outcome promise, and the band existed to carry it. Its legal
+   footnote moved up into GoodSupport so nothing required was lost. */
 
-function HowYouWantToFeel() {
-  return (
-    <div className="mx-auto max-w-[1180px] px-5 pb-[clamp(3rem,6vw,5rem)] md:px-10">
-      <Reveal>
-        {/* The photograph's own backdrop is this tan, so the band is painted the
-            same colour and the shot is faded out along its left edge — the two
-            meet with no seam and the copy sits on open ground. */}
-        <div
-          /* Asymmetric vertical padding on purpose. justify-between pins the
-             headline to the top edge and the footnote to the bottom, and with an
-             even py-10 that put the headline hard against the top of the band —
-             the comp drops it about a quarter of the way down and lets the
-             photograph carry the top corner. The top value is the one doing that
-             work, so it scales with the viewport while the bottom stays put. */
-          className={`relative flex min-h-[clamp(16rem,34vw,30rem)] flex-col justify-between overflow-hidden px-7 pb-8 pt-[clamp(2.5rem,8vw,7.5rem)] sm:px-11 sm:pb-10 ${CARD_R}`}
-          style={{ background: "#c4a279" }}
-        >
-          <img
-            src="/site/skin-health/glutathione-feel.avif"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            className="nv-feelfade pointer-events-none absolute inset-y-0 right-0 h-full w-[72%] object-cover object-right sm:w-[62%]"
-          />
-
-          {/* 16ch, not 11ch: the comp sets this on two lines, "Support how you /
-              want to feel", and an 11ch measure broke it into three by dropping
-              "feel" onto a line of its own. */}
-          <h2
-            className="nv-weight-keep relative z-10 max-w-[16ch] font-display text-[clamp(1.6rem,4.4vw,2.9rem)] font-extrabold leading-[1.1]"
-            style={{ color: CREAM }}
-          >
-            {/* Hard break, so the colour change and the line break are the same
-                place at every width — a natural wrap would drift off the tint. */}
-            <span style={{ color: CREAM_LEAD }}>Support how you</span>
-            <br />
-            want to feel
-          </h2>
-
-          {/* Blended, per the comp: the same cream as the headline but carried at
-              62% and italic, so it settles into the tan instead of sitting on it.
-              Setting it at full strength (which is what I did first) made a legal
-              footnote the second-brightest thing in the band — the opposite of
-              blending it. Italic is what separates it from the headline now that
-              the two share a colour, so it does not need contrast to read as a
-              different kind of text. */}
-          <p
-            className="relative z-10 mt-10 max-w-[52ch] text-[0.74rem] italic leading-relaxed"
-            style={{ color: "rgba(244,227,193,0.62)" }}
-          >
-            Individual results may vary. Treatment is subject to evaluation and approval by a
-            licensed healthcare provider. Compounded medications are not FDA-approved.
-          </p>
-        </div>
-      </Reveal>
-    </div>
-  );
-}
 
 export default function GlutathioneSections({ startTo = "/start" }) {
   return (
@@ -320,7 +284,6 @@ export default function GlutathioneSections({ startTo = "/start" }) {
        injected. I had the two halves the wrong way round. */
     <section style={{ background: "#faf8f4" }}>
       <GoodSupport startTo={startTo} />
-      <HowYouWantToFeel />
       <AlreadyUsing />
       <NotSurfaceLevel />
     </section>

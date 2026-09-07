@@ -11,11 +11,11 @@ import { productPath } from "../../lib/slug";
 // Kiosk burger menu — top categories, each expanding to a few treatments plus
 // the consultation quiz. Slugs mirror the treatment catalog + questionnaires.
 const KIOSK_MENU = [
-  { label: "Anti Aging", goal: "unisex-anti-aging-rx", consult: "longevity" },
+  { label: "Anti Aging", goal: "longevity", consult: "longevity" },
   { label: "Sexual Health", goal: "sexual-health", consult: "intimacy" },
   { label: "Weight Loss", goal: "weight-loss", consult: "weight-loss" },
-  { label: "Skin Health", goal: "unisex-skin-health", consult: "skin" },
-  { label: "Sport Medicine", goal: "sports-medicine", consult: "recovery" },
+  { label: "Skin Health", goal: "skin-health", consult: "skin" },
+  { label: "Sport Medicine", goal: "recovery-wellness", consult: "recovery" },
 ];
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -23,10 +23,10 @@ const EASE = [0.16, 1, 0.3, 1];
 // Mirror the real treatment categories (see data/consultations.jsx). Each item
 const treatmentItems = [
   { name: "Weight Loss", img: "/products/tirzepatide.avif", link: "/treatments/weight-loss" },
-  { name: "Anti-Aging", img: "/products/nad-plus.avif", link: "/treatments/unisex-anti-aging-rx" },
-  { name: "Skin Health", img: "/products/luminance.avif", link: "/treatments/unisex-skin-health" },
+  { name: "Longevity", img: "/products/nad-plus.avif", link: "/treatments/longevity" },
+  { name: "Skin Health", img: "/products/luminance.avif", link: "/treatments/skin-health" },
   { name: "Sexual Health", img: "/products/olympus-peak.avif", link: "/treatments/sexual-health" },
-  { name: "Sports Medicine", img: "/products/ldn.avif", link: "/treatments/sports-medicine" },
+  { name: "Recovery & Wellness", img: "/products/ldn.avif", link: "/treatments/recovery-wellness" },
 ];
 
 /* The peptide molecule menu listed the LUVIRA sub-lines (Semaglutide, BPC-157,

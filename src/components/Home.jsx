@@ -38,7 +38,7 @@ const TreatmentsCarousel = lazy(() => import("./TreatmentsCarousel"));
 
 const TRUST = [
   { text: "US-licensed pharmacy", icon: ShieldCheck },
-  { text: "Fast delivery", icon: Truck },
+  { text: "Home delivery, if prescribed", icon: Truck },
   { text: "Dedicated online care", icon: Clock },
   { text: "No subscription lock-in", icon: Ban },
 ];

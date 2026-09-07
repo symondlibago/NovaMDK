@@ -29,7 +29,7 @@ export default function Footer() {
                 light base it's just a floating box, so the mark sits direct. */}
             <img src="/logo.png" alt="Nova MDK" className="h-[42px] w-auto" />
             <p className="mt-5 max-w-[34ch] text-sm leading-relaxed text-muted">
-              Personalized prescription treatments, reviewed by licensed physicians and delivered to your door.
+              Personalized prescription treatments, reviewed by licensed physicians and, if prescribed, shipped discreetly by a licensed pharmacy.
             </p>
             <div className="mt-6 flex gap-3">
               <a href="https://www.facebook.com/novamdk" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={social}><Facebook size={18} strokeWidth={1.5} /></a>
@@ -44,10 +44,10 @@ export default function Footer() {
             <ul className="space-y-3 text-[14px] text-muted md:space-y-4">
               <li><Link to="/treatments" className={link}>All Treatments</Link></li>
               <li><Link to="/treatments/weight-loss" className={link}>Weight Loss</Link></li>
-              <li><Link to="/treatments/unisex-anti-aging-rx" className={link}>Anti-Aging</Link></li>
-              <li><Link to="/treatments/unisex-skin-health" className={link}>Skin Health</Link></li>
+              <li><Link to="/treatments/longevity" className={link}>Longevity</Link></li>
+              <li><Link to="/treatments/skin-health" className={link}>Skin Health</Link></li>
               <li><Link to="/treatments/sexual-health" className={link}>Sexual Health</Link></li>
-              <li><Link to="/treatments/sports-medicine" className={link}>Sports Medicine</Link></li>
+              <li><Link to="/treatments/recovery-wellness" className={link}>Recovery &amp; Wellness</Link></li>
             </ul>
           </div>
 

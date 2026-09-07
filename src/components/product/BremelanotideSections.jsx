@@ -28,10 +28,10 @@ const TITLE_SIZE = "text-[clamp(1.7rem,4vw,2.75rem)]";
 const SECTION_X = "px-3 sm:px-5 md:px-6";
 
 const FEATURES = [
-  ["A different mechanism", "PT-141 works differently from treatments focused mainly on circulation"],
-  ["Connected to desire", "It acts on pathways involved in sexual desire and response"],
+  ["Melanocortin receptor agonist", "Bremelanotide acts on melanocortin receptors in the central nervous system"],
+  ["Compounded prescription", "Prepared by a licensed compounding pharmacy when prescribed"],
   ["Injectable format", "Prescribed as a subcutaneous injection under provider guidance"],
-  ["Provider-guided use", "Timing and dosing are based on your prescription plan"],
+  ["Provider-guided use", "Use only as directed by your healthcare provider and prescription label"],
 ];
 
 function SignalPill({ children, className = "" }) {
@@ -160,8 +160,8 @@ function ResponseStartsEarlier({ startTo }) {
           <div className="grid gap-5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.72fr)] md:gap-12">
             <Reveal as="div">
               <h2 className={`${TITLE} ${TITLE_SIZE} max-w-[30ch]`} style={{ color: CREAM }}>
-                Sexual response starts
-                <span className="block">before the physical response</span>
+                Melanocortin
+                <span className="block">receptor activity</span>
               </h2>
               <Link
                 to={startTo}
@@ -177,9 +177,7 @@ function ResponseStartsEarlier({ startTo }) {
               className="max-w-[48ch] text-[clamp(0.92rem,1.05vw,1.02rem)] leading-[1.6] md:pt-1"
               style={{ color: CREAM }}
             >
-              PT-141 (bremelanotide) works through melanocortin pathways involved in sexual desire
-              and response, offering a different approach than treatments focused primarily on
-              blood flow.
+              Bremelanotide acts on melanocortin receptors in the central nervous system.
             </Reveal>
           </div>
 
@@ -234,12 +232,23 @@ function ReadinessCard() {
             {p.label}
           </span>
         ))}
-        <img
-          src="/site/sexual-health/pt141-timing-card.avif"
-          alt="PT-141 as-needed timing guide"
-          loading="lazy"
-          className="absolute left-[1%] top-[26%] z-10 w-[74%] drop-shadow-xl sm:left-[2%] sm:w-[70%]"
-        />
+        {/* The 45-minute countdown card that sat here was removed on 2026-09-08
+            with the compliance pass: it implied a standard response time. The
+            approved statement takes its place and its position. */}
+        <div
+          className="absolute left-[4%] top-[26%] z-10 w-[74%] rounded-[calc(20px*var(--nv-r-scale,1))] border px-5 py-5 backdrop-blur-[2px] drop-shadow-xl sm:left-[5%] sm:w-[64%] sm:px-6 sm:py-6"
+          style={{ background: "rgba(248,232,197,0.5)", borderColor: "rgba(255,241,210,0.4)" }}
+        >
+          <h3 className={`${TITLE} text-[clamp(1.1rem,2.2vw,1.5rem)]`} style={{ color: "#fffaf0" }}>
+            As-Needed Treatment
+          </h3>
+          <p
+            className="mt-2 max-w-[26ch] text-[0.86rem] leading-[1.45] sm:text-[0.92rem]"
+            style={{ color: CREAM }}
+          >
+            Use only as directed by your healthcare provider
+          </p>
+        </div>
         <img
           src="/site/sexual-health/pt141-woman.avif"
           alt=""

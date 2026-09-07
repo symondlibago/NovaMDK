@@ -10,7 +10,7 @@ import CategoryGrid from "../components/shop/CategoryGrid";
 import TreatmentShop from "../components/shop/TreatmentShop";
 import Reveal from "../components/ui/Reveal";
 import { CONSULTS, CONSULT_ORDER } from "../components/data/consultations";
-import { visibleProducts } from "../components/data/products";
+import { visibleProducts, categoriesOf } from "../components/data/products";
 import { CATEGORY_META } from "../lib/categoryMeta";
 import { GOAL_ART } from "../lib/goalArt";
 import { track, EVENTS } from "../lib/analytics";
@@ -47,14 +47,16 @@ const TREATMENT_CATS = [
 // nav, footer and carousel, so its URL should redirect here rather than render an
 // empty shelf.
 const VALID_GOALS = new Set(
-  visibleProducts.filter((p) => p.categorySlug !== "supplements").map((p) => p.categorySlug)
+  visibleProducts
+    .flatMap(categoriesOf)
+    .filter((slug) => slug !== "supplements")
 );
 
 const TRUST = [
   { icon: ShieldCheck, label: "Doctor-guided care", sub: "Always backed by medical experts." },
   { icon: Lock, label: "Discreet & confidential", sub: "Private care, delivered discreetly." },
   { icon: FlaskConical, label: "Provider-reviewed treatment options", sub: "Treatment decisions based on each patient's clinical evaluation." },
-  { icon: Truck, label: "Delivered to your door", sub: "Fast, discreet, and convenient." },
+  { icon: Truck, label: "Home delivery, if prescribed", sub: "Shipped discreetly by a licensed pharmacy." },
 ];
 
 

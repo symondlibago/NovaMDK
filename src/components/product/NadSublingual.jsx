@@ -27,7 +27,6 @@ const DOTTED_RULE = {
 };
 
 export default function NadSublingual({ startTo = "/start" }) {
-  const [capRef, capIn] = useRunOnceInView("-80px");
   const [stepsRef, stepsIn] = useRunOnceInView("-80px");
 
   return (
@@ -52,43 +51,34 @@ export default function NadSublingual({ startTo = "/start" }) {
             </div>
           </Reveal>
 
-          <div ref={capRef} className={`nv-cap mt-[clamp(2rem,5vw,3.5rem)] ${capIn ? "is-in" : ""}`}>
-            <span className="block font-mono text-[0.68rem] uppercase tracking-[0.18em]" style={{ color: CREAM }}>
-              Daily Energy
-            </span>
-
-            <div className="relative mt-3">
-              <div className="h-[clamp(2.6rem,6vw,3.4rem)] w-full overflow-hidden rounded-full border border-[#f4e3c1]/55 bg-[#f4e3c1]/35">
-                <span className="nv-cap__fill block h-full rounded-full bg-[#6f5622]" />
-              </div>
-              <span className="nv-cap__pill pointer-events-none absolute top-1/2 block -translate-x-1/2 -translate-y-1/2">
-                <span className="nv-float block">
-                  <img
-                    src="/products/nad-sublingual.avif"
-                    alt=""
-                    aria-hidden="true"
-                    className="block h-[clamp(5rem,12vw,7.5rem)] w-auto max-w-none rotate-[14deg] object-contain drop-shadow-[0_10px_18px_rgba(70,50,20,0.4)]"
-                  />
-                </span>
-              </span>
-            </div>
-
-            <div className="mt-3 flex items-center justify-between text-[0.82rem] font-semibold" style={{ color: CREAM }}>
-              <span>Low</span>
-              <span>Steady</span>
-              <span>High</span>
-            </div>
-          </div>
-
-          {/* --------------------- everyday energy --------------------- */}
-          <div className="mt-[clamp(2.5rem,6vw,4.5rem)] text-center">
+          {/* --------------------- a simple sublingual option --------------------- */}
+          {/* The Low / Steady / High energy meter that sat above this was removed
+              on 2026-09-08 with the compliance pass, along with the "Support Your
+              Everyday Energy" heading it belonged to: both read as a promised
+              result. The tablet itself takes the meter's place. */}
+          <div className="mt-[clamp(2rem,5vw,3.5rem)] text-center">
             <Reveal>
+              <span className="nv-float mx-auto block w-fit">
+                <img
+                  src="/products/nad-sublingual.avif"
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="block h-[clamp(7.5rem,18vw,11.5rem)] w-auto max-w-none rotate-[14deg] object-contain drop-shadow-[0_14px_26px_rgba(70,50,20,0.42)]"
+                />
+              </span>
               <h2
-                className="nv-weight-keep font-display text-[clamp(1.5rem,4.6vw,2.35rem)] font-extrabold leading-tight"
+                className="nv-weight-keep mt-6 font-display text-[clamp(1.5rem,4.6vw,2.35rem)] font-extrabold leading-tight"
                 style={{ color: CREAM }}
               >
-                Support Your Everyday Energy
+                A Simple Sublingual Option
               </h2>
+              <p
+                className="mx-auto mt-3 max-w-[40ch] text-[0.92rem] leading-relaxed"
+                style={{ color: CREAM_SOFT }}
+              >
+                A prescription tablet that dissolves under the tongue
+              </p>
             </Reveal>
             <Reveal delay={0.12}>
               <Link
@@ -164,14 +154,15 @@ export default function NadSublingual({ startTo = "/start" }) {
           </div>
         </div>
 
-        {/* Required qualifiers, verbatim from the comp. The second one names the
-            energy meter specifically, so it has to sit under that panel. */}
+        {/* Required qualifiers. The second one used to name the energy meter,
+            which is gone as of the 2026-09-08 compliance pass, so it now covers
+            the graphics that remain. */}
         <div className="mt-6 flex flex-col gap-3 text-[0.78rem] leading-relaxed text-muted">
           <p>Prescription treatment requires medical evaluation. Individual responses may vary.</p>
           <p>
-            The energy meter and other graphics shown are for illustrative purposes only and do not
-            represent expected or guaranteed results. If prescribed, compounded medications are not
-            FDA-approved drug products.
+            Graphics shown are for illustrative purposes only and do not represent expected or
+            guaranteed results. If prescribed, compounded medications are not FDA-approved drug
+            products.
           </p>
         </div>
 

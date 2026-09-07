@@ -66,7 +66,7 @@ function ConfidenceStage({ startTo }) {
             Confidence <em className="italic">Starts</em> With Feeling Like Yourself
           </h2>
           <p className="mx-auto mt-4 max-w-[44ch] text-center text-[0.85rem] leading-relaxed text-white/85">
-            Prescription treatment options selected according to your individual health needs
+            Discreet, provider-guided care for sexual health and intimacy concerns
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -200,9 +200,9 @@ function FocusRow() {
     <div className="mx-auto max-w-[1320px] px-5 pb-[clamp(3rem,6vw,5rem)] pt-[clamp(2.5rem,6vw,4.5rem)] md:px-10">
       <Reveal>
         <h2 className="text-center font-display text-[clamp(1.6rem,4.6vw,2.6rem)] font-extrabold leading-[1.14]">
-          <span style={{ color: INK }}>Understanding What You</span>{" "}
+          <span style={{ color: INK }}>Start With What</span>{" "}
           <span className="sm:block" style={{ color: SOFT }}>
-            Need Comes First
+            You&rsquo;re Looking For
           </span>
         </h2>
       </Reveal>
@@ -264,7 +264,7 @@ function ExploreBand({ startTo }) {
               to={startTo}
               className="mt-5 inline-flex rounded-full border border-[#f0dcac]/60 px-7 py-2.5 text-[0.9rem] font-medium text-[#f0dcac] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#f0dcac]/10"
             >
-              Begin Your Journey
+              Start Your Consultation
             </Link>
           </div>
         </div>

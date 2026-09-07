@@ -1,12 +1,14 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck, Truck, Clock, Stethoscope, Flag, FlaskConical } from "lucide-react";
+import { Truck, Clock, Stethoscope, ClipboardList, FlaskConical } from "lucide-react";
+/* The approved credential set (2026-09-08 compliance pass). It replaced a list
+   that named a clinician type the Telehealth Consent does not cover and
+   promised "FAST DELIVERY" with no prescription condition on it. */
 const MARQUEE_ITEMS = [
-  { text: "U.S.-LICENSED M.D & DO", icon: Stethoscope },
-  { text: "U.S. LICENSED PHYSICIANS", icon: Flag },
-  { text: "STATE LICENSED U.S. PHARMACIES", icon: ShieldCheck },
-  { text: "USA MADE & SOURCED", icon: FlaskConical },
-  { text: "FAST DELIVERY", icon: Truck },
+  { text: "STATE-LICENSED PHYSICIANS", icon: Stethoscope },
+  { text: "U.S.-LICENSED PHARMACIES", icon: FlaskConical },
+  { text: "PERSONALIZED TREATMENT PLANS", icon: ClipboardList },
+  { text: "DISCREET HOME DELIVERY", icon: Truck },
   { text: "DEDICATED ONLINE CARE", icon: Clock },
 ];
 

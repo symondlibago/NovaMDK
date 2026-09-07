@@ -19,7 +19,7 @@ export const GOAL_ART = {
     motion: "glow",
     figureMotion: "float",
   },
-  "sports-medicine": {
+  "recovery-wellness": {
     cutout: "/site/goals/sportsmedperson.avif",
     cutoutClass: "-top-[1%] h-[102%] left-0",
     hero: "/site/goals/sportsmed-hero.avif",
@@ -28,7 +28,7 @@ export const GOAL_ART = {
     heroBg: "#d1b995",
     motion: "spark",
   },
-  "unisex-anti-aging-rx": {
+  "longevity": {
     cutout: "/site/goals/longevity.avif",
     cutoutClass: "-top-[4%] h-[108%] right-[18%]",
     hero: "/site/goals/longevity-hero.avif",
@@ -37,7 +37,7 @@ export const GOAL_ART = {
     heroBg: "#c9b48f",
     motion: "orbs",
   },
-  "unisex-skin-health": {
+  "skin-health": {
     cutout: "/site/goals/glowing.avif",
     cutoutClass: "-top-[3%] h-[106%] right-[-4%]",
     hero: "/site/goals/glowing.avif",

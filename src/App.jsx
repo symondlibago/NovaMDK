@@ -47,15 +47,32 @@ function App() {
         <Routes>
           <Route path="/" element={<Platform />} />
           <Route path="/treatments" element={<TreatmentsPage />} />
-          {/* Renamed 2026-08-27. Kept as redirects because the catch-all below
-              matches anything and would render the old slugs as an empty category
-              — a heading with no products, which is worse than a 404. Anything
-              already out there points at these: the previous sitemap, the QR
-              codes, GHL campaigns. */}
+          {/* Renamed 2026-08-27 and again 2026-09-08. Kept as redirects because
+              the catch-all below matches anything and would render the old slugs
+              as an empty category — a heading with no products, which is worse
+              than a 404. Anything already out there points at these: the previous
+              sitemap, the QR codes, GHL campaigns.
+
+              vercel.json carries the same set as real 301s, which is what Google
+              follows. These client-side ones are the fallback for local dev and
+              for any preview host that does not read that file. Both lists have
+              to be edited together. */}
           <Route path="/treatments/mens-health" element={<Navigate to="/treatments/sexual-health" replace />} />
           <Route
             path="/treatments/unisex-sports-medicine"
-            element={<Navigate to="/treatments/sports-medicine" replace />}
+            element={<Navigate to="/treatments/recovery-wellness" replace />}
+          />
+          <Route
+            path="/treatments/sports-medicine"
+            element={<Navigate to="/treatments/recovery-wellness" replace />}
+          />
+          <Route
+            path="/treatments/unisex-anti-aging-rx"
+            element={<Navigate to="/treatments/longevity" replace />}
+          />
+          <Route
+            path="/treatments/unisex-skin-health"
+            element={<Navigate to="/treatments/skin-health" replace />}
           />
           <Route path="/treatments/:goal" element={<TreatmentsPage />} />
           {/* Supplements hidden at client request (2026-08-15) — route still

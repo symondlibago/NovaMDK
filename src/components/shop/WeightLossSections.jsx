@@ -330,7 +330,7 @@ function StartCare({ to }) {
           to={to}
           className="mt-5 inline-flex rounded-full bg-[#fdfaf3] px-7 py-3 text-[0.9rem] font-semibold text-[#3a2c12] transition-all duration-300 hover:-translate-y-0.5 nv-shadow"
         >
-          Begin Your Journey
+          Start Your Consultation
         </Link>
       </div>
     </section>

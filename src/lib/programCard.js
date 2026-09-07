@@ -49,7 +49,9 @@ export const productItem = (p) => ({
   title: displayTitle(p),
   /* The price is a monthly rate; the cadence chip beside it still states the
      actual refill rhythm, which is a different fact and stays as it was. */
-  chips: [priceLabel(p), cadenceLabel(refillCadence(p)) || p.dosageForm || ""],
+  /* cardPrice wins when a ladder's shelf card has to open the range rather than
+     quote one fill ("Starts at $39" for the LDN starter). */
+  chips: [p.cardPrice || priceLabel(p), cadenceLabel(refillCadence(p)) || p.dosageForm || ""],
   img: p.img,
   blurb: p.blurb || p.description || "",
   product: p,

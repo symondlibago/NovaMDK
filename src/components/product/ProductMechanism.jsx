@@ -266,10 +266,17 @@ export default function ProductMechanism({ product }) {
                     className="nv-seq__label min-w-0"
                     style={{ animationDelay: `${i * BAR_FILL + BAR_FILL * LABEL_LEAD}s` }}
                   >
-                    <span className="block font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-[#ffe8b1]">
-                      {t.label}
+                    {/* One line per bar, label and description joined by the
+                      dash the compliance script writes them with: the four are
+                      a semicolon-separated list of "Label - Description" pairs,
+                      not eight separate statements. */}
+                    <span className="flex flex-wrap items-baseline gap-x-2 text-[#ffe8b1]">
+                      <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em]">
+                        {t.label}
+                      </span>
+                      <span aria-hidden="true" className="opacity-60">-</span>
+                      <span className="text-[1rem] font-medium leading-snug">{t.text}</span>
                     </span>
-                    <span className="mt-1 block text-[1rem] font-medium leading-snug text-[#ffe8b1]">{t.text}</span>
                   </span>
                 </li>
               ))}

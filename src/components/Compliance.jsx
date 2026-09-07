@@ -54,7 +54,9 @@ export function FdaDisclaimer({ product, className = "" }) {
 export function CompoundedDisclaimer({ className = "", tone = "muted" }) {
   const color = tone === "panel" ? "text-on-panel/55" : "text-muted";
   return (
-    <div className={`space-y-2 text-[0.78rem] leading-relaxed ${color} ${className}`}>
+    /* Italic and tighter (2026-09-07): the comp sets the legal footnote apart
+       from body copy by its slant rather than by a rule or a size drop. */
+    <div className={`space-y-1.5 text-[0.78rem] italic leading-relaxed ${color} ${className}`}>
       <p>
         Compounded drug products are not approved or evaluated for safety, effectiveness, or quality by
         the FDA. Prescription required. Nova MDK does not manufacture drug products.

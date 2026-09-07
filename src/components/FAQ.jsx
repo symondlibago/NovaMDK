@@ -24,8 +24,8 @@ export default function FAQ() {
       a: "Weight and metabolism, longevity, recovery, skin, sexual health, and our full peptide line."
     },
     {
-      q: "How fast will it arrive?",
-      a: "Fast, discreet delivery — usually within a few business days of approval."
+      q: "How will my treatment arrive?",
+      a: "If prescribed, your treatment is shipped discreetly by a licensed pharmacy, usually within a few business days of approval."
     },
     {
       q: "Can I pause or cancel anytime?",

@@ -1,22 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-/* Aliased: the project lint rule does not count `motion.span` as a use of the
-   lowercase binding, so the capitalised alias keeps this file clean. */
-import { motion as Motion } from "framer-motion";
 import Reveal from "../ui/Reveal";
-
-/* Matched to Reveal's own easing and trigger margin so the rail segments and the
-   markers they join are sequenced by one clock rather than two. */
-const EASE = [0.2, 0.7, 0.3, 1];
-const VIEWPORT_MARGIN = "-80px 0px -80px 0px";
-
-/* Each segment starts at the centre of a column and runs one column wide, so
-   the pair spans marker 1 to marker 3. The delays interleave with the markers'
-   0 / 0.75 / 1.5. */
-const RAILS = [
-  { left: "left-[16.667%]", delay: 0.4 },
-  { left: "left-1/2", delay: 1.15 },
-];
 
 const INK = "#544529";
 const BROWN = "#9a8154";
@@ -24,41 +8,24 @@ const BROWN = "#9a8154";
 const TAN_DEEP = "#9c8452";
 const TAN_PALE = "#d0bd99";
 const BODY = "#7a6d58";
-const CREAM = "#f4e3c1";
-const CREAM_SOFT = "rgba(244,227,193,0.86)";
 
 /* The three small cards and the wide photo card. The wide one is painted the
    photograph's own backdrop so the shot can fade into it with no seam. */
 const CARD_TAN = "#f2e9dd";
 const MIND_TAN = "#dcc0a8";
-const LINE = "#c6ab7d";
 
 const CARD_R = "rounded-[calc(26px*var(--nv-r-scale,1))]";
 const TILE_R = "rounded-[calc(18px*var(--nv-r-scale,1))]";
 const TITLE = "nv-weight-keep font-display font-extrabold";
 const BODY_SIZE = "text-[clamp(0.86rem,1.15vw,0.98rem)]";
 
+/* The approved feature set (2026-09-08 compliance pass). Labels only: the
+   supporting lines these cards used to carry were the arousal and response
+   claims the review removed, and nothing was approved to replace them. */
 const MOMENTS = [
-  { t: "Support arousal", d: "Designed to support blood flow and physical response where it matters" },
-  { t: "Feel more", d: "Designed to support blood flow and physical response where it matters" },
-  { t: "Use it when you need it", d: "Applied before intimacy as directed by your healthcare provider" },
-];
-
-/* Set as two lines each, as in the comp, rather than left to wrap. */
-const TURNS = [
-  ["Topical", "application"],
-  ["Designed for use", "before intimacy"],
-  ["Provider", "prescribed"],
-];
-
-const STEPS = [
-  { n: 1, t: "Apply", d: "Use the amount prescribed by your provider on the external intimate area" },
-  { n: 2, t: "Give it a little time", d: "Use the amount prescribed by your provider on the external intimate area" },
-  {
-    n: 3,
-    t: "Let the moment happen",
-    d: "No complicated routine. Just follow your provider's instructions and continue with your evening",
-  },
+  { t: "Topical Formula" },
+  { t: "Prescription Only" },
+  { t: "Use as Directed" },
 ];
 
 /* ---------------------------- 1. more feeling ---------------------------- */
@@ -75,20 +42,19 @@ function MoreFeeling({ startTo }) {
             className={`${TITLE} text-[clamp(1.75rem,4.4vw,2.9rem)] leading-[1.12]`}
             style={{ color: BROWN }}
           >
-            More feeling
+            Topical, provider-
             <br />
-            More you
+            directed care
           </h2>
           <p className={`mt-4 max-w-[52ch] leading-[1.55] lg:mt-6 ${BODY_SIZE}`} style={{ color: BODY }}>
-            Scream Cream Rx is a provider-prescribed topical treatment designed to support physical
-            arousal, sensitivity, and sexual response when you want a little more help getting there
+            Applied externally according to your prescription instructions
           </p>
           <Link
             to={startTo}
             className="mt-6 inline-flex rounded-full px-8 py-3.5 text-[0.95rem] font-semibold transition-all duration-300 hover:-translate-y-0.5 nv-shadow lg:mt-8"
             style={{ background: "linear-gradient(120deg, #b8975e 0%, #a3854c 100%)", color: "#fdf6e6" }}
           >
-            Start Your Assessment
+            Start Your Consultation
           </Link>
           {/* Required qualifier, verbatim from the comp and set in its italic. */}
           <p className="mt-6 text-[0.76rem] italic leading-relaxed text-muted lg:mt-[clamp(2rem,4vw,3.5rem)]">
@@ -134,13 +100,15 @@ function MomentsThatMatter() {
       <div className="mt-6 grid gap-3 sm:grid-cols-3 sm:gap-5 lg:mt-[clamp(2rem,4vw,3rem)]">
         {MOMENTS.map((m, i) => (
           <Reveal as="div" key={m.t} delay={0.06 * i}>
-            <div className={`h-full p-5 sm:px-7 sm:py-7 ${TILE_R}`} style={{ background: CARD_TAN }}>
+            {/* Label-only tiles, so they centre rather than sit top-left with an
+                empty half beneath them. */}
+            <div
+              className={`flex h-full items-center justify-center px-5 py-7 text-center sm:px-7 sm:py-9 ${TILE_R}`}
+              style={{ background: CARD_TAN }}
+            >
               <h3 className="font-display text-[1.02rem] font-bold leading-tight" style={{ color: BROWN }}>
                 {m.t}
               </h3>
-              <p className="mt-2 text-[0.8rem] leading-[1.5] sm:mt-3 sm:leading-[1.55]" style={{ color: BODY }}>
-                {m.d}
-              </p>
             </div>
           </Reveal>
         ))}
@@ -189,67 +157,12 @@ function MomentsThatMatter() {
   );
 }
 
-/* --------------------------- 3. the brass card --------------------------- */
-
-function MeetScreamCream() {
-  return (
-    <div className="mx-auto max-w-[1180px] px-5 pb-8 md:px-10 lg:pb-[clamp(2.5rem,6vw,4.5rem)]">
-      <Reveal>
-        <div
-          className={`px-6 py-8 sm:px-10 sm:py-11 lg:px-14 lg:py-14 ${CARD_R}`}
-          /* The comp's own fill, read off its colour picker: a circular gradient
-             centred at 50% 50%. Same one the Glutathione card uses. */
-          style={{ background: "radial-gradient(circle at 50% 50%, #c1a27a, #9a7843)" }}
-        >
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.88fr)] lg:gap-14">
-            <div>
-              <span
-                className="block font-mono text-[0.6rem] uppercase tracking-[0.18em]"
-                style={{ color: CREAM_SOFT }}
-              >
-                Meet Scream Cream
-              </span>
-              <h2
-                className={`${TITLE} mt-4 text-[clamp(1.45rem,3.4vw,2.2rem)] leading-[1.14]`}
-                style={{ color: CREAM }}
-              >
-                A little support, right
-                <br />
-                where you want it
-              </h2>
-            </div>
-
-            <div className="flex flex-col justify-center gap-5 lg:pt-1">
-              <p className="max-w-[46ch] text-[0.86rem] leading-[1.6]" style={{ color: CREAM_SOFT }}>
-                Instead of a daily pill or injection, Scream Cream is applied topically before
-                intimacy
-              </p>
-              <p className="max-w-[46ch] text-[0.86rem] leading-[1.6]" style={{ color: CREAM_SOFT }}>
-                The prescription blend combines ingredients selected to support blood flow, physical
-                sensitivity, and sexual response
-              </p>
-            </div>
-          </div>
-
-          <div className="nv-taketurns mt-8 grid gap-4 sm:grid-cols-3 sm:gap-6 lg:mt-[clamp(2.5rem,6vw,4.5rem)]">
-              {TURNS.map(([a, b]) => (
-              <p
-                key={a}
-                className={`${TITLE} w-fit bg-clip-text text-transparent text-[clamp(1.15rem,2.4vw,1.55rem)] leading-[1.2]`}
-              >
-                {a}
-                <br />
-                {b}
-              </p>
-            ))}
-          </div>
-        </div>
-      </Reveal>
-    </div>
-  );
-}
-
-/* --------------------------- 4. keep the routine --------------------------- */
+/* --------------------------- 3. keep the routine --------------------------- */
+/* The brass "A little support, right where you want it" card was removed on
+   2026-09-08 with the compliance pass, along with the numbered application
+   steps that used to fill this section: both were the localized-response and
+   timing claims the review asked us to drop. What is left is the one approved
+   sentence about how the cream is used. */
 
 function KeepTheRoutine() {
   return (
@@ -265,46 +178,14 @@ function KeepTheRoutine() {
           </span>
         </h2>
       </Reveal>
-      <div className="relative mt-7 grid gap-5 sm:grid-cols-3 sm:gap-6 lg:mt-[clamp(2.5rem,5vw,4rem)]">
-        {RAILS.map((r) => (
-          <Motion.span
-            key={r.left}
-            aria-hidden="true"
-            className={`pointer-events-none absolute ${r.left} top-5 hidden h-px w-1/3 origin-left sm:block`}
-            style={{ background: LINE }}
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: VIEWPORT_MARGIN }}
-            transition={{ duration: 0.5, ease: EASE, delay: r.delay }}
-          />
-        ))}
-        {STEPS.map((s, i) => (
-          <Reveal
-            as="div"
-            key={s.n}
-            delay={0.75 * i}
-            className="relative flex items-start gap-4 text-left sm:block sm:text-center"
-          >
-            <span
-              className="relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full border font-display text-[0.9rem] font-semibold sm:mx-auto sm:h-10 sm:w-10"
-              style={{ borderColor: LINE, color: BROWN, background: "#faf8f4" }}
-            >
-              {s.n}
-            </span>
-            <div className="min-w-0">
-              <h3 className="font-display text-[1.1rem] font-bold sm:mt-4" style={{ color: INK }}>
-                {s.t}
-              </h3>
-              <p
-                className="mt-1.5 text-[0.92rem] leading-[1.5] sm:mx-auto sm:mt-2.5 sm:max-w-[30ch] sm:leading-[1.55]"
-                style={{ color: BODY }}
-              >
-                {s.d}
-              </p>
-            </div>
-          </Reveal>
-        ))}
-      </div>
+      <Reveal delay={0.06}>
+        <p
+          className={`mt-4 max-w-[46ch] leading-[1.55] lg:mt-6 ${BODY_SIZE}`}
+          style={{ color: BODY }}
+        >
+          Use only as directed by your healthcare provider and prescription label
+        </p>
+      </Reveal>
     </div>
   );
 }
@@ -314,7 +195,6 @@ export default function ScreamCreamSections({ startTo = "/start" }) {
     <section style={{ background: "#faf8f4" }}>
       <MoreFeeling startTo={startTo} />
       <MomentsThatMatter />
-      <MeetScreamCream />
       <KeepTheRoutine />
     </section>
   );

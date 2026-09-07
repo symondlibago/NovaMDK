@@ -1,5 +1,12 @@
 {
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/treatments/mens-health", "destination": "/treatments/sexual-health", "permanent": true },
+    { "source": "/treatments/unisex-sports-medicine", "destination": "/treatments/recovery-wellness", "permanent": true },
+    { "source": "/treatments/sports-medicine", "destination": "/treatments/recovery-wellness", "permanent": true },
+    { "source": "/treatments/unisex-anti-aging-rx", "destination": "/treatments/longevity", "permanent": true },
+    { "source": "/treatments/unisex-skin-health", "destination": "/treatments/skin-health", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

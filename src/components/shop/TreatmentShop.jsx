@@ -1,7 +1,7 @@
 ﻿import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { productsData, visibleProducts } from "../data/products";
+import { productsData, visibleProducts, inCategory } from "../data/products";
 import { programsFor, programProductIds } from "../data/subscriptions";
 import { programItem, productItem } from "../../lib/programCard";
 import { stageOf, baseName } from "../../lib/catalog";
@@ -22,6 +22,13 @@ const GRID = {
   4: "sm:grid-cols-2 lg:grid-cols-4",
 };
 
+/* Approved category descriptions. Only the categories the compliance review
+   named have one; everything else keeps the generated line below. */
+const CATEGORY_INTRO = {
+  "longevity":
+    "Provider-guided options based on your individual longevity and wellness goals.",
+};
+
 // Product ids pinned to the front of a category's listing (marketing priority).
 // Empty since the final-offerings catalog swap — repopulate with new ids as needed.
 const PINNED_FIRST = {};
@@ -29,22 +36,28 @@ const PINNED_FIRST = {};
 export default function TreatmentShop({ category, showBack = false }) {
   const [quickView, setQuickView] = useState(null);
   const pinned = PINNED_FIRST[category] || [];
+  /* inCategory, not categorySlug: a cross-listed product (NAD+ on both the
+     longevity and the recovery shelf) is one record that answers to two slugs. */
   const products = visibleProducts
-    .filter((p) => p.categorySlug === category)
+    .filter((p) => inCategory(p, category))
     .sort((a, b) => {
       const ai = pinned.indexOf(a.id);
       const bi = pinned.indexOf(b.id);
-      if (ai === -1 && bi === -1) return 0;      // both unpinned â†’ keep original order
-      if (ai === -1) return 1;
-      if (bi === -1) return -1;
-      return ai - bi;                            // both pinned â†’ pinned order
+      if (ai !== -1 || bi !== -1) {
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;                          // both pinned â†’ pinned order
+      }
+      // Unpinned: the category's own treatments lead, cross-listed ones follow.
+      // Sort is stable, so equals keep catalogue order.
+      return (a.categorySlug === category ? 0 : 1) - (b.categorySlug === category ? 0 : 1);
     });
-  // The display name has to come from the full catalogue, not the visible list,
-  // so the safety net below still has a heading to show.
-  const name =
-    products[0]?.categoryName ||
-    productsData.find((p) => p.categorySlug === category)?.categoryName ||
-    "";
+  /* Read off a product whose HOME category is this slug, not off products[0]:
+     a cross-listed product carries its own category's name, so on the recovery
+     shelf the first card can be one that calls itself "Longevity". The full
+     catalogue is searched, not the visible list, so the safety net below still
+     has a heading to show. */
+  const name = productsData.find((p) => p.categorySlug === category)?.categoryName || "";
 
   const programs = programsFor(category);
   const inProgram = programProductIds(category);
@@ -109,7 +122,15 @@ export default function TreatmentShop({ category, showBack = false }) {
             {name}
           </h2>
           <p className="mx-auto mt-3 max-w-[46ch] text-[0.95rem] leading-relaxed text-muted sm:text-[1.02rem]">
-            Explore prescription options for {name.toLowerCase()} and learn how each treatment works.
+            {CATEGORY_INTRO[category] ||
+              `Explore prescription options for ${name.toLowerCase()} and learn how each treatment works.`}
+          </p>
+          {/* Required provider disclosure, set directly above the listing it
+              qualifies rather than in the legal footnote at the foot of the
+              shelf — it has to be read before the prices are. */}
+          <p className="mx-auto mt-4 max-w-[62ch] text-[0.85rem] leading-relaxed text-muted">
+            Prescription treatments require evaluation by a licensed healthcare provider and are
+            prescribed only when medically appropriate.
           </p>
         </div>
 
@@ -144,7 +165,9 @@ export default function TreatmentShop({ category, showBack = false }) {
             border-t drew a line across the page and turned a legal footnote into
             what looked like another section. It has to stay readable, so this is
             a softer weight and a tighter measure, not smaller type. */}
-        <CompoundedDisclaimer className="mx-auto mb-[clamp(2rem,4vw,3.5rem)] mt-8 max-w-[620px] text-center opacity-75" />
+        {/* Wide enough that each sentence holds one line on a desktop shelf;
+            it still wraps on a phone, where one line is not possible. */}
+        <CompoundedDisclaimer className="mx-auto mb-[clamp(2rem,4vw,3.5rem)] mt-8 max-w-[1060px] text-center opacity-75" />
       </div>
 
       {/* Weight-loss only — the copy is GLP-1 specific. `startTo` points at the
@@ -153,7 +176,7 @@ export default function TreatmentShop({ category, showBack = false }) {
       {category === "weight-loss" && cards[0] && <WeightLossSections startTo={cards[0].startTo} />}
 
       {/* Anti-aging only — the copy names NAD+. Same startTo contract. */}
-      {category === "unisex-anti-aging-rx" && cards[0] && (
+      {category === "longevity" && cards[0] && (
         <AntiAgingSections startTo={cards[0].startTo} />
       )}
 
@@ -163,12 +186,12 @@ export default function TreatmentShop({ category, showBack = false }) {
       )}
 
       {/* Sports medicine only — the copy is recovery and mobility specific. */}
-      {category === "sports-medicine" && cards[0] && (
+      {category === "recovery-wellness" && cards[0] && (
         <SportsMedicineSections startTo={cards[0].startTo} />
       )}
 
       {/* Skin health only — the copy names skin concerns. Same startTo contract. */}
-      {category === "unisex-skin-health" && cards[0] && (
+      {category === "skin-health" && cards[0] && (
         <SkinHealthSections startTo={cards[0].startTo} />
       )}
 

@@ -87,9 +87,9 @@ function SignalBand({ startTo }) {
                 className={`${TITLE} ${TITLE_SIZE} max-w-[20ch]`}
                 style={{ color: HEADING }}
               >
-                Support your body&rsquo;s{" "}
+                How Sermorelin Acts on the{" "}
                 <span className="sm:block">
-                  natural GH signaling
+                  Growth-Hormone Pathway
                 </span>
               </h2>
 
@@ -106,9 +106,9 @@ function SignalBand({ startTo }) {
             className="text-[clamp(0.95rem,1.25vw,1.15rem)] max-w-[46ch] leading-relaxed lg:pt-2"
             style={{ color: CREAM_SOFT }}
           >
-            Sermorelin is a compounded prescription
-            peptide that stimulates the pituitary gland
-            to release the body&rsquo;s own growth hormone
+            Sermorelin acts on the pituitary growth
+            hormone pathway. If prescribed, it is intended
+            to stimulate release of growth hormone
           </p>
           </div>
 
@@ -119,7 +119,7 @@ function SignalBand({ startTo }) {
               className="mx-auto max-w-[34ch] text-center text-[clamp(0.95rem,1.35vw,1.15rem)] font-semibold leading-snug"
               style={{ color: CREAM_SOFT }}
             >
-              Growth hormone levels naturally change with age
+              Growth-hormone secretion declines by approximately 15% per decade after age 30
             </p>
 
             <div className="mt-3 flex items-stretch gap-2 sm:gap-3">
@@ -172,7 +172,7 @@ function SignalBand({ startTo }) {
                       color: "rgba(246,239,224,0.42)",
                     }}
                   >
-                    14%
+                    15%
                   </span>
                 </Motion.div>
               </div>
@@ -183,6 +183,15 @@ function SignalBand({ startTo }) {
               style={{ color: CREAM_SOFT }}
             >
               Age
+            </p>
+
+            {/* Required attribution and framing: the figure is population data,
+                not a result anyone should expect from treatment. */}
+            <p
+              className="mx-auto mt-4 max-w-[62ch] text-center text-[0.72rem] italic leading-relaxed"
+              style={{ color: "rgba(244,227,193,0.7)" }}
+            >
+              Source: Endotext. Educational information only, not an expected treatment result
             </p>
           </div>
         </div>
@@ -205,29 +214,35 @@ const WORKS_NODES = {
 const WORKS_NODE_LIST =
   Object.values(WORKS_NODES);
 
+/* The approved narrative (2026-09-08 compliance pass) is three beats — Signal,
+   Growth Hormone Release, IGF-1 Response — but the illustration behind these
+   chips is a four-node diagram whose connectors are drawn between fixed
+   anchors, so the pituitary keeps its own chip as the anatomical node the three
+   beats run through. Every description is held to normal metabolic and tissue
+   processes; none of them promises an outcome. */
 const STEPS = [
   {
-    title: "Sends the signal",
+    title: "Signal",
     body:
-      "Support the processes involved in rest, repair, and recovery",
+      "Sermorelin acts on the pituitary growth hormone pathway",
     pos: "left-[5%] top-[4.8%]",
   },
   {
     title: "Pituitary gland",
     body:
-      "Responds by releasing your own growth hormone",
+      "The gland the growth hormone pathway runs through",
     pos: "right-[2.5%] top-[16.4%]",
   },
   {
-    title: "Growth hormone",
+    title: "Growth hormone release",
     body:
-      "Travels throughout the body and signals the production of IGF-1",
+      "If prescribed, it is intended to stimulate release of growth hormone",
     pos: "left-[5%] top-[47.3%]",
   },
   {
-    title: "Your body responds",
+    title: "IGF-1 response",
     body:
-      "Through processes involved in recovery, metabolism, lean tissue, and overall function",
+      "Growth hormone signals the production of IGF-1, which is involved in normal metabolic and tissue processes",
     pos: "right-[2.5%] top-[66.6%]",
   },
 ];
@@ -648,9 +663,9 @@ function HowItWorks({ startTo }) {
             className="mt-7 max-w-[39ch] text-[clamp(1rem,1.25vw,1.22rem)] leading-[1.42]"
             style={{ color: BODY }}
           >
-            Sermorelin signals the pituitary gland to
-            release growth hormone, supporting processes
-            involved in metabolism, lean mass, and recovery
+            Sermorelin acts on the pituitary growth
+            hormone pathway, which is involved in normal
+            metabolic and tissue processes
           </p>
 
           <Link

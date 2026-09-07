@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
 import { motion as Motion } from "framer-motion";
 import Reveal from "../ui/Reveal";
 
@@ -16,8 +15,6 @@ const PANEL = "#ece1cd";
 const PALE_BTN = "#f0e3cb";
 const DASH = "rgba(154,120,67,0.42)";
 const BRASS = "radial-gradient(circle at 50% 50%, #c1a27a, #9a7843)";
-const TAN = "#c89c75";
-const TAN_INK = "#6c5540";
 const TAN_BTN = "#6b5a24";
 const HEAD_FILL = "linear-gradient(135deg, #6b511e 0%, #7f6528 34%, #c6ae87 100%)";
 const CARD_R = "rounded-[calc(26px*var(--nv-r-scale,1))]";
@@ -187,13 +184,13 @@ function FormulaPanel({ startTo }) {
             {/* The comp breaks after the comma. Below md the line is too long
                 to hold, so the break only applies once there is room for it. */}
             <h2 className={`${TITLE} max-w-[26ch] text-[clamp(1.3rem,3.6vw,2.7rem)]`} style={{ color: CREAM }}>
-              Multi-active brightening,{" "}
-              <span className="md:block">in one prescription cream</span>
+              Prescription care{" "}
+              <span className="md:block">for uneven skin tone</span>
             </h2>
 
             <p className={`mt-3 max-w-[46ch] leading-relaxed sm:mt-5 ${BODY_SIZE}`} style={{ color: CREAM_SOFT }}>
-              Luminance combines pigment-targeting, calming, and antioxidant ingredients to help
-              improve the appearance of dark spots, uneven tone, and hyperpigmentation
+              Luminance combines six active ingredients prescribed for concerns such as dark spots,
+              uneven skin tone, and hyperpigmentation
             </p>
 
             <Link
@@ -230,9 +227,7 @@ function FormulaPanel({ startTo }) {
             </h3>
 
             <p className={`mt-3 max-w-[52ch] leading-relaxed sm:mt-5 ${BODY_SIZE}`} style={{ color: CREAM_SOFT }}>
-              Luminance combines six ingredients that work across different factors involved in
-              uneven pigmentation, from excess melanin production to inflammation and oxidative
-              stress
+              Six active ingredients in one provider-directed formula for uneven pigmentation
             </p>
 
             {/* The stage. Below md the figure and the chips are simply stacked;
@@ -356,14 +351,12 @@ function Complexion() {
           <div className="grid items-center gap-5 sm:gap-7 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-12">
             <div>
               <h2 className={`${TITLE} ${TITLE_SIZE} ${RAMP} max-w-[30ch]`} style={rampFill}>
-                A clearer,
-                <span className="block">more even-looking complexion</span>
+                Targeted
+                <span className="block">skin concerns</span>
               </h2>
 
               <p className={`mt-3 max-w-[64ch] leading-relaxed sm:mt-6 ${BODY_SIZE}`} style={{ color: BODY }}>
-                Luminance is intended to gradually improve areas of excess pigmentation so dark
-                spots appear less noticeable and skin tone looks more balanced. The goal is not to
-                change your natural skin tone. It is to target areas where pigment has become uneven
+                Dark spots, uneven tone, and post-inflammatory hyperpigmentation
               </p>
             </div>
 
@@ -383,73 +376,30 @@ function Complexion() {
   );
 }
 
-/* -------------------------------- 4. the routine -------------------------------- */
-
-const ROUTINE = [
-  "Helps address excess pigmentation",
-  "Provides antioxidant support",
-  "Targets dark spots and uneven skin tone",
-];
-
-function Routine() {
-  return (
-    <div className={`mx-auto max-w-[1180px] ${PART_PAD} ${PART_REST}`}>
-      <div className="grid items-center gap-4 sm:gap-8 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1fr)] lg:gap-14">
-        <Reveal as="div">
-          {/* The comp stands the tube off vertical: the cap leans left and the
-              base kicks right, about 9 degrees counter-clockwise. */}
-          <img
-            src="/products/luminance.avif"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            className="mx-auto block w-[36%] max-w-[8.5rem] drop-shadow-2xl sm:w-[42%] sm:max-w-[15rem] lg:w-[72%] lg:max-w-none"
-            style={{ transform: "rotate(-9deg)" }}
-          />
-        </Reveal>
-
-        <Reveal as="div" delay={0.08}>
-          <h2 className={`${TITLE} ${TITLE_SIZE} ${RAMP} max-w-[23ch]`} style={rampFill}>
-            What Luminance
-            <span className="block">brings to your routine</span>
-          </h2>
-
-          <ul className="mt-4 flex flex-col gap-3 sm:mt-8 sm:gap-4">
-            {ROUTINE.map((r, i) => (
-              <Reveal as="li" key={r} delay={0.14 + i * 0.09} y={12} className="flex items-center gap-3">
-                <span
-                  className="grid h-5 w-5 shrink-0 place-items-center rounded-full sm:h-6 sm:w-6"
-                  style={{ background: "#9a7843" }}
-                >
-                  <Check size={12} strokeWidth={3} style={{ color: CREAM }} />
-                </span>
-                <span className="text-[clamp(0.85rem,1.1vw,1rem)]" style={{ color: BODY }}>
-                  {r}
-                </span>
-              </Reveal>
-            ))}
-          </ul>
-        </Reveal>
-      </div>
-    </div>
-  );
-}
-
-/* ----------------------------- 5. prescription care ----------------------------- */
+/* ----------------------------- 4. prescription care ----------------------------- */
+/* The benefit list ("What Luminance brings to your routine") was removed on
+   2026-09-08 with the compliance pass: a standalone list of product benefits is
+   exactly what the review asked us to drop from the page. */
 
 function Oversight({ startTo }) {
   return (
     <div className={`mx-auto max-w-[1180px] ${PART_PAD} pb-8 sm:pb-[clamp(3rem,6vw,5rem)]`}>
       <Reveal>
-        <div className={`relative overflow-hidden ${CARD_R}`} style={{ background: TAN }}>
+        {/* The comp moves this panel onto the same brass field the rest of the
+            page uses, off the flat tan it was on. */}
+        <div className={`relative overflow-hidden ${CARD_R}`} style={{ background: BRASS }}>
           <img
-            src="/site/skin-health/luminance-oversight.avif"
+            src="/site/skin-health/luminance-guidance.avif"
             alt=""
             aria-hidden="true"
             loading="lazy"
-            className="pointer-events-none absolute inset-0 hidden h-full w-full object-cover object-right lg:block"
+            /* The new shot is a cut-out, so she stands on the panel floor at
+               her own proportions and composites straight onto the brass.
+               object-cover would stretch her across the whole card and put the
+               copy on her face. */
+            className="pointer-events-none absolute bottom-0 right-0 hidden h-[108%] w-auto max-w-none lg:block"
           />
-          <div className="relative px-4 pb-6 pt-6 sm:px-9 sm:pb-9 sm:pt-9 lg:w-[58%] lg:px-14 lg:py-[clamp(2rem,3vw,2.5rem)]">
+          <div className="relative px-4 pb-8 pt-8 sm:px-9 sm:pb-11 sm:pt-11 lg:flex lg:min-h-144 lg:w-[58%] lg:flex-col lg:px-14 lg:py-[clamp(3rem,4.5vw,4rem)]">
             <span
               className="font-mono text-[0.58rem] font-semibold uppercase tracking-[0.16em] sm:text-[0.6rem]"
               style={{ color: CREAM_SOFT }}
@@ -461,19 +411,14 @@ function Oversight({ startTo }) {
               className={`${TITLE} mt-2 max-w-[26ch] text-[clamp(1.15rem,2.5vw,1.9rem)] sm:mt-2.5`}
               style={{ color: CREAM }}
             >
-              A stronger formula deserves{" "}
-              <span className="lg:block">the right oversight</span>
+              The right treatment,{" "}
+              <span className="lg:block">with the right guidance</span>
             </h2>
 
-            <p className={`mt-3 max-w-[54ch] leading-relaxed sm:mt-4 ${FINE_SIZE}`} style={{ color: TAN_INK }}>
-              Luminance is a compounded prescription treatment. A licensed provider determines
-              whether it is appropriate for your skin and guides your treatment plan
-            </p>
-
-            <p className={`mt-2.5 max-w-[54ch] leading-relaxed sm:mt-3.5 ${FINE_SIZE}`} style={{ color: TAN_INK }}>
-              Because the formula contains active prescription ingredients, irritation, dryness,
-              peeling, redness, burning, or stinging may occur. Your provider can advise you based
-              on your skin and medical history
+            <p className={`mt-3 max-w-[54ch] leading-relaxed sm:mt-4 ${FINE_SIZE}`} style={{ color: CREAM_SOFT }}>
+              Luminance is a compounded prescription treatment. A licensed provider determines if
+              it&apos;s appropriate for you. Dryness, redness, peeling, burning, or stinging may
+              occur
             </p>
 
             <Link
@@ -481,11 +426,13 @@ function Oversight({ startTo }) {
               className="mt-5 inline-flex max-w-[13rem] rounded-full px-6 py-2.5 text-center text-[0.84rem] font-semibold leading-snug transition-all duration-300 hover:-translate-y-0.5 sm:mt-6 sm:px-7 sm:py-3 sm:text-[0.88rem]"
               style={{ background: TAN_BTN, color: CREAM }}
             >
-              See if Luminance is right for you
+              See If Its Right For You
             </Link>
 
             <p
-              className="mt-5 max-w-[54ch] text-[0.68rem] italic leading-relaxed sm:mt-[clamp(1.5rem,2.6vw,2.25rem)] sm:text-[0.72rem]"
+              /* Sits on the panel floor, as the comp has it, rather than
+                 tucked under the button. */
+              className="mt-5 max-w-[54ch] text-[0.68rem] italic leading-relaxed sm:mt-[clamp(1.5rem,2.6vw,2.25rem)] sm:text-[0.72rem] lg:mt-auto"
               style={{ color: "rgba(247,233,201,0.72)" }}
             >
               Compounded medications are not FDA-approved and have not been reviewed by the FDA for
@@ -493,13 +440,13 @@ function Oversight({ startTo }) {
             </p>
           </div>
 
-          <div className="relative aspect-[21/9] w-full lg:hidden">
+          <div className="relative h-48 w-full overflow-hidden sm:h-56 lg:hidden">
             <img
-              src="/site/skin-health/luminance-oversight.avif"
+              src="/site/skin-health/luminance-guidance.avif"
               alt=""
               aria-hidden="true"
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover object-right"
+              className="absolute bottom-0 right-3 h-[116%] w-auto max-w-none"
             />
           </div>
         </div>
@@ -514,7 +461,6 @@ export default function LuminanceSections({ startTo = "/start" }) {
       <FormulaPanel startTo={startTo} />
       <ThreeAreas />
       <Complexion />
-      <Routine />
       <Oversight startTo={startTo} />
     </section>
   );

@@ -49,12 +49,14 @@ import LipoCSections from "../components/product/LipoCSections";
 
 const HERO_ASSURANCES = [
   { icon: Stethoscope, l1: "US licensed", l2: "providers" },
-  { icon: Truck, l1: "Fast", l2: "Delivery" },
+  { icon: Truck, l1: "Home Delivery,", l2: "If Prescribed" },
   { icon: Lock, l1: "Discreet", l2: "Packaging" },
 ];
+/* Retail items carry no prescription, so the conditional half of the delivery
+   promise would be wrong here — they ship on order. */
 const HERO_ASSURANCES_OTC = [
   { icon: ShieldCheck, l1: "No prescription", l2: "needed" },
-  { icon: Truck, l1: "Fast", l2: "Delivery" },
+  { icon: Truck, l1: "Home", l2: "Delivery" },
   { icon: Lock, l1: "Discreet", l2: "Packaging" },
 ];
 const ingredients = (p) => baseName(p).split("/").map((s) => s.trim()).filter(Boolean);
@@ -159,7 +161,11 @@ export default function ProductPage() {
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(active);
   const isSupplement = product.categorySlug === "supplements";
-  const hasFda = isSupplement && !!fdaDisclaimer(product);
+  /* Supplements carry the name-matched FDA wording. A prescription product only
+     shows this card when its own record names a required statement — the B12
+     combination notice, for one — so the name matching in Compliance.jsx cannot
+     fire an unrelated disclaimer onto an Rx page. */
+  const hasFda = !!product.fdaDisclaimer || (isSupplement && !!fdaDisclaimer(product));
   const startVisit = async (patient) => {
     track(EVENTS.START_VISIT, { id: active.id, name: active.name, category: active.categorySlug });
     setErr("");
@@ -312,12 +318,19 @@ export default function ProductPage() {
               <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-line pt-6">
                 {/* "Starts at", not "Start": the label runs straight into the
                     figure, and a bare verb there ("Start $139/mo") does not
-                    read as English. */}
-                <span className="text-[1rem] uppercase tracking-[0.08em] text-ink">Starts at</span>
+                    read as English. A product priced per defined fill sets
+                    `exactPrice` and drops the label — it is one price, not the
+                    bottom of a range — and states the supply it buys instead. */}
+                {!active.exactPrice && (
+                  <span className="text-[1rem] uppercase tracking-[0.08em] text-ink">Starts at</span>
+                )}
                 <span className="font-display text-[clamp(2.2rem,4vw,2.9rem)] font-extrabold leading-none tracking-tight">
                   {active.price}
                   <span className="font-semibold">{priceUnit(active)}</span>
                 </span>
+                {active.priceNote && (
+                  <span className="text-[0.95rem] leading-snug text-muted">· {active.priceNote}</span>
+                )}
               </div>
 
               {/* Highlights moved down into the "What this supports" section, so
@@ -372,11 +385,29 @@ export default function ProductPage() {
 
               {/* Shipping and vial size lost their pills when the price row went to
                   the comp's FROM / price pairing — kept here as a plain line so the
-                  facts don't disappear off the page. */}
+                  facts don't disappear off the page. Size leads: the delivery
+                  sentence ends on a full stop and cannot take a trailing clause. */}
               <p className="mt-4 text-[0.84rem] leading-relaxed text-muted">
+                {active.size ? `${active.size} · ` : ""}
                 {active.shipping}
-                {active.size ? ` · ${active.size}` : ""}
               </p>
+              {/* Required near every prescription listing and detail page. Off on
+                  retail items, which need no evaluation to buy. */}
+              {!otc && (
+                <>
+                  <p className="mt-2 text-[0.84rem] leading-relaxed text-muted">
+                    Prescription treatments require evaluation by a licensed healthcare provider and
+                    are prescribed only when medically appropriate.
+                  </p>
+                  {/* The required dosing statement. It has to be visible on the
+                      page: the catalogue's Dosing Schedule spec carries the same
+                      sentence, but nothing renders the specs list, so without
+                      this line the page states no dosing position at all. */}
+                  <p className="mt-2 text-[0.84rem] font-medium leading-relaxed text-ink">
+                    Use only as directed by your healthcare provider and prescription label.
+                  </p>
+                </>
+              )}
             </div>
           </Reveal>
         </div>

@@ -9,6 +9,8 @@ const MUTED = "#6b5e4b";
 const GOLD = "#a8874e";
 const GOLD_LIGHT = "#c3a56d";
 const GOLD_DEEP = "#5f4c2c";
+/* The ramp that runs across "so much" alone: mid gold into the pale gold. */
+const HEAD_FILL = "linear-gradient(90deg, #8a6f36 0%, #a8874e 45%, #c9b183 100%)";
 const CREAM = "#f1e4c2";
 const PILL = "#ede5d6";
 
@@ -22,7 +24,7 @@ const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 const TRUST = [
   { img: "/site/skin-health/trust-clinician.avif", label: "Licensed provider review" },
   { img: "/site/skin-health/trust-phone.avif", label: "Prescription skin treatment options" },
-  { img: "/site/skin-health/trust-delivery.avif", label: "Online care with home delivery" },
+  { img: "/site/skin-health/trust-delivery.avif", label: "Online care. Home delivery, if prescribed" },
 ];
 
 function HeroCard({ startTo }) {
@@ -70,9 +72,19 @@ function HeroCard({ startTo }) {
             style={{ background: PANEL }}
           >
             <div>
-              <h2 className="nv-weight-keep font-display text-[clamp(1.4rem,4.6vw,2.4rem)] font-extrabold leading-[1.14]">
-                <span style={{ color: GOLD_LIGHT }}>Sometimes, your routine can only do </span>
-                <span style={{ color: GOLD }}>so much</span>
+              {/* Solid deep brown, with the ramp on "so much" alone. It stays
+                  on one line, so clipping the fill to an inline span is safe. */}
+              <h2
+                className="nv-weight-keep font-display text-[clamp(1.4rem,4.6vw,2.4rem)] font-extrabold leading-[1.14]"
+                style={{ color: GOLD_DEEP }}
+              >
+                Sometimes, your routine can only do{" "}
+                <span
+                  className="bg-clip-text text-transparent"
+                  style={{ backgroundImage: HEAD_FILL }}
+                >
+                  so much
+                </span>
               </h2>
 
               <p
@@ -211,12 +223,15 @@ function BeyondRoutine({ startTo }) {
                 className="nv-weight-keep mx-auto max-w-[22ch] font-display text-[clamp(1.5rem,5vw,2.9rem)] font-extrabold leading-[1.12] lg:mx-0"
                 style={{ color: CREAM }}
               >
-                An option beyond <span className="lg:block">your everyday routine</span>
+                Beyond your <span className="lg:block">daily routine</span>
               </h2>
 
               <p className="mx-auto mt-5 max-w-[44ch] text-[clamp(0.76rem,2.3vw,0.92rem)] leading-relaxed text-white/90 lg:mx-0">
-                Your care continues with access to follow-ups, treatment guidance, and refill
-                support as needed
+                Explore provider-guided options for common skin concerns
+              </p>
+
+              <p className="mx-auto mt-2 max-w-[44ch] text-[clamp(0.7rem,2vw,0.82rem)] leading-relaxed text-white/75 lg:mx-0">
+                Provider-guided options for individual skin concerns
               </p>
 
               <Link
@@ -429,7 +444,7 @@ function ExploreBand({ startTo }) {
               className="mt-5 inline-flex rounded-full border px-7 py-2.5 text-[0.9rem] font-medium transition-all duration-300 hover:-translate-y-0.5"
               style={{ borderColor: "rgba(241,228,194,0.6)", color: CREAM }}
             >
-              Begin Your Journey
+              Start Your Consultation
             </Link>
           </div>
         </div>

@@ -8,10 +8,10 @@ const liquidEase = [0.16, 1, 0.3, 1];
 // Category cards — full-bleed photo + brand badge; each links into that goal's catalog.
 const CATEGORIES = [
   { name: "Weight & Metabolism", img: "/site/weight-metabolism.avif", goal: "weight-loss" },
-  { name: "Dermatology", img: "/site/dermatology.avif", goal: "unisex-skin-health" },
-  { name: "Longevity & Anti-Aging", img: "/site/mens-health.avif", goal: "unisex-anti-aging-rx" },
+  { name: "Skin Health", img: "/site/dermatology.avif", goal: "skin-health" },
+  { name: "Longevity", img: "/site/mens-health.avif", goal: "longevity" },
   { name: "Sexual Health", img: "/site/sexual-health.avif", goal: "sexual-health" },
-  { name: "Sports Medicine", img: "/site/pain-recovery.avif", goal: "sports-medicine" },
+  { name: "Recovery & Wellness", img: "/site/pain-recovery.avif", goal: "recovery-wellness" },
 ];
 
 export default function Treatments() {

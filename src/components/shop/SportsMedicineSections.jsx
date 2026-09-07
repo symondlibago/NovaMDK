@@ -44,7 +44,7 @@ function KeepMoving({ assessmentTo }) {
           </h2>
 
           <p className="mt-4 max-w-[34ch] text-[clamp(0.88rem,1.1vw,1rem)] leading-relaxed text-white/85 drop-shadow-[0_1px_10px_rgba(40,32,20,0.5)]">
-            Personalized care designed around your recovery, mobility, and active lifestyle
+            Provider-guided care for recovery, mobility, and wellness goals
           </p>
 
           {/* Straight into the sports-medicine assessment rather than the product
@@ -54,7 +54,7 @@ function KeepMoving({ assessmentTo }) {
             className="mt-7 inline-flex rounded-full px-7 py-3 text-[0.88rem] font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 nv-shadow"
             style={{ background: "#b08c52" }}
           >
-            Start Better Health
+            Start Your Consultation
           </Link>
         </Reveal>
       </div>
@@ -439,7 +439,7 @@ function StayInMotion() {
                 className="mx-auto mt-4 max-w-[32ch] text-[clamp(0.88rem,1.35vw,1.05rem)] leading-relaxed"
                 style={{ color: "#c6d2d0" }}
               >
-                Personalized sports medicine care designed to fit the way you move
+                Provider-guided care for your recovery and mobility goals
               </p>
 
               <a
@@ -476,9 +476,9 @@ const BOTTLE_FRAME = "aspect-[745/1546]";
 const BOTTLE_IMG = "w-[250.7%] left-[-76.1%] top-[-9.7%]";
 
 const LDN_CHIPS = [
-  { label: "Flexible Dosing", pos: "left-0 top-[46%] lg:left-[6%]" },
-  { label: "Oral Prescription", pos: "right-0 top-[24%] lg:right-[8%]" },
-  { label: "Active Lifestyle", pos: "right-[2%] top-[64%] lg:right-[8%]" },
+  { label: "Oral Prescription", pos: "left-0 top-[46%] lg:left-[6%]" },
+  { label: "Provider-Guided", pos: "right-0 top-[24%] lg:right-[8%]" },
+  { label: "Personalized Plan", pos: "right-[2%] top-[64%] lg:right-[8%]" },
 ];
 
 function LdnPanel() {
@@ -560,14 +560,14 @@ function ExploreBand({ startTo }) {
 
           <div className="relative z-10 text-center">
             <h2 className="nv-weight-keep max-w-[12ch] font-display text-[clamp(1.9rem,4.4vw,3.6rem)] font-extrabold leading-tight text-[#ffe8b1]">
-              Explore Sports Medicine
+              Explore Recovery &amp; Wellness
             </h2>
 
             <Link
               to={startTo}
               className="mt-6 inline-flex rounded-full border border-[#ffe8b1]/70 px-7 py-2.5 text-[0.95rem] font-medium text-[#ffe8b1] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#ffe8b1]/10"
             >
-              Begin Your Journey
+              Start Your Consultation
             </Link>
           </div>
         </div>

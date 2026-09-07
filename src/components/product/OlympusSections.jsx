@@ -17,7 +17,6 @@ const PALE_BTN = "#f0e3cb";
 const BRASS_BTN = "#9a7843";
 const TILE = "#f2ead9";
 const TILE_HI = "#e2d0b2";
-const PANEL = "#f1e8d7";
 
 /* The same circular gradient the other brass panels carry. */
 const BRASS = "radial-gradient(circle at 50% 50%, #c1a27a, #9a7843)";
@@ -63,26 +62,13 @@ function Glow() {
 
 /* ---------------------------- 1. the brass formula ---------------------------- */
 
+/* Drug class only, per the 2026-09-08 compliance pass: each active is named for
+   what it is, not for the response it is meant to produce. The `role` line the
+   ladder used to carry above the description was that claim, so it is gone. */
 const ACTIVES = [
-  {
-    name: "Tadalafil",
-    role: "Supports blood flow",
-    body: "A PDE5 inhibitor that helps increase genital blood flow and support physical sexual response",
-  },
-  {
-    name: "Bremelanotide (PT-141)",
-    role: "Supports desire and arousal signaling",
-    body: "Acts on melanocortin pathways in the brain involved in sexual motivation and arousal",
-  },
-  {
-    name: "Oxytocin",
-    role: "Supports sexual receptivity",
-    /* The comp repeats tadalafil's PDE5 line here, which reads as a copy/paste
-       slip in the Canva file: oxytocin is a neuropeptide, not a PDE5 inhibitor.
-       Written to match the product record rather than shipping a wrong
-       mechanism on a prescription page. */
-    body: "A neuropeptide involved in closeness and bonding that may support sexual receptivity",
-  },
+  { name: "Tadalafil", body: "A PDE5 inhibitor" },
+  { name: "Bremelanotide (PT-141)", body: "A melanocortin receptor agonist" },
+  { name: "Oxytocin", body: "A peptide hormone included in this compounded formulation" },
 ];
 
 function FormulaPanel({ startTo }) {
@@ -191,13 +177,7 @@ function FormulaPanel({ startTo }) {
                         {a.name}
                       </span>
                       <span
-                        className="mt-1 block text-[0.88rem] italic sm:text-[0.97rem]"
-                        style={{ color: CREAM_SOFT }}
-                      >
-                        {a.role}
-                      </span>
-                      <span
-                        className="mt-2 block max-w-[40ch] text-[0.86rem] leading-relaxed sm:mt-2.5 sm:text-[0.95rem]"
+                        className="mt-1.5 block max-w-[40ch] text-[0.88rem] leading-relaxed sm:text-[0.97rem]"
                         style={{ color: CREAM_SOFT }}
                       >
                         {a.body}
@@ -256,12 +236,9 @@ const SIDES = [
   },
 ];
 
-const SUPPORTS = [
-  "Sexual arousal and receptivity",
-  "Genital blood flow and physical response",
-  "Sexual performance and responsiveness",
-  "Orgasmic response",
-];
+/* The "What it may support / Designed for a more complete sexual response"
+   panel that used to close this section was removed on 2026-09-08 with the
+   compliance pass, along with its four-item support list. */
 
 function MoreThanOneSide() {
   return (
@@ -323,38 +300,6 @@ function MoreThanOneSide() {
         ))}
       </div>
 
-      <Reveal>
-        <div
-          className={`mt-4 px-4 py-6 sm:mt-6 sm:px-9 sm:py-10 lg:px-14 lg:py-12 ${CARD_R}`}
-          style={{ background: PANEL }}
-        >
-          <div className="grid gap-5 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] lg:items-center lg:gap-14">
-            <div>
-              <span className="nv-eyebrow">What it may support</span>
-              <h3 className={`${TITLE} ${TITLE_SIZE} mt-2 max-w-[20ch]`} style={{ color: INK }}>
-                Designed for a more
-                <span className="block">complete sexual response</span>
-              </h3>
-            </div>
-
-            <ul className="flex flex-col gap-3 sm:gap-4">
-              {SUPPORTS.map((s, i) => (
-                <Reveal as="li" key={s} delay={0.12 + i * 0.08} y={12} className="flex items-center gap-3">
-                  <span
-                    className="grid h-5 w-5 shrink-0 place-items-center rounded-full sm:h-6 sm:w-6"
-                    style={{ background: BRASS_BTN }}
-                  >
-                    <Check size={12} strokeWidth={3} style={{ color: CREAM }} />
-                  </span>
-                  <span className="text-[clamp(0.85rem,1.1vw,1rem)]" style={{ color: BODY }}>
-                    {s}
-                  </span>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Reveal>
     </div>
   );
 }
@@ -400,16 +345,8 @@ function DesireIsDifferent({ startTo }) {
             className={`relative aspect-[4/3] overflow-hidden sm:aspect-[3/2] lg:aspect-[10/11] ${CARD_R}`}
             style={{ background: BRASS }}
           >
-            {/* Order matters: the stat card is rendered first and sits at z-0 so
-                the figure below (z-10) occludes it — the card now reads as being
-                *behind* the girl. It is also scaled up per the update. */}
-            <img
-              src="/site/sexual-health/olympus-stat.avif"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              className="nv-drift absolute left-[8%] top-[7%] z-0 w-[74%] max-w-[23rem] drop-shadow-xl sm:w-[62%] lg:left-[6%] lg:w-[92%]"
-            />
+            {/* The 21% arousal readout that used to sit behind her was removed on
+                2026-09-08 with the compliance pass. */}
             <img
               src="/site/sexual-health/olympus-figure.avif"
               alt=""

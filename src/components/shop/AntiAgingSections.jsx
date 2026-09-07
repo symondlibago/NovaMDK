@@ -17,12 +17,12 @@ const STEPS = [
   {
     // {price} is filled from the catalogue below rather than typed here: a stale
     // figure on a page that quotes a starting price is worse than no figure.
-    title: "Review & Complete Your Order",
+    title: "Review Your Treatment & Pricing",
     body: "If approved, review your prescribed treatment and final pricing. NAD+ starts at {price}",
   },
   {
     title: "Fulfillment & Delivery",
-    body: "Your prescription is sent to a licensed partner pharmacy for fulfillment and discreet delivery to your door",
+    body: "Your prescription is sent to a licensed partner pharmacy for fulfillment and shipped discreetly, if prescribed",
   },
 ];
 
@@ -30,7 +30,7 @@ function nadFromPrice() {
   const prices = visibleProducts
     .filter(
       (p) =>
-        p.categorySlug === "unisex-anti-aging-rx" &&
+        p.categorySlug === "longevity" &&
         /nad\+/i.test(p.name) &&
         /injection/i.test(p.name) &&
         !stageOf(p)
@@ -55,8 +55,8 @@ const MARQUEE = [
 
 /* ProductJourney reads only these two fields off what it is handed. */
 const JOURNEY_CATEGORY = {
-  categorySlug: "unisex-anti-aging-rx",
-  categoryName: "Anti-Aging Rx",
+  categorySlug: "longevity",
+  categoryName: "Longevity",
 };
 
 /* ------------------------- two ways to experience ------------------------- */
@@ -314,7 +314,7 @@ function ExploreBand({ startTo }) {
               to={startTo}
               className="mt-6 inline-flex rounded-full border border-[#ffe8b1]/70 px-7 py-2.5 text-[0.95rem] font-medium text-[#ffe8b1] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#ffe8b1]/10"
             >
-              Begin Your Journey
+              Start Your Consultation
             </Link>
           </div>
         </div>
@@ -444,7 +444,7 @@ export default function AntiAgingSections({ startTo = "/start" }) {
         {/* ---------------- steps ---------------- */}
         <Reveal as="div">
           <h2 className="max-w-[12ch] font-display text-[clamp(1.9rem,4.4vw,3rem)] font-extrabold leading-[1.08] text-[#725826]">
-            How NAD+ Care Works
+            How Your Care Works
           </h2>
 
           <ul className="mt-[clamp(1.75rem,3vw,2.5rem)] flex flex-col gap-6">

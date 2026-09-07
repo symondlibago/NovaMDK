@@ -37,8 +37,8 @@ const SIGNALS = [
   },
   {
     icon: ArrowUpDown,
-    title: "Desire + response",
-    body: ["Works through", "melanocortin signaling"],
+    title: "Melanocortin receptor activity",
+    body: ["Bremelanotide is a", "melanocortin receptor agonist"],
     pos: "left-[60%] top-[38%] w-[22%]",
   },
   {
@@ -49,7 +49,7 @@ const SIGNALS = [
   },
 ];
 
-const STEPS = ["Nasal use", "Absorption", "Response pathway"];
+const STEPS = ["Nasal format", "Provider-directed", "Use as prescribed"];
 const STEP_GAP = 0.16;
 
 /* The fill fades out at the left so the card dissolves into the brass instead
@@ -199,8 +199,8 @@ function ApproachToDesire({ startTo }) {
               className={`${TITLE} max-w-[18ch] text-[clamp(1.8rem,4vw,2.9rem)]`}
               style={{ color: CREAM }}
             >
-              A Different Approach
-              <span className="block">to Desire</span>
+              A Needle-Free
+              <span className="block">PT-141 Option</span>
             </h2>
             <Link
               to={startTo}
@@ -216,8 +216,8 @@ function ApproachToDesire({ startTo }) {
             className="max-w-[46ch] text-[clamp(0.92rem,1.05vw,1.02rem)] leading-[1.6] md:pt-1"
             style={{ color: CREAM }}
           >
-            PT-141 (bremelanotide) is a prescription treatment that acts on pathways involved in
-            sexual desire and response. The nasal spray offers a needle-free way to take it
+            PT-141 is a compounded prescription nasal spray containing bremelanotide, a
+            melanocortin receptor agonist
           </Reveal>
         </div>
 
