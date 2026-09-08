@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams, Navigate, Link } from "react-router-dom";
 import { track, EVENTS } from "../lib/analytics";
 import {
-  ArrowRight, ArrowLeft, Check, ShieldAlert, ShieldCheck, Truck, Stethoscope, Lock, FlaskConical, Loader2,
+  ArrowRight, ArrowLeft, Check, ShieldCheck, Truck, Stethoscope, Lock, FlaskConical, Loader2,
   QrCode, X, UserRound, ChevronDown, MapPin, Home,
 } from "lucide-react";
 import Seo from "../components/Seo";
@@ -23,8 +23,9 @@ import { syncToGhl, treatmentLabel } from "../lib/ghl";
 import {
   readKioskLocation, scanUrl, captureScanSource, readScanSource, sourceLabel, SCAN_PARAM,
 } from "../lib/kioskLocations";
+import { isBlockedState } from "../lib/serviceArea";
 import KioskQr from "../components/kiosk/KioskQr";
-import { ComplianceBadges, CompoundedDisclaimer, FdaDisclaimer, fdaDisclaimer } from "../components/Compliance";
+import { ComplianceBadges, CompoundedDisclaimer } from "../components/Compliance";
 import useKioskMode from "../lib/useKioskMode";
 import useLockBodyScroll from "../lib/useLockBodyScroll";
 import DatePicker from "../components/ui/DatePicker";
@@ -160,12 +161,12 @@ export default function ProductPage() {
     .slice(0, 3);
   const relatedHeading = `More in ${product.categoryName}`;
   const hasCompounded = isCompounded(active);
-  const isSupplement = product.categorySlug === "supplements";
-  /* Supplements carry the name-matched FDA wording. A prescription product only
-     shows this card when its own record names a required statement — the B12
-     combination notice, for one — so the name matching in Compliance.jsx cannot
-     fire an unrelated disclaimer onto an Rx page. */
-  const hasFda = !!product.fdaDisclaimer || (isSupplement && !!fdaDisclaimer(product));
+  /* isSupplement / hasFda went with the FDA disclaimer card on 2026-09-09.
+     Restoring the card means restoring both: supplements carried the
+     name-matched wording, while an Rx product only qualified when its own
+     record named a statement (the B12 combination notice, for one), which is
+     what kept Compliance.jsx from firing an unrelated disclaimer onto an Rx
+     page. */
   const startVisit = async (patient) => {
     track(EVENTS.START_VISIT, { id: active.id, name: active.name, category: active.categorySlug });
     setErr("");
@@ -391,52 +392,30 @@ export default function ProductPage() {
                 {active.size ? `${active.size} · ` : ""}
                 {active.shipping}
               </p>
-              {/* Required near every prescription listing and detail page. Off on
-                  retail items, which need no evaluation to buy. */}
-              {!otc && (
-                <>
-                  <p className="mt-2 text-[0.84rem] leading-relaxed text-muted">
-                    Prescription treatments require evaluation by a licensed healthcare provider and
-                    are prescribed only when medically appropriate.
-                  </p>
-                  {/* The required dosing statement. It has to be visible on the
-                      page: the catalogue's Dosing Schedule spec carries the same
-                      sentence, but nothing renders the specs list, so without
-                      this line the page states no dosing position at all. */}
-                  <p className="mt-2 text-[0.84rem] font-medium leading-relaxed text-ink">
-                    Use only as directed by your healthcare provider and prescription label.
-                  </p>
-                </>
-              )}
+              {/* The "requires evaluation" and "use only as directed" lines that
+                  sat here were removed on 2026-09-09 at the client's request.
+                  Both came from the 2026-09-08 compliance script (global items 5
+                  and 6), so restoring them is a two-line change if the
+                  compliance owner wants them back. */}
             </div>
           </Reveal>
         </div>
 
-        {/* compliance disclaimers — one aligned row, icon + label so they're noticed quickly */}
-        {(hasCompounded || hasFda) && (
-          <div className={`mt-8 grid items-stretch gap-4 ${hasCompounded && hasFda ? "md:grid-cols-2" : "grid-cols-1"}`}>
-            {hasCompounded && (
-              <div className="flex gap-3.5 rounded-2xl border border-line bg-surface-2/60 p-5">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-                  <FlaskConical size={16} />
-                </span>
-                <div>
-                  <h4 className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.13em] text-ink">Compounded drug notice</h4>
-                  <CompoundedDisclaimer className="mt-1.5" />
-                </div>
+        {/* Compounded notice only. The FDA disclaimer card that sat beside it
+            was removed on 2026-09-09 at the client's request; the disclaimer
+            text itself still lives on the records in products.jsx, so it is a
+            card away from coming back. */}
+        {hasCompounded && (
+          <div className="mt-8 grid grid-cols-1 items-stretch gap-4">
+            <div className="flex gap-3.5 rounded-2xl border border-line bg-surface-2/60 p-5">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                <FlaskConical size={16} />
+              </span>
+              <div>
+                <h4 className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.13em] text-ink">Compounded drug notice</h4>
+                <CompoundedDisclaimer className="mt-1.5" />
               </div>
-            )}
-            {hasFda && (
-              <div className="flex gap-3.5 rounded-2xl border border-line bg-surface-2/60 p-5">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-                  <ShieldAlert size={16} />
-                </span>
-                <div>
-                  <h4 className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.13em] text-ink">FDA disclaimer</h4>
-                  <FdaDisclaimer product={product} className="mt-1.5" />
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         )}
       </section>
@@ -508,7 +487,6 @@ export default function ProductPage() {
           <p className="mt-2 max-w-[86ch] text-[0.9rem] leading-relaxed text-muted">{active.safety}</p>
         </section>
       )}
-      {!otc && <ProductJourney product={active} />}
 
       {/* ===== Why Nova MDK ===== */}
       {!otc && <ProductWhy />}
@@ -563,6 +541,10 @@ export default function ProductPage() {
           </div>
         </Reveal>
       </section>
+
+      {/* Moved below the consultation CTA on 2026-09-09: the client wants the
+          four-step path to close the page rather than interrupt it. */}
+      {!otc && <ProductJourney product={active} />}
       </div>
       {otc && related.length > 0 && (
         <section className="mx-auto mb-[clamp(3.5rem,7vw,6rem)] max-w-[1180px] px-5 md:px-10">
@@ -787,10 +769,14 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
     form.dob &&
     (form.gender === "1" || form.gender === "2");
 
+  /* A blocked state fails validation like any other bad field, which disables
+     Continue. Checked on form.state rather than at selection time because the
+     address autocomplete can set it too, without the picker ever being opened. */
   const step3Valid =
     form.street.trim().length > 0 &&
     form.city.trim().length > 0 &&
     form.state &&
+    !isBlockedState(form.state) &&
     /^\d{5}(-\d{4})?$/.test(form.zip.trim());
 
   const submit = async (e) => {
@@ -839,6 +825,40 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
     2: ["About you", "These go on your private patient file — your intake will skip them."],
     3: ["Where should we deliver?", "Physical delivery address — no PO boxes."],
   };
+
+  /* Takes over the modal rather than sitting inside the form: once we know we
+     can't serve this address there's nothing left to fill in, and leaving the
+     fields up invites the patient to keep trying. Sits below every hook so the
+     call order can't shift when it trips. */
+  if (isBlockedState(form.state)) {
+    return (
+      <div onClick={onClose} data-lenis-prevent className="fixed inset-0 z-120 flex overflow-y-auto bg-ink/65 p-6 backdrop-blur-sm">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          role="alertdialog"
+          aria-labelledby="nv-unavailable"
+          className="relative m-auto w-full max-w-110 rounded-3xl border border-line bg-surface p-6 text-center nv-shadow-lg md:p-8"
+        >
+          <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
+            <MapPin size={22} />
+          </span>
+          <h3 id="nv-unavailable" className="mt-3 font-display text-[1.35rem] font-extrabold leading-tight">
+            NovaMDK isn&rsquo;t currently available in {form.state}.
+          </h3>
+          <p className="mx-auto mt-2 max-w-[38ch] text-[0.9rem] leading-relaxed text-muted">
+            We&rsquo;re working to expand access. Please check back for future availability.
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-[0.98rem] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow"
+          >
+            Return to NovaMDK
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     /* data-lenis-prevent: Lenis intercepts touchmove globally, so without it a
@@ -944,6 +964,9 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
                 <input value={form.city} onChange={set("city")} placeholder="City" autoComplete="address-level2" className={inputCls} />
                 <input value={form.zip} onChange={set("zip")} placeholder="ZIP code" autoComplete="postal-code" inputMode="numeric" className={inputCls} />
               </div>
+              {/* Blocked states stay in the list rather than being removed from
+                  it: a missing state reads as a broken form. Choosing one swaps
+                  this whole modal for the unavailable notice below. */}
               <NvSelect value={form.state} onChange={setVal("state")} placeholder="State…" options={US_STATES} />
             </>
           )}

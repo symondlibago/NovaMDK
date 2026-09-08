@@ -7,9 +7,9 @@ import { treatmentFor } from "../../lib/portalCatalog";
 
 const greeting = () => {
   const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 18) return "Good afternoon";
-  return "Good evening";
+  if (h < 12) return "Good Morning";
+  if (h < 18) return "Good Afternoon";
+  return "Good Evening";
 };
 
 const Bar = ({ className = "" }) => <span className={`block animate-pulse rounded bg-line ${className}`} />;
@@ -98,7 +98,9 @@ export default function PortalHome({ onUnauthorized, onNavigate }) {
         <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-muted">
           {format(new Date(), "EEEE, MMMM d")}
         </p>
-        <h1 className="mt-2 text-[1.8rem] leading-tight tracking-tight text-ink">
+        {/* primary-deep rather than a literal: it is the theme's own darker
+            gold, so it follows the Design Studio instead of drifting from it. */}
+        <h1 className="mt-2 text-[1.8rem] leading-tight tracking-tight text-primary-deep">
           {greeting()}{name ? `, ${name}` : ""}.
         </h1>
 

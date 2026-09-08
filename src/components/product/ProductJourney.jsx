@@ -22,6 +22,10 @@ const STEPS = [
   },
   {
     title: "Licensed provider review",
+    /* Set explicitly: at the shared 15ch measure this title broke to three
+       lines. The client wants two, with "review" up on the same line as
+       "provider". */
+    titleLines: ["Licensed", "provider review"],
     text: "A licensed healthcare provider evaluates your information and determines whether treatment is medically appropriate",
     img: "/products/detail/journey-provider.avif",
     art: "h-[76%] left-[2%] w-[98%]",
@@ -49,8 +53,19 @@ function StepPanel({ step, index }) {
         className="relative flex h-full min-h-76 flex-col overflow-hidden rounded-[calc(18px*var(--nv-r-scale,1))] px-5 pb-5 pt-6 sm:min-h-84 lg:min-h-96"
         style={{ background: PANEL }}
       >
-        <h3 className="relative z-10 max-w-[15ch] font-display text-[0.95rem] font-bold uppercase leading-[1.2] tracking-[0.02em] text-[#f8e8c5] sm:text-[1.02rem]">
-          {step.title}
+        <h3
+          className={`relative z-10 font-display text-[0.95rem] font-bold uppercase leading-[1.2] tracking-[0.02em] text-[#f8e8c5] sm:text-[1.02rem] ${
+            step.titleLines ? "" : "max-w-[15ch]"
+          }`}
+        >
+          {step.titleLines
+            ? step.titleLines.map((l, i) => (
+                <React.Fragment key={l}>
+                  {i > 0 && <br />}
+                  {l}
+                </React.Fragment>
+              ))
+            : step.title}
         </h3>
         {/* Seated on the panel floor and behind the caption, the way the comp
             crops each figure at the bottom edge. */}
@@ -80,14 +95,17 @@ export default function ProductJourney({ product }) {
         <h2 className="max-w-[16ch] font-display text-[clamp(1.5rem,3.2vw,2.2rem)] font-extrabold leading-[1.15] text-[#725826]">
           From assessment to ongoing care
         </h2>
-        <div className="md:pt-1">
-          <p className="max-w-[46ch] text-[0.88rem] leading-relaxed text-muted">
+        {/* Column is a flex stack so both the sentence and the link can be sent
+            to the container's right edge. Left-ranged on a phone, where there
+            is no width to push into. */}
+        <div className="flex flex-col items-start md:items-end md:pt-1">
+          <p className="max-w-[46ch] text-[0.88rem] leading-relaxed text-muted md:text-right">
             A straightforward path to personalized treatment, with licensed medical oversight at every step
           </p>
           <Link
             to="/start"
             onClick={() => track(EVENTS.QUIZ_STARTED, { source: "product-journey" })}
-            className="group mt-3 inline-flex items-center gap-2.5 text-[0.92rem] font-bold text-ink transition-colors hover:text-[#725826]"
+            className="group mt-3 inline-flex items-center gap-2.5 text-[0.92rem] font-bold text-ink transition-colors hover:text-[#725826] md:self-end"
           >
             Take a quick assessment
             <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />

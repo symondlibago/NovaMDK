@@ -4,6 +4,7 @@ import Navbar from './Nav/Navbar';
 import Footer from './Nav/Footer';
 import BackButton from './ui/BackButton';
 import Seo from './Seo';
+import { blockedStatesPhrase } from '../lib/serviceArea';
 
 /* "MD Integrations Clinician Network" is the one phrase in the legal copy that
    links out (client, 2026-09-04). Split on it rather than reaching for
@@ -66,7 +67,9 @@ const legalDocuments = {
           },
           {
             heading: '2.1(a) Service Availability',
-            text: 'Nova MDK currently facilitates telehealth services in all U.S. states except Alaska, Mississippi, and New Jersey. Services are not available to patients physically located in those states.\n\nSpecific treatments and medications may be limited or unavailable in certain states based on provider licensure, pharmacy coverage, product type, and applicable law. Availability and eligibility are confirmed during the intake and clinical-review process.',
+            // Names the states from the same constant the intake blocks on, so
+            // this sentence can't promise something the form doesn't enforce.
+            text: `Nova MDK currently facilitates telehealth services in all U.S. states except ${blockedStatesPhrase()}. Services are not available to patients physically located in those states.\n\nSpecific treatments and medications may be limited or unavailable in certain states based on provider licensure, pharmacy coverage, product type, and applicable law. Availability and eligibility are confirmed during the intake and clinical-review process.`,
           },
           {
             heading: '2.2 Account Registration',
