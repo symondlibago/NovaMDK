@@ -4,6 +4,14 @@ import { SITE_URL } from "./absoluteUrl";
 export const KIOSK_LOCATIONS = [
   { id: "costa-mesa", label: "Costa Mesa, CA" },
   { id: "irvine", label: "Irvine, CA" },
+  { id: "newport-beach", label: "Newport Beach, CA" },
+  { id: "huntington-beach", label: "Huntington Beach, CA" },
+  { id: "santa-ana", label: "Santa Ana, CA" },
+  { id: "anaheim", label: "Anaheim, CA" },
+  { id: "tustin", label: "Tustin, CA" },
+  { id: "fullerton", label: "Fullerton, CA" },
+  { id: "long-beach", label: "Long Beach, CA" },
+  { id: "mission-viejo", label: "Mission Viejo, CA" },
 ];
 
 const STORAGE_KEY = "nv-kiosk-location";
