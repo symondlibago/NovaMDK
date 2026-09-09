@@ -211,7 +211,6 @@ export default function ProductPage() {
           tags: [
             "website-lead",
             active.categorySlug,
-            "intake-started",
             ...(scannedFrom ? ["kiosk", `kiosk-${scannedFrom}`] : []),
           ],
           note: `Started ${treatmentLabel(active)}.` +
@@ -220,8 +219,12 @@ export default function ProductPage() {
               ? ` Accepted telehealth consent and terms at ${patient.consent.accepted_at}.`
               : ""),
         }).then((r) => {
-          if (!r?.opportunityId) return;
-          try { sessionStorage.setItem("ghl_opportunity", r.opportunityId); } catch { /* private mode */ }
+          // The contact id rides along so the intake page can tag this same
+          // person once MDI confirms the questionnaire actually started.
+          try {
+            if (r?.opportunityId) sessionStorage.setItem("ghl_opportunity", r.opportunityId);
+            if (r?.contactId) sessionStorage.setItem("ghl_contact", r.contactId);
+          } catch { /* private mode */ }
         });
       }
 

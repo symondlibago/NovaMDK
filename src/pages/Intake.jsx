@@ -8,6 +8,24 @@ const MDI_ORIGIN = "https://patient.novamdk.com";
 const PAYMENT_TRIGGER_EVENTS = ["finish"];
 const PAYMENT_TRIGGER_STEPS = ["identification", "thank-you"];
 
+/* Fire-and-forget: a CRM write must never surface to the patient mid-intake,
+   so a failure is logged and the questionnaire carries on regardless. */
+function recordMilestone(milestone) {
+  let contactId = null;
+  let releaseToken = null;
+  try {
+    contactId = sessionStorage.getItem("ghl_contact");
+    releaseToken = sessionStorage.getItem("mdi_release_token");
+  } catch { /* private mode */ }
+  if (!contactId) return;
+
+  fetch("/api/ghl-journey", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ contact_id: contactId, milestone, release_token: releaseToken }),
+  }).catch((e) => console.error(`GHL milestone "${milestone}" failed:`, e.message));
+}
+
 /* Embedded MDIntegrations patient intake — the questionnaire runs in an iframe */
 export default function IntakePage() {
   const [params] = useSearchParams();
@@ -16,6 +34,11 @@ export default function IntakePage() {
   const [payOpen, setPayOpen] = useState(false);
   const [paid, setPaid] = useState(false);
   const [caseId, setCaseId] = useState(null);
+  const intakeTagged = useRef(false);
+  /* Latches for the rest of the session: whatever MDI emits afterwards, we must
+     never put a checkout in front of someone the questionnaire just turned
+     away. */
+  const ineligible = useRef(false);
 
   const token = params.get("token");
   const productName = params.get("product") || "";
@@ -29,11 +52,33 @@ export default function IntakePage() {
       if (event.origin !== MDI_ORIGIN) return;
       if (import.meta.env.DEV) console.log("[MDI message]", event.data);
       const msg = typeof event.data === "object" && event.data !== null ? event.data : {};
+
+      /* The questionnaire is genuinely running now, which is what separates an
+         intake start from a lead who never got past the hand-off. Guarded by a
+         ref because MDI re-emits these if the patient navigates back.
+
+         `step` counts too: the event names came from reading MDI's shipped
+         bundle rather than documentation, and reaching a question is proof the
+         intake began whatever the first event happens to be called. Missing it
+         would leave the tag unapplied, which is worse than applying it early. */
+      if ((msg.event === "start" || msg.event === "step") && !intakeTagged.current) {
+        intakeTagged.current = true;
+        recordMilestone("intake-started");
+      }
+
+      /* The questionnaire disqualified them. Recorded as a plain outcome; the
+         answer that caused it never leaves MDI. */
+      if (msg.event === "dead_end_question" && !ineligible.current) {
+        ineligible.current = true;
+        setPayOpen(false);
+        recordMilestone("not-eligible");
+      }
+
       if (msg.event === "encounter_created" && msg.data) {
         setCaseId(msg.data.encounter_id || null);
         sessionStorage.setItem("mdi_encounter", JSON.stringify(msg.data));
       }
-      if (paid) return;
+      if (paid || ineligible.current) return;
       const step = msg.data?.step || msg.data?.route || null;
       if (
         PAYMENT_TRIGGER_EVENTS.includes(msg.event) ||

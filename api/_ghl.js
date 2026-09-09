@@ -79,6 +79,24 @@ function mergeTreatment(previous, next) {
   return list.join(TREATMENT_SEPARATOR);
 }
 
+/* Additive: GHL's tag endpoint appends rather than replacing, so a later
+ * lifecycle tag never wipes the ones the lead arrived with. */
+export async function tagContact(contactId, tags = []) {
+  const wanted = tags.filter(Boolean);
+  if (!contactId || !wanted.length) return null;
+  await ghlFetch(`/contacts/${contactId}/tags`, { method: "POST", body: { tags: wanted } });
+  return wanted;
+}
+
+export async function updateContactFields(contactId, fields = {}) {
+  const customFields = Object.entries(fields)
+    .filter(([, value]) => value)
+    .map(([key, value]) => ({ key, field_value: value }));
+  if (!contactId || !customFields.length) return null;
+  await ghlFetch(`/contacts/${contactId}`, { method: "PUT", body: { customFields } });
+  return customFields;
+}
+
 export async function upsertContact({ patient = {}, treatment, tags = [], source } = {}) {
   const email = clean(patient.email);
   const phone = toE164(patient.phone_number);
@@ -129,10 +147,9 @@ export async function upsertContact({ patient = {}, treatment, tags = [], source
     }
   }
 
-  const wanted = tags.filter(Boolean);
-  if (contact?.id && wanted.length) {
+  if (contact?.id) {
     try {
-      await ghlFetch(`/contacts/${contact.id}/tags`, { method: "POST", body: { tags: wanted } });
+      await tagContact(contact.id, tags);
     } catch (e) {
       console.error("GHL tagging failed:", e.message);
     }
