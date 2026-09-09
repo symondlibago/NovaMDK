@@ -76,6 +76,22 @@ const comboTagline = (p) => {
 // Fallback questionnaire used when a product has no questionnaireId yet.
 const DEFAULT_QUESTIONNAIRE_ID = "";
 
+/* Compared as calendar parts rather than by subtracting timestamps: a date
+   difference is thrown off by leap years and by the browser's timezone, and
+   someone turning 18 today must pass. */
+const MIN_AGE = 18;
+function isAdult(iso) {
+  const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+  if (!parts) return false;
+  const [, y, m, d] = parts.map(Number);
+
+  const now = new Date();
+  const age = now.getFullYear() - y;
+  const hadBirthday =
+    now.getMonth() + 1 > m || (now.getMonth() + 1 === m && now.getDate() >= d);
+  return (hadBirthday ? age : age - 1) >= MIN_AGE;
+}
+
 export default function ProductPage() {
   const { id } = useParams();
   // URLs use keyword slugs (/product/semaglutide-…); legacy numeric ids still
@@ -768,8 +784,12 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
     form.last_name.trim().length > 0 &&
     form.phone_number.replace(/\D/g, "").length >= 10;
 
+  /* The Terms already require 18, so catching it here saves a minor from filling
+     in an address and being turned away by the questionnaire afterwards. */
+  const tooYoung = form.dob && !isAdult(form.dob);
   const step2Valid =
     form.dob &&
+    !tooYoung &&
     (form.gender === "1" || form.gender === "2");
 
   /* A blocked state fails validation like any other bad field, which disables
@@ -826,7 +846,9 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
     0: ["What's your email address?", ""],
     1: ["First, a few details", "So your care team can reach you about your visit."],
     2: ["About you", "These go on your private patient file — your intake will skip them."],
-    3: ["Where should we deliver?", "Physical delivery address — no PO boxes."],
+    // Says why rather than just forbidding it: a bare "no PO boxes" reads as an
+    // arbitrary rule, and the carrier restriction is the actual reason.
+    3: ["Where should we deliver?", "A street address"],
   };
 
   /* Takes over the modal rather than sitting inside the form: once we know we
@@ -943,6 +965,16 @@ function PatientInfoModal({ onClose, onSubmit, loading = false, err = "" }) {
                   />
                 </label>
               </div>
+              {/* Stated plainly rather than capping the calendar at 2008: a year
+                  that simply isn't there reads as a broken picker. */}
+              {tooYoung && (
+                <p
+                  role="alert"
+                  className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-3.5 py-3 text-[0.82rem] leading-relaxed text-amber-700"
+                >
+                  You need to be {MIN_AGE} or older to start a visit with Nova MDK.
+                </p>
+              )}
             </>
           )}
 

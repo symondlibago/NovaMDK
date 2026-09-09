@@ -60,7 +60,10 @@ export default function ThemeProvider({ children }) {
   // so a selection sticks across reloads on the kiosk itself.
   const [kioskLayoutId, setKioskLayoutId] = useState(() => read(LS.kioskLayout, DEFAULTS.kioskLayout));
   const [studioOpen, setStudioOpen] = useState(false);
-  const [studioUnlocked, setStudioUnlocked] = useState(() => urlFlags.studioParam !== "0");
+  const [studioUnlocked, setStudioUnlocked] = useState(() => {
+    if (urlFlags.studioParam != null) return urlFlags.studioParam !== "0";
+    return read(LS.studio, "false") === "true";
+  });
 
   const isPreview = urlFlags.isPreview;
 
