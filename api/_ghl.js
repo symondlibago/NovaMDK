@@ -8,6 +8,7 @@ export const FIELD = {
   TREATMENT: "treatment",
   SEX_AT_BIRTH: "sex_at_birth",
   EMAIL_ADDRESS: "email_address",
+  PRODUCT_LINE: "product_line",
   // MDI's permanent id for the person. One per patient, never changes, so the
   // Contact is the only place it belongs.
   MDI_PATIENT_ID: "mdi_patient_id",
@@ -29,6 +30,28 @@ const TREATMENT_FIELD_ID = "aUvylLMgR2BFDDjxKNm1";
 const TREATMENT_SEPARATOR = "; ";
 const TREATMENT_MAX_LENGTH = 500;
 const SEX_AT_BIRTH = { 1: "Male", 2: "Female" };
+
+/* `product_line` is a single-select dropdown in GHL, and a dropdown rejects any
+ * value that isn't already one of its options: the write fails rather than
+ * storing something new. So this mirrors the configured options exactly.
+ *
+ * "Supplements" is a real category on the site but deliberately absent here,
+ * so those visits leave the column empty instead of failing. Add it to both
+ * places, never just one, if that changes. */
+const PRODUCT_LINES = new Set([
+  "Weight Loss",
+  "Recovery & Wellness",
+  "Sexual Health",
+  "Skin Health",
+  "Longevity",
+]);
+const productLineOf = (name) => {
+  const value = clean(name);
+  if (!value) return null;
+  if (PRODUCT_LINES.has(value)) return value;
+  console.warn(`GHL product_line has no option for "${value}" — leaving it unset.`);
+  return null;
+};
 
 async function ghlFetch(path, { method = "GET", body } = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -129,7 +152,7 @@ export async function updateOpportunityFields(opportunityId, fields = {}, { name
   return data?.opportunity || null;
 }
 
-export async function upsertContact({ patient = {}, treatment, tags = [], source, mdiPatientId } = {}) {
+export async function upsertContact({ patient = {}, treatment, tags = [], source, mdiPatientId, productLine } = {}) {
   const email = clean(patient.email);
   const phone = toE164(patient.phone_number);
   if (!email && !phone) throw new Error("A GHL contact needs at least an email or a phone number.");
@@ -143,6 +166,9 @@ export async function upsertContact({ patient = {}, treatment, tags = [], source
   // MDI hands this back with the voucher, which is minted moments before this
   // call. It stays blank when MDI couldn't match or create the patient.
   addField(FIELD.MDI_PATIENT_ID, clean(mdiPatientId));
+  // Single-select, so a repeat patient's column reflects their newest visit
+  // rather than every line they've bought. The full history lives in Treatment.
+  addField(FIELD.PRODUCT_LINE, productLineOf(productLine));
 
   const body = {
     locationId: LOCATION_ID,
@@ -244,15 +270,21 @@ export async function markOpportunityPaid(opportunityId) {
  * how repeat visits stay individually trackable without duplicating the person.
  * Deliberately separate from upsertContact: a patient who books twice is one
  * contact and two opportunities. */
-export async function createVisitOpportunity({ contactId, treatment, value, source, kioskLocation, mdiEncounterId } = {}) {
+export async function createVisitOpportunity({ contactId, treatment, value, source, kioskLocation, mdiEncounterId, productLine } = {}) {
   const name = clean(treatment);
   if (!contactId || !name) return null;
 
   const { pipelineId, stageId } = await resolvePipeline();
   const amount = Number(value) > 0 ? { monetaryValue: Number(value) } : null;
+  /* The opportunity's product_line is deliberately unvalidated, unlike the
+     contact's. This one is a text field, so it records the category verbatim
+     and keeps categories the contact dropdown has no option for. It is also
+     the per-visit truth: the contact's copy only ever holds the newest visit,
+     so counting product lines has to happen here. */
   const fields = customFieldList({
     [FIELD.KIOSK_LOCATION]: kioskLocation,
     [FIELD.MDI_ENCOUNTER_ID]: mdiEncounterId,
+    [FIELD.PRODUCT_LINE]: productLine,
   });
   const custom = fields.length ? { customFields: fields } : null;
 

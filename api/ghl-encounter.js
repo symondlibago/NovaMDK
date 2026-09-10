@@ -86,6 +86,7 @@ export default async function handler(req, res) {
           value: req.body?.value,
           source: req.body?.source,
           kioskLocation: req.body?.kioskLocation,
+          productLine: req.body?.productLine,
           mdiEncounterId: encounterId,
         }),
   ]);

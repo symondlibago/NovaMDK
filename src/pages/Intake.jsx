@@ -37,7 +37,7 @@ const statusOf = (data) =>
 /* Same fire-and-forget contract as the milestones above. The encounter ids are
    for the CRM's benefit alone, so a patient mid-questionnaire must never see a
    failure to record them. */
-function recordEncounter({ encounterId, status, additional, treatment, value }) {
+function recordEncounter({ encounterId, status, additional, treatment, value, productLine }) {
   let contactId = null;
   let opportunityId = null;
   let releaseToken = null;
@@ -66,6 +66,7 @@ function recordEncounter({ encounterId, status, additional, treatment, value }) 
       additional,
       treatment,
       value,
+      productLine,
       source: originLabel,
       kioskLocation: scannedFrom ? originLabel : undefined,
       release_token: releaseToken,
@@ -135,6 +136,7 @@ export default function IntakePage() {
             status: statusOf(msg.data),
             additional,
             treatment: treatmentLabel(product),
+            productLine: product?.categoryName,
             // Prices are display strings ("$249"); GHL rejects anything
             // non-numeric as an opportunity value.
             value: Number(String(product?.price ?? "").replace(/[^0-9.]/g, "")) || undefined,

@@ -223,6 +223,9 @@ export default function ProductPage() {
              moment ago. It rides along on the contact write rather than a
              second call, and is simply absent when MDI couldn't resolve them. */
           mdiPatientId: voucher.patient_id || undefined,
+          // The category as the site names it. The server drops it when GHL's
+          // dropdown has no matching option rather than failing the write.
+          productLine: active.categoryName,
           // Prices are display strings ("$249"), so strip to a number for the
           // opportunity's value — GHL rejects anything non-numeric.
           value: Number(String(active.price).replace(/[^0-9.]/g, "")) || undefined,
