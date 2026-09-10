@@ -3,6 +3,7 @@ import {
   updateContactFields,
   updateOpportunityFields,
   createVisitOpportunity,
+  tagContact,
   FIELD,
 } from "./_ghl.js";
 import { blocked, verifyReleaseToken } from "./_guard.js";
@@ -18,6 +19,11 @@ const safeStatus = (v) => {
 };
 
 const idOf = (result) => result?.opportunity?.id || result?.id || null;
+
+/* Distinct from "intake-started", which fires when the questionnaire opens.
+   This one means they reached the end and MDI created the encounter, so the
+   two together give the drop-off between starting and finishing. */
+const SUBMITTED_TAG = "intake-submitted";
 
 /* Written for humans in the clinic's own timezone. The field is a text field
    either way, so nothing is gained by storing UTC, and a raw ISO stamp reads
@@ -68,7 +74,7 @@ export default async function handler(req, res) {
 
   /* Settled independently. The contact mirror and the per-visit record are
      useful on their own, so one failing must not cost us the other. */
-  const [contactWrite, opportunityWrite] = await Promise.allSettled([
+  const [contactWrite, opportunityWrite, tagWrite] = await Promise.allSettled([
     updateContactFields(contactId, {
       [FIELD.LATEST_MDI_ENCOUNTER_ID]: encounterId,
       [FIELD.LAST_MDI_UPDATE_DATE]: stamp(),
@@ -89,9 +95,11 @@ export default async function handler(req, res) {
           productLine: req.body?.productLine,
           mdiEncounterId: encounterId,
         }),
+    // Additive, so it never disturbs the tags the lead arrived with.
+    tagContact(contactId, [SUBMITTED_TAG]),
   ]);
 
-  for (const [what, result] of [["contact", contactWrite], ["opportunity", opportunityWrite]]) {
+  for (const [what, result] of [["contact", contactWrite], ["opportunity", opportunityWrite], ["tag", tagWrite]]) {
     if (result.status === "rejected") {
       console.error(
         `GHL encounter ${what} write failed:`,
@@ -103,7 +111,7 @@ export default async function handler(req, res) {
 
   // Never fail a patient's intake over a CRM write.
   return res.status(200).json({
-    ok: contactWrite.status === "fulfilled" && opportunityWrite.status === "fulfilled",
+    ok: [contactWrite, opportunityWrite, tagWrite].every((r) => r.status === "fulfilled"),
     encounter_id: encounterId,
     // Where the encounter actually landed, which differs from what was sent
     // when a repeat visit spawned a fresh record.
