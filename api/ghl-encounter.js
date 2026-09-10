@@ -19,6 +19,21 @@ const safeStatus = (v) => {
 
 const idOf = (result) => result?.opportunity?.id || result?.id || null;
 
+/* Written for humans in the clinic's own timezone. The field is a text field
+   either way, so nothing is gained by storing UTC, and a raw ISO stamp reads
+   seven hours wrong to the staff in California who actually look at it. */
+const CLINIC_TZ = process.env.GHL_CLINIC_TIMEZONE || "America/Los_Angeles";
+const stamp = (d = new Date()) =>
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: CLINIC_TZ,
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(d);
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -56,7 +71,7 @@ export default async function handler(req, res) {
   const [contactWrite, opportunityWrite] = await Promise.allSettled([
     updateContactFields(contactId, {
       [FIELD.LATEST_MDI_ENCOUNTER_ID]: encounterId,
-      [FIELD.LAST_MDI_UPDATE_DATE]: new Date().toISOString(),
+      [FIELD.LAST_MDI_UPDATE_DATE]: stamp(),
       ...(status && { [FIELD.MDI_ENCOUNTER_STATUS]: status }),
     }),
     opportunityId && !additional
