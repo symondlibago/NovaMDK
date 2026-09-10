@@ -4,13 +4,26 @@ const LOCATION_ID = process.env.GHL_LOCATION_ID;
 const VERSION = process.env.GHL_API_VERSION || "2021-07-28";
 
 export const ghlConfigured = () => Boolean(TOKEN && LOCATION_ID);
-const FIELD = {
+export const FIELD = {
   TREATMENT: "treatment",
   SEX_AT_BIRTH: "sex_at_birth",
   EMAIL_ADDRESS: "email_address",
-  // Lives on the Opportunity, not the Contact: one person can walk up to two
-  // different kiosks, and per-visit is the only place that stays true.
+  // MDI's permanent id for the person. One per patient, never changes, so the
+  // Contact is the only place it belongs.
+  MDI_PATIENT_ID: "mdi_patient_id",
+  // The newest encounter, mirrored onto the Contact so a list can show it
+  // without opening the opportunity. The per-visit copy lives below.
+  LATEST_MDI_ENCOUNTER_ID: "latest_mdi_encounter_id",
+  MDI_ENCOUNTER_STATUS: "mdi_encounter_status",
+  LAST_MDI_UPDATE_DATE: "last_mdi_update_date",
+  /* ---- these two live on the Opportunity, not the Contact ---- */
+  // One person can walk up to two different kiosks, and per-visit is the only
+  // place that stays true.
   KIOSK_LOCATION: "kiosk_location",
+  // The encounter this particular visit produced. Distinct from the Contact's
+  // LATEST_MDI_ENCOUNTER_ID, which gets overwritten each visit — this one is
+  // the permanent record of which encounter belongs to which opportunity.
+  MDI_ENCOUNTER_ID: "mdi_encounter_id",
 };
 const TREATMENT_FIELD_ID = "aUvylLMgR2BFDDjxKNm1";
 const TREATMENT_SEPARATOR = "; ";
@@ -88,16 +101,35 @@ export async function tagContact(contactId, tags = []) {
   return wanted;
 }
 
+/* Bare keys throughout. GHL's UI shows these wrapped as
+ * `{{contact.some_key}}` / `{{opportunity.some_key}}` because that's the merge
+ * syntax for emails and forms, but the API only accepts the unprefixed key. */
+const customFieldList = (fields) =>
+  Object.entries(fields)
+    .filter(([, value]) => value != null && String(value).trim() !== "")
+    .map(([key, value]) => ({ key, field_value: typeof value === "string" ? value.trim() : value }));
+
 export async function updateContactFields(contactId, fields = {}) {
-  const customFields = Object.entries(fields)
-    .filter(([, value]) => value)
-    .map(([key, value]) => ({ key, field_value: value }));
+  const customFields = customFieldList(fields);
   if (!contactId || !customFields.length) return null;
   await ghlFetch(`/contacts/${contactId}`, { method: "PUT", body: { customFields } });
   return customFields;
 }
 
-export async function upsertContact({ patient = {}, treatment, tags = [], source } = {}) {
+/* `name` rides along because GHL treats it as required on an opportunity PUT.
+ * Callers pass the same treatment the record was created with, so it reads as a
+ * no-op rather than a rename. */
+export async function updateOpportunityFields(opportunityId, fields = {}, { name } = {}) {
+  const customFields = customFieldList(fields);
+  if (!opportunityId || !customFields.length) return null;
+  const data = await ghlFetch(`/opportunities/${opportunityId}`, {
+    method: "PUT",
+    body: { customFields, ...(clean(name) && { name: clean(name) }) },
+  });
+  return data?.opportunity || null;
+}
+
+export async function upsertContact({ patient = {}, treatment, tags = [], source, mdiPatientId } = {}) {
   const email = clean(patient.email);
   const phone = toE164(patient.phone_number);
   if (!email && !phone) throw new Error("A GHL contact needs at least an email or a phone number.");
@@ -108,6 +140,9 @@ export async function upsertContact({ patient = {}, treatment, tags = [], source
   const nextTreatment = clean(treatment);
   addField(FIELD.SEX_AT_BIRTH, SEX_AT_BIRTH[Number(patient.gender)]);
   addField(FIELD.EMAIL_ADDRESS, email);
+  // MDI hands this back with the voucher, which is minted moments before this
+  // call. It stays blank when MDI couldn't match or create the patient.
+  addField(FIELD.MDI_PATIENT_ID, clean(mdiPatientId));
 
   const body = {
     locationId: LOCATION_ID,
@@ -209,17 +244,17 @@ export async function markOpportunityPaid(opportunityId) {
  * how repeat visits stay individually trackable without duplicating the person.
  * Deliberately separate from upsertContact: a patient who books twice is one
  * contact and two opportunities. */
-export async function createVisitOpportunity({ contactId, treatment, value, source, kioskLocation } = {}) {
+export async function createVisitOpportunity({ contactId, treatment, value, source, kioskLocation, mdiEncounterId } = {}) {
   const name = clean(treatment);
   if (!contactId || !name) return null;
 
   const { pipelineId, stageId } = await resolvePipeline();
   const amount = Number(value) > 0 ? { monetaryValue: Number(value) } : null;
-  // Bare key, like the contact fields. GHL shows it as `contact.kiosk_location`
-  // in the UI but only accepts the unprefixed form on write.
-  const kiosk = clean(kioskLocation)
-    ? { customFields: [{ key: FIELD.KIOSK_LOCATION, field_value: clean(kioskLocation) }] }
-    : null;
+  const fields = customFieldList({
+    [FIELD.KIOSK_LOCATION]: kioskLocation,
+    [FIELD.MDI_ENCOUNTER_ID]: mdiEncounterId,
+  });
+  const custom = fields.length ? { customFields: fields } : null;
 
   try {
     const data = await ghlFetch("/opportunities/", {
@@ -232,7 +267,7 @@ export async function createVisitOpportunity({ contactId, treatment, value, sour
         name,
         status: "open",
         ...amount,
-        ...kiosk,
+        ...custom,
         ...(clean(source) && { source: clean(source) }),
       },
     });
@@ -250,7 +285,7 @@ export async function createVisitOpportunity({ contactId, treatment, value, sour
     // visit, and that visit came from wherever this scan did.
     const data = await ghlFetch(`/opportunities/${existingId}`, {
       method: "PUT",
-      body: { name, ...amount, ...kiosk, ...(clean(source) && { source: clean(source) }) },
+      body: { name, ...amount, ...custom, ...(clean(source) && { source: clean(source) }) },
     });
     return { opportunity: data?.opportunity || null, created: false };
   }

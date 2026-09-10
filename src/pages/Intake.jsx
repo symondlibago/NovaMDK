@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { ArrowLeft, Loader2, Lock, CreditCard, CheckCircle2, ShieldCheck } from "lucide-react";
 import { productsData } from "../components/data/products";
+import { treatmentLabel } from "../lib/ghl";
+import { readScanSource, sourceLabel } from "../lib/kioskLocations";
 import Seo from "../components/Seo";
 
 const MDI_ORIGIN = "https://patient.novamdk.com";
@@ -26,6 +28,51 @@ function recordMilestone(milestone) {
   }).catch((e) => console.error(`GHL milestone "${milestone}" failed:`, e.message));
 }
 
+/* The event payload's shape came from reading MDI's shipped bundle rather than
+   their documentation, so the status is read defensively: whichever of these
+   they happen to send, or none at all. */
+const statusOf = (data) =>
+  data?.case_status?.name || data?.status || data?.encounter_status || null;
+
+/* Same fire-and-forget contract as the milestones above. The encounter ids are
+   for the CRM's benefit alone, so a patient mid-questionnaire must never see a
+   failure to record them. */
+function recordEncounter({ encounterId, status, additional, treatment, value }) {
+  let contactId = null;
+  let opportunityId = null;
+  let releaseToken = null;
+  try {
+    contactId = sessionStorage.getItem("ghl_contact");
+    opportunityId = sessionStorage.getItem("ghl_opportunity");
+    releaseToken = sessionStorage.getItem("mdi_release_token");
+  } catch { /* private mode */ }
+  // No contact means the hand-off never wrote one, and there is nothing in the
+  // CRM for this encounter to hang off.
+  if (!contactId) return;
+
+  // Only needed if this encounter has to open its own opportunity, but it costs
+  // nothing to send and keeps the kiosk funnel intact when it does.
+  const scannedFrom = readScanSource();
+  const originLabel = scannedFrom ? sourceLabel(scannedFrom) : "NovaMDK website";
+
+  fetch("/api/ghl-encounter", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contact_id: contactId,
+      opportunity_id: opportunityId,
+      encounter_id: encounterId,
+      status,
+      additional,
+      treatment,
+      value,
+      source: originLabel,
+      kioskLocation: scannedFrom ? originLabel : undefined,
+      release_token: releaseToken,
+    }),
+  }).catch((e) => console.error("GHL encounter write failed:", e.message));
+}
+
 /* Embedded MDIntegrations patient intake — the questionnaire runs in an iframe */
 export default function IntakePage() {
   const [params] = useSearchParams();
@@ -35,6 +82,10 @@ export default function IntakePage() {
   const [paid, setPaid] = useState(false);
   const [caseId, setCaseId] = useState(null);
   const intakeTagged = useRef(false);
+  /* Holds the last encounter id sent rather than a boolean: MDI re-emits
+     encounter_created when the patient navigates back, and the id is what tells
+     a repeat of the same encounter from a genuinely new visit. */
+  const encounterSent = useRef(null);
   /* Latches for the rest of the session: whatever MDI emits afterwards, we must
      never put a checkout in front of someone the questionnaire just turned
      away. */
@@ -53,14 +104,6 @@ export default function IntakePage() {
       if (import.meta.env.DEV) console.log("[MDI message]", event.data);
       const msg = typeof event.data === "object" && event.data !== null ? event.data : {};
 
-      /* The questionnaire is genuinely running now, which is what separates an
-         intake start from a lead who never got past the hand-off. Guarded by a
-         ref because MDI re-emits these if the patient navigates back.
-
-         `step` counts too: the event names came from reading MDI's shipped
-         bundle rather than documentation, and reaching a question is proof the
-         intake began whatever the first event happens to be called. Missing it
-         would leave the tag unapplied, which is worse than applying it early. */
       if ((msg.event === "start" || msg.event === "step") && !intakeTagged.current) {
         intakeTagged.current = true;
         recordMilestone("intake-started");
@@ -75,8 +118,28 @@ export default function IntakePage() {
       }
 
       if (msg.event === "encounter_created" && msg.data) {
-        setCaseId(msg.data.encounter_id || null);
-        sessionStorage.setItem("mdi_encounter", JSON.stringify(msg.data));
+        const encounterId = msg.data.encounter_id || null;
+        setCaseId(encounterId);
+        try {
+          sessionStorage.setItem("mdi_encounter", JSON.stringify(msg.data));
+        } catch { /* private mode */ }
+
+        /* This session already opened an opportunity at the email step, and the
+           first encounter belongs to it. A second, different encounter is a new
+           visit, so it earns its own record instead of displacing the first. */
+        if (encounterId && encounterId !== encounterSent.current) {
+          const additional = Boolean(encounterSent.current);
+          encounterSent.current = encounterId;
+          recordEncounter({
+            encounterId,
+            status: statusOf(msg.data),
+            additional,
+            treatment: treatmentLabel(product),
+            // Prices are display strings ("$249"); GHL rejects anything
+            // non-numeric as an opportunity value.
+            value: Number(String(product?.price ?? "").replace(/[^0-9.]/g, "")) || undefined,
+          });
+        }
       }
       if (paid || ineligible.current) return;
       const step = msg.data?.step || msg.data?.route || null;
@@ -89,7 +152,7 @@ export default function IntakePage() {
     };
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [paid]);
+  }, [paid, product]);
 
   useEffect(() => {
     if (!payDemo || !loaded || paid) return;

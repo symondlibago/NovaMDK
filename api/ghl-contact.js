@@ -13,8 +13,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { patient, treatment, tags, source, note, value, kioskLocation } = req.body || {};
-    const contact = await upsertContact({ patient, treatment, tags, source });
+    const { patient, treatment, tags, source, note, value, kioskLocation, mdiPatientId } = req.body || {};
+    const contact = await upsertContact({ patient, treatment, tags, source, mdiPatientId });
     // Returned to the client so the payment step can move this exact
     // opportunity to Paid, rather than guessing at it by contact later.
     let opportunityId = null;

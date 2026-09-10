@@ -219,6 +219,10 @@ export default function ProductPage() {
         syncToGhl({
           patient: profile,
           treatment: treatmentLabel(active),
+          /* MDI's permanent id for this person, minted with the voucher a
+             moment ago. It rides along on the contact write rather than a
+             second call, and is simply absent when MDI couldn't resolve them. */
+          mdiPatientId: voucher.patient_id || undefined,
           // Prices are display strings ("$249"), so strip to a number for the
           // opportunity's value — GHL rejects anything non-numeric.
           value: Number(String(active.price).replace(/[^0-9.]/g, "")) || undefined,
