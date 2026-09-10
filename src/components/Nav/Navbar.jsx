@@ -5,136 +5,175 @@ import { ChevronDown, ArrowRight, Menu, X, ClipboardList, LogIn, LifeBuoy } from
 import { getLenis } from "../../lib/smoothScroll";
 import Marquee from "../ui/Marquee";
 import useKioskMode from "../../lib/useKioskMode";
-import { visibleProducts } from "../data/products";
+import { visibleProducts, inCategory } from "../data/products";
 import { productPath } from "../../lib/slug";
+import { stageOf, displayTitle } from "../../lib/catalog";
 
-// Kiosk burger menu — top categories, each expanding to a few treatments plus
-// the consultation quiz. Slugs mirror the treatment catalog + questionnaires.
-const KIOSK_MENU = [
-  { label: "Anti Aging", goal: "longevity", consult: "longevity" },
-  { label: "Sexual Health", goal: "sexual-health", consult: "intimacy" },
+/* The five treatment categories, in the order the 2026-09-11 comp sets them.
+   `consult` is the questionnaire slug, which is not always the category slug. */
+const CATEGORIES = [
   { label: "Weight Loss", goal: "weight-loss", consult: "weight-loss" },
+  { label: "Longevity", goal: "longevity", consult: "longevity" },
   { label: "Skin Health", goal: "skin-health", consult: "skin" },
-  { label: "Sport Medicine", goal: "recovery-wellness", consult: "recovery" },
+  { label: "Sexual Health", goal: "sexual-health", consult: "intimacy" },
+  { label: "Recovery & Wellness", goal: "recovery-wellness", consult: "recovery" },
 ];
 
 const EASE = [0.16, 1, 0.3, 1];
 
-// Mirror the real treatment categories (see data/consultations.jsx). Each item
-const treatmentItems = [
-  { name: "Weight Loss", img: "/products/tirzepatide.avif", link: "/treatments/weight-loss" },
-  { name: "Longevity", img: "/products/nad-plus.avif", link: "/treatments/longevity" },
-  { name: "Skin Health", img: "/products/luminance.avif", link: "/treatments/skin-health" },
-  { name: "Sexual Health", img: "/products/olympus-peak.avif", link: "/treatments/sexual-health" },
-  { name: "Recovery & Wellness", img: "/products/ldn.avif", link: "/treatments/recovery-wellness" },
-];
+/* Built once at module load, not per render: the catalogue is static.
+   `inCategory` rather than a categorySlug match, so a cross-listed treatment
+   (NAD+ and Glutathione sit in two categories) appears under both. Dose rungs
+   collapse to their Starter so the panel lists treatments, not strengths. */
+const TREATMENTS = Object.fromEntries(
+  CATEGORIES.map((c) => {
+    const seen = new Set();
+    const items = visibleProducts
+      .filter((p) => inCategory(p, c.goal))
+      .filter((p) => !stageOf(p) || stageOf(p) === "Starter")
+      .filter((p) => {
+        const t = displayTitle(p);
+        if (seen.has(t)) return false;
+        seen.add(t);
+        return true;
+      });
+    return [c.goal, items];
+  }),
+);
 
 /* The peptide molecule menu listed the LUVIRA sub-lines (Semaglutide, BPC-157,
    MOTS-C, …). That whole line was dropped from the catalog on 2026-08-05, so the
    menu it fed is gone with it — "Supplements" stays a plain link. */
 
-/* --------------------------- desktop dropdown --------------------------- */
-function NavDropdown({ title, items, viewAllLink, openOnClick = false }) {
-  const [open, setOpen] = useState(false);
-  // Touch screens (kiosk) can't hover — open on tap and dim-tap to close.
-  const hoverProps = openOnClick ? {} : { onMouseEnter: () => setOpen(true), onMouseLeave: () => setOpen(false) };
+/* The catalogue art comes in two shapes and they cannot share one size.
+   The weight-loss renders are 1000x1000 with the product sitting in generous
+   whitespace, so the bottle itself is only ~58% of the file. nad-sublingual
+   (776x1674), glutathione (253x542) and scream-cream (390x984) are tight crops
+   whose product bleeds to all four edges. Draw both at the same box height and
+   the crops look blown up next to the padded ones, which is exactly what they
+   looked like.
+
+   So the box supplies the margin the crop is missing: measure the file on load
+   and, if it is markedly taller than wide (every padded render is square, every
+   crop is over 2:1), draw it at 60% height so its bottle lands at the same
+   visual size as a padded one. Measured rather than listed by filename, so new
+   art is handled without touching this. */
+/* Measured off-DOM with a throwaway Image rather than from the rendered one.
+   The rendered thumb is lazy and lives inside a panel whose height animates up
+   from zero, so its load event is unreliable: sometimes it had already fired
+   before React attached the handler, sometimes the lazy loader had not started
+   it at all, and either way every crop stayed at full height. A detached Image
+   always resolves, and the browser serves it from the same cache. Cached per
+   src at module scope so each file is measured once for the session. */
+const TIGHT_ART = new Map();
+
+function ProductThumb({ src }) {
+  const [tight, setTight] = useState(() => TIGHT_ART.get(src) ?? false);
+
+  useEffect(() => {
+    if (TIGHT_ART.has(src)) {
+      setTight(TIGHT_ART.get(src));
+      return undefined;
+    }
+    let alive = true;
+    const probe = new Image();
+    probe.onload = () => {
+      const t = probe.naturalHeight / probe.naturalWidth > 1.5;
+      TIGHT_ART.set(src, t);
+      if (alive) setTight(t);
+    };
+    probe.src = src;
+    return () => {
+      alive = false;
+    };
+  }, [src]);
+
+  /* The image is absolutely positioned rather than laid out in the tile.
+     As a centred grid item its height was auto, so `w-full` on a 390x984 file
+     resolved to a 535px-tall element inside a 212px box and the tile simply
+     clipped it, which is the crop that kept coming back. Pinned to inset-0 the
+     box is definite, object-contain letterboxes any ratio, and padding is the
+     one lever that sets how big the product sits. */
   return (
-    <div className="relative" {...hoverProps}>
-      <button
-        aria-expanded={open}
-        onClick={openOnClick ? () => setOpen((o) => !o) : undefined}
-        className="flex items-center gap-1.5 py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink"
-      >
-        {title}
-        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown size={14} className="opacity-50" />
-        </motion.span>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <>
-            {openOnClick && <div className="fixed inset-0 z-40" aria-hidden="true" onClick={() => setOpen(false)} />}
-          <motion.div
+    <span className="relative block aspect-square w-full overflow-hidden bg-surface-2">
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className={`absolute inset-0 h-full w-full object-contain transition-transform duration-500 group-hover:scale-105 ${
+          tight ? "p-[20%]" : "p-4"
+        }`}
+      />
+    </span>
+  );
+}
+
+/* ---------------------- desktop category mega-panel ----------------------
+   One panel shared by all five categories rather than a dropdown each. The
+   shell animates in once and then stays put while the pointer travels along
+   the row, and only the contents cross-fade, so moving Weight Loss → Longevity
+   reads as the panel changing its mind rather than closing and reopening. */
+function TreatmentPanel({ cat, onNavigate }) {
+  const items = TREATMENTS[cat.goal] || [];
+  return (
+    <motion.div
+      key={cat.goal}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.22, ease: EASE }}
+      className="mx-auto max-w-[1340px] px-5 py-7 md:px-10"
+    >
+      <div className="mb-4 flex items-baseline justify-between gap-4">
+        <h2 className="font-display text-[1.05rem] font-bold text-ink">{cat.label}</h2>
+        <Link
+          to={`/treatments/${cat.goal}`}
+          onClick={onNavigate}
+          className="group inline-flex items-center gap-1.5 text-[0.85rem] font-semibold text-primary transition-colors hover:text-primary-deep"
+        >
+          View all
+          <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+
+      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {items.map((p, i) => (
+          <motion.li
+            key={p.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute left-1/2 top-full z-50 mt-2 max-h-[72vh] w-[330px] -translate-x-1/2 overflow-y-auto rounded-3xl border border-line bg-surface p-2.5 nv-shadow-lg nv-scroll"
+            /* Capped so a six-item category does not run visibly late. */
+            transition={{ duration: 0.34, ease: EASE, delay: Math.min(i, 6) * 0.045 }}
           >
             <Link
-              to={viewAllLink}
-              onClick={() => setOpen(false)}
-              className="group mb-2 flex items-center justify-between rounded-2xl bg-surface-2 px-4 py-3 text-[15px] font-medium text-primary transition-colors hover:bg-primary hover:text-on-primary"
+              to={productPath(p)}
+              onClick={onNavigate}
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:nv-shadow"
             >
-              <span className="flex items-center gap-3">
-                <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-xl bg-surface">
-                  <img src={items[0]?.img} className="h-full w-full scale-[1.15] object-contain transition-transform group-hover:scale-[1.3]" alt="" />
-                </span>
-                View all {title.toLowerCase()}
+              <ProductThumb src={p.img} />
+              <span className="flex grow items-center px-3 py-2.5 text-[0.86rem] font-medium leading-snug text-ink/85 transition-colors group-hover:text-ink">
+                {displayTitle(p)}
               </span>
-              <ArrowRight size={18} />
             </Link>
-            <ul className="space-y-0.5">
-              {items.map((item, i) => (
-                <li key={i}>
-                  <Link
-                    to={item.link}
-                    onClick={() => setOpen(false)}
-                    className="group flex items-center justify-between rounded-2xl px-4 py-2.5 transition-colors hover:bg-surface-2"
-                  >
-                    <span className="flex items-center gap-3">
-                      <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-lg">
-                        <img src={item.img} className="h-full w-full scale-[1.15] object-contain transition-transform group-hover:scale-[1.3]" alt={item.name} />
-                      </span>
-                      <span className="text-[15px] font-medium text-ink/80 transition-colors group-hover:text-ink">{item.name}</span>
-                    </span>
-                    <span className="font-mono text-[11px] tracking-tight text-muted/50">Rx</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </div>
+          </motion.li>
+        ))}
+      </ul>
+
+      <Link
+        to={`/start/${cat.consult}`}
+        onClick={onNavigate}
+        className="mt-4 inline-flex items-center gap-2 rounded-full bg-surface-2 px-5 py-2.5 text-[0.85rem] font-semibold text-ink transition-colors hover:bg-primary hover:text-on-primary"
+      >
+        <ClipboardList size={15} /> Start a {cat.label} consultation
+      </Link>
+    </motion.div>
   );
 }
 
-/* --------------------------- mobile accordion --------------------------- */
-function MobileGroup({ title, items, close, viewAllLink, defaultOpen = false }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="border-b border-line py-4">
-      <button aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center justify-between text-[17px] font-medium text-ink">
-        {title}
-        <ChevronDown size={18} className={`text-muted transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-            <div className="flex flex-col gap-3.5 pt-4">
-              <Link to={viewAllLink} onClick={close} className="flex items-center gap-2 text-[15px] font-medium text-primary">
-                View all {title.toLowerCase()} <ArrowRight size={14} />
-              </Link>
-              {items.map((item, i) => (
-                <Link key={i} to={item.link} onClick={close} className="flex items-center gap-3 text-[15px] text-muted transition-colors hover:text-ink">
-                  <span className="grid h-8 w-8 place-items-center rounded bg-surface-2">
-                    <img src={item.img} alt={item.name} className="h-full w-full scale-[1.1] object-contain" />
-                  </span>
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function KioskMenuGroup({ cat, close, open, onToggle }) {
-  const treatments = visibleProducts.filter((p) => p.categorySlug === cat.goal);
+/* ------------------- category accordion (mobile + kiosk) ------------------- */
+function CategoryGroup({ cat, close, open, onToggle }) {
+  const treatments = TREATMENTS[cat.goal] || [];
   return (
     <div className="border-b border-line py-4">
       <button aria-expanded={open} onClick={onToggle} className="flex w-full items-center justify-between text-[17px] font-medium text-ink">
@@ -150,7 +189,7 @@ function KioskMenuGroup({ cat, close, open, onToggle }) {
                   <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-2">
                     <img src={t.img} alt={t.name} loading="lazy" className="h-full w-full scale-[1.1] object-contain" />
                   </span>
-                  <span className="min-w-0 flex-1 truncate">{t.name}</span>
+                  <span className="min-w-0 flex-1 truncate">{displayTitle(t)}</span>
                   <ArrowRight size={14} className="shrink-0 opacity-50" />
                 </Link>
               ))}
@@ -168,10 +207,14 @@ function KioskMenuGroup({ cat, close, open, onToggle }) {
 /* ------------------------------- navbar ------------------------------- */
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  // Which kiosk category is expanded — null for none. Single value, so opening
-  // one closes whichever was open.
+  // Which category is expanded in the drawer — null for none. Single value, so
+  // opening one closes whichever was open.
   const [openKioskGoal, setOpenKioskGoal] = useState(null);
+  /* Which category's panel is showing on the desktop bar. Kiosk is a touch
+     screen with no hover, so there it toggles on tap instead. */
+  const [openCat, setOpenCat] = useState(null);
   const isKiosk = useKioskMode();
+  const closePanel = () => setOpenCat(null);
 
   // Horizontal scroll meter pinned to the bottom of the header.
   const { scrollYProgress } = useScroll();
@@ -189,43 +232,64 @@ export default function Navbar() {
       {/* promo bar — scrolling credential marquee */}
       <Marquee />
 
-      <header className="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-xl">
-        <nav className="mx-auto flex min-h-[68px] max-w-[1340px] items-center justify-between px-5 md:px-10">
-          <Link to="/" aria-label="Nova MDK home"><img src="/logo.png" alt="Nova MDK" className="h-[46px] w-auto md:h-[52px]" /></Link>
+      {/* The panel hangs off the header, so the whole thing is one hover
+          target: travelling from a category down into its own panel never
+          crosses dead space and never closes it. */}
+      <header
+        onMouseLeave={isKiosk ? undefined : closePanel}
+        className="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-xl"
+      >
+        <nav className="mx-auto flex min-h-[68px] max-w-[1340px] items-center justify-between gap-4 px-5 md:px-10">
+          <Link to="/" aria-label="Nova MDK home" onClick={closePanel}>
+            <img src="/logo.png" alt="Nova MDK" className="h-[46px] w-auto md:h-[52px]" />
+          </Link>
 
-          {/* Desktop links stay off in kiosk mode at ANY width — the physical
-              kiosk is 1080px wide (≥ lg), which otherwise doubles the menu */}
-          {!isKiosk && (
-            <div className="hidden items-center gap-7 lg:flex">
-              <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} />
-              {/* Kiosk hidden at client request (2026-08-11) — route still live, just unlinked.
-              <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
-              */}
-              <Link to="/contact" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Contact</Link>
-            </div>
-          )}
-
-          {/* Kiosk mode: primary sections live on the navbar (the burger holds the meds menu) */}
-          {isKiosk && (
-            <div className="flex items-center gap-6">
-              {/* touch screen: tap opens the dropdown instead of jumping to /treatments */}
-              <NavDropdown title="Treatments" viewAllLink="/treatments" items={treatmentItems} openOnClick />
-              {/* Kiosk hidden at client request (2026-08-11) — route still live, just unlinked.
-              <Link to="/kiosk" className="py-2 text-[15px] font-medium text-muted transition-colors hover:text-ink">Kiosk</Link>
-              */}
-            </div>
-          )}
+          {/* The category row. Hidden below lg on a normal browser, where the
+              drawer carries the same five; the kiosk keeps it at every width
+              because its screen is wide enough and tapping beats a burger. */}
+          <div className={`items-center gap-1 ${isKiosk ? "flex" : "hidden lg:flex"}`}>
+            {CATEGORIES.map((cat, i) => {
+              const on = openCat === cat.goal;
+              return (
+                <React.Fragment key={cat.goal}>
+                  {/* Hairline between each pair, as the comp draws them. Not a
+                      border on the button: that would sit under the active
+                      marker and move with the button's own padding. */}
+                  {i > 0 && <span aria-hidden="true" className="h-5 w-px shrink-0 bg-ink/15" />}
+                <button
+                  aria-expanded={on}
+                  onMouseEnter={isKiosk ? undefined : () => setOpenCat(cat.goal)}
+                  onFocus={isKiosk ? undefined : () => setOpenCat(cat.goal)}
+                  onClick={() => setOpenCat((g) => (g === cat.goal ? null : cat.goal))}
+                  className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[14px] font-medium transition-colors xl:px-3.5 xl:text-[15px] ${
+                    on ? "text-ink" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {cat.label}
+                  {/* One element that slides between buttons rather than five
+                      that fade, so the marker tracks the pointer. */}
+                  {on && (
+                    <motion.span
+                      layoutId="nv-nav-marker"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      className="absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-primary"
+                    />
+                  )}
+                </button>
+                </React.Fragment>
+              );
+            })}
+          </div>
 
           <div className="flex items-center gap-2.5">
             {!isKiosk && (
-              <>
-                <Link to="/portal" className="hidden h-10 items-center gap-2 rounded-full border-2 border-primary bg-surface px-5 text-[14px] font-semibold text-primary transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-on-primary nv-shadow lg:flex">
-                  <LogIn size={15} /> Patient Portal
-                </Link>
-                <Link to="/treatments" className="hidden h-10 items-center gap-2 rounded-full bg-primary px-5 text-[14px] font-semibold text-on-primary transition-all hover:-translate-y-0.5 hover:bg-primary-deep nv-shadow lg:flex">
-                  Get started
-                </Link>
-              </>
+              <Link
+                to="/portal"
+                onClick={closePanel}
+                className="hidden h-10 items-center gap-2 rounded-full border-2 border-primary bg-surface px-5 text-[14px] font-semibold text-primary transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-on-primary nv-shadow lg:flex"
+              >
+                <LogIn size={15} /> Patient Portal
+              </Link>
             )}
 
             {/* kiosk keeps the burger at any width — it holds the meds menu */}
@@ -241,7 +305,35 @@ export default function Navbar() {
           style={{ scaleX }}
           className="absolute inset-x-0 bottom-0 h-[3px] origin-left bg-linear-to-r from-accent to-primary"
         />
+
+        {/* The panel. Height animates so the bar below it settles rather than
+            jumping when a five-item category follows a three-item one. */}
+        <AnimatePresence>
+          {openCat && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: EASE }}
+              className="absolute inset-x-0 top-full overflow-hidden border-b border-line bg-bg/95 backdrop-blur-xl nv-shadow-lg"
+            >
+              <AnimatePresence mode="wait">
+                <TreatmentPanel
+                  key={openCat}
+                  cat={CATEGORIES.find((c) => c.goal === openCat)}
+                  onNavigate={closePanel}
+                />
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
+
+      {/* Kiosk taps outside the panel to dismiss it — there is no pointer to
+          leave the header with. */}
+      {isKiosk && openCat && (
+        <div className="fixed inset-0 z-40" aria-hidden="true" onClick={closePanel} />
+      )}
 
       {/* mobile drawer */}
       <AnimatePresence>
@@ -267,8 +359,8 @@ export default function Navbar() {
                    directly under the last one (not pinned to the drawer foot, so
                    they sit with the list rather than floating away from it). */
                 <div className="flex grow flex-col p-4">
-                  {KIOSK_MENU.map((cat) => (
-                    <KioskMenuGroup
+                  {CATEGORIES.map((cat) => (
+                    <CategoryGroup
                       key={cat.goal}
                       cat={cat}
                       open={openKioskGoal === cat.goal}
@@ -296,7 +388,18 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="flex grow flex-col p-4">
-                  <MobileGroup title="Treatments" items={treatmentItems} close={() => setMobileOpen(false)} viewAllLink="/treatments" defaultOpen />
+                  {/* The same five categories the desktop bar carries, as
+                      accordions with the same thumbnails. First one opens by
+                      default so the drawer never reads as an empty list. */}
+                  {CATEGORIES.map((cat, i) => (
+                    <CategoryGroup
+                      key={cat.goal}
+                      cat={cat}
+                      open={openKioskGoal === null ? i === 0 : openKioskGoal === cat.goal}
+                      onToggle={() => setOpenKioskGoal((g) => (g === cat.goal ? "" : cat.goal))}
+                      close={() => setMobileOpen(false)}
+                    />
+                  ))}
                   {/* Kiosk hidden at client request (2026-08-11) — route still live, just unlinked.
                   <Link to="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center justify-between border-b border-line py-5 text-[17px] font-medium text-ink">
                     Kiosk <ArrowRight size={16} className="text-muted" />

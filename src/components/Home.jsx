@@ -1,59 +1,21 @@
 import React, { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight, ShieldCheck, Truck, Clock, Ban,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import Navbar from "./Nav/Navbar";
 import Footer from "./Nav/Footer";
-import HeroStage, { KIOSK_VARIANT_IDS } from "./home/HeroStage";
+import HeroVideo from "./home/HeroVideo";
+import ImproveGoals from "./home/ImproveGoals";
+import StartingPoint from "./home/StartingPoint";
 import Reveal from "./ui/Reveal";
 import Photo from "./ui/Photo";
-import { useTheme } from "../theme/ThemeContext";
-import useKioskMode from "../lib/useKioskMode";
 
-function useKioskVariant() {
-  const { kioskLayout } = useTheme();
-
-  const isKiosk = useKioskMode();
-
-  const paramVariant = () => {
-    if (typeof window === "undefined") return null;
-    const v = new URLSearchParams(window.location.search).get("kiosk");
-    return v && KIOSK_VARIANT_IDS.includes(v) ? v : null;
-  };
-
-  const forced = paramVariant();
-  if (forced) return forced;
-  return isKiosk ? kioskLayout.id : null;
-}
-
-// Testimonials disabled per legal review (no verified member feedback yet).
-// const Testimonials = lazy(() => import("./Testimonials"));
+/* useKioskVariant and the HeroStage card grid it drove went with the
+   2026-09-11 hero redesign. The new hero is one full-bleed clip and reads the
+   same on a phone, a desktop and the 1080x1920 kiosk, so there is no longer a
+   per-kiosk layout to pick. HeroStage.jsx is still on disk if a variant is
+   ever wanted back. */
 const FAQ = lazy(() => import("./FAQ"));
-const TreatmentsCarousel = lazy(() => import("./TreatmentsCarousel"));
-/* The BMI calculator moved to the weight-loss treatments page (2026-08-19). It
-   belongs next to the treatments it qualifies you for, not on the landing page.
-   Still reachable from the footer via /weight-loss-calculator. */
-
-const TRUST = [
-  { text: "US-licensed pharmacy", icon: ShieldCheck },
-  { text: "Home delivery, if prescribed", icon: Truck },
-  { text: "Dedicated online care", icon: Clock },
-  { text: "No subscription lock-in", icon: Ban },
-];
-
-/* "~2 min / Guided questionnaire" and "0 / Waiting rooms" were dropped at the
-   client's request (2026-08-15). Both replacements restate promises the site
-   already makes elsewhere, so nothing new is being claimed here. */
-const STATS = [
-  { b: "100%", s: "Physician-reviewed" },
-  { b: "Fast", s: "Doorstep delivery" },
-  { b: "1:1", s: "Provider messaging" },
-  { b: "HIPAA", s: "Private and secure" },
-];
-
-// The three-step "How it works" cards (replaces the old bento + steps section).
 const HOW_STEPS = [
   {
     n: "01", eyebrow: "Step one", title: "Explore your options",
@@ -76,23 +38,12 @@ const HOW_STEPS = [
 ];
 
 export default function Home() {
-  const kioskVariant = useKioskVariant();
-
   return (
     <main className="min-h-screen w-full bg-bg text-ink">
       <Navbar />
-      <HeroStage kioskVariant={kioskVariant} />
-
-      {/* ===== Trust strip ===== */}
-      <section className="border-y border-line bg-surface">
-        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-center gap-x-10 gap-y-3 px-5 py-4 md:px-10">
-          {TRUST.map((t) => (
-            <span key={t.text} className="flex items-center gap-2 text-[0.88rem] font-medium text-muted">
-              <t.icon size={16} className="text-primary" /> {t.text}
-            </span>
-          ))}
-        </div>
-      </section>
+      <HeroVideo />
+      <ImproveGoals />
+      <StartingPoint />
 
       {/* ===== How it works (3 cards) ===== */}
       <section id="how" className="mx-auto w-full max-w-[1240px] scroll-mt-24 px-5 pt-[clamp(1.75rem,4.5vw,4.5rem)] md:px-10">
@@ -129,50 +80,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== Treatments & Solutions showcase (moved from Treatments page) ===== */}
-      <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>
-        <TreatmentsCarousel />
-      </Suspense>
-
-      {/* ===== Stats band ===== */}
-      <section className="border-y border-line bg-surface-2 text-ink">
-        <div className="mx-auto grid max-w-[1240px] grid-cols-2 gap-6 px-5 py-[clamp(2.4rem,4vw,3.2rem)] md:grid-cols-4 md:px-10">
-          {STATS.map((s) => (
-            <div key={s.s} className="text-center">
-              <b className="block text-[clamp(1.8rem,4vw,2.6rem)] font-extrabold tracking-tight text-primary">{s.b}</b>
-              <span className="mt-1.5 block font-mono text-[0.72rem] uppercase tracking-[0.13em] text-muted">{s.s}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ===== FAQ ===== */}
-      {/* Testimonials disabled per legal review until we have verified member
-          feedback from actual clinician services. Re-enable <Testimonials />
-          here once real reviews exist. */}
       <Suspense fallback={<div className="grid h-[200px] place-items-center bg-bg text-muted">Loading…</div>}>
         <div id="faq" className="scroll-mt-24"><FAQ /></div>
       </Suspense>
-
-      {/* ===== Closing CTA ===== */}
-      <section className="mx-auto mb-12 mt-[clamp(2.4rem,5vw,4rem)] max-w-[1240px] px-5 md:px-10">
-        <Reveal>
-          <div className="relative grid min-h-[clamp(300px,42vw,460px)] items-center overflow-hidden rounded-[calc(28px*var(--nv-r-scale,1))]">
-            <div className="absolute inset-0 z-0">
-              <Photo src="/site/outdoor-group.avif" alt="A group of people standing together outdoors" className="h-full w-full" imgClassName="object-cover" />
-            </div>
-            <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(100deg, color-mix(in oklab, var(--nv-ink-panel) 86%, transparent) 0%, color-mix(in oklab, var(--nv-ink-panel) 55%, transparent) 52%, color-mix(in oklab, var(--nv-ink-panel) 18%, transparent) 100%)" }} />
-            <div className="relative z-10 max-w-[34rem] p-[clamp(1.8rem,5vw,3rem)] text-white">
-              <span className="nv-eyebrow text-accent">Begin</span>
-              <h2 className="mt-3 text-[clamp(1.9rem,4.5vw,3rem)] font-extrabold leading-[1.06] text-white">Care designed around your needs</h2>
-              <p className="mb-7 mt-3 max-w-[42ch] text-[1.06rem] text-white/85">Answer a few questions and let a doctor do the rest. You pay only if a provider determines that a prescription is appropriate.</p>
-              <Link to="/treatments" className="group inline-flex items-center gap-2 rounded-full bg-bg px-7 py-3.5 text-[0.96rem] font-semibold text-ink transition-all hover:-translate-y-0.5 nv-shadow-lg">
-                Start your visit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </div>
-        </Reveal>
-      </section>
 
       <Footer />
     </main>

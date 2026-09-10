@@ -15,7 +15,9 @@ const MARQUEE_ITEMS = [
 export default function Marquee({ speed = 42 }) {
   return (
     <div
-      className="relative flex w-full overflow-hidden border-y border-ink/10 py-2.5 text-ink"
+      /* py-1.5, not py-2.5: the hero below is sized to fill what is left of the
+         viewport, so every pixel this strip takes is a pixel off the hero. */
+      className="relative flex w-full overflow-hidden border-y border-ink/10 py-1.5 text-ink"
       style={{ background: "color-mix(in oklab, var(--nv-accent) 72%, var(--nv-surface))" }}
     >
       <motion.div
