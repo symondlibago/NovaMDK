@@ -4,6 +4,8 @@ import {
   updateOpportunityFields,
   createVisitOpportunity,
   tagContact,
+  clinicStamp,
+  INTAKE_STAGE,
   FIELD,
 } from "./_ghl.js";
 import { blocked, verifyReleaseToken } from "./_guard.js";
@@ -24,21 +26,6 @@ const idOf = (result) => result?.opportunity?.id || result?.id || null;
    This one means they reached the end and MDI created the encounter, so the
    two together give the drop-off between starting and finishing. */
 const SUBMITTED_TAG = "intake-submitted";
-
-/* Written for humans in the clinic's own timezone. The field is a text field
-   either way, so nothing is gained by storing UTC, and a raw ISO stamp reads
-   seven hours wrong to the staff in California who actually look at it. */
-const CLINIC_TZ = process.env.GHL_CLINIC_TIMEZONE || "America/Los_Angeles";
-const stamp = (d = new Date()) =>
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: CLINIC_TZ,
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZoneName: "short",
-  }).format(d);
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -77,13 +64,18 @@ export default async function handler(req, res) {
   const [contactWrite, opportunityWrite, tagWrite] = await Promise.allSettled([
     updateContactFields(contactId, {
       [FIELD.LATEST_MDI_ENCOUNTER_ID]: encounterId,
-      [FIELD.LAST_MDI_UPDATE_DATE]: stamp(),
+      [FIELD.LAST_MDI_UPDATE_DATE]: clinicStamp(),
+      // MDI has the questionnaire, so this visit got all the way through.
+      [FIELD.INTAKE_STAGE]: INTAKE_STAGE.COMPLETE,
       ...(status && { [FIELD.MDI_ENCOUNTER_STATUS]: status }),
     }),
     opportunityId && !additional
       ? updateOpportunityFields(
           opportunityId,
-          { [FIELD.MDI_ENCOUNTER_ID]: encounterId },
+          {
+            [FIELD.MDI_ENCOUNTER_ID]: encounterId,
+            [FIELD.INTAKE_STAGE]: INTAKE_STAGE.COMPLETE,
+          },
           { name: treatment }
         )
       : createVisitOpportunity({
@@ -93,6 +85,7 @@ export default async function handler(req, res) {
           source: req.body?.source,
           kioskLocation: req.body?.kioskLocation,
           productLine: req.body?.productLine,
+          intakeStage: INTAKE_STAGE.COMPLETE,
           mdiEncounterId: encounterId,
         }),
     // Additive, so it never disturbs the tags the lead arrived with.

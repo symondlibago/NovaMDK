@@ -10,22 +10,61 @@ const MDI_ORIGIN = "https://patient.novamdk.com";
 const PAYMENT_TRIGGER_EVENTS = ["finish"];
 const PAYMENT_TRIGGER_STEPS = ["identification", "thank-you"];
 
-/* Fire-and-forget: a CRM write must never surface to the patient mid-intake,
-   so a failure is logged and the questionnaire carries on regardless. */
-function recordMilestone(milestone) {
-  let contactId = null;
-  let releaseToken = null;
+const stored = (key) => {
   try {
-    contactId = sessionStorage.getItem("ghl_contact");
-    releaseToken = sessionStorage.getItem("mdi_release_token");
-  } catch { /* private mode */ }
-  if (!contactId) return;
+    return sessionStorage.getItem(key);
+  } catch {
+    return null; // private mode
+  }
+};
 
-  fetch("/api/ghl-journey", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ contact_id: contactId, milestone, release_token: releaseToken }),
-  }).catch((e) => console.error(`GHL milestone "${milestone}" failed:`, e.message));
+/* The hand-off banks the contact id only once GHL answers, and that round trip
+   is several API calls long. MDI can be showing the first question before it
+   lands, which used to drop the milestone outright. Waiting briefly is what
+   makes the tag dependable rather than a race against the questionnaire. */
+const CONTACT_WAIT_MS = 8000;
+const CONTACT_POLL_MS = 300;
+
+async function contactIdSoon() {
+  const deadline = Date.now() + CONTACT_WAIT_MS;
+  for (;;) {
+    const id = stored("ghl_contact");
+    if (id) return id;
+    if (Date.now() >= deadline) return null;
+    await new Promise((resolve) => setTimeout(resolve, CONTACT_POLL_MS));
+  }
+}
+
+/* Fire-and-forget: a CRM write must never surface to the patient mid-intake,
+   so a failure is logged and the questionnaire carries on regardless.
+   Resolves false when nothing was sent, which lets the caller un-latch and try
+   again on MDI's next event. */
+async function recordMilestone(milestone, { treatment } = {}) {
+  const contactId = await contactIdSoon();
+  if (!contactId) {
+    console.error(`GHL milestone "${milestone}" skipped: no contact id after ${CONTACT_WAIT_MS}ms`);
+    return false;
+  }
+
+  try {
+    await fetch("/api/ghl-journey", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contact_id: contactId,
+        // Carries the stage onto this visit's own record, which is what
+        // survives the patient coming back for something else later.
+        opportunity_id: stored("ghl_opportunity"),
+        treatment,
+        milestone,
+        release_token: stored("mdi_release_token"),
+      }),
+    });
+    return true;
+  } catch (e) {
+    console.error(`GHL milestone "${milestone}" failed:`, e.message);
+    return false;
+  }
 }
 
 /* The event payload's shape came from reading MDI's shipped bundle rather than
@@ -38,16 +77,11 @@ const statusOf = (data) =>
    for the CRM's benefit alone, so a patient mid-questionnaire must never see a
    failure to record them. */
 function recordEncounter({ encounterId, status, additional, treatment, value, productLine }) {
-  let contactId = null;
-  let opportunityId = null;
-  let releaseToken = null;
-  try {
-    contactId = sessionStorage.getItem("ghl_contact");
-    opportunityId = sessionStorage.getItem("ghl_opportunity");
-    releaseToken = sessionStorage.getItem("mdi_release_token");
-  } catch { /* private mode */ }
+  const contactId = stored("ghl_contact");
   // No contact means the hand-off never wrote one, and there is nothing in the
-  // CRM for this encounter to hang off.
+  // CRM for this encounter to hang off. Unlike the milestone above this needs
+  // no wait: submitting a questionnaire takes minutes, so the contact has long
+  // since landed by the time MDI gets here.
   if (!contactId) return;
 
   // Only needed if this encounter has to open its own opportunity, but it costs
@@ -60,7 +94,7 @@ function recordEncounter({ encounterId, status, additional, treatment, value, pr
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       contact_id: contactId,
-      opportunity_id: opportunityId,
+      opportunity_id: stored("ghl_opportunity"),
       encounter_id: encounterId,
       status,
       additional,
@@ -69,7 +103,7 @@ function recordEncounter({ encounterId, status, additional, treatment, value, pr
       productLine,
       source: originLabel,
       kioskLocation: scannedFrom ? originLabel : undefined,
-      release_token: releaseToken,
+      release_token: stored("mdi_release_token"),
     }),
   }).catch((e) => console.error("GHL encounter write failed:", e.message));
 }
@@ -107,7 +141,12 @@ export default function IntakePage() {
 
       if ((msg.event === "start" || msg.event === "step") && !intakeTagged.current) {
         intakeTagged.current = true;
-        recordMilestone("intake-started");
+        /* Un-latched when nothing was sent, so MDI's next `step` retries. The
+           patient moves through several questions, which gives this more than
+           one chance to land. */
+        recordMilestone("intake-started", { treatment: treatmentLabel(product) }).then((sent) => {
+          if (!sent) intakeTagged.current = false;
+        });
       }
 
       /* The questionnaire disqualified them. Recorded as a plain outcome; the

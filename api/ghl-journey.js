@@ -1,9 +1,25 @@
-import { ghlConfigured, tagContact, updateContactFields } from "./_ghl.js";
+import {
+  ghlConfigured,
+  tagContact,
+  updateContactFields,
+  updateOpportunityFields,
+  clinicStamp,
+  INTAKE_STAGE,
+  FIELD,
+} from "./_ghl.js";
 import { blocked, verifyReleaseToken } from "./_guard.js";
 
+/* The browser names a milestone; the server decides what that means. `stage`
+   lands on both the contact and the visit's opportunity: the contact copy is
+   what workflows trigger on, the opportunity copy is what survives a repeat
+   visit and so is the only honest basis for counting drop-off. */
 const MILESTONES = {
   "intake-started": {
     tags: ["intake-started"],
+    stage: INTAKE_STAGE.STARTED,
+    // Only meaningful on the contact: an opportunity already carries its own
+    // creation timestamp, which is the same moment to within a second or two.
+    stampField: FIELD.INTAKE_STARTED_DATE,
   },
   "not-eligible": {
     tags: ["not-eligible"],
@@ -35,14 +51,33 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: false, skipped: "not_configured" });
   }
 
+  const opportunityId = req.body?.opportunity_id || null;
+  const contactFields = {
+    ...(milestone.fields || {}),
+    ...(milestone.stage && { [FIELD.INTAKE_STAGE]: milestone.stage }),
+    ...(milestone.stampField && { [milestone.stampField]: clinicStamp() }),
+  };
+
   /* Settled independently: a failed field write shouldn't cost us the tag, and
      the tag is what the smart lists filter on. */
-  const [tagged, updated] = await Promise.allSettled([
+  const writes = [
     tagContact(contactId, milestone.tags || []),
-    updateContactFields(contactId, milestone.fields || {}),
-  ]);
+    updateContactFields(contactId, contactFields),
+    /* The treatment rides along because GHL wants a name on an opportunity
+       PUT. It's the same value the record was created with, so it reads as a
+       no-op rather than a rename. */
+    milestone.stage && opportunityId
+      ? updateOpportunityFields(
+          opportunityId,
+          { [FIELD.INTAKE_STAGE]: milestone.stage },
+          { name: req.body?.treatment }
+        )
+      : Promise.resolve(null),
+  ];
 
-  for (const [what, result] of [["tags", tagged], ["fields", updated]]) {
+  const [tagged, updated, opportunity] = await Promise.allSettled(writes);
+
+  for (const [what, result] of [["tags", tagged], ["fields", updated], ["opportunity", opportunity]]) {
     if (result.status === "rejected") {
       console.error(`GHL journey ${what} failed:`, result.reason?.message, result.reason?.details ?? "");
     }
@@ -50,7 +85,7 @@ export default async function handler(req, res) {
 
   // Never fail a patient's intake over a CRM write.
   return res.status(200).json({
-    ok: tagged.status === "fulfilled" && updated.status === "fulfilled",
+    ok: [tagged, updated, opportunity].every((r) => r.status === "fulfilled"),
     milestone: req.body.milestone,
   });
 }

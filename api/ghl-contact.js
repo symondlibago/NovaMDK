@@ -1,4 +1,4 @@
-import { ghlConfigured, upsertContact, addContactNote, createVisitOpportunity } from "./_ghl.js";
+import { ghlConfigured, upsertContact, addContactNote, createVisitOpportunity, INTAKE_STAGE } from "./_ghl.js";
 import { blocked } from "./_guard.js";
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -14,13 +14,18 @@ export default async function handler(req, res) {
 
   try {
     const { patient, treatment, tags, source, note, value, kioskLocation, mdiPatientId, productLine } = req.body || {};
-    const contact = await upsertContact({ patient, treatment, tags, source, mdiPatientId, productLine });
+    /* This call is the hand-off: the contact and its opportunity are created a
+       beat before the questionnaire opens, so the intake genuinely has not
+       started yet. Anyone who never gets further stays parked here, which is
+       the drop-off the funnel is meant to show. */
+    const stage = INTAKE_STAGE.NOT_STARTED;
+    const contact = await upsertContact({ patient, treatment, tags, source, mdiPatientId, productLine, intakeStage: stage });
     // Returned to the client so the payment step can move this exact
     // opportunity to Paid, rather than guessing at it by contact later.
     let opportunityId = null;
     if (contact?.id && treatment) {
       try {
-        const { opportunity, created } = await createVisitOpportunity({ contactId: contact.id, treatment, value, source, kioskLocation, productLine });
+        const { opportunity, created } = await createVisitOpportunity({ contactId: contact.id, treatment, value, source, kioskLocation, productLine, intakeStage: stage });
         opportunityId = opportunity?.id || null;
         if (!created) {
           console.warn(

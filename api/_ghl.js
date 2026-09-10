@@ -9,6 +9,8 @@ export const FIELD = {
   SEX_AT_BIRTH: "sex_at_birth",
   EMAIL_ADDRESS: "email_address",
   PRODUCT_LINE: "product_line",
+  INTAKE_STAGE: "intake_stage",
+  INTAKE_STARTED_DATE: "intake_started_date",
   // MDI's permanent id for the person. One per patient, never changes, so the
   // Contact is the only place it belongs.
   MDI_PATIENT_ID: "mdi_patient_id",
@@ -52,6 +54,39 @@ const productLineOf = (name) => {
   console.warn(`GHL product_line has no option for "${value}" — leaving it unset.`);
   return null;
 };
+
+/* Where a visit got to before the questionnaire was submitted. Guarded for the
+ * same reason as product_line: the Contact copy is a dropdown. The Opportunity
+ * copy is plain text and takes the value unchecked, so a mismatch loses the
+ * Contact field but never the per-visit record. */
+export const INTAKE_STAGE = {
+  NOT_STARTED: "not_started",
+  STARTED: "started",
+  COMPLETE: "complete",
+};
+const INTAKE_STAGES = new Set(Object.values(INTAKE_STAGE));
+const intakeStageOf = (stage) => {
+  const value = clean(stage);
+  if (!value) return null;
+  if (INTAKE_STAGES.has(value)) return value;
+  console.warn(`GHL intake_stage has no option for "${value}" — leaving it unset.`);
+  return null;
+};
+
+/* Timestamps written for humans, in the clinic's own timezone. These land in
+ * text fields, so nothing is gained by storing UTC, and a raw ISO stamp reads
+ * seven hours wrong to the staff in California who actually look at them. */
+const CLINIC_TZ = process.env.GHL_CLINIC_TIMEZONE || "America/Los_Angeles";
+export const clinicStamp = (d = new Date()) =>
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: CLINIC_TZ,
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(d);
 
 async function ghlFetch(path, { method = "GET", body } = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -152,7 +187,7 @@ export async function updateOpportunityFields(opportunityId, fields = {}, { name
   return data?.opportunity || null;
 }
 
-export async function upsertContact({ patient = {}, treatment, tags = [], source, mdiPatientId, productLine } = {}) {
+export async function upsertContact({ patient = {}, treatment, tags = [], source, mdiPatientId, productLine, intakeStage } = {}) {
   const email = clean(patient.email);
   const phone = toE164(patient.phone_number);
   if (!email && !phone) throw new Error("A GHL contact needs at least an email or a phone number.");
@@ -169,6 +204,9 @@ export async function upsertContact({ patient = {}, treatment, tags = [], source
   // Single-select, so a repeat patient's column reflects their newest visit
   // rather than every line they've bought. The full history lives in Treatment.
   addField(FIELD.PRODUCT_LINE, productLineOf(productLine));
+  // Reset on every visit: the stage describes the newest intake, not a lifetime
+  // high-water mark. The per-visit history stays on the opportunities.
+  addField(FIELD.INTAKE_STAGE, intakeStageOf(intakeStage));
 
   const body = {
     locationId: LOCATION_ID,
@@ -270,7 +308,7 @@ export async function markOpportunityPaid(opportunityId) {
  * how repeat visits stay individually trackable without duplicating the person.
  * Deliberately separate from upsertContact: a patient who books twice is one
  * contact and two opportunities. */
-export async function createVisitOpportunity({ contactId, treatment, value, source, kioskLocation, mdiEncounterId, productLine } = {}) {
+export async function createVisitOpportunity({ contactId, treatment, value, source, kioskLocation, mdiEncounterId, productLine, intakeStage } = {}) {
   const name = clean(treatment);
   if (!contactId || !name) return null;
 
@@ -285,6 +323,7 @@ export async function createVisitOpportunity({ contactId, treatment, value, sour
     [FIELD.KIOSK_LOCATION]: kioskLocation,
     [FIELD.MDI_ENCOUNTER_ID]: mdiEncounterId,
     [FIELD.PRODUCT_LINE]: productLine,
+    [FIELD.INTAKE_STAGE]: intakeStage,
   });
   const custom = fields.length ? { customFields: fields } : null;
 
