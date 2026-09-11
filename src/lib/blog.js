@@ -47,6 +47,47 @@ export function getPosts() {
   return [...posts].sort((a, b) => String(b.date).localeCompare(String(a.date)));
 }
 
+/** The newest `limit` published posts, one per title.
+    The sync has re-imported at least one article under a second slug
+    ("why-does-energy-decline-with-age" and "blog-why-does-energy-decline-with-age"),
+    and a short list is exactly where that shows: the same headline twice in a
+    row of three reads as a broken page. Deduping here rather than in a view
+    keeps every caller honest. */
+export function latestPosts(limit = 3) {
+  const seen = new Set();
+  return getPosts()
+    .filter((p) => !p.draft)
+    .filter((p) => {
+      const key = String(p.title || "").trim().toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, limit);
+}
+
+/* Tags arrive from GoHighLevel in two shapes: names an author typed
+   ("Weight Management") and slugs the CMS generated ("unisex-anti-aging-rx").
+   Anything rendered to a reader goes through here so a slug never reaches the
+   page. The map covers the ones whose de-slugified form would still read badly;
+   everything else falls through to title case. */
+const TAG_LABELS = {
+  "unisex-anti-aging-rx": "Longevity",
+  "mind-body-healing": "Mind & Body",
+  "benefits-holistic-wellness": "Holistic Wellness",
+};
+
+/** Display label for a raw tag. */
+export function tagLabel(tag) {
+  if (!tag) return "";
+  if (TAG_LABELS[tag]) return TAG_LABELS[tag];
+  if (!tag.includes("-")) return tag;
+  return tag
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 /** One post by slug, or null. */
 export function getPost(slug) {
   return posts.find((p) => p.slug === slug) || null;

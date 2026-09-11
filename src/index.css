@@ -28,6 +28,12 @@
   --font-body: var(--nv-font-body);
   --font-mono: var(--nv-font-mono);
 
+  /* The journal's serif. Deliberately NOT wired to --nv-font-display: the
+     theme switcher owns that, and the blog's headings are meant to stay serif
+     whichever theme is picked. Playfair is already imported at the top of this
+     file. */
+  --font-journal: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
   /* Legacy aliases used across existing components — now follow the theme. */
   --font-sans: var(--nv-font-body);
   --font-baskerville: var(--nv-font-display);
